@@ -88,7 +88,7 @@ $dowForFirstOfMonth = date('w',mktime(0,0,0,$month,1,$year));
 $leadInDays = $dowForFirstOfMonth - $startDayOfWeek;
 if ($leadInDays < 0)
 	$leadInDays += 7;
-	
+
 //get the first printed date
 $firstPrintedDate = $startDate - ($leadInDays * A_DAY);
 
@@ -103,12 +103,36 @@ include("timesheet_menu.inc");
 
 function print_totals($seconds, $type="", $year, $month, $day) {
 
+	/**
+	 * Bug fix by robsearles 26 Jan 2008
+	 * Strange bug I noticed whilst fixing bug below. If a month starts
+	 * on a Monday, there is an extra total and link before the month
+	 * starts. Simply check to see if we are on the first day of the
+	 * month, if so, don't do anything.
+	 */
+	if($day == 1) { return false; }
+	/**
+	 * Bug fix by robsearles 26 Jan 2008
+	 * Fix the "weekly total" link. Both the last and first
+	 * weeks' links now link to the correct week
+	 */
+	$passedDate = mktime(0,0,0,$month, $day, $year);
+	$day_numeric = date("w", $passedDate);
+	// if the start day is a monday, want to view the week before
+	if($day_numeric == 1) { $day_numeric = 7;}
+	// other wise want to view this week (for use for last week of month)
+	else { $day_numeric--; }
+	$passedDate -= A_DAY * $day_numeric;
+/*
+	OLD CODE
 	//minus a week from the date given so we link to the start of that week
 	$passedDate = mktime(0,0,0,$month, $day, $year);
 	$passedDate -= A_DAY * 7;
+*/
 	$year = date("Y", $passedDate);
 	$month = date("n", $passedDate);
 	$day = date("j", $passedDate);
+
 
 	// Called from calendar.php to print out a line summing the hours worked in the past
 	// week.  index.phtml must set all global variables.
@@ -120,7 +144,7 @@ function print_totals($seconds, $type="", $year, $month, $day) {
 		$seconds -= $break_sec;
 		print "<font size=\"-1\">Break time: <font color=\"red\">". formatSeconds($break_sec);
 		print "</font></font></td><td align=\"right\" colspan=\"4\">";
-	} 
+	}
 	else
 		print "<td align=\"right\" colspan=\"7\" class=\"calendar_totals_line_$type\">";
 
@@ -129,10 +153,10 @@ function print_totals($seconds, $type="", $year, $month, $day) {
 	else {
 		print "<a href=\"weekly.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&year=$year&month=$month&day=$day\">Weekly Total: </a>";
 	}
-								
+
 	print "<span class=\"calendar_total_value_$type\">". formatSeconds($seconds) ."</span></td>\n";
 }
-    
+
 ?>
 <html>
 <head>
@@ -176,10 +200,10 @@ include ("banner.inc");
 											<tr>
 												<td height="1"></td>
 												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
-											</tr>											
+											</tr>
 										</table>
-									</td>	
-									<td>		
+									</td>
+									<td>
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
@@ -217,7 +241,7 @@ include ("banner.inc");
 						$currentDayDate = $firstPrintedDate;
 						for ($i=0; $i<7; $i++) {
 							$currentDayStr = strftime("%A", $currentDayDate);
-							$currentDayDate += A_DAY;							
+							$currentDayDate += A_DAY;
 							print "	<td class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>\n";
 						}
 						?>
@@ -227,42 +251,42 @@ include ("banner.inc");
 
 	//define the variable dayRow
 	$dayRow = 0;
-	
+
 	// Print last months' days spots.
 	for ($i=0; $i<$leadInDays; $i++) {
 	//while (($dayRow < $dowForFirstOfMonth) && ($dowForFirstOfMonth != 0)) {
 		print "<td width=\"14%\" HEIGHT=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayRow++;
 	}
-  
+
 	// Get the Monthly data.
 	list($num, $qh) = get_time_date($month, $year, $contextUser, $proj_id, $client_id);
-  
+
   $i=0; $day = 1; $tot_sec = 0; $week_tot_sec = 0; $day_tot_sec = 0;
-  while (checkdate($month, $day, $year)) {  
+  while (checkdate($month, $day, $year)) {
 		// Reset daily variables;
 		$day_tot_sec = 0;
 		$last_task_id = -1;
 		$last_proj_id = -1;
 		$last_client_id = -1;
-    
+
 		// New Week.
 		if ((($dayRow % 7) == 0) && ($dowForFirstOfMonth != 0)) {
 			print_totals($week_tot_sec, "weekly", $year, $month, $day);
 			$week_tot_sec = 0;
 			print "</tr>\n<tr>\n";
 		}
-		else 
+		else
 			$dowForFirstOfMonth = 1;
 
-		//define subtable		
+		//define subtable
 		if (($dayRow % 7) == 6)
 			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_right\">\n";
 		else
 			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_middle\">\n";
-		
+
 		print "	<table width=\"100%\">\n";
-    
+
 		// Print out date.
     /*print "<tr><td valign=\"top\"><tt><A HREF=\"daily.php?month=$month&year=$year&".
       "day=$day&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$day</a></tt></td></tr>";*/
@@ -292,26 +316,26 @@ include ("banner.inc");
     // If the day has data, print it.
 		for ($i=0;$i<$num; $i++) {
 			$data = dbResult($qh,$i);
-			
-			//Due to a bug in mysql with converting to unix timestamp from the string, 
+
+			//Due to a bug in mysql with converting to unix timestamp from the string,
 			//we are going to use php's strtotime to make the timestamp from the string.
 			//the problem has something to do with timezones.
 			$data["start_time"] = strtotime($data["start_time_str"]);
 			$data["end_time"] = strtotime($data["end_time_str"]);
-			
+
 			if (
-					(($data["start_time"] < mktime(0,0,0,$month,$day,$year)) 
+					(($data["start_time"] < mktime(0,0,0,$month,$day,$year))
 					&& ($data["end_time"] > mktime(23,59,59,$month,$day,$year))) ||
-					(($data["start_time"] >= mktime(0,0,0,$month,$day,$year)) 
+					(($data["start_time"] >= mktime(0,0,0,$month,$day,$year))
 					&& ($data["start_time"] <= mktime(23,59,59,$month,$day,$year))) ||
-					(($data["end_time"] >= mktime(0,0,0,$month,$day,$year)) 
+					(($data["end_time"] >= mktime(0,0,0,$month,$day,$year))
 					&& ($data["end_time"] <= mktime(23,59,59,$month,$day,$year)))
 				 )
 			{
 			  // This day has data in it.  Therefore we want to print out a summary at the bottom of each day.
 			  $data_seen = 1;
 			  $todays_total_sec=0;
-			  
+
 			  //print out client name if its a new client
 			  if ($client_id == 0 && $last_client_id != $data["client_id"]) {
 			  	$last_client_id = $data["client_id"];
@@ -321,24 +345,24 @@ include ("banner.inc");
 
 			  //print out project name if its a new project
 			  if ($proj_id == 0 && $last_proj_id != $data["proj_id"]) {
-					$last_proj_id = $data["proj_id"];  
+					$last_proj_id = $data["proj_id"];
 					$projectName = $data["title"];
  					print "<tr><td valign=\"top\" class=\"project_name_small\">$projectName</td></tr>";
 			  }
-			    
+
 			  // Print out task name if it's a new task
 			  if ($last_task_id != $data["task_id"]) {
 					$last_task_id = $data["task_id"];
 					$taskName = $data["name"];
 					print "<tr><td valign=\"top\" class=\"task_name_small\">$taskName</td></tr>";
 				}
-				
+
 				if ($data["diff_sec"] > 0) {
 					//if both start and end time are not today
 					if ($data["start_time"] < mktime(0,0,0,$month,$day,$year) && $data["end_time"] > mktime(23,59,59,$month,$day,$year)) {
 						$today_diff_sec = 24*60*60; //all day - no one should work this hard!
 						print "<tr><td valign=\"top\" class=\"task_time_small\">...-...</td></tr>";
-					}		
+					}
 					//if end time is not today
 					elseif ($data["end_time"] > mktime(23,59,59,$month,$day,$year)) {
 						$today_diff_sec = mktime(0,0,0, $month,$day,$year) + 24*60*60 - $data["start_time"];
@@ -346,7 +370,7 @@ include ("banner.inc");
 					}
 					//elseif start time is not today
 					elseif ($data["start_time"] < mktime(0,0,0,$month,$day,$year)) {
-						$today_diff_sec = $data["end_time"] - mktime(0,0,0, $month,$day,$year); 
+						$today_diff_sec = $data["end_time"] - mktime(0,0,0, $month,$day,$year);
 						print "<tr><td valign=\"top\" class=\"task_time_small\">...-$data[endd]</td></tr>";
 					}
 					else {
@@ -355,7 +379,7 @@ include ("banner.inc");
 						$endTimeStr = $data["endd"];
 				    print "<tr><td valign=\"top\" class=\"task_time_small\">$startTimeStr-$endTimeStr</td></tr>";
 					}
-			
+
 			    $tot_sec += $today_diff_sec;
 			    $week_tot_sec += $today_diff_sec;
 			    $day_tot_sec += $today_diff_sec;
@@ -366,10 +390,10 @@ include ("banner.inc");
 				}
 			}
 		}
-		
+
     if ($data_seen == 1)	{
       print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . formatSeconds($day_tot_sec) ."</td></tr>";
-    } 
+    }
 		else {
       print "<tr><td>&nbsp;</td></tr>";
     }
@@ -389,7 +413,6 @@ include ("banner.inc");
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</TD>\n ";
 		$dayRow++;
 	}
-	
 	print_totals($week_tot_sec, "weekly", $year, $month, $day);
 	$week_tot_sec = 0;
 	print "</tr>\n<tr>\n";
@@ -397,7 +420,7 @@ include ("banner.inc");
 }?>
 					</tr>
 				</table>
-			</td>		
+			</td>
 		</tr>
 	</table>
 
@@ -407,7 +430,7 @@ include ("banner.inc");
 		</td>
 	</tr>
 </table>
-	
+
 </form>
 <?
 include ("footer.inc");
