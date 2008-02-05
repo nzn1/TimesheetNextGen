@@ -1,4 +1,4 @@
-<?
+<?PHP
 
 //load local vars from superglobals
 $year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: (int)date("Y");
@@ -27,7 +27,7 @@ if (isset($_REQUEST['mode']))
 	$mode = $_REQUEST['mode'];
 else
 	$mode = "all";
-if (!($mode == "all" || $mode == "monthly" || $mode == "weekly")) 
+if (!($mode == "all" || $mode == "monthly" || $mode == "weekly"))
 	$mode = "all";
 
 //define the command menu

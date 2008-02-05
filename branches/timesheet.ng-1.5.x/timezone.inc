@@ -1,4 +1,4 @@
-<?{
+<?PHP
 
 	//Get the result set for the config set 1
 	$dbh = dbConnect();
@@ -15,4 +15,4 @@
 		putenv("TZ=" . stripslashes($configdata["timezone"]));
 	}
 
-}?>
+?>
