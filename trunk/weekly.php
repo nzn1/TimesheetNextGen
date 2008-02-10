@@ -36,7 +36,7 @@ if ($proj_id != 0 && $client_id != 0) { // id 0 means 'All Projects'
 }
 else
 	$task_id = 0;
-	
+
 
 //a useful constant
 define("A_DAY", 24 * 60 * 60);
@@ -86,12 +86,12 @@ $configData = dbResult($qh2);
 
 //build the database query
 $query = "SELECT date_format(start_time,'%d') AS day_of_month, ";
-			
+
 if ($configData["timeformat"] == "12")
 	$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
 else
 	$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') AS start, ";
-				
+
 $query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
 						"end_time AS end_time_str, ".
 						"start_time AS start_time_str, ".
@@ -104,22 +104,25 @@ $query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
 						"$CLIENT_TABLE.organisation AS clientName " .
 						"FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE WHERE " .
 						"uid='$contextUser' AND ";
-			
+
 if ($proj_id > 0) //otherwise want all records no matter what project
 	$query .=	"$TIMES_TABLE.proj_id=$proj_id AND ";
 else if ($client_id > 0) //only records for projects of the given client
 	$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
-			
-$query .= 
+
+$query .=
 				"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
 				"$TASK_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
 				"$PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id AND ".
 			"((start_time >= '$startYear-$startMonth-$startDay 00:00:00' AND " .
 			"start_time < '$endYear-$endMonth-$endDay 00:00:00') ".
 			"OR (end_time >= '$startYear-$startMonth-$startDay 00:00:00' AND " .
-			"end_time < '$endYear-$endMonth-$endDay 00:00:00') ".			
+			"end_time < '$endYear-$endMonth-$endDay 00:00:00') ".
 			"OR (start_time < '$startYear-$startMonth-$startDay 00:00:00' AND end_time >= '$endYear-$endMonth-$endDay 00:00:00')) ".
-				"ORDER BY day_of_month, proj_id, task_id, start_time";
+		//		"ORDER BY day_of_month, proj_id, task_id, start_time";
+		// Update By Rob: 10 Feb 2008
+		// Bug fix: 0000018
+		"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
 
 ?>
 <html>
@@ -147,7 +150,7 @@ include ("banner.inc");
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -167,8 +170,8 @@ include ("banner.inc");
 												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
 											</tr>
 										</table>
-									</td>	
-									<td>		
+									</td>
+									<td>
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
@@ -206,8 +209,8 @@ include ("banner.inc");
 
 						if ($client_id == 0)
 							print "Client / ";
-					
-						if ($proj_id == 0) 
+
+						if ($proj_id == 0)
 							print "Project / ";
 
 						print "Task";
@@ -219,7 +222,7 @@ include ("banner.inc");
 						$currentDayDate = $startDate;
 						for ($i=0; $i<7; $i++) {
 							$currentDayStr = strftime("%A", $currentDayDate);
-							$currentDayDate += A_DAY;							
+							$currentDayDate += A_DAY;
 							print "	<td class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>\n";
 						}
 						?>
@@ -231,16 +234,16 @@ include ("banner.inc");
 
 	//debug
 	//$startDateStr = strftime("%D", $startDate);
-	//$endDateStr = strftime("%D", $endDate);			
+	//$endDateStr = strftime("%D", $endDate);
 	//print "<p>WEEK start: $startDateStr WEEK end: $endDateStr</p>";
 
- 
+
 	class TaskInfo extends Pair {
 		var $projectId;
 		var $projectTitle;
 		var $taskName;
 		var $clientName;
-		
+
 		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName) {
 			 parent::Pair($value1, $value2);
 			 $this->projectId = $projectId;
@@ -251,7 +254,7 @@ include ("banner.inc");
 	}
 
 	// Get the Weekly data.
-	list($qh3, $num3) = dbQuery($query);	
+	list($qh3, $num3) = dbQuery($query);
 
 	//print "<p>Query: $query </p>";
 	//print "<p>there were $num3 results</p>";
@@ -260,7 +263,7 @@ include ("banner.inc");
 	//we're going to put the data into an array of
 	//different (unique) TASKS
 	//which has an array of DAYS (7) which has
-	//and array of size 4: 
+	//and array of size 4:
 	// -index 0 is task entries array for tasks which started on a previous day and finish on a following day
 	// -index 1 is task entries array for tasks which started on a previous day and finish today
 	// -index 2 is task entreis array for tasks which started and finished today
@@ -275,24 +278,24 @@ include ("banner.inc");
 		//get the record for this task entry
 		$data = dbResult($qh3,$i);
 
-		//Due to a bug in mysql with converting to unix timestamp from the string, 
+		//Due to a bug in mysql with converting to unix timestamp from the string,
 		//we are going to use php's strtotime to make the timestamp from the string.
 		//the problem has something to do with timezones.
 		$data["start_time"] = strtotime($data["start_time_str"]);
 		$data["end_time"] = strtotime($data["end_time_str"]);
-		
+
 		//get the current task properties
 		$currentTaskId = $data["task_id"];
 		$currentTaskStartDate = $data["start_time"];
 		$currentTaskEndDate = $data["end_time"];
 		$currentTaskName = $data["taskName"];
 		$currentProjectTitle = $data["projectTitle"];
-		$currentProjectId = $data["proj_id"];				
+		$currentProjectId = $data["proj_id"];
 		$currentClientName = $data["clientName"];
-		
+
 		//debug
 		//print "<p>taskId:$currentTaskId '$data[taskName]', start time:$data[start_time_str], end time:$data[end_time_str]</p>";
-		
+
 		//find the current task id in the array
 		$taskCount = count($structuredArray);
 		unset($matchedPair);
@@ -302,23 +305,23 @@ include ("banner.inc");
 				//store the pair we matched with
 				$matchedPair = &$structuredArray[$j];
 
-				//debug				
+				//debug
 				//print "<p> found existing matched pair so adding to that one </p>";
-				
+
 				//break since it matched
 				break;
 			}
 		}
-		
+
 		//was it not matched
 		if (!isset($matchedPair)) {
 
-			//debug				
+			//debug
 			//print "<p> creating a new matched pair for this task </p>";
-				
+
 			//create a new days array
 			$daysArray = array();
-			
+
 			//put an array in each day (this internal array will be of size 4)
 			for ($j=0; $j<7; $j++) {
 				//create a task event types array
@@ -327,50 +330,50 @@ include ("banner.inc");
 				//add 4 arrays to it
 				for ($k=0; $k<4; $k++)
 					$taskEventTypes[] = array();
-					
+
 				//add the task event types array to the days array for this day
 				$daysArray[] = $taskEventTypes;
 			}
-			
+
 			//create a new pair
-			$matchedPair = new TaskInfo($currentTaskId, 
-																					 $daysArray, 
-																					 $currentProjectId, 
-																					 $currentProjectTitle, 
-																					 $currentTaskName, 
+			$matchedPair = new TaskInfo($currentTaskId,
+																					 $daysArray,
+																					 $currentProjectId,
+																					 $currentProjectTitle,
+																					 $currentTaskName,
 																					 $currentClientName);
-			
+
 			//add the matched pair to the structured array
-			$structuredArray[] = $matchedPair;					
-			
+			$structuredArray[] = $matchedPair;
+
 			//make matchedPair be a reference to where we copied it to
-			$matchedPair = &$structuredArray[count($structuredArray)-1];			
-			
+			$matchedPair = &$structuredArray[count($structuredArray)-1];
+
 			//print "<p> added matched pair with task '$matchedPair->taskName'</p>";
 		}
-			
+
 		//iterate through the days array
 		for ($k=0; $k<7; $k++) {
-		
+
 			//$dayStart = strftime("%D %T", $startDate + $k * A_DAY);
-			//$dayEnd = strftime("%D %T", $startDate + ($k + 1) * A_DAY);		
+			//$dayEnd = strftime("%D %T", $startDate + ($k + 1) * A_DAY);
 			//print "<p>DAY start: $dayStart, DAY end: $dayEnd</p>";
-		
+
 			//work out some booleans
 			$startsOnPreviousDay = ($currentTaskStartDate < ($startDate + $k * A_DAY));
 			$endsOnFollowingDay = ($currentTaskEndDate >= ($startDate + ($k + 1) * A_DAY));
-			$startsToday = ($currentTaskStartDate >= ($startDate + $k * A_DAY) && 
+			$startsToday = ($currentTaskStartDate >= ($startDate + $k * A_DAY) &&
 													$currentTaskStartDate < ($startDate + ($k + 1) * A_DAY));
 			$endsToday = 	($currentTaskEndDate >= ($startDate + $k * A_DAY) &&
-													$currentTaskEndDate < ($startDate + ($k + 1) * A_DAY));	
+													$currentTaskEndDate < ($startDate + ($k + 1) * A_DAY));
 
 			//$currentTaskStartDateStr = strftime("%D %T", $currentTaskStartDate);
 			//$currentTaskEndDateStr = strftime("%D %T", $currentTaskEndDate);
 			//print "<p>task start: $currentTaskStartDateStr task end: $currentTaskEndDateStr</p>";
-													
+
 			//print "<p>startsOnPreviousDay=$startsOnPreviousDay, endsOnFollowingDay=$endsOnFollowingDay" .
 			//	", startsToday=$startsToday, endsToday=$endsToday</p>";
-		
+
 			//does it start before this day and end after this day?
 			if ($startsOnPreviousDay && $endsOnFollowingDay)
 				//add this task entry to the array for index 0
@@ -381,26 +384,26 @@ include ("banner.inc");
 				$matchedPair->value2[$k][1][] = $data;
 			//does it start and end on this day?
 			else if ($startsToday && $endsToday)
-				//add this task entry to the array for index 2					
+				//add this task entry to the array for index 2
 				$matchedPair->value2[$k][2][] = $data;
 			//does it start on this day and end on a following day
 			else if ($startsToday && $endsOnFollowingDay)
 				//add this task entry to the array for index 3
-				$matchedPair->value2[$k][3][] = $data;						
+				$matchedPair->value2[$k][3][] = $data;
 		}
 	}
-	
+
 	//by now we should have our results structured in such a way that it's easy to output it
 
 	//set vars
 	$previousProjectId = -1;
 	$allTasksDayTotals = array(0,0,0,0,0,0,0); //totals for each day
 
-/*	$previousTaskId = -1;	
-	$thisTaskId = -1;	
+/*	$previousTaskId = -1;
+	$thisTaskId = -1;
 	$columnDay = -1;
 	$columnStartDate = $startDate;*/
-	
+
 	//iterate through the structured array
 	$count = count($structuredArray);
 	unset($matchedPair);
@@ -412,61 +415,61 @@ include ("banner.inc");
 
 		//open the column for client name, project title, task name
 		print "<td  class=\"calendar_cell_middle\" valign=\"top\">";
-		
+
 		//should we print the client name?
 		if ($client_id == 0)
 			print "<div class=\"client_name_small\">$matchedPair->clientName</div>";
-		
+
 		//print the project title
-		if ($proj_id == 0) 
+		if ($proj_id == 0)
 			print "<div class=\"project_name_small\">$matchedPair->projectTitle</div>";
-			
+
 		//print the task name
 		print "<div class=\"task_name_small\">$matchedPair->taskName</div>";
 		print "</td>\n";
-		
+
 		//print the spacer column
 		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
-		
+
 		//iterate through the days array
 		$currentDay = 0;
 		$weeklyTotal = 0;
 		foreach ($matchedPair->value2 as $currentDayArray) {
 			//open the column
 			print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"right\">";
-			
+
 			//while we are printing times set the style
 			print "<span class=\"task_time_small\">";
-						
-			//declare todays vars			
+
+			//declare todays vars
 			$todaysStartTime = $startDate + $currentDay * A_DAY;
 			$todaysEndTime = $startDate + ($currentDay + 1) * A_DAY;
 			$currentDay++;
 			$todaysTotal = 0;
-			
+
 			//create a flag for empty cell
 			$emptyCell = true;
-			
+
 			//iterate through the current day array
 			for ($j=0; $j<4; $j++) {
-				$currentTaskEntriesArray = $currentDayArray[$j];				
-				
+				$currentTaskEntriesArray = $currentDayArray[$j];
+
 				//print "C" . count($currentTaskEntriesArray) . " ";
-				
+
 				//iterate through the task entries
 				foreach ($currentTaskEntriesArray as $currentTaskEntry) {
 					//is the cell empty?
 					if ($emptyCell)
 						//the cell is not empty since we found a task entry
-						$emptyCell = false;					
-					else					
+						$emptyCell = false;
+					else
 						//print a break for the next entry
 						print "<br>";
-						
+
 					//format printable times
 					$formattedStartTime = $currentTaskEntry["start"];
-					$formattedEndTime = $currentTaskEntry["endd"];						
-										
+					$formattedEndTime = $currentTaskEntry["endd"];
+
 					switch($j) {
 					case 0: //tasks which started on a previous day and finish on a following day
 						print "...-...";
@@ -485,52 +488,52 @@ include ("banner.inc");
 						$todaysTotal += $todaysEndTime - $currentTaskEntry["start_time"];
 						break;
 					default:
-						print "error";					
-					}						
+						print "error";
+					}
 				}
 			}
-			
+
 			//make sure the cell has at least a space in it so that its rendered by the browser
 			if ($emptyCell)
 				print "&nbsp;";
-				
+
 			//close the times class
 			print "</span>";
-				
+
 			if (!$emptyCell) {
 				//print todays total
 				$todaysTotalStr = formatSeconds($todaysTotal);
-				print "<br><span class=\"task_time_total_small\">$todaysTotalStr</span>";			
+				print "<br><span class=\"task_time_total_small\">$todaysTotalStr</span>";
 			}
-			
+
 			//end the column
 			print "</td>";
 
 			//add this days total to the weekly total
 			$weeklyTotal += $todaysTotal;
-		
+
 			//add this days total to the all tasks total for this day
 			$allTasksDayTotals[$currentDay - 1] += $todaysTotal;
-		}	
+		}
 
 		//print the spacer column
 		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
 
 		//format the weekly total
 		$weeklyTotalStr = formatSeconds($weeklyTotal);
-			
+
 		//print the total column
 		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\">";
 		print "<span class=\"calendar_total_value_weekly\" align=\"right\">$weeklyTotalStr</span></td>";
-		
+
 		//end the row
-		print "</tr>";				
-		
+		print "</tr>";
+
 		//store the previous task and project ids
 		$previousTaskId = $currentTaskId;
-		$previousProjectId = $matchedPair->projectId;		
+		$previousProjectId = $matchedPair->projectId;
 	}
-	
+
 	//create an actions row
 	print "<tr>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">Actions:</td>\n";
@@ -539,7 +542,7 @@ include ("banner.inc");
 	for ($i=0; $i<7; $i++) {
 		$currentDay = date("j", $currentDayDate);
 		$currentMonth = date("m", $currentDayDate);
-		$currentYear = date("Y", $currentDayDate);				
+		$currentYear = date("Y", $currentDayDate);
 		$popup_href = "javascript:void(0)\" onclick=window.open(\"popup.php".
 											"?client_id=$client_id".
 											"&proj_id=$proj_id".
@@ -556,13 +559,13 @@ include ("banner.inc");
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n";
 	print "</tr>";
-	
-	
+
+
 	//create a new totals row
 	print "<tr>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">Total Hours:</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
-						
+
 	//iterate through day totals for all tasks
 	$grandTotal = 0;
 	foreach ($allTasksDayTotals as $currentAllTasksDayTotal) {
@@ -571,18 +574,18 @@ include ("banner.inc");
 		print "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
 		print "<span class=\"calendar_total_value_weekly\">$formattedTotal</span></td>";
 	}
-	
+
 	//print grand total
 	$formattedGrandTotal = formatSeconds($grandTotal);
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	print "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
 	print "<span class=\"calendar_total_value_monthly\">$formattedGrandTotal</span></td>";
 	print "</tr>";
-		
-?>	
-					
+
+?>
+
 				</table>
-			</td>		
+			</td>
 		</tr>
 	</table>
 
@@ -592,11 +595,10 @@ include ("banner.inc");
 		</td>
 	</tr>
 </table>
-	
+
 </form>
 <?
 include ("footer.inc");
 ?>
 </body>
 </html>
-	
