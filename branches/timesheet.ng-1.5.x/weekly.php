@@ -68,22 +68,45 @@ $nextWeekDay = date( "j", $nextWeekDate );
 // get the timeformat
 list( $qh2, $numq ) = dbQuery( "select timeformat from $CONFIG_TABLE where config_set_id = '1'" );
 $configData = dbResult( $qh2 );
-// build the database query
+//build the database query
 $query = "SELECT date_format(start_time,'%d') AS day_of_month, ";
 
-if ( $configData["timeformat"] == "12" )
+if ($configData["timeformat"] == "12")
 	$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
 else
 	$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') AS start, ";
 
-$query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, " . "end_time AS end_time_str, " . "start_time AS start_time_str, " . "unix_timestamp(start_time) AS start_time, " . "unix_timestamp(end_time) AS end_time, " . "$PROJECT_TABLE.title AS projectTitle, " . "$TASK_TABLE.name AS taskName, " . "$TIMES_TABLE.proj_id, " . "$TIMES_TABLE.task_id, " . "$CLIENT_TABLE.organisation AS clientName " . "FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE WHERE " . "uid='$contextUser' AND ";
+$query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
+						"end_time AS end_time_str, ".
+						"start_time AS start_time_str, ".
+						"unix_timestamp(start_time) AS start_time, ".
+						"unix_timestamp(end_time) AS end_time, ".
+						"$PROJECT_TABLE.title AS projectTitle, " .
+						"$TASK_TABLE.name AS taskName, " .
+						"$TIMES_TABLE.proj_id, " .
+						"$TIMES_TABLE.task_id, " .
+						"$CLIENT_TABLE.organisation AS clientName " .
+						"FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE WHERE " .
+						"uid='$contextUser' AND ";
 
-if ( $proj_id > 0 ) // otherwise want all records no matter what project
-	$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
-else if ( $client_id > 0 ) // only records for projects of the given client
+if ($proj_id > 0) //otherwise want all records no matter what project
+	$query .=	"$TIMES_TABLE.proj_id=$proj_id AND ";
+else if ($client_id > 0) //only records for projects of the given client
 	$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
 
-$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND " . "$TASK_TABLE.proj_id = $PROJECT_TABLE.proj_id AND " . "$PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id AND " . "((start_time >= '$startYear-$startMonth-$startDay 00:00:00' AND " . "start_time < '$endYear-$endMonth-$endDay 00:00:00') " . "OR (end_time >= '$startYear-$startMonth-$startDay 00:00:00' AND " . "end_time < '$endYear-$endMonth-$endDay 00:00:00') " . "OR (start_time < '$startYear-$startMonth-$startDay 00:00:00' AND end_time >= '$endYear-$endMonth-$endDay 00:00:00')) " . "ORDER BY day_of_month, proj_id, task_id, start_time";
+$query .=
+				"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
+				"$TASK_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
+				"$PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id AND ".
+			"((start_time >= '$startYear-$startMonth-$startDay 00:00:00' AND " .
+			"start_time < '$endYear-$endMonth-$endDay 00:00:00') ".
+			"OR (end_time >= '$startYear-$startMonth-$startDay 00:00:00' AND " .
+			"end_time < '$endYear-$endMonth-$endDay 00:00:00') ".
+			"OR (start_time < '$startYear-$startMonth-$startDay 00:00:00' AND end_time >= '$endYear-$endMonth-$endDay 00:00:00')) ".
+		//		"ORDER BY day_of_month, proj_id, task_id, start_time";
+		// Update By Rob: 10 Feb 2008
+		// Bug fix: 0000018
+		"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
 
 ?>
 <html>
