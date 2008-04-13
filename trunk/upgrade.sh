@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-TIMESHEET_NEW_VERSION="1.2.1";
+TIMESHEET_NEW_VERSION="1.3.1";
 DATETIME=`date +%Y-%m-%d_%H-%M-%S`
 DB_BACKUP_FILE="timesheet-backup-${DATETIME}.sql";
 

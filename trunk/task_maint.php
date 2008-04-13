@@ -3,8 +3,8 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn()) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
 	exit;
 }
 
@@ -34,7 +34,7 @@ $query_task = "select distinct task_id, name, description,status, ".
            "where $TASK_TABLE.proj_id=$proj_id ".
     "order by $TASK_TABLE.task_id";
 
- $query_project = "select distinct title, description,".
+$query_project = "select distinct title, description,".
            "DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
            "DATE_FORMAT(deadline, '%M %d, %Y') as deadline,".
            "proj_status, proj_leader ".
@@ -51,10 +51,10 @@ include ("header.inc");
 <script language="Javascript">
 
 	function delete_task(projectId, taskId) {
-				if (confirm('Deleting a task which has been used in the past will make those timesheet ' +
-												'entries invalid, and may cause errors. This action is not recommended. ' + 
-												'Are you sure you want to delete this task?'))
-					location.href = 'task_action.php?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
+		if (confirm('Deleting a task which has been used in the past will make those timesheet ' +
+				'entries invalid, and may cause errors. This action is not recommended. ' + 
+				'Are you sure you want to delete this task?'))
+			location.href = 'task_action.php?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
 	}
 
 </script>

@@ -33,7 +33,7 @@ include ("header.inc");
 		}
 	}
 
-	function editUser(uid, firstName, lastName, username, emailAddress, phone, billRate, password, isAdministrator)
+	function editUser(uid, firstName, lastName, username, emailAddress, phone, billRate, password, isAdministrator, isManager)
 	{
 		document.userForm.uid.value = uid;
 		document.userForm.first_name.value = firstName;
@@ -44,7 +44,8 @@ include ("header.inc");
 		document.userForm.bill_rate.value = billRate;
 		document.userForm.password.value = password;
 		document.userForm.checkAdmin.checked = isAdministrator;
-		onCheckAdmin();
+		document.userForm.checkManager.checked = isManager;
+		onCheckClearance();
 		document.location.href = "#AddEdit";
 	}
 
@@ -62,9 +63,11 @@ include ("header.inc");
 		}
 	}
 	
-	function onCheckAdmin() {
+	function onCheckClearance() {
 		document.userForm.isAdministrator.value =
 			document.userForm.checkAdmin.checked;
+		document.userForm.isManager.value =
+			document.userForm.checkManager.checked;
 	}
 	
 </script>
@@ -121,12 +124,15 @@ while ($data = dbResult($qh)) {
 	$phoneField = empty($data["phone"]) ? "&nbsp;": $data["phone"];
 	$billRateField = empty($data["bill_rate"]) ? "&nbsp;": $data["bill_rate"];
 	$isAdministrator = ($data["level"] >= 10);
+	$isManager = ($data["level"] >= 5);
 
 	print "<tr>\n";
 	print "<td class=\"calendar_cell_middle\">$firstNameField</td>";
 	print "<td class=\"calendar_cell_middle\">$lastNameField</td>";
 	if ($isAdministrator)
 		print "<td class=\"calendar_cell_middle\"><span class=\"calendar_total_value_weekly\">Admin</span></td>";
+	else if ($isManager)
+		print "<td class=\"calendar_cell_middle\">Manager</td>";	
 	else
 		print "<td class=\"calendar_cell_middle\">Basic</td>";	
 	print "<td class=\"calendar_cell_middle\">$usernameField</td>";
@@ -135,7 +141,7 @@ while ($data = dbResult($qh)) {
 	print "<td class=\"calendar_cell_middle\">$billRateField</td>";
 	print "<td class=\"calendar_cell_disabled_right\">";
 	print "	<a href=\"javascript:deleteUser('$data[uid]', '$data[username]')\">Delete</a>,&nbsp;\n";
-	print "	<a href=\"javascript:editUser('$data[uid]', '$data[first_name]', '$data[last_name]', '$data[username]', '$data[email_address]', '$data[phone]', '$data[bill_rate]', '$data[password]', '$isAdministrator')\">Edit</a>\n";
+	print "	<a href=\"javascript:editUser('$data[uid]', '$data[first_name]', '$data[last_name]', '$data[username]', '$data[email_address]', '$data[phone]', '$data[bill_rate]', '$data[password]', '$isAdministrator', '$isManager')\">Edit</a>\n";
 	print "</td>\n";
 	print "</tr>\n";
 }
@@ -177,17 +183,21 @@ while ($data = dbResult($qh)) {
 					<tr>
 						<td>First name:<br><input size="20" name="first_name" style="width: 100%;"></td>
 						<TD>Last name:<br><input size="20" name="last_name" style="width: 100%;"></td>
-						<TD>Login username:<br><input size="20" name="username" style="width: 100%;"></td>
+						<TD>Login username:<br><input size="15" name="username" style="width: 100%;"></td>
 						<TD>Email address:<br><input size="35" name="email_address" style="width: 100%;"></td>
 						<TD>Phone:<br><input size="20" name="phone" style="width: 100%;"></td>
 						<TD>Bill rate:<br><input size="20" name="bill_rate" style="width: 100%;"></td>
+						<td>Password:<br><input type="password" size="20" NAME="password" style="width: 100%;"></td>
 					</tr>
 					<tr>
-						<td colspan="5" align="left">
+						<td colspan="2" align="left">
 							<input type="checkbox" name="checkAdmin" id="checkAdmin" value="" onClick="onCheckAdmin();">This user is an administrator</input>
 							<input type="hidden" name="isAdministrator" id="isAdministrator" value="false" />							
 						</td>
-						<td align="left">Password:<br><input type="password" size="20" NAME="password" style="width: 100%;"></td>
+						<td colspan="5" align="left">
+							<input type="checkbox" name="checkManager" id="checkManager" value="" onClick="onCheckClearance();">This user is a project manager</input>
+							<input type="hidden" name="isManager" id="isManager" value="false" />							
+						</td>
 					</tr>
 				</table>
 			</td>			

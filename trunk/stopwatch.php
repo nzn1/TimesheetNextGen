@@ -1,5 +1,5 @@
 <?php
-//$Header: /cvsroot/tsheet/timesheet.php/stopwatch.php,v 1.5 2005/05/17 03:38:37 vexil Exp $
+//$Header: /cvsroot/tsheet/timesheet.php/stopwatch.php,v 1.6 2005/05/24 03:15:05 vexil Exp $
    
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -46,8 +46,21 @@ function doClockonoff(clockon) {
 function resizePopupWindow() {
 	//now resize the window
 	var outerTable = document.getElementById('outer_table');
-	var newWidth = outerTable.offsetWidth + window.outerWidth - window.innerWidth;
-	var newHeight = outerTable.offsetHeight + window.outerHeight - window.innerHeight;
+	var innerWidth = window.innerWidth;
+	var outerWidth = window.outerWidth;
+	if (innerWidth == null || outerWidth == null) {
+		innerWidth = document.body.offsetWidth;
+		outerWidth = innerWidth + 28;
+	}
+	var innerHeight = window.innerHeight;
+	var outerHeight = window.outerHeight;
+	if (innerHeight == null || outerHeight == null) {
+		innerHeight = document.body.offsetHeight;
+		outerHeight = innerHeight + 30;
+	}
+
+	var newWidth = outerTable.offsetWidth + outerWidth - innerWidth;
+	var newHeight = outerTable.offsetHeight + outerHeight - innerHeight;
 	window.resizeTo(newWidth, newHeight);
 }
 
@@ -156,17 +169,6 @@ function resizePopupWindow() {
 				</table>
 			</td>
 		</tr>
-<!--		<tr height="0">						
-			<td valign="bottom">
-				<table width="100%" border="0" class="table_bottom_panel">
-					<tr>
-						<td align="left">&copy; 2002-2003 Dominic J. Gamble</td>
-						<td align="right">&copy; 1998-1999 Peter D. Kovacs.</td>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>-->			
 	</table>
 
 <!-- include the timesheet face up until the end -->

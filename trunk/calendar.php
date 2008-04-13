@@ -249,14 +249,14 @@ include ("banner.inc");
 					<tr>
 <?php {
 
-	//define the variable dayRow
-	$dayRow = 0;
+	//define the variable dayCol
+	$dayCol = 0;
 
 	// Print last months' days spots.
 	for ($i=0; $i<$leadInDays; $i++) {
-	//while (($dayRow < $dowForFirstOfMonth) && ($dowForFirstOfMonth != 0)) {
+	//while (($dayCol < $dowForFirstOfMonth) && ($dowForFirstOfMonth != 0)) {
 		print "<td width=\"14%\" HEIGHT=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
-		$dayRow++;
+		$dayCol++;
 	}
 
 	// Get the Monthly data.
@@ -271,7 +271,7 @@ include ("banner.inc");
 		$last_client_id = -1;
 
 		// New Week.
-		if ((($dayRow % 7) == 0) && ($dowForFirstOfMonth != 0)) {
+		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
 			print_totals($week_tot_sec, "weekly", $year, $month, $day);
 			$week_tot_sec = 0;
 			print "</tr>\n<tr>\n";
@@ -280,7 +280,7 @@ include ("banner.inc");
 			$dowForFirstOfMonth = 1;
 
 		//define subtable
-		if (($dayRow % 7) == 6)
+		if (($dayCol % 7) == 6)
 			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_right\">\n";
 		else
 			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_middle\">\n";
@@ -403,15 +403,15 @@ include ("banner.inc");
 		print " </td>\n";
 
     $day++;
-    $dayRow++;
+    $dayCol++;
   }
   // Print the rest of the calendar.
-	while (($dayRow % 7) != 0) {
-		if (($dayRow % 7) == 6)
+	while (($dayCol % 7) != 0) {
+		if (($dayCol % 7) == 6)
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</TD>\n ";
 		else
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</TD>\n ";
-		$dayRow++;
+		$dayCol++;
 	}
 	print_totals($week_tot_sec, "weekly", $year, $month, $day);
 	$week_tot_sec = 0;

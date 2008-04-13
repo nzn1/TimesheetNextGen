@@ -4,8 +4,8 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Manager");
 	exit;
 }
 
@@ -40,7 +40,7 @@ function format_seconds($seconds) {
 	
 	if ($sec < 10)
 		$sec = '0'. $sec;		// Totally wierd PHP behavior.  There needs to
-															// be a space after the . operator for this to work.
+						// be a space after the . operator for this to work.
 	return "$hour:$minutes:$sec";
 }
     
@@ -197,11 +197,10 @@ $grand_total_time = 0;
   	  $grand_total_time += $data["diff"];
 	  }
   
-	  if ($total_time) 
-		{
-  	  $formatted_time = format_seconds($total_time);
-    	print "<tr><td colspan=\"4\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
-    					"Total: <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>";
+	  if ($total_time) {
+		$formatted_time = format_seconds($total_time);
+		print "<tr><td colspan=\"4\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
+			"Total: <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>";
 	  }
   	$formatted_time = format_seconds($grand_total_time);
 	}

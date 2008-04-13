@@ -22,6 +22,7 @@ $phone = $_REQUEST["phone"];
 $bill_rate = $_REQUEST["bill_rate"];
 $password = $_REQUEST["password"];
 $isAdministrator = isset($_REQUEST["isAdministrator"]) ? $_REQUEST["isAdministrator"]: "false";
+$isManager = isset($_REQUEST["isManager"]) ? $_REQUEST["isManager"]: "false";
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
 
@@ -37,6 +38,8 @@ else if ($action == "addupdate") {
 	//set the level
 	if ($isAdministrator == "true")
 		$level = 11;
+	else if ($isManager == "true")
+		$level = 6;
 	else 
 		$level = 1;
 
