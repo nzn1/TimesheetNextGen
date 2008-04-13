@@ -31,6 +31,7 @@ enum (
 
 //define clearance levels
 define("CLEARANCE_ADMINISTRATOR", 10);	
+define("CLEARANCE_MANAGER", 5);	
 
 /**
 *	Manages and provides authentication services

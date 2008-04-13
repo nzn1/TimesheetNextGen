@@ -1,7 +1,7 @@
 #!/bin/sh
 
-TIMESHEET_NEW_VERSION="1.2.1";
-TIMESHEET_LAST_VERSION="1.2.0";
+TIMESHEET_NEW_VERSION="1.3.1";
+TIMESHEET_LAST_VERSION="1.2.1";
 
 echo "###################################################################"
 echo "# Timesheet.php $TIMESHEET_NEW_VERSION (c) 1998-1999 Peter D. Kovacs               #"

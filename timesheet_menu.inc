@@ -39,11 +39,15 @@ $commandMenu->add(new IconTextCommand("Calendar", true, "calendar.php?month=$mon
 $commandMenu->add(new IconTextCommand("Simple Timesheet", true, "simple.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$todayMonth&year=$todayYear&day=$todayDay", "images/icon_daily.gif"));
 //add administrator menu options?
 if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	$commandMenu->add(new IconTextCommand("Reports", true, "reports.php", "images/icon_reports.gif"));
 	$commandMenu->add(new IconTextCommand("Clients", true, "client_maint.php", "images/icon_clients.gif"));
-	$commandMenu->add(new IconTextCommand("Users", true, "user_maint.php", "images/icon_users.gif"));
+}
+if ($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
 	$commandMenu->add(new IconTextCommand("Projects", true, "proj_maint.php", "images/icon_projects.gif"));
 	$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint.php", "images/icon_tasks.gif"));
+	$commandMenu->add(new IconTextCommand("Reports", true, "reports.php", "images/icon_reports.gif"));
+}
+if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
+	$commandMenu->add(new IconTextCommand("Users", true, "user_maint.php", "images/icon_users.gif"));
 	$commandMenu->add(new IconTextCommand("Configuration", true, "config.php", "images/icon_configuration.gif"));
 }
 if (!$authenticationManager->usingLDAP())

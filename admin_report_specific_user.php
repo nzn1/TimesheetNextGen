@@ -4,8 +4,8 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Manager");
 	exit;
 }
 
@@ -121,7 +121,7 @@ $grand_total_time = 0;
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap>
+						<td align="left" nowrap width="200">
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">User:</td>

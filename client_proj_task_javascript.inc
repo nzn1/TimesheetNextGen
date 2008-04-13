@@ -5,7 +5,7 @@
 <?php
 //get all of the clients and put them into a hastable
 $getClientsQuery = "SELECT $CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation from " .
-													"$CLIENT_TABLE ORDER BY $CLIENT_TABLE.organisation";
+			"$CLIENT_TABLE ORDER BY $CLIENT_TABLE.organisation";
 
 list($qh2, $num2) = dbQuery($getClientsQuery);
 //iterate through results
@@ -19,12 +19,12 @@ for ($i=0; $i<$num2; $i++) {
 
 //get all of the projects and put them into the hashtable
 $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, $PROJECT_TABLE.title, ".
-													"$PROJECT_TABLE.proj_status FROM ".
-													"$PROJECT_TABLE, $ASSIGNMENTS_TABLE where ".
-													"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
-													"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
-													"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
-													"ORDER BY $PROJECT_TABLE.title";
+			"$PROJECT_TABLE.proj_status FROM ".
+			"$PROJECT_TABLE, $ASSIGNMENTS_TABLE where ".
+			"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
+			"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
+			"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
+			"ORDER BY $PROJECT_TABLE.title";
 													 
 list($qh3, $num3) = dbQuery($getProjectsQuery);
 //iterate through results
@@ -44,10 +44,10 @@ for ($i=0; $i<$num3; $i++) {
 
 //get all of the tasks and put them into the hashtable
 $getTasksQuery = "SELECT $TASK_TABLE.proj_id, $TASK_TABLE.task_id, $TASK_TABLE.name from ".
-											"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE where ".
-											"$TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
-											"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
-											"ORDER BY $TASK_TABLE.name";
+			"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE where ".
+			"$TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
+			"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
+			"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);
 //iterate through results
@@ -232,8 +232,8 @@ for ($i=0; $i<$num4; $i++) {
 	}
 	
 	function doOnLoad() {
-   //are there checkboxes
-   if (document.getElementById('clock_on_check') != null) {
+		//are there checkboxes
+		if (document.getElementById('clock_on_check') != null) {
 			enableClockOn(); 
 			enableClockOff();
 		}
