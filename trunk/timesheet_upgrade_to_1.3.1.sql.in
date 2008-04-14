@@ -1,0 +1,3 @@
+ALTER TABLE __TABLE_PREFIX__config ADD COLUMN LDAPBindByUser tinyint(4) NOT NULL default '0';
+
+

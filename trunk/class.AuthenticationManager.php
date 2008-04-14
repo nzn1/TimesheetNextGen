@@ -202,10 +202,11 @@ class AuthenticationManager {
 	
 	function ldapLogin($username, $password) {
 		require("table_names.inc");
+		require("database_credentials.inc");
 		//get the connection settings from the database
 		list($qh, $num) = dbQuery("SELECT LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, " .
 															"LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, " .
-															"LDAPBindUsername, LDAPBindPassword " .
+															"LDAPBindByUser, LDAPBindUsername, LDAPBindPassword " .
 															"FROM $CONFIG_TABLE WHERE config_set_id='1'");
 		$data = dbResult($qh);
 		
@@ -224,13 +225,27 @@ class AuthenticationManager {
 		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $data["LDAPProtocolVersion"]);
 
 		//do we need to bind anonymously?
-		if (empty($data["LDAPBindUserName"])) {
-			//bind to server (anonymously)
-			if (!($bind = @ldap_bind($connection))) {
-				$this->ldapErrorCode = LDAP_SERVER_ERROR;
-				$this->ldapServerErrorCode = ldap_errno($connection);
-				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
-				return false;
+		if (empty($data["LDAPBindUsername"])) {
+			// bind to server by user
+			if ($data['LDAPBindByUser'] == 1) { 
+
+				$credentials=$data['LDAPUsernameAttribute'] . "=" . $username . "," . $data['LDAPBaseDN']; 
+
+				if (!($bind = @ldap_bind($connection, $credentials, $password))) { 
+					$this->ldapErrorCode = LDAP_SERVER_ERROR; 
+					$this->ldapServerErrorCode = ldap_errno($connection); 
+					$this->ldapServerErrorText = "LDAP: " . ldap_error($connection); 
+					return false; 
+				}
+			}
+			else { 
+				//bind to server (anonymously)
+				if (!($bind = @ldap_bind($connection))) {
+					$this->ldapErrorCode = LDAP_SERVER_ERROR;
+					$this->ldapServerErrorCode = ldap_errno($connection);
+					$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
+					return false;
+				}
 			}
 		}
 		else {
