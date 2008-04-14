@@ -19,7 +19,7 @@ include("timesheet_menu.inc");
 list($qh, $num) = dbQuery("select locale, timezone, timeformat, headerhtml, bodyhtml, footerhtml, " .
 		"errorhtml, bannerhtml, tablehtml, useLDAP, LDAPScheme, LDAPHost, LDAPPort, " .
 		"LDAPBaseDN, LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, ".
-		"LDAPBindUsername, LDAPBindPassword, weekstartday " .
+		"LDAPBindByUser, LDAPBindUsername, LDAPBindPassword, weekstartday " .
 		"from $CONFIG_TABLE where config_set_id = '1'");
 $resultset = dbResult($qh);
 
@@ -67,6 +67,7 @@ function enableLDAP(value) {
 	document.getElementById('LDAPFilter').disabled = !value;
 	document.getElementById('LDAPUrl').disabled = !value;
 	document.getElementById('LDAPProtocolVersion').disabled = !value;
+	document.getElementById('LDAPBindByUser').disabled = !value;
 	document.getElementById('LDAPBindUsername').disabled = !value;
 	document.getElementById('LDAPBindPassword').disabled = !value;
 }
@@ -189,7 +190,12 @@ function onSubmit() {
 		document.getElementById('useLDAP').value = 1;
 	else
 		document.getElementById('useLDAP').value = 0;
-	
+
+	if (document.getElementById('LDAPBindByUsercheck').checked)
+		document.getElementById('LDAPBindByUser').value = 1;
+	else
+		document.getElementById('LDAPBindByUser').value = 0;
+		
 	//re-enable the fields just before submitting because otherwise they are not send in mozilla
 	enableLDAP(true);
 	
@@ -331,9 +337,9 @@ include ("banner.inc");
 															<td>&nbsp;</td>
 															<td width="100%">
 																<select id="LDAPSearchScope" name="LDAPSearchScope">
-																	<option value="base" <? if ($resultset["LDAPSearchScope"] == "base") print "selected"; ?>>Base DN search only</option>
-																	<option value="one" <? if ($resultset["LDAPSearchScope"] == "one") print "selected"; ?>>One level search</option>
-																	<option value="sub" <? if ($resultset["LDAPSearchScope"] == "sub") print "selected"; ?>>Full sub-tree search</option>
+																	<option value="base" <? if ($resultset["LDAPSearchScope"] == "base") print "selected"; ?>>Base DN search only (LDAPRead)</option>
+																	<option value="one" <? if ($resultset["LDAPSearchScope"] == "one") print "selected"; ?>>One level search (LDAPList)</option>
+																	<option value="sub" <? if ($resultset["LDAPSearchScope"] == "sub") print "selected"; ?>>Full sub-tree search (LDAPSearch)</option>
 																</select>													
 															</td>
 														</tr>
@@ -390,6 +396,18 @@ include ("banner.inc");
 													<table width="100%" cellpadding="0" cellspacing="0" border="0">
 														<tr>
 															<td width="50%">																
+																<table width="100%" cellpadding="0" cellspacing="0" border="0">
+																	<tr>
+																		<td nowrap>
+																			<span class="label" nowrap>Use LDAP by user authentication:</span>
+																		</td>
+																		<td width="5">&nbsp;</td>
+																		<td width="100%">
+																			<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <? if ($resultset['LDAPBindByUser'] == 1) echo "checked"; ?>></input>
+																			<input type="hidden" name="LDAPBindByUser" id="LDAPBindByUser"></input>
+																		</td>
+																	</tr>
+																</table>
 																<table width="100%" cellpadding="0" cellspacing="0" border="0">
 																	<tr>
 																		<td nowrap>

@@ -173,6 +173,29 @@ if [ "$TIMESHEET_VERSION" \< "1.2.1" ]; then
 	fi
 fi
 
+if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then 
+	#now do the latest changes
+	#replace prefix and version timesheet_upgrade....sql.in
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.3.1.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.3.1.sql
+	
+	#drop the config table and insert defaults
+	echo ""
+	echo "Timesheet.php upgrade will now import the new configuration (1.3.1)"
+	echo "into the $DBNAME database:"
+	echo ""
+	echo $DBHOST
+	echo $DBUSER
+	echo $DBNAME
+	echo $DBPASS
+	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.3.1.sql
+
+	if [ $? = 1 ]; then
+		echo "There was an error altering tables in the database. Please make sure the user $DBUSER " 
+		echo "has ALTER TABLE privileges. Upgrade will not continue."
+		exit 1;
+	fi
+fi
+
 #set the version number in the config table
 echo "UPDATE ${TABLE_PREFIX}config set version='$TIMESHEET_NEW_VERSION';" | mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS
 

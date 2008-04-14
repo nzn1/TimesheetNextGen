@@ -69,6 +69,7 @@ CREATE TABLE __TABLE_PREFIX__config (
   LDAPSearchScope enum('base','sub','one') NOT NULL default 'base',
   LDAPFilter varchar(255) default NULL,
   LDAPProtocolVersion varchar(255) default '3',
+  LDAPBindByUser tinyint(4) NOT NULL default '0',
   LDAPBindUsername varchar(255) default '',
   LDAPBindPassword varchar(255) default '',
   PRIMARY KEY  (config_set_id)
