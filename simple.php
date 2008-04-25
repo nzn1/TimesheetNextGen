@@ -199,6 +199,9 @@ for ($i=0; $i<$num4; $i++) {
 
 				projectSelect.options[projectSelect.options.length] = new Option(String.fromCharCode(160, 160) + projectTasksHash[key]['name'], key);
 
+				// Add for select last project like default project
+				if (projectId == -1)
+					projectId=key;
 				if (key == projectId)
 					projectSelect.options[projectSelect.options.length-1].selected = true;
 			}
@@ -317,8 +320,18 @@ for ($i=0; $i<$num4; $i++) {
 				//insert the new node before the totals node
 				totalsNode.parentNode.insertBefore(newNode, totalsNode);
 
+				//select default project
+				i=row+1;
+				var projectSelect = document.getElementById('projectSelect_row' + i);
+				projectSelect.options[projectSelect.options.length-1].selected = true;
+
 				//clear the task select
 				clearTaskSelect(totalRows);
+
+				//repopulate task
+				var projectId = projectSelect.options[projectSelect.selectedIndex].value;
+				populateTaskSelect(row+1, projectId);
+
 			}
 
 			//enable fields
