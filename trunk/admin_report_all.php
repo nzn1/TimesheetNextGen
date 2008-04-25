@@ -16,10 +16,10 @@ $contextUser = strtolower($_SESSION['contextUser']);
 //load local vars from superglobals
 $uid = isset($_REQUEST["uid"]) ? $_REQUEST["uid"]: 1;
 $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "username";
-	
+
 //define the command menu
 include("timesheet_menu.inc");
-   
+
 // Calculate the previous month.
 $next_month = $month + 1;
 $next_year = $year;
@@ -49,30 +49,33 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
-			  			<? echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
+						<? echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
+						</td>
+						<td  align="center" >
+						<a href="#" onclick="javascript:esporta('project')" ><img src="images/export_data.gif" name="esporta_dati" border=0></a>
 						</td>
 						<td align="right" nowrap>
 						<?
 							print "<a href=\"$_SERVER[PHP_SELF]?uid=$uid&month=$prev_month&year=$prev_year\" class=\"outer_table_action\">Prev</a>&nbsp;";
-			    		print "<a HREF=\"$_SERVER[PHP_SELF]?uid=$uid&month=$next_month&year=$next_year\" class=\"outer_table_action\">Next</a>";
+							print "<a HREF=\"$_SERVER[PHP_SELF]?uid=$uid&month=$next_month&year=$next_year\" class=\"outer_table_action\">Next</a>";
 						?>
 						</td>
 					</tr>
 				</table>
-				
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
+			<td>
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 					<tr class="inner_table_head">
 						<td class="inner_table_column_heading">Name</td>
@@ -82,7 +85,7 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 							<b><a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=<? echo $PROJECT_TABLE; ?>.proj_id&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Project</a>&nbsp;/&nbsp;
 							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=<? echo $TASK_TABLE; ?>.task_id&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Task</a></b>
 						</td>
-					</tr>				
+					</tr>
 <?
 
 	$query = "select distinct first_name, last_name, $USER_TABLE.username, $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, ".
@@ -95,6 +98,8 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 	list ($qh,$num) = dbQuery($query);
 	$last_username = "";
 
+	$dati_total=array();
+	$dati_total_time_data=array();
 	if ($num == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
@@ -104,17 +109,19 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 	}
 	else {
 		while ($name_data = dbResult($qh)) {
+			array_push($dati_total,$name_data);
 			$query = "SELECT sec_to_time(sum(unix_timestamp(end_time) - unix_timestamp(start_time))) AS diff " .
 				"FROM $TIMES_TABLE WHERE ".
-      "start_time >= '$year-$month-1' AND end_time < '$next_year-$next_month-1' and end_time > 0 ".
-      "and uid='$name_data[username]' AND task_id=$name_data[task_id] and proj_id=$name_data[proj_id]";
-      
+					"start_time >= '$year-$month-1' AND end_time < '$next_year-$next_month-1' and end_time > 0 ".
+					"and uid='$name_data[username]' AND task_id=$name_data[task_id] and proj_id=$name_data[proj_id]";
+
 			list($qh2, $num2) = dbQuery($query);
 			if ($num2 > 0)
 				$time_data = dbResult($qh2);
-    
+
+			array_push($dati_total_time_data,$time_data);
 			print "<tr>\n";
-    
+
 			if ($last_username != $name_data["username"]) {
 				$last_username = $name_data["username"];
 				print "<td class=\"calendar_cell_middle\">$name_data[first_name] $name_data[last_name]</TD>\n";
@@ -131,14 +138,24 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 			else
 				print "&nbsp;";
 			print "</td>\n\n";
-    
-    $projectTitle = stripslashes($name_data["title"]);
-    $taskName = stripslashes($name_data["name"]);
+
+			$projectTitle = stripslashes($name_data["title"]);
+			$taskName = stripslashes($name_data["name"]);
 			print "<td class=\"calendar_cell_disabled_right\"><a href=\"javascript:void(0)\" ONCLICK=window.open(\"proj_info.php?proj_id=$name_data[proj_id]\",\"Info\",\"location=0,directories=no,status=no,menubar=no,resizable=1,scrollbar=yes,width=580,height=200\") class=\"outer_table_action\">$projectTitle</A> ".
-          "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"task_info.php?proj_id=$name_data[proj_id]&task_id=$name_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=580,height=220\")>$taskName</A></TD>\n";
+				"<a href=\"javascript:void(0)\" ONCLICK=window.open(\"task_info.php?proj_id=$name_data[proj_id]&task_id=$name_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=580,height=220\")>$taskName</A></TD>\n";
 			print "</tr>\n";
 	}
 }
+	$out_js="<SCRIPT language=javascript> function esporta() {";
+	if (!empty($dati_total)) {
+		$_SESSION['excel_data']=$dati_total;
+		$_SESSION['excel_data_time_data']=$dati_total_time_data;
+		$out_js.="window.open('./export_timesheet.php?type=all')";
+	}else {
+		$out_js.="alert('No records to export')";
+	}
+	$out_js.="} </SCRIPT>";
+	echo 	$out_js;
 ?>
 				</TABLE>
 			</td>
@@ -151,7 +168,7 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 		</td>
 	</tr>
 </table>
-		
+
 <?
 include ("footer.inc");
 ?>
