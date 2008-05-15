@@ -132,7 +132,7 @@ $grand_total_time = 0;
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-			  			<?	if ($mode == "weekly")
+						<?	if ($mode == "weekly")
 								echo date('F d, Y',$time);
 							else
 								echo date('F Y',$time);
@@ -225,7 +225,7 @@ $grand_total_time = 0;
 		}
 	$out_js.="} </SCRIPT>";
 
-	echo 	$out_js;
+	echo $out_js;
 
 ?>
 						</tr>

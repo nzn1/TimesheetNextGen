@@ -59,7 +59,7 @@ include("timesheet_menu.inc");
 //get trans info
 $trans_info = get_trans_info($trans_num);
 
-		//Due to a bug in mysql with converting to unix timestamp from the string, 
+		//Due to a bug in mysql with converting to unix timestamp from the string,
 		//we are going to use php's strtotime to make the timestamp from the string.
 		//the problem has something to do with timezones.
 		$trans_info["start_time"] = strtotime($trans_info["start_time_str"]);
@@ -77,7 +77,7 @@ include("form_input.inc");
 <html>
 <head>
 <title>Edit Work Log Record for <? echo $contextUser; ?></title>
-<?php 
+<?php
 include("header.inc");
 include("client_proj_task_javascript.inc");
 ?>
@@ -88,7 +88,7 @@ include("client_proj_task_javascript.inc");
 <table width="500" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -111,13 +111,13 @@ include("client_proj_task_javascript.inc");
 		<input type="hidden" name="day" value="<?echo $day; ?>">
 		<input type="hidden" id="client_id" name="client_id" value="<?echo $client_id; ?>">
 		<input type="hidden" id="proj_id" name="proj_id" value="<?echo $proj_id; ?>">
-		<input type="hidden" id="task_id" name="task_id" value="<?echo $task_id; ?>">																										
+		<input type="hidden" id="task_id" name="task_id" value="<?echo $task_id; ?>">
 		<input type="hidden" name="trans_num" value="<? echo $trans_num; ?>">
 		<input type="hidden" name="action" value="saveChanges" />
-		
+
 		<tr>
-			<td>			
-				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">				
+			<td>
+				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="left">
 							<table width="100%" border="0">
@@ -130,9 +130,9 @@ include("client_proj_task_javascript.inc");
 														<select id="clientSelect" name="clientSelect" onChange="onChangeClientSelect();" style="width: 100%;" />
 													</td>
 												</tr>
-											</table>											
-									</td>									
-								</tr>																									
+											</table>
+									</td>
+								</tr>
 								<tr>
 									<td align="left" width="100%" nowrap>
 											<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -143,8 +143,8 @@ include("client_proj_task_javascript.inc");
 													</td>
 												</tr>
 											</table>
-									</td>									
-								</tr>																		
+									</td>
+								</tr>
 								<tr>
 									<td align="left" width="100%">
 											<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -155,34 +155,34 @@ include("client_proj_task_javascript.inc");
 													</td>
 												</tr>
 											</table>
-									</td>									
-								</tr>																										
+									</td>
+								</tr>
 							</table>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<table>			
+							<table>
 								<tr>
 									<td>
-										<table class="clock_on_box">											
+										<table class="clock_on_box">
 											<tr>
 												<td align="left" class="clock_on_text" nowrap>
 													Start time:
 												</td>
 												<td align="left" nowrap>
-													<? $hourInput = new HourInput("clock_on_time_hour"); 
-														 $hourInput->create(date("G", $trans_info["start_time"])); ?>
+													<? $hourInput = new HourInput("clock_on_time_hour");
+														$hourInput->create(date("G", $trans_info["start_time"])); ?>
 													:
 													<? $minuteInput = new MinuteInput("clock_on_time_min");
-														 $minuteInput->create(date("i", $trans_info["start_time"])); ?>
+														$minuteInput->create(date("i", $trans_info["start_time"])); ?>
 													&nbsp;on&nbsp;
 													<? $monthInput = new MonthInput("clock_on_date_month");
-														 $monthInput->create(date("n", $trans_info["start_time"])); ?>
+														$monthInput->create(date("n", $trans_info["start_time"])); ?>
 													,
 													<? $dayInput= new DayInput("clock_on_date_day");
-														 $dayInput->create(date("d", $trans_info["start_time"])); ?>
-													&nbsp;							
+														$dayInput->create(date("d", $trans_info["start_time"])); ?>
+													&nbsp;
 													<input type="text" name="clock_on_date_year" size="4" value="<? echo date("Y", $trans_info["start_time"]); ?>">
 												</td>
 												<td align="left">
@@ -194,20 +194,20 @@ include("client_proj_task_javascript.inc");
 													End time:
 												</td>
 												<td align="left" nowrap>
-													<? $hourInput = new HourInput("clock_off_time_hour"); 
-														 $hourInput->create(date("G", $trans_info["end_time"])); ?>
+													<? $hourInput = new HourInput("clock_off_time_hour");
+														$hourInput->create(date("G", $trans_info["end_time"])); ?>
 															:
 													<? $minuteInput = new MinuteInput("clock_off_time_min");
-														 $minuteInput->create(date("i", $trans_info["end_time"])); ?>
+														$minuteInput->create(date("i", $trans_info["end_time"])); ?>
 													&nbsp;on&nbsp;
 													<? $monthInput = new MonthInput("clock_off_date_month");
-														 $monthInput->create(date("n", $trans_info["end_time"])); ?>
+														$monthInput->create(date("n", $trans_info["end_time"])); ?>
 													,
 													<? $dayInput= new DayInput("clock_off_date_day");
-														 $dayInput->create(date("d", $trans_info["end_time"])); ?>
-													&nbsp;							
+														$dayInput->create(date("d", $trans_info["end_time"])); ?>
+													&nbsp;
 													<input type="text" name="clock_off_date_year" size="4" value="<? echo date("Y", $trans_info["end_time"]); ?>">
-												</td>					
+												</td>
 												<td align="left">
 													<img src="images/clock-red-sml.gif">
 												</td>
@@ -224,7 +224,7 @@ include("client_proj_task_javascript.inc");
 									<td colspan="3" align="center">
 										<textarea name="log_message" cols="60" rows="5" style="width: 100%;"><? echo trim(stripslashes($trans_info["log_message"])); ?></textarea>
 									</td>
-								</tr>	
+								</tr>
 								<tr>
 									<td>
 										<table width="100%" border="0" class="table_bottom_panel">
@@ -235,15 +235,15 @@ include("client_proj_task_javascript.inc");
 										</tr>
 										</table>
 									</td>
-								</tr>																						
+								</tr>
 							</table>
 						</td>
 					</tr>
 				</table>
 			</td>
 		</tr>
-		</form>		
-	</table>	
+		</form>
+	</table>
 
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
@@ -251,7 +251,7 @@ include("client_proj_task_javascript.inc");
 		</td>
 	</tr>
 </table>
-	
+
 
 <?php include ("footer.inc"); ?>
 </body>

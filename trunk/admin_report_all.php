@@ -34,8 +34,8 @@ if (!checkdate($next_month, 1, $next_year)) {
 
 //rollover year back
 if (!checkdate($prev_month, 1, $prev_year)) {
-    $prev_month += 12;
-    $prev_year --;
+	$prev_month += 12;
+	$prev_year --;
 }
 
 ?>
@@ -88,12 +88,12 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 					</tr>
 <?
 
-	$query = "select distinct first_name, last_name, $USER_TABLE.username, $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, ".
-					 "$TASK_TABLE.name, $TASK_TABLE.task_id ".
+	$query = "SELECT DISTINCT first_name, last_name, $USER_TABLE.username, $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, ".
+					"$TASK_TABLE.name, $TASK_TABLE.task_id ".
 		"FROM $USER_TABLE, $PROJECT_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE, $TASK_ASSIGNMENTS_TABLE WHERE ".
-    "$ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id and $TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id ".
-		"AND $PROJECT_TABLE.proj_id = $TASK_TABLE.proj_id AND ".
-    "$ASSIGNMENTS_TABLE.username = $USER_TABLE.username and $USER_TABLE.username NOT IN ('admin','guest') ORDER BY $orderby";
+			"$ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id and $TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id ".
+			"AND $PROJECT_TABLE.proj_id = $TASK_TABLE.proj_id AND ".
+			"$ASSIGNMENTS_TABLE.username = $USER_TABLE.username and $USER_TABLE.username NOT IN ('admin','guest') ORDER BY $orderby";
 
 	list ($qh,$num) = dbQuery($query);
 	$last_username = "";
@@ -155,7 +155,7 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 		$out_js.="alert('No records to export')";
 	}
 	$out_js.="} </SCRIPT>";
-	echo 	$out_js;
+	echo $out_js;
 ?>
 				</TABLE>
 			</td>

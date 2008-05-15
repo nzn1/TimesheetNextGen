@@ -19,12 +19,12 @@ $client_id = $_REQUEST['client_id'];
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 //build the query
-$query = "select client_id, organisation, description, address1, address2,".
-           "city, country, postal_code, contact_first_name, contact_last_name,".
-           "username, contact_email, phone_number, fax_number, gsm_number, ".
-           "http_url ".
-           "from $CLIENT_TABLE ".
-           "where $CLIENT_TABLE.client_id=$client_id";
+$query = "SELECT client_id, organisation, description, address1, address2,".
+			"city, country, postal_code, contact_first_name, contact_last_name,".
+			"username, contact_email, phone_number, fax_number, gsm_number, ".
+			"http_url ".
+		"FROM $CLIENT_TABLE ".
+		"WHERE $CLIENT_TABLE.client_id=$client_id";
 
 //run the query
 list($qh, $num) = dbQuery($query);
@@ -46,7 +46,7 @@ $data = dbResult($qh);
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -63,7 +63,7 @@ $data = dbResult($qh);
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
+			<td>
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Organisation:</td>
@@ -130,7 +130,7 @@ $data = dbResult($qh);
 				</table>
 			</td>
 		</tr>
-		<tr>						
+		<tr>
 			<td>
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
@@ -141,7 +141,7 @@ $data = dbResult($qh);
 				</table>
 			</td>
 		</tr>
-	</table>	
+	</table>
 
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
@@ -149,7 +149,7 @@ $data = dbResult($qh);
 		</td>
 	</tr>
 </table>
-	
+
 </form>
 
 <?php include("footer.inc"); ?>

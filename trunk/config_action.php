@@ -46,22 +46,22 @@ $LDAPBindUsername = $_REQUEST["LDAPBindUsername"];
 $LDAPBindPassword = $_REQUEST["LDAPBindPassword"];
 $weekstartday = isset($_REQUEST["weekstartday"]) ? $_REQUEST["weekstartday"]: 0;
 $weekStartDayReset = isset($_REQUEST["weekStartDayReset"]) ? $_REQUEST["weekStartDayReset"]: false;
- 
-	function resetConfigValue($fieldName)	{	
+
+	function resetConfigValue($fieldName) {
 		include("table_names.inc");
-		
+
 		//get the default value
 		list($qh, $num) = dbQuery("SELECT $fieldName FROM $CONFIG_TABLE WHERE config_set_id='0';");
 		$resultset = dbResult($qh);
-		
+
 		//set it
 		dbQuery("UPDATE $CONFIG_TABLE SET $fieldName='" . $resultset[$fieldName] . "' WHERE config_set_id='1';");
 	}
 
-if (!isset($action))	{
+if (!isset($action)) {
 	Header("Location: $HTTP_REFERER");
 }
-elseif ($action == "edit") {	
+elseif ($action == "edit") {
 	$headerhtml = addslashes(unhtmlentities(trim($headerhtml)));
 	$bodyhtml = addslashes(unhtmlentities(trim($bodyhtml)));
 	$footerhtml = addslashes(unhtmlentities(trim($footerhtml)));
@@ -79,7 +79,7 @@ elseif ($action == "edit") {
 		"tablehtml='$tablehtml',".
 		"locale='$locale',".
 		"timezone='$timezone',".
-		"timeformat='$timeformat', ".		
+		"timeformat='$timeformat', ".
 		"useLDAP='$useLDAP', " .
 		"LDAPScheme='$LDAPScheme', " .
 		"LDAPHost='$LDAPHost', " .
@@ -92,7 +92,7 @@ elseif ($action == "edit") {
 		"LDAPBindByUser='$LDAPBindByUser', " .
 		"LDAPBindUsername='$LDAPBindUsername', ".
 		"LDAPBindPassword='$LDAPBindPassword', ".
-		"weekstartday='$weekstartday' " .	
+		"weekstartday='$weekstartday' " .
 		"WHERE config_set_id='1';";
 	list($qh,$num) = dbquery($query);
 
@@ -118,7 +118,7 @@ elseif ($action == "edit") {
 		resetConfigValue("weekstartday");
 }
 
-//return to the config.php page  
+//return to the config.php page
 Header("Location: config.php");
 
 ?>

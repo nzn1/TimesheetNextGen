@@ -1,22 +1,22 @@
 <?php
 
-     /*
+/*
 
-	 this is a modified version of excelwriter.inc.php
-	 original version get from: http://phpsoft.mirrors.phpclasses.org/browse/package/2037.html
+	this is a modified version of excelwriter.inc.php
+	original version get from: http://phpsoft.mirrors.phpclasses.org/browse/package/2037.html
 
-	 original version is made by:
-     ###############################################
-     ####                                       ####
-     ####    Author : Harish Chauhan            ####
-     ####    Date   : 31 Dec,2004               ####
-     ####    Updated:                           ####
-     ####                                       ####
-     ###############################################
+	original version is made by:
+	###############################################
+	####                                       ####
+	####    Author : Harish Chauhan            ####
+	####    Date   : 31 Dec,2004               ####
+	####    Updated:                           ####
+	####                                       ####
+	###############################################
 
-     */ 
+*/
 
-	 /*
+	/*
 	 * Class is used for save the data into microsoft excel format. It takes data into array or you can write data column vise.
 	 */
 	Class ExcelWriter{
@@ -24,20 +24,20 @@
 		var $error;
 		var $state="CLOSED";
 		var $newRow=false;
-		var $nome; 		
+		var $nome;
 		function ExcelWriter($file=""){
 			$this->nome=$file;
 			return $this->open($file);
 		}
-		
+
 // 		* 			if you are using file name with directory i.e. test/myFile.xls then the directory must be existed on the system and have permissioned properly to write the file.
 
 		function open($file) {
 			if($this->state!="CLOSED"){
 				$this->error="Error : Another file is opend .Close it to save the file";
 				return false;
-			}	
-			
+			}
+
 			if(!empty($file))
 				$this->fp=@fopen($file,"w+");
 			else{
@@ -50,32 +50,30 @@
 			}
 			$this->state="OPENED";
 			fwrite($this->fp,$this->GetHeader());
- 			return $this->fp;
+			return $this->fp;
 		}
-		
+
 		function close(){
 			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
-			}	
+			}
 			if($this->newRow){
 				fwrite($this->fp,"</tr>");
 				$this->newRow=false;
 			}
-			
+
 			fwrite($this->fp,$this->GetFooter());
 			fclose($this->fp);
 			$this->state="CLOSED";
 			return ;
 		}
-		 							
-        /* @Params : Void
-        *  @return : Void
-        * This function write the header of Excel file.
-        */
-                                     
-        function GetHeader()
-        {
+
+		/* @Params : Void
+		 *  @return : Void
+		 * This function write the header of Excel file.
+		*/
+		function GetHeader() {
 			$header = <<<EOH
 				<html xmlns:o="urn:schemas-microsoft-com:office:office"
 				xmlns:x="urn:schemas-microsoft-com:office:excel"
@@ -84,14 +82,14 @@
 				<head>
 				<meta name=ProgId content=Excel.Sheet>
 				<!--[if gte mso 9]><xml>
-				 <o:DocumentProperties>
-                  <o:LastAuthor>Sriram</o:LastAuthor>
-				  <o:LastSaved>2005-01-02T07:46:23Z</o:LastSaved>
-				  <o:Version>10.2625</o:Version>
-				 </o:DocumentProperties>
-				 <o:OfficeDocumentSettings>
-				  <o:DownloadComponents/>
-				 </o:OfficeDocumentSettings>
+				<o:DocumentProperties>
+				<o:LastAuthor>Sriram</o:LastAuthor>
+				<o:LastSaved>2005-01-02T07:46:23Z</o:LastSaved>
+				<o:Version>10.2625</o:Version>
+				</o:DocumentProperties>
+				<o:OfficeDocumentSettings>
+				<o:DownloadComponents/>
+				</o:OfficeDocumentSettings>
 				</xml><![endif]-->
 				<style>
 				table
@@ -212,25 +210,25 @@
 					white-space:normal;}
 				</style>
 				<!--[if gte mso 9]><xml>
-				 <x:ExcelWorkbook>
-				  <x:ExcelWorksheets>
-				   <x:ExcelWorksheet>
-                    <x:Name>srirmam</x:Name>
+				<x:ExcelWorkbook>
+					<x:ExcelWorksheets>
+					<x:ExcelWorksheet>
+					<x:Name>srirmam</x:Name>
 					<x:WorksheetOptions>
-					 <x:Selected/>
-					 <x:ProtectContents>False</x:ProtectContents>
-					 <x:ProtectObjects>False</x:ProtectObjects>
-					 <x:ProtectScenarios>False</x:ProtectScenarios>
+						<x:Selected/>
+						<x:ProtectContents>False</x:ProtectContents>
+						<x:ProtectObjects>False</x:ProtectObjects>
+						<x:ProtectScenarios>False</x:ProtectScenarios>
 					</x:WorksheetOptions>
-				   </x:ExcelWorksheet>
-				  </x:ExcelWorksheets>
-				  <x:WindowHeight>10005</x:WindowHeight>
-				  <x:WindowWidth>10005</x:WindowWidth>
-				  <x:WindowTopX>120</x:WindowTopX>
-				  <x:WindowTopY>135</x:WindowTopY>
-				  <x:ProtectStructure>False</x:ProtectStructure>
-				  <x:ProtectWindows>False</x:ProtectWindows>
-				 </x:ExcelWorkbook>
+					</x:ExcelWorksheet>
+					</x:ExcelWorksheets>
+					<x:WindowHeight>10005</x:WindowHeight>
+					<x:WindowWidth>10005</x:WindowWidth>
+					<x:WindowTopX>120</x:WindowTopX>
+					<x:WindowTopY>135</x:WindowTopY>
+					<x:ProtectStructure>False</x:ProtectStructure>
+					<x:ProtectWindows>False</x:ProtectWindows>
+				</x:ExcelWorkbook>
 				</xml><![endif]-->
 				</head>
 
@@ -247,7 +245,7 @@ EOH;
 		function GetFooter(){
 			return "</table></body></html>";
 		}
-		
+
 		function writeLine($line_arr){
 			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
@@ -297,56 +295,56 @@ EOH;
 			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
-			}	
+			}
 			if($this->newRow==false)
 				fwrite($this->fp,"<tr>");
 			else
 				fwrite($this->fp,"</tr><tr>");
-			$this->newRow=true;	
+			$this->newRow=true;
 		}
-		
+
 		function writeRow_orange(){
 			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
-			}	
+			}
 			if($this->newRow==false)
 				fwrite($this->fp,"<tr>");
 			else
 				fwrite($this->fp,"</tr><tr>");
-			$this->newRow=true;	
+			$this->newRow=true;
 		}
 
 		function writeCol($value){
 			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
-			}	
+			}
 			fwrite($this->fp,"<td class=xl24 width=64 >$value</td>");
 		}
 		function writeCol_p0($value){
 			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
-			}	
+			}
 			fwrite($this->fp,"<td class=xl24 width=58>$value</td>");
 		}
 		function writeTableSis(){
 			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
-			}	
+			}
 // 			if($this->newRow==false)
 				fwrite($this->fp,"<td class=xl24><table>");
 // 			else
 // 				fwrite($this->fp,"</tr><tr>");
-// 			$this->newRow=true;	
+// 			$this->newRow=true;
 		}
 		function closeTableSis(){
 			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
-			}	
+			}
 // 			if($this->newRow){
 				fwrite($this->fp,"</tr></table></td>");
 // 				$this->newRow=false;
@@ -365,7 +363,7 @@ EOH;
 				fwrite($this->fp,"<td class=xl27>$col</td>");
 // 			fwrite($this->fp,"</tr>");
 		}
-	
+
 		function writeTitolo1_av($line_arr){
 			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";

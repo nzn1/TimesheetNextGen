@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");	
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
 
@@ -21,11 +21,9 @@ include ("header.inc");
 ?>
 <script language="javascript">
 
-	function deleteUser(uid, username)
-	{
+	function deleteUser(uid, username) {
 		//get confirmation
-		if (confirm("Deleting user '" + username + "' will also remove all related project and task assignments."))
-		{	
+		if (confirm("Deleting user '" + username + "' will also remove all related project and task assignments.")) {
 			document.userForm.action.value = "delete";
 			document.userForm.uid.value = uid;
 			document.userForm.username.value = username;
@@ -33,8 +31,7 @@ include ("header.inc");
 		}
 	}
 
-	function editUser(uid, firstName, lastName, username, emailAddress, phone, billRate, password, isAdministrator, isManager)
-	{
+	function editUser(uid, firstName, lastName, username, emailAddress, phone, billRate, password, isAdministrator, isManager) {
 		document.userForm.uid.value = uid;
 		document.userForm.first_name.value = firstName;
 		document.userForm.last_name.value = lastName;
@@ -49,27 +46,25 @@ include ("header.inc");
 		document.location.href = "#AddEdit";
 	}
 
-	function addUser()
-	{
+	function addUser() {
 		//validation
 		if (document.userForm.username.value == "")
 			alert("You must enter a username that the user will log on with.");
 		else if (document.userForm.password.value == "")
 			alert("You must enter a password that the user will log on with.");
-		else
-		{
+		else {
 			document.userForm.action.value = "addupdate";
 			document.userForm.submit();
 		}
 	}
-	
+
 	function onCheckClearance() {
 		document.userForm.isAdministrator.value =
 			document.userForm.checkAdmin.checked;
 		document.userForm.isManager.value =
 			document.userForm.checkManager.checked;
 	}
-	
+
 </script>
 </HEAD>
 <BODY <? include ("body.inc"); ?> >
@@ -79,14 +74,14 @@ include ("banner.inc");
 <form action="user_action.php" name="userForm" method="post">
 <input type="hidden" name="action" value="">
 <input type="hidden" name="uid" value="">
-	
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
-	
+
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
@@ -100,9 +95,9 @@ include ("banner.inc");
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
+			<td>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-					<tr class="inner_table_head">										
+					<tr class="inner_table_head">
 						<td class="inner_table_column_heading">First Name</td>
 						<td class="inner_table_column_heading">Last Name</td>
 						<td class="inner_table_column_heading">Access</td>
@@ -111,10 +106,10 @@ include ("banner.inc");
 						<td class="inner_table_column_heading">Phone Number</td>
 						<td class="inner_table_column_heading">Bill Rate</td>
 						<td class="inner_table_column_heading"><i>Actions</i></td>
-					</tr>				
+					</tr>
 <?
 
-list($qh,$num) = dbQuery("select * from $USER_TABLE where username!='guest' order by last_name, first_name");
+list($qh,$num) = dbQuery("SELECT * FROM $USER_TABLE WHERE username!='guest' ORDER BY last_name, first_name");
 
 while ($data = dbResult($qh)) {
 	$firstNameField = empty($data["first_name"]) ? "&nbsp;": $data["first_name"];
@@ -132,9 +127,9 @@ while ($data = dbResult($qh)) {
 	if ($isAdministrator)
 		print "<td class=\"calendar_cell_middle\"><span class=\"calendar_total_value_weekly\">Admin</span></td>";
 	else if ($isManager)
-		print "<td class=\"calendar_cell_middle\">Manager</td>";	
+		print "<td class=\"calendar_cell_middle\">Manager</td>";
 	else
-		print "<td class=\"calendar_cell_middle\">Basic</td>";	
+		print "<td class=\"calendar_cell_middle\">Basic</td>";
 	print "<td class=\"calendar_cell_middle\">$usernameField</td>";
 	print "<td class=\"calendar_cell_middle\">$emailAddressField</td>";
 	print "<td class=\"calendar_cell_middle\">$phoneField</td>";
@@ -150,18 +145,18 @@ while ($data = dbResult($qh)) {
 			</td>
 		</tr>
 	</table>
-	
+
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
-		
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -178,7 +173,7 @@ while ($data = dbResult($qh)) {
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
+			<td>
 				<table width="100%" border="0" class="table_body">
 					<tr>
 						<td>First name:<br><input size="20" name="first_name" style="width: 100%;"></td>
@@ -192,15 +187,15 @@ while ($data = dbResult($qh)) {
 					<tr>
 						<td colspan="2" align="left">
 							<input type="checkbox" name="checkAdmin" id="checkAdmin" value="" onClick="onCheckAdmin();">This user is an administrator</input>
-							<input type="hidden" name="isAdministrator" id="isAdministrator" value="false" />							
+							<input type="hidden" name="isAdministrator" id="isAdministrator" value="false" />
 						</td>
 						<td colspan="5" align="left">
 							<input type="checkbox" name="checkManager" id="checkManager" value="" onClick="onCheckClearance();">This user is a project manager</input>
-							<input type="hidden" name="isManager" id="isManager" value="false" />							
+							<input type="hidden" name="isManager" id="isManager" value="false" />
 						</td>
 					</tr>
 				</table>
-			</td>			
+			</td>
 		</tr>
 		<tr>
 			<td>
@@ -221,7 +216,7 @@ while ($data = dbResult($qh)) {
 		</td>
 	</tr>
 </table>
-			
+
 </form>
 <?
 include ("footer.inc");

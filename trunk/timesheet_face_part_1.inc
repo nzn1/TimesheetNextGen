@@ -2,7 +2,7 @@
 	<tr>
 		<td>
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr>					
+				<tr>
 					<td width="6" height="3">
 						<img src="images/timesheet_face_01.gif" width="6" height="3" /></td>
 					<td width="100%" height="3">
@@ -31,4 +31,3 @@
 					</td>
 					<td width="100%" background="images/timesheet_face_05.gif">
 					<!-- BREAK POINT 1 -->
-					

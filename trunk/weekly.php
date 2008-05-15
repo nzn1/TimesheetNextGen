@@ -81,7 +81,7 @@ $nextWeekMonth = date("n", $nextWeekDate);
 $nextWeekDay = date("j", $nextWeekDate);
 
 //get the timeformat
-list($qh2, $numq) = dbQuery("select timeformat from $CONFIG_TABLE where config_set_id = '1'");
+list($qh2, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qh2);
 
 //build the database query
@@ -106,7 +106,7 @@ $query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
 						"uid='$contextUser' AND ";
 
 if ($proj_id > 0) //otherwise want all records no matter what project
-	$query .=	"$TIMES_TABLE.proj_id=$proj_id AND ";
+	$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
 else if ($client_id > 0) //only records for projects of the given client
 	$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
 
@@ -245,11 +245,11 @@ include ("banner.inc");
 		var $clientName;
 
 		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName) {
-			 parent::Pair($value1, $value2);
-			 $this->projectId = $projectId;
-			 $this->projectTitle = $projectTitle;
-			 $this->taskName = $taskName;
-			 $this->clientName = $clientName;
+			parent::Pair($value1, $value2);
+			$this->projectId = $projectId;
+			$this->projectTitle = $projectTitle;
+			$this->taskName = $taskName;
+			$this->clientName = $clientName;
 		}
 	}
 
@@ -337,11 +337,11 @@ include ("banner.inc");
 
 			//create a new pair
 			$matchedPair = new TaskInfo($currentTaskId,
-																					 $daysArray,
-																					 $currentProjectId,
-																					 $currentProjectTitle,
-																					 $currentTaskName,
-																					 $currentClientName);
+											$daysArray,
+											$currentProjectId,
+											$currentProjectTitle,
+											$currentTaskName,
+											$currentClientName);
 
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
@@ -364,7 +364,7 @@ include ("banner.inc");
 			$endsOnFollowingDay = ($currentTaskEndDate >= ($startDate + ($k + 1) * A_DAY));
 			$startsToday = ($currentTaskStartDate >= ($startDate + $k * A_DAY) &&
 													$currentTaskStartDate < ($startDate + ($k + 1) * A_DAY));
-			$endsToday = 	($currentTaskEndDate >= ($startDate + $k * A_DAY) &&
+			$endsToday = ($currentTaskEndDate >= ($startDate + $k * A_DAY) &&
 													$currentTaskEndDate < ($startDate + ($k + 1) * A_DAY));
 
 			//$currentTaskStartDateStr = strftime("%D %T", $currentTaskStartDate);

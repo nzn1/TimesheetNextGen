@@ -101,20 +101,20 @@ else
 							$clock_on_time_min, $clock_off_time_min, $clockonoff;
 		global $log_message, $log_message_presented, $fromPopupWindow;
 
-		if ($log_message_presented == false) 	{
+		if ($log_message_presented == false) {
 			$targetWindowLocation = "log_message.php".
-						 "?origin=$origin&destination=$destination".
-						 "&clock_on_time_hour=$clock_on_time_hour".
-						 "&clock_off_time_hour=$clock_off_time_hour".
-						 "&clock_on_time_min=$clock_on_time_min".
-						 "&clock_off_time_min=$clock_off_time_min".
-						 "&year=$year".
-						 "&month=$month".
-						 "&day=$day".
-						 "&client_id=$client_id". 
-						 "&proj_id=$proj_id".
-						 "&task_id=$task_id".
-						 "&clockonoff=$clockonoff";
+						"?origin=$origin&destination=$destination".
+						"&clock_on_time_hour=$clock_on_time_hour".
+						"&clock_off_time_hour=$clock_off_time_hour".
+						"&clock_on_time_min=$clock_on_time_min".
+						"&clock_off_time_min=$clock_off_time_min".
+						"&year=$year".
+						"&month=$month".
+						"&day=$day".
+						"&client_id=$client_id".
+						"&proj_id=$proj_id".
+						"&task_id=$task_id".
+						"&clockonoff=$clockonoff";
 
 			if ($fromPopupWindow) {
 				//close this popup window and load the log message page in the main window.
@@ -184,7 +184,7 @@ else
 		//import global vars
 		global $contextUser, $year, $month, $day, $task_id, $proj_id, $Location;
 		global $destination, $clock_on_time_hour, $clock_off_time_hour,
-					 $clock_on_time_min, $clock_off_time_min, $clockonoff;
+					$clock_on_time_min, $clock_off_time_min, $clockonoff;
 		global $log_message, $log_message_presented, $fromPopupWindow;
 
 		//check that we are actually clocked on
@@ -201,7 +201,7 @@ else
 		if ($num == 0)
 			errorPage("You are not currently clocked on. You must clock on before you can clock off.", $fromPopupWindow);
 		//also check that the clockoff time is after the clockon time
-   else if ($data["valid"] == 0)
+		else if ($data["valid"] == 0)
 			errorPage("You must clock off <i>after</i> you clock on.", $fromPopupWindow);
 
 		//do we need to present the user with a log message screen?
@@ -221,13 +221,13 @@ else
 		Header("Location: $Location");
 	}
 
-	function clockonandoff() 	{
+	function clockonandoff() {
 		include("table_names.inc");
 
 		//import global vars
 		global $contextUser, $year, $month, $day, $task_id, $proj_id, $Location;
 		global $destination, $clock_on_time_hour, $clock_off_time_hour,
-					 $clock_on_time_min, $clock_off_time_min, $clockonoff;
+					$clock_on_time_min, $clock_off_time_min, $clockonoff;
 		global $log_message, $log_message_presented;
 		global $clock_on_radio, $clock_off_radio, $fromPopupWindow;
 
@@ -257,7 +257,7 @@ else
 		if ($log_message_presented == false)
 			getLogMessage();
 
-   $log_message = addslashes($log_message);
+		$log_message = addslashes($log_message);
 		$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, proj_id, task_id, log_message) ".
 				"VALUES ('$contextUser','$year-$month-$day $clock_on_time_hour:$clock_on_time_min:00', ".
 				"'$year-$month-$day $clock_off_time_hour:$clock_off_time_min:00', ".

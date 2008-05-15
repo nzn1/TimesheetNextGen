@@ -54,7 +54,7 @@ function format_seconds($seconds) {
 }
 
 //get the project name
-//	$query = "select title from $PROJECT_TABLE where proj_id='$proj_id'";
+//	$query = "SELECT title FROM $PROJECT_TABLE WHERE proj_id='$proj_id'";
 //	list($qh,$num) = dbQuery($query);
 //	$data = dbResult($qh);
 //	$project_title = $data['title'];
@@ -62,25 +62,25 @@ function format_seconds($seconds) {
 // Change the date-format for internationalization...
 if ($mode == "all") $mode = "monthly";
 if ($mode == "weekly") {
-	$query = "select $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id, ".
+	$query = "SELECT $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id, ".
 			"sec_to_time(unix_timestamp(end_time) - unix_timestamp(start_time)) as diff_time, ".
 			"(unix_timestamp(end_time) - unix_timestamp(start_time)) as diff, $PROJECT_TABLE.title, $TASK_TABLE.name, ".
 			"date_format(start_time, '%Y/%m/%d') as start_date, trans_num, $TIMES_TABLE.uid, ".
 			"$USER_TABLE.first_name, $USER_TABLE.last_name, $TIMES_TABLE.log_message " .
-			"from $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
+			"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
 			"WHERE $TIMES_TABLE.uid=$USER_TABLE.username and end_time > 0 AND $TIMES_TABLE.proj_id='$proj_id' AND start_time >= '$year-$month-$day' AND ".
 			"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND $TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
-			"end_time < '".date("Y-m-d",$next_week)."' order by $USER_TABLE.uid, task_id, start_time";
+			"end_time < '".date("Y-m-d",$next_week)."' ORDER BY $USER_TABLE.uid, task_id, start_time";
 } else {
-	$query = "select $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id, ".
+	$query = "SELECT $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id, ".
 			"sec_to_time(unix_timestamp(end_time) - unix_timestamp(start_time)) as diff_time, ".
 			"(unix_timestamp(end_time) - unix_timestamp(start_time)) as diff, $PROJECT_TABLE.title, $TASK_TABLE.name, ".
 			"date_format(start_time, '%Y/%m/%d') as start_date, trans_num, $TIMES_TABLE.uid, ".
 			"$USER_TABLE.first_name, $USER_TABLE.last_name, $TIMES_TABLE.log_message " .
-			"from $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
+			"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
 			"WHERE $TIMES_TABLE.uid=$USER_TABLE.username and end_time > 0 AND $TIMES_TABLE.proj_id='$proj_id' AND start_time >= '$year-$month-1' AND ".
 			"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND $TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
-			"end_time < '".date("Y-m-1",$next_month)."' order by $USER_TABLE.uid, task_id, start_time";
+			"end_time < '".date("Y-m-1",$next_month)."' ORDER BY $USER_TABLE.uid, task_id, start_time";
 }
 
 //run the query
@@ -216,7 +216,7 @@ $grand_total_time = 0;
 		}
 	$out_js.="} </SCRIPT>";
 
-	echo 	$out_js;
+	echo $out_js;
 
 ?>
 						</tr>
@@ -225,8 +225,7 @@ $grand_total_time = 0;
 			</td>
 		</tr>
 <?
-	if ($num > 0)
-	{
+	if ($num > 0) {
 ?>
 		<tr>
 			<td>

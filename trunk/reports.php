@@ -18,9 +18,9 @@ $uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']: $contextUser;
 
 //define the command menu
 include("timesheet_menu.inc");
-  
+
 // Set default months
-setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time, $time_middle_month); 
+setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time, $time_middle_month);
 
 ?>
 <html>
@@ -33,7 +33,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -43,7 +43,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 							Reports
 						</td>
 						<td align="left" nowrap class="outer_table_heading">
-			  			<? echo date('F d, Y',$time) ?>
+							<? echo date('F d, Y',$time) ?>
 						</td>
 						<td align="right" nowrap>
 						<?
@@ -63,7 +63,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 					<tr class="inner_table_head">
 						<td class="inner_table_column_heading">Report Description</td>
 						<td class="inner_table_column_heading">Actions</td>
-					</tr>				
+					</tr>
 					<tr>
 						<td class="calendar_cell_middle">Hours worked by a specific user</td>
 						<td class="calendar_cell_disabled_right">
@@ -90,19 +90,19 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 						<td class="calendar_cell_disabled_right">
 							<a href="admin_report_all.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a>
 						</td>
-					</tr>															
+					</tr>
 				</table>
 			</td>
 		</tr>
 	</table>
-	
+
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
-		
+
 <?
 include ("footer.inc");
 ?>
