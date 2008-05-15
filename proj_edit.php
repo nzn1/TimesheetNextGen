@@ -19,20 +19,20 @@ $proj_id = $_REQUEST['proj_id'];
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 $dbh = dbConnect();
-list($qh, $num) = dbQuery("select proj_id, title, client_id, description, DATE_FORMAT(start_date, '%m') as start_month, ".
-			    "date_format(start_date, '%d') as start_day, date_format(start_date, '%Y') as start_year, ".
-			    "DATE_FORMAT(deadline, '%m') as end_month, date_format(deadline, '%d') as end_day, date_format(deadline, '%Y') as end_year, ".
-			    "http_link, proj_status, proj_leader from $PROJECT_TABLE where proj_id = $proj_id order by proj_id");
+list($qh, $num) = dbQuery("SELECT proj_id, title, client_id, description, DATE_FORMAT(start_date, '%m') as start_month, ".
+					"date_format(start_date, '%d') as start_day, date_format(start_date, '%Y') as start_year, ".
+					"DATE_FORMAT(deadline, '%m') as end_month, date_format(deadline, '%d') as end_day, date_format(deadline, '%Y') as end_year, ".
+					"http_link, proj_status, proj_leader FROM $PROJECT_TABLE WHERE proj_id = $proj_id ORDER BY proj_id");
 $data = dbResult($qh);
 
-list($qh, $num) = dbQuery("SELECT username from $ASSIGNMENTS_TABLE where proj_id = $proj_id");
+list($qh, $num) = dbQuery("SELECT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
 $selected_array = array();
 $i = 0;
-while ($datanext = dbResult($qh)) {	
+while ($datanext = dbResult($qh)) {
 	$selected_array[$i] = $datanext["username"];
 	$i++;
 }
-?> 
+?>
 
 <html>
 <head>
@@ -41,7 +41,7 @@ while ($datanext = dbResult($qh)) {
 </head>
 <body <? include ("body.inc"); ?> >
 <?php include ("banner.inc"); ?>
-	
+
 <form action="proj_action.php" method="post">
 <input type="hidden" name="action" value="edit">
 <input type="hidden" name="proj_id" value="<? echo $data["proj_id"]; ?>">
@@ -49,7 +49,7 @@ while ($datanext = dbResult($qh)) {
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -66,7 +66,7 @@ while ($datanext = dbResult($qh)) {
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
+			<td>
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Project Title:</td>
@@ -74,7 +74,7 @@ while ($datanext = dbResult($qh)) {
 					</tr>
 					<tr>
 						<td align="right">Client:</td>
-						<td><? client_select_list($data["client_id"], 0, false, false, false, true, "", false); ?></td>												
+						<td><? client_select_list($data["client_id"], 0, false, false, false, true, "", false); ?></td>
 					</tr>
 					<tr>
 						<td align="right" valign="top">Description:</td>
@@ -107,7 +107,7 @@ while ($datanext = dbResult($qh)) {
 				</table>
 			</td>
 		</tr>
-		<tr>						
+		<tr>
 			<td>
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
@@ -118,7 +118,7 @@ while ($datanext = dbResult($qh)) {
 				</table>
 			</td>
 		</tr>
-	</table>	
+	</table>
 
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
@@ -126,7 +126,7 @@ while ($datanext = dbResult($qh)) {
 		</td>
 	</tr>
 </table>
-	
+
 </form>
 
 <?php include ("footer.inc"); ?>

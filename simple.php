@@ -31,7 +31,7 @@ $proj_id = 0;
 
 // Check project assignment.
 if ($proj_id != 0) { // id 0 means 'All Projects'
-	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE where proj_id='$proj_id' and username='$contextUser'");
+	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE WHERE proj_id='$proj_id' and username='$contextUser'");
 	if ($num < 1)
 		errorPage("You cannot access this project, because you are not assigned to it.");
 }
@@ -81,7 +81,7 @@ $nextWeekMonth = date("n", $nextWeekDate);
 $nextWeekDay = date("j", $nextWeekDate);
 
 //get the timeformat
-list($qh2, $numq) = dbQuery("select timeformat from $CONFIG_TABLE where config_set_id = '1'");
+list($qh2, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qh2);
 
 //build the database query
@@ -106,7 +106,7 @@ $query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
 						"uid='$contextUser' AND ";
 
 if ($proj_id > 0) //otherwise want all records no matter what project
-	$query .=	"$TIMES_TABLE.proj_id=$proj_id AND ";
+	$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
 
 $query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
 			"((start_time >= '$startYear-$startMonth-$startDay 00:00:00' AND " .
@@ -130,7 +130,7 @@ include ("header.inc");
 //get all of the projects and put them into the hashtable
 $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.title, $PROJECT_TABLE.client_id, ".
 													"$CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation FROM ".
-													"$PROJECT_TABLE, $ASSIGNMENTS_TABLE, $CLIENT_TABLE where ".
+													"$PROJECT_TABLE, $ASSIGNMENTS_TABLE, $CLIENT_TABLE WHERE ".
 													"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
 													"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
 													"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
@@ -150,8 +150,8 @@ for ($i=0; $i<$num3; $i++) {
 }
 
 //get all of the tasks and put them into the hashtable
-$getTasksQuery = "SELECT $TASK_TABLE.proj_id, $TASK_TABLE.task_id, $TASK_TABLE.name from ".
-											"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE where ".
+$getTasksQuery = "SELECT $TASK_TABLE.proj_id, $TASK_TABLE.task_id, $TASK_TABLE.name FROM ".
+											"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE WHERE ".
 											"$TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
 											"$TASK_ASSIGNMENTS_TABLE.username='$contextUser'";
 
@@ -275,7 +275,7 @@ for ($i=0; $i<$num4; $i++) {
 			//populate the select with tasks for this project
 			populateTaskSelect(row, projectId);
 
-		 setDirty();
+			setDirty();
 	}
 
 	function onChangeTaskSelect(idStr) {
@@ -340,7 +340,7 @@ for ($i=0; $i<$num4; $i++) {
 				document.getElementById('mins_row' + row + '_col' + i).disabled = false;
 			}
 		}
-	 setDirty();
+		setDirty();
 	}
 
 	function replaceIdAndNameAttributes(node, rowRegex, rowNumber) {
@@ -571,10 +571,10 @@ include ("banner.inc");
 		var $taskName;
 
 		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName) {
-			 parent::Pair($value1, $value2);
-			 $this->projectId = $projectId;
-			 $this->projectTitle = $projectTitle;
-			 $this->taskName = $taskName;
+			parent::Pair($value1, $value2);
+			$this->projectId = $projectId;
+			$this->projectTitle = $projectTitle;
+			$this->taskName = $taskName;
 		}
 	}
 
@@ -662,9 +662,9 @@ include ("banner.inc");
 
 			//create a new pair
 			$matchedPair = new TaskInfo($currentTaskId, $daysArray,
-																					 $currentProjectId,
-																					 $currentProjectTitle,
-																					 $currentTaskName);
+											$currentProjectId,
+											$currentProjectTitle,
+											$currentTaskName);
 
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
@@ -687,7 +687,7 @@ include ("banner.inc");
 			$endsOnFollowingDay = ($currentTaskEndDate >= ($startDate + ($k + 1) * A_DAY));
 			$startsToday = ($currentTaskStartDate >= ($startDate + $k * A_DAY) &&
 													$currentTaskStartDate < ($startDate + ($k + 1) * A_DAY));
-			$endsToday = 	($currentTaskEndDate >= ($startDate + $k * A_DAY) &&
+			$endsToday = ($currentTaskEndDate >= ($startDate + $k * A_DAY) &&
 													$currentTaskEndDate < ($startDate + ($k + 1) * A_DAY));
 
 			//$currentTaskStartDateStr = strftime("%D %T", $currentTaskStartDate);

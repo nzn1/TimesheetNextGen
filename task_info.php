@@ -16,28 +16,28 @@ $contextUser = strtolower($_SESSION['contextUser']);
 $task_id = $_REQUEST['task_id'];
 
 //build query
-$query_task = "select distinct task_id, name, description,status, ".
-           "DATE_FORMAT(assigned, '%M %d, %Y') as assigned,".
-           "DATE_FORMAT(started, '%M %d, %Y') as started,".
-           "DATE_FORMAT(suspended, '%M %d, %Y') as suspended,".
-           "DATE_FORMAT(completed, '%M %d, %Y') as completed ".
-           "from $TASK_TABLE ".
-           "where $TASK_TABLE.task_id=$task_id ".
-							 "order by $TASK_TABLE.task_id";
+$query_task = "SELECT DISTINCT task_id, name, description,status, ".
+				"DATE_FORMAT(assigned, '%M %d, %Y') as assigned,".
+				"DATE_FORMAT(started, '%M %d, %Y') as started,".
+				"DATE_FORMAT(suspended, '%M %d, %Y') as suspended,".
+				"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
+			"FROM $TASK_TABLE ".
+			"WHERE $TASK_TABLE.task_id=$task_id ".
+					"ORDER BY $TASK_TABLE.task_id";
 
 //get the proj_id for this task
 if (!isset($proj_id)) {
-	list($qh, $num) = $proj_id = dbQuery("SELECT proj_id FROM $TASK_TABLE where task_id='$task_id'");
+	list($qh, $num) = $proj_id = dbQuery("SELECT proj_id FROM $TASK_TABLE WHERE task_id='$task_id'");
 	$results = dbResult($qh);
 	$proj_id = $results["proj_id"];
 }
 
-$query_project = "select distinct title, description,".
-           "DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
-           "DATE_FORMAT(deadline, '%M %d, %Y') as deadline,".
-           "proj_status, proj_leader ".
-           "from $PROJECT_TABLE ".
-           "where $PROJECT_TABLE.proj_id=$proj_id";
+$query_project = "SELECT DISTINCT title, description,".
+			"DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
+			"DATE_FORMAT(deadline, '%M %d, %Y') as deadline,".
+			"proj_status, proj_leader ".
+		"FROM $PROJECT_TABLE ".
+		"WHERE $PROJECT_TABLE.proj_id=$proj_id";
 
 ?>
 <html>
@@ -51,9 +51,9 @@ include ("header.inc");
 <table border="0" width="100%" height="100%" align="center" valign="center">
 <?
 
-  list($qh, $num) = dbQuery($query_task);
-  if ($num > 0) {
-    $data_task = dbResult($qh);
+		list($qh, $num) = dbQuery($query_task);
+		if ($num > 0) {
+			$data_task = dbResult($qh);
 
 ?>
 		<tr>
@@ -71,7 +71,7 @@ include ("header.inc");
 							<span class="label">Assigned persons:</span><br>
 <?
 			//get assigned users
-			list($qh3, $num_3) = dbQuery("select username, task_id from $TASK_ASSIGNMENTS_TABLE where task_id=$data_task[task_id]");
+			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id=$data_task[task_id]");
 			if ($num_3 > 0) {
 				while ($data_3 = dbResult($qh3)) {
 					print "$data_3[username] ";
@@ -86,9 +86,9 @@ include ("header.inc");
 				</table>
 			</td>
 		</tr>
-								
+
 <?php
- }
+	}
 ?>
 </BODY>
 </HTML>

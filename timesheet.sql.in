@@ -13,7 +13,7 @@ CREATE TABLE __TABLE_PREFIX__assignments (
   PRIMARY KEY (proj_id,username)
 );
 
-INSERT INTO __TABLE_PREFIX__assignments VALUES ( 1, 'guest'); 
+INSERT INTO __TABLE_PREFIX__assignments VALUES ( 1, 'guest');
 
 #
 # Table structure for table 'client'

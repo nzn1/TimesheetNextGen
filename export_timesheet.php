@@ -35,7 +35,7 @@ function format_seconds($seconds) {
 	$nomefile="temp".rand(0,9)."_prp.xls";
 	$excel=new ExcelWriter($nomefile);
 
-	if($excel==false)	echo $excel->error;
+	if($excel==false) echo $excel->error;
 
 
 	if ($_GET['type'] == "project") {

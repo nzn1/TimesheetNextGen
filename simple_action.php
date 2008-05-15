@@ -36,9 +36,9 @@ $endDay = date("j", $endDate);
 
 //clear the tasks which start on this week
 $queryString = "DELETE FROM $TIMES_TABLE WHERE ".
-									 "uid='$contextUser' AND " .
-									 "start_time >= '$startYear-$startMonth-$startDay 00:00:00' AND ".
-									 "start_time < '$endYear-$endMonth-$endDay 00:00:00'";
+								"uid='$contextUser' AND " .
+								"start_time >= '$startYear-$startMonth-$startDay 00:00:00' AND ".
+								"start_time < '$endYear-$endMonth-$endDay 00:00:00'";
 dbQuery($queryString);
 
 //TODO:...
@@ -49,30 +49,30 @@ for ($i=0; $i<$totalRows; $i++) {
 	$taskId = $_POST["taskSelect_row" . $i];
 	if ($taskId < 1)
 		continue;
-	
+
 	for ($j=1; $j<=7; $j++) {
 		//get the timestamp for this day
 		$todaysTimestamp = $startDate + ($j-1) * A_DAY;
-		
+
 		//get the year, month and day for the timestamp
 		$todayYear = date("Y", $todaysTimestamp);
 		$todayMonth = date("n", $todaysTimestamp);
 		$todayDay = date("j", $todaysTimestamp);
-		
-		//get the number of hours and minutes entered into the form	
+
+		//get the number of hours and minutes entered into the form
 		$hours = $_POST["hours_row" . $i . "_col" . $j];
 		$mins = $_POST["mins_row" . $i . "_col" . $j];
-		
+
 		if ((!empty($hours) && $hours != 0) || (!empty($mins) && $mins != 0)) {
 
 			//fix by Tyler Schacht
 			if (empty($hours) || $hours == "") $hours = "00";
-			
+
 			//add to database
 			$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, proj_id, task_id, log_message) ".
-										 "VALUES ('$contextUser','$todayYear-$todayMonth-$todayDay 00:00:00', ".
-										 "'$todayYear-$todayMonth-$todayDay $hours:$mins:00', ".
-										 "$projectId, $taskId, 'Task time entered via simple.php')";
+									"VALUES ('$contextUser','$todayYear-$todayMonth-$todayDay 00:00:00', ".
+									"'$todayYear-$todayMonth-$todayDay $hours:$mins:00', ".
+									"$projectId, $taskId, 'Task time entered via simple.php')";
 			list($qh,$num) = dbQuery($queryString);
 		}
 	}

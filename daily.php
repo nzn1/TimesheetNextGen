@@ -37,10 +37,10 @@ $tomorrow = mktime(0,0,0,$month,$day,$year) + 24*60*60;
  */
 function getDailyTimes($month, $day, $year, $id, $proj_id) {
 	include("table_names.inc");
-	list($qhq, $numq) = dbQuery("select timeformat from $CONFIG_TABLE where config_set_id = '1'");
+	list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 	$configData = dbResult($qhq);
 
-	$query = "select date_format(start_time,'%d') as day_of_month, trans_num, ";
+	$query = "SELECT date_format(start_time,'%d') as day_of_month, trans_num, ";
 
 	if ($configData["timeformat"] == "12")
 		$query .= "date_format(end_time, '%l:%i%p') as endd, date_format(start_time, '%l:%i%p') as start, ";
@@ -62,7 +62,7 @@ function getDailyTimes($month, $day, $year, $id, $proj_id) {
 						"((start_time >= '$year-$month-$day 00:00:00' AND start_time <= '$year-$month-$day 23:59:59') " .
 						" OR (end_time >= '$year-$month-$day 00:00:00' AND end_time <= '$year-$month-$day 23:59:59') " .
 						" OR (start_time < '$year-$month-$day 00:00:00' AND end_time > '$year-$month-$day 23:59:59')) " .
-						" order by day_of_month, start_time";
+						" ORDER BY day_of_month, start_time";
 	list($my_qh, $num) = dbQuery($query);
 		return array($num, $my_qh);
 }
@@ -168,26 +168,25 @@ else {
 		if ($data["diff_sec"] > 0) {
 			//if both start and end time are not today
 			if ($data["start_time"] < mktime(0,0,0,$month,$day,$year) &&
-					$data["end_time"] > mktime(23,59,59,$month,$day,$year))
-			{
+					$data["end_time"] > mktime(23,59,59,$month,$day,$year)) {
 				$today_diff_sec = 24*60*60; //all day - no one should work this hard!
 
 				echo "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["start"] . "," .
-						 "<a href=\"daily.php?month=" . date("m",$data["start_time"]) .
-						 "&year=" . date("Y",$data["start_time"]) .
-						 "&day=" . date("d",$data["start_time"]) .
-						 "&proj_id=$proj_id\"><i>" . date("d-M",$data["start_time"]) .
-						 "</a></i></font>" .
-						 "</td>" .
-						 "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["endd"] . "," .
-						 "<a href=\"daily.php?month=" . date("m",$data["end_time"]) .
-						 "&year=" . date("Y",$data["end_time"]) .
-						 "&day=" . date("d",$data["end_time"]) .
-						 "&proj_id=$proj_id\"><i>" . date("d-M",$data["end_time"]) .
-						 "</a></i></font>" .
-						 "</td>" .
-						 "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($today_diff_sec). "<font color=\"#909090\"><i> of " .
-						 		formatSeconds($data["diff_sec"]) . "</i></font></TD>\n";
+							"<a href=\"daily.php?month=" . date("m",$data["start_time"]) .
+							"&year=" . date("Y",$data["start_time"]) .
+							"&day=" . date("d",$data["start_time"]) .
+							"&proj_id=$proj_id\"><i>" . date("d-M",$data["start_time"]) .
+							"</a></i></font>" .
+							"</td>" .
+							"<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["endd"] . "," .
+							"<a href=\"daily.php?month=" . date("m",$data["end_time"]) .
+							"&year=" . date("Y",$data["end_time"]) .
+							"&day=" . date("d",$data["end_time"]) .
+							"&proj_id=$proj_id\"><i>" . date("d-M",$data["end_time"]) .
+							"</a></i></font>" .
+							"</td>" .
+							"<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($today_diff_sec). "<font color=\"#909090\"><i> of " .
+								formatSeconds($data["diff_sec"]) . "</i></font></TD>\n";
 
 
 			}
@@ -196,29 +195,29 @@ else {
 				$today_diff_sec = mktime(0,0,0, $month,$day,$year) + 24*60*60 - $data["start_time"];
 
 				echo "<td class=\"calendar_cell_middle\" align=\"right\">" . $data["start"] . "</td>" .
-						 "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["endd"] . "," .
-						 "<a href=\"daily.php?month=" . date("m",$data["end_time"]) .
-						 "&year=" . date("Y",$data["end_time"]) .
-						 "&day=" . date("d",$data["end_time"]) .
-						 "&proj_id=$proj_id\"><i>" . date("d-M",$data["end_time"]) .
-						 "</a></i></font>" .
-						 "</td>" .
-						 "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($today_diff_sec). "<font color=\"#909090\"><i> of " . formatSeconds($data["diff_sec"]) . "</i></font></td>\n";
+							"<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["endd"] . "," .
+							"<a href=\"daily.php?month=" . date("m",$data["end_time"]) .
+							"&year=" . date("Y",$data["end_time"]) .
+							"&day=" . date("d",$data["end_time"]) .
+							"&proj_id=$proj_id\"><i>" . date("d-M",$data["end_time"]) .
+							"</a></i></font>" .
+							"</td>" .
+							"<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($today_diff_sec). "<font color=\"#909090\"><i> of " . formatSeconds($data["diff_sec"]) . "</i></font></td>\n";
 			}
 			//elseif start time is not today
 			elseif ($data["start_time"] < mktime(0,0,0,$month,$day,$year)) {
 				$today_diff_sec = $data["end_time"] - mktime(0,0,0, $month,$day,$year);
 
 				echo "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["start"] . "," .
-						 "<a href=\"daily.php?month=" . date("m",$data["start_time"]) .
-						 "&year=" . date("Y",$data["start_time"]) .
-						 "&day=" . date("d",$data["start_time"]) .
-						 "&proj_id=$proj_id\"><i>" . date("d-M",$data["start_time"]) .
-						 "</a></i></font>" .
-						 "</td>" .
-				 		 "<td class=\"calendar_cell_middle\" align=\"right\">" . $data["endd"] . "</td>" .
-						 "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($today_diff_sec). "<font color=\"#909090\"><i> of " .
-						 		formatSeconds($data["diff_sec"]) . "</i></font></td>\n";
+							"<a href=\"daily.php?month=" . date("m",$data["start_time"]) .
+							"&year=" . date("Y",$data["start_time"]) .
+							"&day=" . date("d",$data["start_time"]) .
+							"&proj_id=$proj_id\"><i>" . date("d-M",$data["start_time"]) .
+							"</a></i></font>" .
+							"</td>" .
+							"<td class=\"calendar_cell_middle\" align=\"right\">" . $data["endd"] . "</td>" .
+							"<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($today_diff_sec). "<font color=\"#909090\"><i> of " .
+								formatSeconds($data["diff_sec"]) . "</i></font></td>\n";
 			}
 			else {
 				$today_diff_sec = $data["diff_sec"];
@@ -366,10 +365,10 @@ else {
 																	<input type="radio" name="clock_on_radio" value="date" id="clock_on_radio_date" onclick="enableClockOn();" checked>
 																<? endif; ?>
 																<? $hourInput = new HourInput("clock_on_time_hour");
-																	 $hourInput->create(10); ?>
+																	$hourInput->create(10); ?>
 																:
 																<? $minuteInput = new MinuteInput("clock_on_time_min");
-																	 $minuteInput->create(); ?>
+																	$minuteInput->create(); ?>
 															</td>
 															<td>
 																<img src="images/clock-green-sml.gif" border="0">
@@ -401,10 +400,10 @@ else {
 																	<input type="radio" name="clock_off_radio" id="clock_off_radio_date" value="date" onclick="enableClockOff();">
 																<? endif; ?>
 																<? $hourInput = new HourInput("clock_off_time_hour");
-																	 $hourInput->create(17); ?>
+																	$hourInput->create(17); ?>
 																:
 																<? $minuteInput = new MinuteInput("clock_off_time_min");
-																	 $minuteInput->create(); ?>
+																	$minuteInput->create(); ?>
 															</td>
 															<td>
 																<img src="images/clock-red-sml.gif" border="0">

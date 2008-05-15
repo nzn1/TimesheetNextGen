@@ -77,9 +77,9 @@ done
 
 SUCCESS=0
 
-if [ "$NEWEXIST" = "e" -o "$NEWEXIST" = "E" ]; then	
+if [ "$NEWEXIST" = "e" -o "$NEWEXIST" = "E" ]; then
 	until [ $SUCCESS = 1 ]
-	do	
+	do
 		echo -n "Please enter the name of the existing database:"
 		read DBNAME
 		echo ""
@@ -91,7 +91,7 @@ if [ "$NEWEXIST" = "e" -o "$NEWEXIST" = "E" ]; then
 		read DBUSER
 		echo -n "$DBNAME MySQL password:"
 		read DBPASS
-	
+
 		#now test
 		mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < test.sql > /dev/null
 
@@ -112,9 +112,9 @@ else
 	fi
 
 	DBUSER=$DBNAME
-	
+
 	until [ $SUCCESS = 1 ]
-	do				
+	do
 		echo ""
 		echo "To create a new database, you must provide the MySQL administrators "
 		echo "username and password. This should have been set up when you installed "
@@ -140,13 +140,13 @@ else
 		sed s/__DBUSER__/$DBUSER/g | \
 		sed s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g | \
 		sed s/__DBPASS__/$DBPASS/g > timesheet_create.sql
-	
+
 		#execute the script
 		mysql -h $DBHOST -u $MYSQLADMINUSER --password=$MYSQLADMINPASS < timesheet_create.sql
 
 		if [ $? = 0 ]; then
 			SUCCESS=1
-		else 
+		else
 			SUCCESS=0
 			echo ""
 			echo "There was an error creating the database. "
@@ -154,7 +154,7 @@ else
 		fi
 	done
 fi
-	
+
 echo ""
 echo "Timesheet.php prefixes all tables used with a string, so to avoid "
 echo "name clashes with other tables in the database. This prefix is "
@@ -187,7 +187,7 @@ if [ $? != 0 ]; then
 	echo "An unexpected error occured when creating the tables. Please report this to dominic@advancen.com"
 	exit 1;
 fi
-		
+
 #replace the DBNAME, DBUSER, and DBPASS in the database_credentials.inc.in file
 sed s/__DBHOST__/$DBHOST/g database_credentials.inc.in | \
 sed s/__DBNAME__/$DBNAME/g | \
@@ -236,7 +236,7 @@ if [ ! -d $INSTALL_DIR/images ]; then
 		exit 1
 	fi
 fi
-	
+
 echo ""
 echo "Installing files..."
 cp *.php *.inc *.html .htaccess $INSTALL_DIR

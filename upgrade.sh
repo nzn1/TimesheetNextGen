@@ -40,7 +40,7 @@ echo ""
 # get the working dir of the existing timesheet.php
 SUCCESS=0
 until [ $SUCCESS = 1 ]
-do	
+do
 	echo ""
 	echo -n "Please enter the working directory of the version of timesheet.php "
 	echo -n "you wish to upgrade (full path):"
@@ -49,7 +49,7 @@ do
 	if [ ! -d $INSTALL_DIR ]; then
 		echo "Directory '$INSTALL_DIR' not found."
 	else
-		SUCCESS=1					
+		SUCCESS=1
 	fi
 done
 
@@ -61,7 +61,7 @@ fi
 # get the database name
 DBNAME=`awk '/DATABASE_DB/ {print $0 }' $INSTALL_DIR/$CREDENTIALS_FILE | awk '{print $3}' | sed s/\"//g | sed s/\;//g`
 
-# get the database host 
+# get the database host
 DBHOST=`awk '/DATABASE_HOST/ {print $0 }' $INSTALL_DIR/$CREDENTIALS_FILE | awk '{print $3}' | sed s/\"//g | sed s/\;//g`
 
 # get the mysql user
@@ -114,7 +114,7 @@ echo "Existing Timesheet version='$TIMESHEET_VERSION'"
 echo "Press Enter..."
 read asdf3
 
-if [ "$TIMESHEET_VERSION" \< "1.2.0" ]; then 
+if [ "$TIMESHEET_VERSION" \< "1.2.0" ]; then
 
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.2.0.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.2.0.sql
@@ -140,21 +140,21 @@ echo "   1: SHA1 (Use this for version 4.1 and later)"
 echo "   2: PASSWORD (Use this for version below 4.1)"
 echo "   3: OLD_PASSWORD (Select this one if you orignally installed timesheet on pre 4.1 versions)"
 read PASSWORD_FUNCTION_NUMBER
-                                                                                                                            
+
 DBPASSWORDFUNCTION="OLD_PASSWORD"
 if [ "$PASSWORD_FUNCTION_NUMBER" = "3" ]; then
         DBPASSWORDFUNCTION="OLD_PASSWORD"
 fi
-                                                                                                                            
+
 if [ "$PASSWORD_FUNCTION_NUMBER" = "2" ]; then
         DBPASSWORDFUNCTION="PASSWORD"
 fi
 
-if [ "$TIMESHEET_VERSION" \< "1.2.1" ]; then 
+if [ "$TIMESHEET_VERSION" \< "1.2.1" ]; then
 	#now do the latest (1.2.1) changes
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.2.1.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.2.1.sql
-	
+
 	#drop the config table and insert defaults
 	echo ""
 	echo "Timesheet.php upgrade will now import the new configuration (1.2.1)"
@@ -167,17 +167,17 @@ if [ "$TIMESHEET_VERSION" \< "1.2.1" ]; then
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.2.1.sql
 
 	if [ $? = 1 ]; then
-		echo "There was an error altering tables in the database. Please make sure the user $DBUSER " 
+		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "
 		echo "has ALTER TABLE privileges. Upgrade will not continue."
 		exit 1;
 	fi
 fi
 
-if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then 
+if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then
 	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.3.1.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.3.1.sql
-	
+
 	#drop the config table and insert defaults
 	echo ""
 	echo "Timesheet.php upgrade will now import the new configuration (1.3.1)"
@@ -190,7 +190,7 @@ if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.3.1.sql
 
 	if [ $? = 1 ]; then
-		echo "There was an error altering tables in the database. Please make sure the user $DBUSER " 
+		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "
 		echo "has ALTER TABLE privileges. Upgrade will not continue."
 		exit 1;
 	fi

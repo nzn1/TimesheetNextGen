@@ -11,7 +11,7 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
 		if (!empty($_REQUEST["redirect"]))
 			header("Location: $_REQUEST[redirect]");
 		else
-			header("Location: calendar.php");	
+			header("Location: calendar.php");
 
 		exit();
 	}
@@ -19,7 +19,7 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
 else
 	//destroy the session by logging out
 	$authenticationManager->logout();
-	
+
 function printMessage($message) {
 	print "<tr>" .
 				"	<td>&nbsp;</td>" .
@@ -79,20 +79,20 @@ include ("header.inc");
 					<td class="label"><br><input type="submit" name="Login" value="submit"></td>
 				</tr>
 				<?	if (isset($loginFailure))
-							printMessage($authenticationManager->getErrorMessage()); 
+							printMessage($authenticationManager->getErrorMessage());
 						else if (isset($_REQUEST["clearanceRequired"]))
-							printMessage("$_REQUEST[clearanceRequired] clearance is required for the page you have tried to access."); 
+							printMessage("$_REQUEST[clearanceRequired] clearance is required for the page you have tried to access.");
 				?>
 			</table>
-					
+
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
-	
+
 		</td>
 	</tr>
 </table>
 
 </form>
-	
+
 </body>
 </html>
