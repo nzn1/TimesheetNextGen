@@ -33,7 +33,7 @@
 			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 			$configdata = dbResult($qhq);
 
-			if ($configdata[timeformat] == "12")
+			if ($configdata['timeformat'] == "12")
 				$this->create_12hour($selectedIndex);
 			else
 				$this->create_24hour($selectedIndex);
