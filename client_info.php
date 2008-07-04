@@ -2,8 +2,8 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn()) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
 	exit;
 }
 

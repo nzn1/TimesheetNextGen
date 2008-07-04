@@ -466,6 +466,35 @@ include ("banner.inc");
 				</table>
 				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 
+		<!-- ACL-->
+			<tr>
+				<td align="left" valign="top">
+					<b>ACL</b>:
+				</td>
+				<td align="left" width="100%">
+					The ACL defines the access given to pages for the different user roles defined. It is possible to disable a page by giving no access.
+				</td>
+			</tr>
+			<tr>
+				<td align="left" class="label" nowrap width="90">
+					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" >Reset</input>
+				</td>
+				<td align="left" width="100%">
+					<span class="label" nowrap>Stopwatch:</span><? acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>
+					<span class="label" nowrap>Daily:</span><? acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>
+					<span class="label" nowrap>Weekly:</span><? acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>
+					<span class="label" nowrap>Calendar:</span><? acl_select_droplist("aclCalendar", $resultset["aclCalendar"]); ?>
+					<span class="label" nowrap>Simple:</span><? acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>
+					<span class="label" nowrap>Clients:</span><? acl_select_droplist("aclClients", $resultset["aclClients"]); ?>
+					<span class="label" nowrap>Projects:</span><? acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>
+					<span class="label" nowrap>Tasks:</span><? acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>
+					<span class="label" nowrap>Reports:</span><? acl_select_droplist("aclReports", $resultset["aclReports"]); ?>
+				</td>
+			</tr>
+
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
 		<!-- locale -->
 			<tr>
 				<td align="left" valign="top">

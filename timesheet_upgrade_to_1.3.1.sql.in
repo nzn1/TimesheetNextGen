@@ -1,3 +1,4 @@
 ALTER TABLE __TABLE_PREFIX__config ADD COLUMN LDAPBindByUser tinyint(4) NOT NULL default '0';
+ALTER TABLE __TABLE_PREFIX__config ADD `aclStopwatch` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclDaily` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclWeekly` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclCalendar` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclSimple` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclClients` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclProjects` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclTasks` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclReports` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL;
 
 

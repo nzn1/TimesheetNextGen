@@ -138,6 +138,13 @@ if (!defined("COMMON_INC")) {
 			return $result;
 		}
 
+		function get_acl_level($page) {
+			include("table_names.inc");
+			list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclCalendar,aclSimple,aclClients,aclProjects,aclTasks,aclReports FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+			$configData = dbResult($qhq);
+			return $configData[$page];
+		}
+
 		function day_button($name, $today=0) {
 			if (!$today)
 				$today = date("d");
@@ -434,6 +441,16 @@ if (!defined("COMMON_INC")) {
 		}
 		print "</select>";
 	}
+
+	function acl_select_droplist($id, $selected='', $disabled='false') {
+?>
+	<select name="<? echo $id; ?>" id="<? echo $id; ?>" <? if ($disabled=='true') echo 'readonly'?>>
+	<option value="Admin" <? if ($selected== 'Admin') echo 'selected'?>>Admin</option>
+	<option value="Mgr" <? if ($selected== 'Mgr') echo 'selected'?>>Mgr</option>
+	<option value="Basic" <? if ($selected== 'Basic') echo 'selected'?>>Basic</option>
+	<option value="None" <? if ($selected== 'None') echo 'selected'?>>None</option>
+	</select>
+<?	}
 
 	function client_select_droplist($client_id=1, $disabled='false') {
 		include("table_names.inc");
