@@ -4,8 +4,8 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclSimple')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclSimple'));
 	exit;
 }
 

@@ -30,6 +30,7 @@ $errorReset = isset($_REQUEST["errorReset"]) ? $_REQUEST["errorReset"]: false;
 $bannerReset = isset($_REQUEST["bannerReset"]) ? $_REQUEST["bannerReset"]: false;
 $tableReset = isset($_REQUEST["tableReset"]) ? $_REQUEST["tableReset"]: false;
 $localeReset = isset($_REQUEST["localeReset"]) ? $_REQUEST["localeReset"]: false;
+$aclReset = isset($_REQUEST["aclReset"]) ? $_REQUEST["aclReset"]: false;
 $timezoneReset = isset($_REQUEST["timezoneReset"]) ? $_REQUEST["timezoneReset"]: false;
 $timeformatReset = isset($_REQUEST["timeformatReset"]) ? $_REQUEST["timeformatReset"]: false;
 $useLDAP = isset($_REQUEST["useLDAP"]) ? $_REQUEST["useLDAP"]: false;
@@ -46,6 +47,15 @@ $LDAPBindUsername = $_REQUEST["LDAPBindUsername"];
 $LDAPBindPassword = $_REQUEST["LDAPBindPassword"];
 $weekstartday = isset($_REQUEST["weekstartday"]) ? $_REQUEST["weekstartday"]: 0;
 $weekStartDayReset = isset($_REQUEST["weekStartDayReset"]) ? $_REQUEST["weekStartDayReset"]: false;
+$aclStopwatch = $_REQUEST["aclStopwatch"];
+$aclDaily = $_REQUEST["aclDaily"];
+$aclWeekly = $_REQUEST["aclWeekly"];
+$aclCalendar = $_REQUEST["aclCalendar"];
+$aclSimple = $_REQUEST["aclSimple"];
+$aclClients = $_REQUEST["aclClients"];
+$aclProjects = $_REQUEST["aclProjects"];
+$aclTasks = $_REQUEST["aclTasks"];
+$aclReports = $_REQUEST["aclReports"];
 
 	function resetConfigValue($fieldName) {
 		include("table_names.inc");
@@ -80,6 +90,7 @@ elseif ($action == "edit") {
 		"locale='$locale',".
 		"timezone='$timezone',".
 		"timeformat='$timeformat', ".
+		"weekstartday='$weekstartday', " .
 		"useLDAP='$useLDAP', " .
 		"LDAPScheme='$LDAPScheme', " .
 		"LDAPHost='$LDAPHost', " .
@@ -89,10 +100,18 @@ elseif ($action == "edit") {
 		"LDAPSearchScope='$LDAPSearchScope', " .
 		"LDAPFilter='$LDAPFilter', " .
 		"LDAPProtocolVersion='$LDAPProtocolVersion', " .
-		"LDAPBindByUser='$LDAPBindByUser', " .
 		"LDAPBindUsername='$LDAPBindUsername', ".
 		"LDAPBindPassword='$LDAPBindPassword', ".
-		"weekstartday='$weekstartday' " .
+		"LDAPBindByUser='$LDAPBindByUser', " .
+		"aclStopwatch='$aclStopwatch', " .
+		"aclDaily='$aclDaily', " .
+		"aclWeekly='$aclStopwatch', " .
+		"aclCalendar='$aclCalendar', " .
+		"aclSimple='$aclSimple', " .
+		"aclClients='$aclClients', " .
+		"aclProjects='$aclProjects', " .
+		"aclTasks='$aclTasks', " .
+		"aclReports='$aclReports' " .
 		"WHERE config_set_id='1';";
 	list($qh,$num) = dbquery($query);
 
@@ -116,6 +135,18 @@ elseif ($action == "edit") {
 		resetConfigValue("timeformat");
 	if ($weekStartDayReset == true)
 		resetConfigValue("weekstartday");
+	if ($aclReset == true)
+	{
+		resetConfigValue("aclStopwatch");
+		resetConfigValue("aclDaily");
+		resetConfigValue("aclWeekly");
+		resetConfigValue("aclCalendar");
+		resetConfigValue("aclSimple");
+		resetConfigValue("aclClients");
+		resetConfigValue("aclProjects");
+		resetConfigValue("aclTasks");
+		resetConfigValue("aclReports");
+	}
 }
 
 //return to the config.php page

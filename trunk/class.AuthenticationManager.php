@@ -32,6 +32,7 @@ enum (
 //define clearance levels
 define("CLEARANCE_ADMINISTRATOR", 10);
 define("CLEARANCE_MANAGER", 5);
+define("CLEARANCE_BASIC", 0);
 
 /**
 *	Manages and provides authentication services
@@ -188,6 +189,29 @@ class AuthenticationManager {
 		@session_start();
 
 		return (isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] >= $accessLevel);
+	}
+
+	/**
+	* returns true if the user has access to the specified page
+	*/
+	function hasAccess($page) {
+
+		$acl = get_acl_level($page);
+		switch ($acl) {
+		case 'None':
+			$level = 100; //This level is unobtainable
+			break;
+		case 'Basic':
+			$level = CLEARANCE_BASIC;
+			break;
+		case 'Mgr':
+			$level = CLEARANCE_MANAGER;
+			break;
+		default:
+			$level = CLEARANCE_ADMINISTRATOR;
+			break;
+		}
+		return ($this->hasClearance($level));
 	}
 
 	/* This function returns true if the system is configured to use
