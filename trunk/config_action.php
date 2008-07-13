@@ -56,6 +56,8 @@ $aclClients = $_REQUEST["aclClients"];
 $aclProjects = $_REQUEST["aclProjects"];
 $aclTasks = $_REQUEST["aclTasks"];
 $aclReports = $_REQUEST["aclReports"];
+$simpleTimesheetLayout = $_REQUEST["simpleTimesheetLayout"];
+$startPage = $_REQUEST["startPage"];
 
 	function resetConfigValue($fieldName) {
 		include("table_names.inc");
@@ -111,7 +113,9 @@ elseif ($action == "edit") {
 		"aclClients='$aclClients', " .
 		"aclProjects='$aclProjects', " .
 		"aclTasks='$aclTasks', " .
-		"aclReports='$aclReports' " .
+		"aclReports='$aclReports', " .
+		"simpleTimesheetLayout='$simpleTimesheetLayout', " .
+		"startPage='$startPage' " .
 		"WHERE config_set_id='1';";
 	list($qh,$num) = dbquery($query);
 

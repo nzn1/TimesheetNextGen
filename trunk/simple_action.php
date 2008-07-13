@@ -42,6 +42,7 @@ $queryString = "DELETE FROM $TIMES_TABLE WHERE ".
 dbQuery($queryString);
 
 //TODO:...
+//TODO: write meaningful todos ;)
 for ($i=0; $i<$totalRows; $i++) {
 	$projectId = $_POST["projectSelect_row" . $i];
 	if ($projectId < 1)
@@ -49,6 +50,11 @@ for ($i=0; $i<$totalRows; $i++) {
 	$taskId = $_POST["taskSelect_row" . $i];
 	if ($taskId < 1)
 		continue;
+	$workDescription = '';
+	if (array_key_exists("description_row" . $i, $_POST)) {
+		// does not exist if simple timesheet layout = "no work description field"!
+		$workDescription = mysql_real_escape_string($_POST["description_row" . $i]);
+	}
 
 	for ($j=1; $j<=7; $j++) {
 		//get the timestamp for this day
@@ -72,7 +78,7 @@ for ($i=0; $i<$totalRows; $i++) {
 			$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, proj_id, task_id, log_message) ".
 									"VALUES ('$contextUser','$todayYear-$todayMonth-$todayDay 00:00:00', ".
 									"'$todayYear-$todayMonth-$todayDay $hours:$mins:00', ".
-									"$projectId, $taskId, 'Task time entered via simple.php')";
+									"$projectId, $taskId, '$workDescription')";
 			list($qh,$num) = dbQuery($queryString);
 		}
 	}

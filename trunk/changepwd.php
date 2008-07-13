@@ -50,7 +50,7 @@ if (empty($errormsg) && !empty($old_pass)) {
 	}
 	else {
 		$qh = mysql_query("UPDATE $USER_TABLE SET password=$DATABASE_PASSWORD_FUNCTION('$passwd1') WHERE username='$contextUser'");
-		Header("Location: calendar.php");
+		gotoStartPage();
 		exit;
 	}
 }

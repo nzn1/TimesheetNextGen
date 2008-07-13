@@ -11,7 +11,7 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
 		if (!empty($_REQUEST["redirect"]))
 			header("Location: $_REQUEST[redirect]");
 		else
-			header("Location: calendar.php");
+			gotoStartPage();
 
 		exit();
 	}

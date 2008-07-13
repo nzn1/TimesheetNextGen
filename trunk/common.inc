@@ -796,4 +796,13 @@ if (!defined("COMMON_INC")) {
 					"&mode=".$mode."\" class=\"outer_table_action\">Next Week</a>";
 		}
 	}
+	
+	function gotoStartPage() {
+		include('table_names.inc');
+		list($result, $count) = dbQuery("SELECT startPage FROM $CONFIG_TABLE WHERE config_set_id = '1';");
+		list($startPage) = dbResult($result);
+		
+		header("Location: $startPage.php");
+		exit();
+	}
 }?>

@@ -31,7 +31,7 @@ $proj_id = 0;
 
 // Check project assignment.
 if ($proj_id != 0) { // id 0 means 'All Projects'
-	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE WHERE proj_id='$proj_id' and username='$contextUser'");
+	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE WHERE proj_id='$proj_id' AND username='$contextUser'");
 	if ($num < 1)
 		errorPage("You cannot access this project, because you are not assigned to it.");
 }
@@ -80,9 +80,10 @@ $nextWeekYear = date("Y", $nextWeekDate);
 $nextWeekMonth = date("n", $nextWeekDate);
 $nextWeekDay = date("j", $nextWeekDate);
 
-//get the timeformat
-list($qh2, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+//get the configuration of timeformat and layout 
+list($qh2, $numq) = dbQuery("SELECT timeformat, simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qh2);
+$layout = $configData['simpleTimesheetLayout'];
 
 //build the database query
 $query = "SELECT date_format(start_time,'%d') AS day_of_month, ";
@@ -100,7 +101,9 @@ $query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
 						"$PROJECT_TABLE.title AS projectTitle, " .
 						"$TASK_TABLE.name AS taskName, " .
 						"$TIMES_TABLE.proj_id, " .
-						"$TIMES_TABLE.task_id " .
+						"$TIMES_TABLE.task_id, " .
+						"$TIMES_TABLE.log_message " .
+
 						"FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE WHERE " .
 						"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND " .
 						"uid='$contextUser' AND ";
@@ -174,7 +177,7 @@ for ($i=0; $i<$num4; $i++) {
 		//alert('There are ' + existingRows + ' existing rows');
 
 		//iterate to plus one to do the additional row
-		for (i=0; i<=existingRows; i++) {
+		for (var i=0; i<=existingRows; i++) {
 			//alert('existing row ' + i);
 
 			//get the project and task id for this row
@@ -191,7 +194,7 @@ for ($i=0; $i<$num4; $i++) {
 
 			//add the projects
 			var clientId = -1;
-			for (key in projectTasksHash) {
+			for (var key in projectTasksHash) {
 				if (projectTasksHash[key]['clientId'] != clientId) {
 					projectSelect.options[projectSelect.options.length] = new Option('[' + projectTasksHash[key]['clientName'] + ']', -1);
 					clientId = projectTasksHash[key]['clientId'];
@@ -225,7 +228,7 @@ for ($i=0; $i<$num4; $i++) {
 
 		//add the tasks
 		var thisProjectTasks = projectTasksHash[projectId]['tasks'];
-		for (taskKey in thisProjectTasks) {
+		for (var taskKey in thisProjectTasks) {
 			taskSelect.options[taskSelect.options.length] = new Option(thisProjectTasks[taskKey], taskKey);
 
 			if (taskKey == selectedTaskId)
@@ -235,7 +238,7 @@ for ($i=0; $i<$num4; $i++) {
 
 	function clearTaskSelect(row) {
 		taskSelect = document.getElementById('taskSelect_row' + row);
-		for (i=1; i<taskSelect.options.length; i++)
+		for (var i=1; i<taskSelect.options.length; i++)
 			taskSelect.options[i] = null;
 
 		//set the length back to 1
@@ -245,6 +248,11 @@ for ($i=0; $i<$num4; $i++) {
 		taskSelect.options[0].selected = true;
 
 		onChangeTaskSelectRow(row);
+	}
+
+	function clearWorkDescriptionField(row) {	
+		descField = document.getElementById("description_row" + row);
+		descField.value = "";
 	}
 
 	function rowFromIdStr(idStr) {
@@ -286,7 +294,7 @@ for ($i=0; $i<$num4; $i++) {
 		taskSelect = document.getElementById('taskSelect_row' + row);
 		if (taskSelect.options[0].selected == true) {
 			//disable fields
-			for (i=1; i<=7; i++) {
+			for (var i=1; i<=7; i++) {
 				document.getElementById('hours_row' + row + '_col' + i).disabled = true;
 				document.getElementById('mins_row' + row + '_col' + i).disabled = true;
 			}
@@ -321,21 +329,24 @@ for ($i=0; $i<$num4; $i++) {
 				totalsNode.parentNode.insertBefore(newNode, totalsNode);
 
 				//select default project
-				i=row+1;
-				var projectSelect = document.getElementById('projectSelect_row' + i);
-				projectSelect.options[projectSelect.options.length-1].selected = true;
+				var oldProjectSelect = document.getElementById('projectSelect_row' + row);
+				var newProjectSelect = document.getElementById('projectSelect_row' + (row+1));
+				newProjectSelect.options[oldProjectSelect.selectedIndex].selected = true;
 
 				//clear the task select
 				clearTaskSelect(totalRows);
 
+				// clear the work description field
+				clearWorkDescriptionField(totalRows);
+				
 				//repopulate task
-				var projectId = projectSelect.options[projectSelect.selectedIndex].value;
-				populateTaskSelect(row+1, projectId);
-
+				//var projectId = projectSelect.options[projectSelect.selectedIndex].value;
+				//populateTaskSelect(row+1, projectId);
+				
 			}
 
 			//enable fields
-			for (i=1; i<=7; i++) {
+			for (var i=1; i<=7; i++) {
 				document.getElementById('hours_row' + row + '_col' + i).disabled = false;
 				document.getElementById('mins_row' + row + '_col' + i).disabled = false;
 			}
@@ -343,6 +354,31 @@ for ($i=0; $i<$num4; $i++) {
 		setDirty();
 	}
 
+	function onChangeWorkDescription(idStr) {
+		setDirty();
+	}
+	
+	//clear row and make it invisible
+	function onDeleteRow(idStr) {
+		var row = rowFromIdStr(idStr);
+		var tr = document.getElementById('row' + row)
+		
+		// clear the task select				
+		clearTaskSelect(row);
+
+		// clear the work description field
+		clearWorkDescriptionField(row);
+				
+		// clear hours and minutes
+		for (var i=1; i<=7; i++) {
+			document.getElementById("hours_row" + row + "_col" + i).value = "";
+			document.getElementById("mins_row" + row + "_col" + i).value = "";
+			recalculateCol(i);
+		}
+		
+		tr.style.display = "none";
+	}
+	
 	function replaceIdAndNameAttributes(node, rowRegex, rowNumber) {
 		while (node != null) {
 			if (node.getAttribute != null && node.getAttribute("id") != null)
@@ -351,7 +387,9 @@ for ($i=0; $i<$num4; $i++) {
 				node.setAttribute("name", node.getAttribute("name").replace(rowRegex, "row" + rowNumber));
 
 			//call this function recursively for children
-			if (node.firstChild != null && node.firstChild.tagName != null)
+			// did not to work recursely with if statement like it was:
+			// if (node.firstChild != null && node.firstChild.tagName != null)
+			if (node.firstChild != null)
 				replaceIdAndNameAttributes(node.firstChild, rowRegex, rowNumber);
 
 			//do the same for the next sibling
@@ -404,7 +442,7 @@ for ($i=0; $i<$num4; $i++) {
 
 		var totalMins = 0;
 		var row="";
-		for (i=0; i<totalRows; i++) {
+		for (var i=0; i<totalRows; i++) {
 			hours = parseInt(document.getElementById("hours_row" + i + "_col" + col).value);
 			if (!isNaN(hours))
 				totalMins += hours * 60;
@@ -434,7 +472,7 @@ for ($i=0; $i<$num4; $i++) {
 
 	function recalculateGrandTotal() {
 		var totalMins = 0;
-		for (i=1; i<=7; i++) {
+		for (var i=1; i<=7; i++) {
 			var currentInnerHTML = document.getElementById("subtotal_col" + i).innerHTML;
 			//get the hours
 			hPos = currentInnerHTML.indexOf('h');
@@ -466,9 +504,9 @@ for ($i=0; $i<$num4; $i++) {
 		var totalRows = parseInt(document.getElementById('totalRows').value);
 
 		//iterate through rows
-		for (i=0; i<totalRows; i++) {
+		for (var i=0; i<totalRows; i++) {
 			//iterate through cols
-			for (j=1; j<=7; j++) {
+			for (var j=1; j<=7; j++) {
 				hours = parseInt(document.getElementById("hours_row" + i + "_col" + j).value);
 				if (document.getElementById("hours_row" + i + "_col" + j).value != "" && isNaN(hours) || hours > 23) {
 					alert('The hours field in row ' + i + ' column ' + j + ' must be a number between 0 and 23.');
@@ -537,7 +575,9 @@ include ("banner.inc");
 			<td>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 					<tr class="inner_table_head">
-						<td class="inner_table_column_heading" align="center">Project / Task</td>
+						<td class="inner_table_column_heading" align="center">
+							Project / Task<?php if(strstr($layout, 'no work description') == '') echo ' / Work Description'; ?>
+						</td>
 						<td align="center" width="2">&nbsp;</td>
 						<?php
 						//print the days of the week
@@ -555,6 +595,8 @@ include ("banner.inc");
 						?>
 						<td align="center" width="2">&nbsp;</td>
 						<td class="inner_table_column_heading" align="center" width="50">Total</td>
+						<td align="center" width="2">&nbsp;</td>
+						<td class="inner_table_column_heading" align="center" width="50">delete</td>
 					</tr>
 					<tr>
 <?php
@@ -569,13 +611,213 @@ include ("banner.inc");
 		var $projectId;
 		var $projectTitle;
 		var $taskName;
+		var $workDescription;
 
-		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName) {
+		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $workDescription) {
 			parent::Pair($value1, $value2);
 			$this->projectId = $projectId;
 			$this->projectTitle = $projectTitle;
 			$this->taskName = $taskName;
+			$this->workDescription = $workDescription;
 		}
+	}
+	
+	function printSpaceColumn() {
+		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
+	}
+	
+	// taskId = $matchedPair->value1, daysArray = $matchedPair->value2
+	// $allTasksDayTotals = int[7] and sums up the minutes for all tasks at one day 
+	// usage: provide an index to generate an empty row or ALL parameters to prefill the row
+	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $daysArray = null, $allTasksDayTotals = null) { 
+	
+		// print project, task and optioinally work description
+
+		?>
+		<tr id="row<?php echo $rowIndex; ?>">
+			<td class="calendar_cell_middle" valign="top">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+				<?php 
+					switch ($layout) {
+						case "no work description field":
+							?>
+							<td align="left" style="width:50%;">
+								<input type="hidden" id="project_row<? echo $rowIndex; ?>" name="project_row<? echo $rowIndex; ?>" value="<? echo $projectId; ?>" />
+								<select id="projectSelect_row<? echo $rowIndex; ?>" name="projectSelect_row<? echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+							</td>
+							<td align="left" style="width:50%;">
+								<input type="hidden" id="task_row<? echo $rowIndex; ?>" name="task_row<? echo $rowIndex; ?>" value="<? echo $taskId; ?>" />
+								<select id="taskSelect_row<? echo $rowIndex; ?>" name="taskSelect_row<? echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+							</td>
+							<?php
+							break;
+						
+						case "big work description field":
+							// big work description field
+							?>
+							<td align="left" style="width:160px;">
+								<input type="hidden" id="project_row<? echo $rowIndex; ?>" name="project_row<? echo $rowIndex; ?>" value="<? echo $projectId; ?>" />
+								<select id="projectSelect_row<? echo $rowIndex; ?>" name="projectSelect_row<? echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+								<br/>
+								<input type="hidden" id="task_row<? echo $rowIndex; ?>" name="task_row<? echo $rowIndex; ?>" value="<? echo $taskId; ?>" />
+								<select id="taskSelect_row<? echo $rowIndex; ?>" name="taskSelect_row<? echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+							</td>
+							<td align="left" style="width:auto;">
+								<textarea rows="2" style="width:100%;" id="description_row<? echo $rowIndex; ?>" name="description_row<? echo $rowIndex; ?>" onKeyUp="onChangeWorkDescription(this.id);"><? echo $workDescription; ?></textarea>
+							</td>
+							<?php
+							break;
+							
+						case "small work description field":
+						default:
+							// small work description field = default layout
+							?>
+							<td align="left" style="width:100px;">
+								<input type="hidden" id="project_row<? echo $rowIndex; ?>" name="project_row<? echo $rowIndex; ?>" value="<? echo $projectId; ?>" />
+								<select id="projectSelect_row<? echo $rowIndex; ?>" name="projectSelect_row<? echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+							</td>
+							<td align="left" style="width:160px;">
+								<input type="hidden" id="task_row<? echo $rowIndex; ?>" name="task_row<? echo $rowIndex; ?>" value="<? echo $taskId; ?>" />
+								<select id="taskSelect_row<? echo $rowIndex; ?>" name="taskSelect_row<? echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+							</td>
+							<td align="left" style="width:auto;">
+								<input type="text" id="description_row<? echo $rowIndex; ?>" name="description_row<? echo $rowIndex; ?>" onChange="onChangeWorkDescription(this.id);" value="<? echo $workDescription; ?>" style="width: 100%;" />
+							</td>
+							<?php
+							break;
+					}
+					 
+				?>
+				</tr>
+			</table>
+		</td>
+		<?php
+
+		printSpaceColumn();
+
+		$weeklyTotal = 0;
+		$isEmptyRow = ($daysArray == null);
+		
+		// print hours and minutes input field for each day
+ 
+		for ($currentDay = 0; $currentDay < 7; $currentDay++) {
+			//open the column
+			print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\">";
+
+			//while we are printing times set the style
+			print "<span class=\"task_time_small\">";
+
+			//create a flag for empty cell
+			$emptyCell = true;
+			
+			//declare todays vars
+//			$currentDay++;
+			$todaysTotal = 0;
+			$todaysHours = "";
+			$todaysMinutes = "";
+
+			// if there is an $daysArray calculate todays minutes and hours
+
+			if (!$isEmptyRow) {
+				$currentDayArray = $daysArray[$currentDay];
+				$todaysStartTime = $startDate + $currentDay * A_DAY;
+				$todaysEndTime = $startDate + ($currentDay + 1) * A_DAY;
+				
+				for ($j=0; $j<4; $j++) {
+					$currentTaskEntriesArray = $currentDayArray[$j];
+	
+					//print "C" . count($currentTaskEntriesArray) . " ";
+	
+					//iterate through the task entries
+					foreach ($currentTaskEntriesArray as $currentTaskEntry) {
+						//is the cell empty?
+						if ($emptyCell)
+							//the cell is not empty since we found a task entry
+							$emptyCell = false;
+						//else
+							//print a break for the next entry
+							//print "<br>";
+	
+						//format printable times
+						$formattedStartTime = $currentTaskEntry["start"];
+						$formattedEndTime = $currentTaskEntry["endd"];
+	
+						switch($j) {
+						case 0: //tasks which started on a previous day and finish on a following day
+							//print "...-...";
+							$todaysTotal += A_DAY;
+							break;
+						case 1: //tasks which started on a previous day and finish today
+							//print "...-" . $formattedEndTime;
+							$todaysTotal += $currentTaskEntry["end_time"] - $todaysStartTime;
+							break;
+						case 2: //tasks which started and finished today
+							//print $formattedStartTime . "-" . $formattedEndTime;
+							$todaysTotal += $currentTaskEntry["end_time"] - $currentTaskEntry["start_time"];
+							break;
+						case 3: //tasks which started today and finish on a following day
+							//print $formattedStartTime . "-...";
+							$todaysTotal += $todaysEndTime - $currentTaskEntry["start_time"];
+							break;
+						default:
+							print "error";
+						}
+					}
+				}
+
+				$todaysHours = floor($todaysTotal / 60 / 60);
+				$todaysMinutes = ($todaysTotal - ($todaysHours * 60 * 60)) / 60;
+			}
+			
+			// write summary and totals of this row
+			
+			//create a string to be used in form input names
+			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay+1);
+			$disabled = $isEmptyRow?'disabled="true" ':'';
+			
+			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$todaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>h</span>";
+			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$todaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>m</span>";
+
+			//close the times class
+			print "</span>";
+
+			/*if (!$emptyCell) {
+				//print todays total
+				$todaysTotalStr = formatSeconds($todaysTotal);
+				print "<br><span class=\"task_time_total_small\">$todaysTotalStr</span>";
+			}*/
+
+			//end the column
+			print "</td>";
+
+			//add this days total to the weekly total
+			$weeklyTotal += $todaysTotal;
+
+			// add this days total to the all tasks total for this day 
+			// if an array is provided by the caller
+			if ($allTasksDayTotals != null) {
+				$allTasksDayTotals[$currentDay] += $todaysTotal;
+			}
+		}
+
+		printSpaceColumn();
+		
+		//format the weekly total
+		$weeklyTotalStr = formatSeconds($weeklyTotal);
+
+		//print the total column
+		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\">";
+		print "<span class=\"calendar_total_value_weekly\" align=\"right\" id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
+
+		printSpaceColumn();
+				
+		// print delete button
+		print "<td class=\"calendar_delete_cell\" class=\"subtotal\">";
+		print "<a id=\"delete_row$rowIndex\" href=\"#\" onclick=\"onDeleteRow(this.id); return false;\">x</a></td>";
+				
+		//end the row
+		print "</tr>";
 	}
 
 	// Get the Weekly data.
@@ -616,6 +858,7 @@ include ("banner.inc");
 		$currentTaskName = stripslashes($data["taskName"]);
 		$currentProjectTitle = stripslashes($data["projectTitle"]);
 		$currentProjectId = $data["proj_id"];
+		$currentWorkDescription = $data["log_message"];
 
 		//debug
 		//print "<p>taskId:$currentTaskId '$data[taskName]', start time:$data[start_time_str], end time:$data[end_time_str]</p>";
@@ -625,8 +868,8 @@ include ("banner.inc");
 		$taskCount = count($structuredArray);
 		unset($matchedPair);
 		for ($j=0; $j<$taskCount; $j++) {
-			//does its value1 (the task id) match?
-			if ($structuredArray[$j]->value1 == $currentTaskId) {
+			// does(taskID [value1] && workDescription) match?
+			if ($structuredArray[$j]->value1 == $currentTaskId && $structuredArray[$j]->workDescription == $currentWorkDescription) {
 				//store the pair we matched with
 				$matchedPair = &$structuredArray[$j];
 
@@ -662,9 +905,8 @@ include ("banner.inc");
 
 			//create a new pair
 			$matchedPair = new TaskInfo($currentTaskId, $daysArray,
-											$currentProjectId,
-											$currentProjectTitle,
-											$currentTaskName);
+										$currentProjectId, $currentProjectTitle,
+										$currentTaskName, $currentWorkDescription);
 
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
@@ -721,212 +963,39 @@ include ("banner.inc");
 	//set vars
 	$previousProjectId = -1;
 	$allTasksDayTotals = array(0,0,0,0,0,0,0); //totals for each day
-
+	
 /*	$previousTaskId = -1;
 	$thisTaskId = -1;
 	$columnDay = -1;
 	$columnStartDate = $startDate;*/
 
-	//iterate through the structured array
+	
+//iterate through the structured array
 	$count = count($structuredArray);
 	unset($matchedPair);
-	for ($i=0; $i<$count; $i++) {
-		$matchedPair = &$structuredArray[$i];
+	for ($rowIndex = 0; $rowIndex<$count; $rowIndex++) {
+		$matchedPair = &$structuredArray[$rowIndex];
 
-	?><tr id="row<?php echo $i; ?>"><?
-		?><td class="calendar_cell_middle" valign="top"><?
-			?><table width="100%" border="0" cellspacing="0" cellpadding="0"><?
-				?><tr><?
-						?><td width="50%" align="left"><?
-							?><input type="hidden" id="project_row<? echo $i; ?>" name="project_row<? echo $i; ?>" value="<? echo $matchedPair->projectId; ?>" /><?
-							?><select id="projectSelect_row<? echo $i; ?>" name="projectSelect_row<? echo $i; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" /><?
-						?></td><?
-						?><td width="50%" align="left"><?
-							?><input type="hidden" id="task_row<? echo $i; ?>" name="task_row<? echo $i; ?>" value="<? echo $matchedPair->value1; ?>" /><?
-							?><select id="taskSelect_row<? echo $i; ?>" name="taskSelect_row<? echo $i; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" /><?
-						?></td><?
-				?></tr><?
-				?><tr><?
-						?><td height="1"><img src="images/spacer.gif" width="100" height="1" /></td><?
-				?></tr><?
-			?></table><?
-		?></td><?
-
-		//print the spacer column
-		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
-
-		//iterate through the days array
-		$currentDay = 0;
-		$weeklyTotal = 0;
-		foreach ($matchedPair->value2 as $currentDayArray) {
-			//open the column
-			print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\">";
-
-			//while we are printing times set the style
-			print "<span class=\"task_time_small\">";
-
-			//declare todays vars
-			$todaysStartTime = $startDate + $currentDay * A_DAY;
-			$todaysEndTime = $startDate + ($currentDay + 1) * A_DAY;
-			$currentDay++;
-			$todaysTotal = 0;
-
-			//create a flag for empty cell
-			$emptyCell = true;
-
-			//iterate through the current day array
-			for ($j=0; $j<4; $j++) {
-				$currentTaskEntriesArray = $currentDayArray[$j];
-
-				//print "C" . count($currentTaskEntriesArray) . " ";
-
-				//iterate through the task entries
-				foreach ($currentTaskEntriesArray as $currentTaskEntry) {
-					//is the cell empty?
-					if ($emptyCell)
-						//the cell is not empty since we found a task entry
-						$emptyCell = false;
-					//else
-						//print a break for the next entry
-						//print "<br>";
-
-					//format printable times
-					$formattedStartTime = $currentTaskEntry["start"];
-					$formattedEndTime = $currentTaskEntry["endd"];
-
-					switch($j) {
-					case 0: //tasks which started on a previous day and finish on a following day
-						//print "...-...";
-						$todaysTotal += A_DAY;
-						break;
-					case 1: //tasks which started on a previous day and finish today
-						//print "...-" . $formattedEndTime;
-						$todaysTotal += $currentTaskEntry["end_time"] - $todaysStartTime;
-						break;
-					case 2: //tasks which started and finished today
-						//print $formattedStartTime . "-" . $formattedEndTime;
-						$todaysTotal += $currentTaskEntry["end_time"] - $currentTaskEntry["start_time"];
-						break;
-					case 3: //tasks which started today and finish on a following day
-						//print $formattedStartTime . "-...";
-						$todaysTotal += $todaysEndTime - $currentTaskEntry["start_time"];
-						break;
-					default:
-						print "error";
-					}
-				}
-			}
-
-			//create a string to be used in form input names
-			$rowCol = "_row" . $i . "_col" . $currentDay;
-
-			//make sure the cell has at least a space in it so that its rendered by the browser
-			if ($emptyCell) {
-				print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" />h</span>";
-				print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" />m</span>";
-			}
-			else {
-				//split todays total into hours and minutes
-				$todaysHours = floor($todaysTotal / 60 / 60);
-				$todaysMinutes = ($todaysTotal - ($todaysHours * 60 * 60)) / 60;
-				print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"" . $todaysHours . "\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" />h</span>";
-				print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"" . $todaysMinutes . "\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" />m</span>";
-			}
-
-			//close the times class
-			print "</span>";
-
-			/*if (!$emptyCell) {
-				//print todays total
-				$todaysTotalStr = formatSeconds($todaysTotal);
-				print "<br><span class=\"task_time_total_small\">$todaysTotalStr</span>";
-			}*/
-
-			//end the column
-			print "</td>";
-
-			//add this days total to the weekly total
-			$weeklyTotal += $todaysTotal;
-
-			//add this days total to the all tasks total for this day
-			$allTasksDayTotals[$currentDay - 1] += $todaysTotal;
-		}
-
-		//print the spacer column
-		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
-
-		//format the weekly total
-		$weeklyTotalStr = formatSeconds($weeklyTotal);
-
-		//print the total column
-		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\">";
-		print "<span class=\"calendar_total_value_weekly\" align=\"right\" id=\"subtotal_row" . $i . "\">$weeklyTotalStr</span></td>";
-
-		//end the row
-		print "</tr>";
+		printFormRow($rowIndex, $layout,  
+					 $matchedPair->projectId, 
+					 $matchedPair->value1, 
+					 $matchedPair->workDescription,
+					 $startDate, 
+					 $matchedPair->value2, 
+					 $allTasksDayTotals);
+					 
 
 		//store the previous task and project ids
-		$previousTaskId = $currentTaskId;
+		$previousTaskId = $matchedPair->value1;
 		$previousProjectId = $matchedPair->projectId;
 	}
 
 	/////////////////////////////////////////
 	//add an extra row for new data entry
 	/////////////////////////////////////////
-	?><tr id="row<? echo $count; ?>"><?
-		?><td class="calendar_cell_middle" valign="top"><?
-			?><table width="100%" border="0" cellspacing="0" cellpadding="0"><?
-				?><tr><?
-						?><td width="50%" align="left"><?
-							?><input type="hidden" id="project_row<? echo $count; ?>" name="project_row<? echo $count; ?>" value="-1" /><?
-							?><select id="projectSelect_row<? echo $count; ?>" name="projectSelect_row<? echo $count; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" /><?
-						?></td><?
-						?><td width="50%" align="left"><?
-							?><input type="hidden" id="task_row<? echo $count; ?>" name="task_row<? echo $count; ?>" value="-1" /><?
-							?><select id="taskSelect_row<? echo $count; ?>" name="taskSelect_row<? echo $count; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" /><?
-						?></td><?
-				?></tr><?
-				?><tr><?
-						?><td height="1"><img src="images/spacer.gif" width="100" height="1" /></td><?
-				?></tr><?
-			?></table><?
-		?></td><?
-
-		//print the spacer column
-		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
-
-		for ($currentDay=1; $currentDay<=7; $currentDay++) {
-			//open the column
-			print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\" width=\"65\">";
-
-			//while we are printing times set the style
-			print "<span class=\"task_time_small\">";
-
-			//create a string to be used in form input names
-			$rowCol = "_row" . $count . "_col" . $currentDay;
-
-			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" disabled=\"true\" />h</span>";
-			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" disabled=\"true\" />m</span>";
-
-			//close the times class
-			print "</span>";
-
-			//end the column
-			print "</td>";
-		}
-
-		//print the spacer column
-		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
-
-		//print the total column
-		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\" width=\"50\">";
-		print "<span class=\"calendar_total_value_weekly\" align=\"right\" id=\"subtotal_row" . $count . "\">0h 0m</span></td>";
-
-		//end the row
-		print "</tr>";
-	//////////////////////////////////////////////////////////////////////
-
-
+	
+	printFormRow($count, $layout, 1, -1);
+	
 	//store a hidden form field containing the number of existing rows
 	print "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $count . "\" />";
 

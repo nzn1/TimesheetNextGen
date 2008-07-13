@@ -81,6 +81,8 @@ CREATE TABLE __TABLE_PREFIX__config (
   aclProjects enum('Admin','Mgr','Basic','None') NOT NULL default 'Basic',
   aclTasks enum('Admin','Mgr','Basic','None') NOT NULL default 'Basic',
   aclReports enum('Admin','Mgr','Basic','None') NOT NULL default 'Basic',
+  simpleTimesheetLayout enum('small work description field','big work description field','no work description field') NOT NULL DEFAULT 'small work description field',
+  startPage enum('stopwatch', 'daily', 'weekly', 'calendar', 'simple') NOT NULL DEFAULT 'calendar',
   PRIMARY KEY  (config_set_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -168,7 +170,7 @@ CREATE TABLE __TABLE_PREFIX__times (
   trans_num int(11) NOT NULL auto_increment,
   proj_id int(11) DEFAULT '1' NOT NULL,
   task_id int(11) DEFAULT '1' NOT NULL,
-  log_message varchar(255),
+  log_message TEXT,
   KEY uid (uid,trans_num),
   UNIQUE trans_num (trans_num)
 );
