@@ -629,7 +629,7 @@ include ("banner.inc");
 	// taskId = $matchedPair->value1, daysArray = $matchedPair->value2
 	// $allTasksDayTotals = int[7] and sums up the minutes for all tasks at one day 
 	// usage: provide an index to generate an empty row or ALL parameters to prefill the row
-	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $daysArray = null, $allTasksDayTotals = null) { 
+	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $daysArray = null, &$allTasksDayTotals = null) { 
 	
 		// print project, task and optioinally work description
 
