@@ -328,20 +328,20 @@ for ($i=0; $i<$num4; $i++) {
 				//insert the new node before the totals node
 				totalsNode.parentNode.insertBefore(newNode, totalsNode);
 
-				//select default project
-				var oldProjectSelect = document.getElementById('projectSelect_row' + row);
-				var newProjectSelect = document.getElementById('projectSelect_row' + (row+1));
-				newProjectSelect.options[oldProjectSelect.selectedIndex].selected = true;
-
 				//clear the task select
 				clearTaskSelect(totalRows);
 
 				// clear the work description field
 				clearWorkDescriptionField(totalRows);
 				
+				//select default project
+				var oldProjectSelect = document.getElementById('projectSelect_row' + row);
+				var newProjectSelect = document.getElementById('projectSelect_row' + (row+1));
+				newProjectSelect.options[oldProjectSelect.selectedIndex].selected = true;
+
 				//repopulate task
-				//var projectId = projectSelect.options[projectSelect.selectedIndex].value;
-				//populateTaskSelect(row+1, projectId);
+				var projectId = newProjectSelect.options[newProjectSelect.selectedIndex].value;
+				populateTaskSelect(row+1, projectId);
 				
 			}
 
