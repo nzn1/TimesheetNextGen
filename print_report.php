@@ -28,8 +28,8 @@ if (isset($first_day)) {
 	$start_date = $first_day;
 	$end_date = $start_date + $TIMEPERIOD_LENGTH-1;
 } else {
-	Header("Location: calendar.php");
-	exit;
+	gotoStartPage();
+	//exit;
 }
 
 $qh = mysql_query("SELECT first_name, last_name, ssn FROM $USER_TABLE WHERE username='$contextUser'") or die("Select failed: ". mysql_error());

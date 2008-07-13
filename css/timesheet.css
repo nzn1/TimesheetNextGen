@@ -135,3 +135,9 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 		border-right: 1px solid #5271CC; 
 		border-bottom: 1px solid #5271CC; 
 		background-color: #E0EEFF; }
+		
+.calendar_delete_cell {
+	text-align:center; }
+	
+.calendar_delete_cell a:link, .calendar_delete_cell a:visited {
+	color:#e04040; }

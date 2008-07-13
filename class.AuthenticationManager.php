@@ -387,7 +387,8 @@ class AuthenticationManager {
 			//create the user
 			dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, last_name, " .
 						"email_address, phone, bill_rate, time_stamp, status) " .
-						"VALUES ('$username',1,$DATABASE_PASSWORD_FUNCTION('$password'),'$firstName',".
+//						"VALUES ('$username',1,$DATABASE_PASSWORD_FUNCTION('$password'),'$firstName',".
+						"VALUES ('$username',1,'','$firstName',".
 						"'$lastName','$emailAddress','$phone','$billRate',0,'OUT')");
 			dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username' )"); // add default project.
 			dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task

@@ -495,6 +495,58 @@ include ("banner.inc");
 				</table>
 				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 
+		<!-- simple timesheet layout -->
+			<tr>
+				<td align="left" valign="top">
+					<b>simple layout</b>:
+				</td>
+				<td align="left" width="100%">
+					Select a layout of the simple timesheet plugin. You can choose to show a text field to describe the work you did with plain text and additionally choose between two different sizes of that field.
+				</td>
+			</tr>
+			<tr>
+				<td align="left" class="label" nowrap width="90">
+					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);">Reset</input>
+				</td>
+				<td align="left" width="100%">
+					<select name="simpleTimesheetLayout" id="simpleTimesheetLayout">
+						<option value="small work description field" <? if ($resultset["simpleTimesheetLayout"] == 'small work description field') echo 'selected'?>>small work description field</option>
+						<option value="big work description field" <? if ($resultset["simpleTimesheetLayout"] == 'big work description field') echo 'selected'?>>big work description field</option>
+						<option value="no work description field" <? if ($resultset["simpleTimesheetLayout"] == 'no work description field') echo 'selected'?>>no work description field</option>
+					</select>
+				</td>
+			</tr>
+
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
+		<!-- start page -->
+			<tr>
+				<td align="left" valign="top">
+					<b>start page</b>:
+				</td>
+				<td align="left" width="100%">
+					Select a default page to go to after login. 
+				</td>
+			</tr>
+			<tr>
+				<td align="left" class="label" nowrap width="90">
+					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);">Reset</input>
+				</td>
+				<td align="left" width="100%">
+					<select name="startPage" id="startPage">
+						<option value="stopwatch" <? if ($resultset["startPage"] == 'stopwatch') echo 'selected'?>>Stopwatch</option>
+						<option value="daily" <?     if ($resultset["startPage"] == 'daily')     echo 'selected'?>>Daily Timesheet</option>
+						<option value="weekly" <?    if ($resultset["startPage"] == 'weekly')    echo 'selected'?>>Weekly Timesheet</option>
+						<option value="calendar" <?  if ($resultset["startPage"] == 'calendar')  echo 'selected'?>>Calendar</option>
+						<option value="simple" <?    if ($resultset["startPage"] == 'simple')    echo 'selected'?>>Simple Timesheet</option>
+					</select>
+				</td>
+			</tr>
+
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
 		<!-- locale -->
 			<tr>
 				<td align="left" valign="top">
