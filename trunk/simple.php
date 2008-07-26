@@ -80,7 +80,7 @@ $nextWeekYear = date("Y", $nextWeekDate);
 $nextWeekMonth = date("n", $nextWeekDate);
 $nextWeekDay = date("j", $nextWeekDate);
 
-//get the configuration of timeformat and layout 
+//get the configuration of timeformat and layout
 list($qh2, $numq) = dbQuery("SELECT timeformat, simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qh2);
 $layout = $configData['simpleTimesheetLayout'];
@@ -156,7 +156,8 @@ for ($i=0; $i<$num3; $i++) {
 $getTasksQuery = "SELECT $TASK_TABLE.proj_id, $TASK_TABLE.task_id, $TASK_TABLE.name FROM ".
 											"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE WHERE ".
 											"$TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
-											"$TASK_ASSIGNMENTS_TABLE.username='$contextUser'";
+											"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
+											"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);
 //iterate through results
@@ -250,7 +251,7 @@ for ($i=0; $i<$num4; $i++) {
 		onChangeTaskSelectRow(row);
 	}
 
-	function clearWorkDescriptionField(row) {	
+	function clearWorkDescriptionField(row) {
 		descField = document.getElementById("description_row" + row);
 		descField.value = "";
 	}
@@ -333,7 +334,7 @@ for ($i=0; $i<$num4; $i++) {
 
 				// clear the work description field
 				clearWorkDescriptionField(totalRows);
-				
+
 				//select default project
 				var oldProjectSelect = document.getElementById('projectSelect_row' + row);
 				var newProjectSelect = document.getElementById('projectSelect_row' + (row+1));
@@ -342,7 +343,7 @@ for ($i=0; $i<$num4; $i++) {
 				//repopulate task
 				var projectId = newProjectSelect.options[newProjectSelect.selectedIndex].value;
 				populateTaskSelect(row+1, projectId);
-				
+
 			}
 
 			//enable fields
@@ -357,28 +358,28 @@ for ($i=0; $i<$num4; $i++) {
 	function onChangeWorkDescription(idStr) {
 		setDirty();
 	}
-	
+
 	//clear row and make it invisible
 	function onDeleteRow(idStr) {
 		var row = rowFromIdStr(idStr);
 		var tr = document.getElementById('row' + row)
-		
-		// clear the task select				
+
+		// clear the task select
 		clearTaskSelect(row);
 
 		// clear the work description field
 		clearWorkDescriptionField(row);
-				
+
 		// clear hours and minutes
 		for (var i=1; i<=7; i++) {
 			document.getElementById("hours_row" + row + "_col" + i).value = "";
 			document.getElementById("mins_row" + row + "_col" + i).value = "";
 			recalculateCol(i);
 		}
-		
+
 		tr.style.display = "none";
 	}
-	
+
 	function replaceIdAndNameAttributes(node, rowRegex, rowNumber) {
 		while (node != null) {
 			if (node.getAttribute != null && node.getAttribute("id") != null)
@@ -621,24 +622,23 @@ include ("banner.inc");
 			$this->workDescription = $workDescription;
 		}
 	}
-	
+
 	function printSpaceColumn() {
 		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
 	}
-	
-	// taskId = $matchedPair->value1, daysArray = $matchedPair->value2
-	// $allTasksDayTotals = int[7] and sums up the minutes for all tasks at one day 
-	// usage: provide an index to generate an empty row or ALL parameters to prefill the row
-	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $daysArray = null, &$allTasksDayTotals = null) { 
-	
-		// print project, task and optioinally work description
 
+	// taskId = $matchedPair->value1, daysArray = $matchedPair->value2
+	// $allTasksDayTotals = int[7] and sums up the minutes for all tasks at one day
+	// usage: provide an index to generate an empty row or ALL parameters to prefill the row
+	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $daysArray = NULL) {
+		// print project, task and optionally work description
+		global $allTasksDayTotals; //global because of PHP4 thing about passing by reference?
 		?>
 		<tr id="row<?php echo $rowIndex; ?>">
 			<td class="calendar_cell_middle" valign="top">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-				<?php 
+				<?php
 					switch ($layout) {
 						case "no work description field":
 							?>
@@ -652,7 +652,7 @@ include ("banner.inc");
 							</td>
 							<?php
 							break;
-						
+
 						case "big work description field":
 							// big work description field
 							?>
@@ -668,7 +668,7 @@ include ("banner.inc");
 							</td>
 							<?php
 							break;
-							
+
 						case "small work description field":
 						default:
 							// small work description field = default layout
@@ -687,7 +687,7 @@ include ("banner.inc");
 							<?php
 							break;
 					}
-					 
+
 				?>
 				</tr>
 			</table>
@@ -698,9 +698,9 @@ include ("banner.inc");
 
 		$weeklyTotal = 0;
 		$isEmptyRow = ($daysArray == null);
-		
+
 		// print hours and minutes input field for each day
- 
+
 		for ($currentDay = 0; $currentDay < 7; $currentDay++) {
 			//open the column
 			print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\">";
@@ -710,7 +710,7 @@ include ("banner.inc");
 
 			//create a flag for empty cell
 			$emptyCell = true;
-			
+
 			//declare todays vars
 //			$currentDay++;
 			$todaysTotal = 0;
@@ -723,12 +723,12 @@ include ("banner.inc");
 				$currentDayArray = $daysArray[$currentDay];
 				$todaysStartTime = $startDate + $currentDay * A_DAY;
 				$todaysEndTime = $startDate + ($currentDay + 1) * A_DAY;
-				
+
 				for ($j=0; $j<4; $j++) {
 					$currentTaskEntriesArray = $currentDayArray[$j];
-	
+
 					//print "C" . count($currentTaskEntriesArray) . " ";
-	
+
 					//iterate through the task entries
 					foreach ($currentTaskEntriesArray as $currentTaskEntry) {
 						//is the cell empty?
@@ -738,11 +738,11 @@ include ("banner.inc");
 						//else
 							//print a break for the next entry
 							//print "<br>";
-	
+
 						//format printable times
 						$formattedStartTime = $currentTaskEntry["start"];
 						$formattedEndTime = $currentTaskEntry["endd"];
-	
+
 						switch($j) {
 						case 0: //tasks which started on a previous day and finish on a following day
 							//print "...-...";
@@ -769,13 +769,13 @@ include ("banner.inc");
 				$todaysHours = floor($todaysTotal / 60 / 60);
 				$todaysMinutes = ($todaysTotal - ($todaysHours * 60 * 60)) / 60;
 			}
-			
+
 			// write summary and totals of this row
-			
+
 			//create a string to be used in form input names
 			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay+1);
 			$disabled = $isEmptyRow?'disabled="true" ':'';
-			
+
 			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$todaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>h</span>";
 			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$todaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>m</span>";
 
@@ -794,7 +794,7 @@ include ("banner.inc");
 			//add this days total to the weekly total
 			$weeklyTotal += $todaysTotal;
 
-			// add this days total to the all tasks total for this day 
+			// add this days total to the all tasks total for this day
 			// if an array is provided by the caller
 			if ($allTasksDayTotals != null) {
 				$allTasksDayTotals[$currentDay] += $todaysTotal;
@@ -802,7 +802,7 @@ include ("banner.inc");
 		}
 
 		printSpaceColumn();
-		
+
 		//format the weekly total
 		$weeklyTotalStr = formatSeconds($weeklyTotal);
 
@@ -811,11 +811,11 @@ include ("banner.inc");
 		print "<span class=\"calendar_total_value_weekly\" align=\"right\" id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
 
 		printSpaceColumn();
-				
+
 		// print delete button
 		print "<td class=\"calendar_delete_cell\" class=\"subtotal\">";
 		print "<a id=\"delete_row$rowIndex\" href=\"#\" onclick=\"onDeleteRow(this.id); return false;\">x</a></td>";
-				
+
 		//end the row
 		print "</tr>";
 	}
@@ -963,27 +963,27 @@ include ("banner.inc");
 	//set vars
 	$previousProjectId = -1;
 	$allTasksDayTotals = array(0,0,0,0,0,0,0); //totals for each day
-	
+
 /*	$previousTaskId = -1;
 	$thisTaskId = -1;
 	$columnDay = -1;
 	$columnStartDate = $startDate;*/
 
-	
+
 //iterate through the structured array
 	$count = count($structuredArray);
 	unset($matchedPair);
 	for ($rowIndex = 0; $rowIndex<$count; $rowIndex++) {
 		$matchedPair = &$structuredArray[$rowIndex];
 
-		printFormRow($rowIndex, $layout,  
-					 $matchedPair->projectId, 
-					 $matchedPair->value1, 
+		printFormRow($rowIndex, $layout,
+					 $matchedPair->projectId,
+					 $matchedPair->value1,
 					 $matchedPair->workDescription,
-					 $startDate, 
-					 $matchedPair->value2, 
+					 $startDate,
+					 $matchedPair->value2,
 					 $allTasksDayTotals);
-					 
+
 
 		//store the previous task and project ids
 		$previousTaskId = $matchedPair->value1;
@@ -993,9 +993,9 @@ include ("banner.inc");
 	/////////////////////////////////////////
 	//add an extra row for new data entry
 	/////////////////////////////////////////
-	
-	printFormRow($count, $layout, 1, -1);
-	
+
+	printFormRow($count, $layout, -1, -1);
+
 	//store a hidden form field containing the number of existing rows
 	print "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $count . "\" />";
 
