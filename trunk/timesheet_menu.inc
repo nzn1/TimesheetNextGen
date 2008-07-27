@@ -44,14 +44,17 @@ if ($authenticationManager->hasAccess('aclSimple'))
 	$commandMenu->add(new IconTextCommand("Simple Timesheet", true, "simple.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$todayMonth&year=$todayYear&day=$todayDay", "images/icon_daily.gif"));
 if ($authenticationManager->hasAccess('aclClients'))
 	$commandMenu->add(new IconTextCommand("Clients", true, "client_maint.php", "images/icon_clients.gif"));
-if ($authenticationManager->hasAccess('aclProjects'))
+if ($authenticationManager->hasAccess('aclProjects')) {
 	$commandMenu->add(new IconTextCommand("Projects", true, "proj_maint.php", "images/icon_projects.gif"));
+	$commandMenu->add(new IconTextCommand("Projects-Rates", true, "project_user_rates.php", "images/icon_projects_user_rates.gif"));
+}
 if ($authenticationManager->hasAccess('aclTasks'))
 	$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint.php", "images/icon_tasks.gif"));
 if ($authenticationManager->hasAccess('aclReports'))
 	$commandMenu->add(new IconTextCommand("Reports", true, "reports.php", "images/icon_reports.gif"));
 if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	$commandMenu->add(new IconTextCommand("Users", true, "user_maint.php", "images/icon_users.gif"));
+	$commandMenu->add(new IconTextCommand("User-Rates", true, "rate_maint.php", "images/icon_rates.gif"));
 	$commandMenu->add(new IconTextCommand("Configuration", true, "config.php", "images/icon_configuration.gif"));
 }
 if (!$authenticationManager->usingLDAP())

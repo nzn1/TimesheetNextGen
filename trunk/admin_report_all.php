@@ -56,7 +56,7 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
-						<? echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
+						<? echo strftime('%B %Y',mktime(0,0,0,$month, 1, $year)); ?>
 						</td>
 						<td  align="center" >
 						<a href="#" onclick="javascript:esporta('project')" ><img src="images/export_data.gif" name="esporta_dati" border=0></a>

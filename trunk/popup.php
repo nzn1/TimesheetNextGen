@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/popup.php,v 1.11 2005/05/17 03:38:37 vexil Exp $
+// $Header: /cvsroot/tsheet/timesheet.php/popup.php,v 1.12 2005/05/24 03:15:05 vexil Exp $
 
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -94,8 +94,21 @@ include("client_proj_task_javascript.inc");
 function resizePopupWindow() {
 	//now resize the window
 	var outerTable = document.getElementById('outer_table');
-	var newWidth = outerTable.offsetWidth + window.outerWidth - window.innerWidth;
-	var newHeight = outerTable.offsetHeight + window.outerHeight - window.innerHeight;
+	var innerWidth = window.innerWidth;
+	var outerWidth = window.outerWidth;
+	if (innerWidth == null || outerWidth == null) {
+		innerWidth = document.body.offsetWidth;
+		outerWidth = innerWidth + 28;
+	}
+	var innerHeight = window.innerHeight;
+	var outerHeight = window.outerHeight;
+	if (innerHeight == null || outerHeight == null) {
+		innerHeight = document.body.offsetHeight;
+		outerHeight = innerHeight + 30;
+	}
+
+	var newWidth = outerTable.offsetWidth + outerWidth - innerWidth;
+	var newHeight = outerTable.offsetHeight + outerHeight - innerHeight;
 	window.resizeTo(newWidth, newHeight);
 }
 

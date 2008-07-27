@@ -111,10 +111,14 @@ include ("banner.inc");
 			$data["organisation"] = stripslashes($data["organisation"]);
 			$data["description"] = stripslashes($data["description"]);
 
-			list($billqh, $bill_num) = dbquery("SELECT sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, ".
+			list($billqh, $bill_num) = dbquery(
+					"SELECT sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, ".
 						"sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))) as billed ".
-						"FROM $TIMES_TABLE, $USER_TABLE ".
-						"WHERE end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] AND $USER_TABLE.username = $TIMES_TABLE.uid ");
+						"FROM $TIMES_TABLE, $ASSIGNMENTS_TABLE, $RATE_TABLE ".
+						"WHERE end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] ".
+						"AND $ASSIGNMENTS_TABLE.proj_id = $data[proj_id] ".
+						"AND $ASSIGNMENTS_TABLE.rate_id = $RATE_TABLE.rate_id ".
+						"AND $ASSIGNMENTS_TABLE.username = $TIMES_TABLE.uid ");
 			$bill_data = dbResult($billqh);
 
 			//start the row
@@ -144,6 +148,7 @@ include ("banner.inc");
 												<td align="right" valign="top" nowrap>
 													<span class="label">Actions:</span>
 													<a href="proj_edit.php?client_id=<? echo $client_id; ?>&proj_id=<?php echo $data["proj_id"]; ?>">Edit</a>,
+													<a href="project_user_rates_action.php?proj_id=<?php echo $data["proj_id"]; ?>&action=show_users">Bill Rates</a>,
 													<a href="javascript:delete_project(<? echo $client_id; ?>,<?php echo $data["proj_id"]; ?>);">Delete</a>
 												</td>
 											</tr>

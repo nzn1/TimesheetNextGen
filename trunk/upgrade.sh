@@ -6,8 +6,8 @@ DATETIME=`date +%Y-%m-%d_%H-%M-%S`
 DB_BACKUP_FILE="timesheet-backup-${DATETIME}.sql";
 
 echo "###################################################################"
-echo "# Timesheet.php $TIMESHEET_NEW_VERSION (c) 1998-1999 Peter D. Kovacs               #"
-echo "#                   (c) 2004 Dominic J. Gamble, Advancen          #"
+echo "# TimesheetNextGen $TIMESHEET_NEW_VERSION"
+echo "# (c) 2008 Tsheetx Development Team                               #"
 echo "###################################################################"
 echo "# This program is free software; you can redistribute it and/or   #"
 echo "# modify it under the terms of the GNU General Public License     #"
@@ -277,12 +277,5 @@ echo "need the php LDAP modules for apache, or LDAP compiled into your"
 echo "Apache PHP module. For more information check the PHP documentation"
 echo "at http://www.php.net"
 echo ""
-echo "If you have any questions or comments, or would just like to say"
-echo "thanks, please contact dominic@advancen.com"
-echo ""
-echo "If you find this program useful we ask that you make a donation to"
-echo "help fund further development of timesheet.php for everyones "
-echo "benefit. You can also sponsor specific changes for features which"
-echo "you would like to see in timesheet.php."
-echo ""
+
 

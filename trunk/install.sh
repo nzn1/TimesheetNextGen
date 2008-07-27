@@ -4,8 +4,8 @@ TIMESHEET_NEW_VERSION="1.3.1";
 TIMESHEET_LAST_VERSION="1.2.1";
 
 echo "###################################################################"
-echo "# Timesheet.php $TIMESHEET_NEW_VERSION (c) 1998-1999 Peter D. Kovacs               #"
-echo "#                   (c) 2004 Dominic J. Gamble, Advancen          #"
+echo "# TimesheetNextGen $TIMESHEET_NEW_VERSION "
+echo "# (c) 2008 Tsheetx Development Team                               #"
 echo "###################################################################"
 echo "# This program is free software; you can redistribute it and/or   #"
 echo "# modify it under the terms of the GNU General Public License     #"
@@ -184,7 +184,7 @@ mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet.sq
 
 if [ $? != 0 ]; then
 	echo ""
-	echo "An unexpected error occured when creating the tables. Please report this to dominic@advancen.com"
+	echo "An unexpected error occured when creating the tables. Please report this."
 	exit 1;
 fi
 
@@ -274,13 +274,13 @@ echo -n "Please enter a password for the account:"
 read ADMIN_PASS
 
 echo -n "INSERT INTO $TABLE_PREFIX" > sql.tmp
-echo -n "user VALUES ('$ADMIN_USER',10,$DBPASSWORDFUNCTION('" >> sql.tmp
+echo -n "user (username,level,password,first_name,last_name) VALUES ('$ADMIN_USER',10,$DBPASSWORDFUNCTION('" >> sql.tmp
 echo -n $ADMIN_PASS >> sql.tmp
-echo "'),'.*','Timesheet','Admin','','','0.00','','OUT','1');" >> sql.tmp
+echo "'),'Timesheet','Admin')" >> sql.tmp
 mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < sql.tmp
 
 echo -n "INSERT INTO $TABLE_PREFIX" > sql.tmp
-echo -n "assignments VALUES(1,'$ADMIN_USER');" >> sql.tmp
+echo -n "assignments VALUES(1,'$ADMIN_USER', 1);" >> sql.tmp
 mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < sql.tmp
 
 echo -n "INSERT INTO $TABLE_PREFIX" > sql.tmp
@@ -301,13 +301,5 @@ echo "at http://www.php.net"
 echo ""
 echo "Once that is done, point your browser to the installation and log"
 echo "in as $ADMIN_USER with the password you gave above. "
-echo ""
-echo "If you have any questions or comments, or would just like to say"
-echo "thanks, please contact dominic@advancen.com"
-echo ""
-echo "If you find this program useful we ask that you make a donation to"
-echo "help fund further development of timesheet.php for everyones "
-echo "benefit. You can also sponsor specific changes for features which"
-echo "you would like to see in timesheet.php."
 echo ""
 
