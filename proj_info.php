@@ -59,10 +59,14 @@ include ("header.inc");
 			$data["organisation"] = stripslashes($data["organisation"]);
 			$data["description"] = stripslashes($data["description"]);
 
-			list($billqh, $bill_num) = dbquery("SELECT sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, ".
+			list($billqh, $bill_num) = dbquery(
+					"SELECT sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, ".
 						"sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))) as billed ".
-						"FROM $TIMES_TABLE, $USER_TABLE ".
-						"WHERE end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] AND $USER_TABLE.username = $TIMES_TABLE.uid ");
+						"FROM $TIMES_TABLE, $ASSIGNMENTS_TABLE, $RATE_TABLE ".
+						"WHERE end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] ".
+						"AND $ASSIGNMENTS_TABLE.proj_id = $data[proj_id] ".
+						"AND $ASSIGNMENTS_TABLE.rate_id = $RATE_TABLE.rate_id ".
+						"AND $ASSIGNMENTS_TABLE.username = $TIMES_TABLE.uid ");
 			$bill_data = dbResult($billqh);
 
 			//start the row

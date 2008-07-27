@@ -66,12 +66,12 @@ elseif ($action == "add") {
 	while (list(,$username) = each($assigned)) {
 		if ($username == $project_leader)
 			$leader_added = true;
-		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username')");
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1)");
 		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
 	}
 	if (!$leader_added) {
 		// Add the project leader.
-		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$project_leader')");
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$project_leader', 1)");
 		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$project_leader')");
 	}
 
@@ -98,7 +98,7 @@ elseif ($action == "edit") {
 	if ($assigned) {
 		dbQuery("DELETE FROM $ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
 		while (list(,$username) = each($assigned)) {
-			dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username')");
+			dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1)");
 		}
 	}
 

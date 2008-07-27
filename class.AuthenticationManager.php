@@ -378,7 +378,6 @@ class AuthenticationManager {
 		else
 			$firstName = $attributes['givenName'][0];
 
-		$phone = isset($attributes['telephoneNumber']) ? $attributes['telephoneNumber'][0]: "";
 		$emailAddress = isset($attributes['mail']) ? $attributes['mail'][0]: "";
 		$billRate = 100;
 
@@ -386,16 +385,16 @@ class AuthenticationManager {
 		if (!$this->userExists($username)) {
 			//create the user
 			dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, last_name, " .
-						"email_address, phone, bill_rate, time_stamp, status) " .
+						"email_address, time_stamp, status) " .
 //						"VALUES ('$username',1,$DATABASE_PASSWORD_FUNCTION('$password'),'$firstName',".
 						"VALUES ('$username',1,'','$firstName',".
-						"'$lastName','$emailAddress','$phone','$billRate',0,'OUT')");
-			dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username' )"); // add default project.
+						"'$lastName','$emailAddress',0,'OUT')");
+			dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
 			dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
 		}
 		else {
 			//get the existing user details
-			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address, phone, bill_rate " .
+			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address, " .
 																"FROM $USER_TABLE WHERE username='$username'");
 			$existingUserDetails = dbResult($qh);
 
@@ -404,16 +403,12 @@ class AuthenticationManager {
 				$firstName = $existingUserDetails['first_name'];
 			if ($lastName == "")
 				$lastName = $existingUserDetails['last_name'];
-			if ($phone == "")
-				$phone = $existingUserDetails['phone'];
 			if ($emailAddress == "")
 				$emailAddress = $existingUserDetails['email_address'];
-			if ($existingUserDetails['bill_rate'] != 0)
-				$billRate = $existingUserDetails['bill_rate'];
 
 			//update the users details
 			dbquery("UPDATE $USER_TABLE SET first_name='$firstName', last_name='$lastName', ".
-								"email_address='$emailAddress', phone='$phone', bill_rate='$billRate' ".
+								"email_address='$emailAddress' ".
 								"WHERE username='$username'");
 		}
 

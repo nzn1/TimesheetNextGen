@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/admin_report_specific_user.php,v 1.11 2005/05/23 10:42:46 vexil Exp $
+// $Header: /cvsroot/tsheet/timesheet.php/admin_report_specific_user.php,v 1.11 2005/05/23 10:42:46 vexil Exp $ modified by ivan_nz 25/08/08
 
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -179,7 +179,7 @@ $grand_total_time = 0;
 
 				$current_project_title = stripslashes($data["title"]);
 				print "<tr><td valign=\"top\" colspan=\"4\" class=\"calendar_cell_disabled_right\">".
-							"<a href=\"javascript:void(0)\" onclick=\"javascript:window.open('proj_info.php?proj_id=$data[proj_id]','Project Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$current_project_title</a>\n";
+							"<a href=\"javascript:void(0)\" ONCLICK=window.open(\"proj_info.php?proj_id=$data[proj_id]\",\"Info\",\"location=0,directories=no,status=no,menubar=no,resizable=1,scrollbar=yes,width=500,height=200\") class=\"outer_table_action\">$current_project_title</a>\n";
 							"</td></tr>\n";
 				$total_time = 0;
 			}
@@ -188,7 +188,7 @@ $grand_total_time = 0;
 			if ($last_task_id != $data["task_id"]) {
 				$last_task_id = $data["task_id"];
 				$current_task_name = stripslashes($data["name"]);
-				print "<a href=\"javascript:void(0)\" onclick=\"javascript:window.open('task_info.php?task_id=$data[task_id]','Task Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=300,height=150')\">$current_task_name</a>&nbsp;\n";
+				print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"task_info.php?task_id=$data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,scrollbar=yes,width=500,height=200\")>$current_task_name</a>&nbsp;\n";
 			}
 			print "&nbsp;</td>\n\t<td valign=\"top\" align=\"left\" width=\"8%\" class=\"calendar_cell_right\">$data[start_date]:&nbsp;&nbsp;</td>\n\t";
 			print "</td>\n\t<td valign=\"top\" align=\"left\" class=\"calendar_cell_right\">";
@@ -196,11 +196,13 @@ $grand_total_time = 0;
 			else print "&nbsp;";
 			print "</td>\n\t";
 			print "<td valign=\"bottom\" align=\"right\" width=\"5%\" class=\"calendar_cell_right\">\n\t\t";
-			print "<a href=\"javascript:void(0)\" onclick=\"javascript:window.open(" .
-						"'trans_info.php?trans_num=$data[trans_num]'" .
-						",'Task Event Info','location=0,directories=no" .
-						",status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">";
-			print "&nbsp;&nbsp;$data[diff_time]<a>\n\t</td>\n</tr>\n";
+			print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"trans_info.php?trans_num=$data[trans_num]\",\"TransactionInfo\",\"location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200\")>$data[diff_time]</a>\n\t</td>\n</tr>\n";			
+
+//			print "<a href=\"javascript:void(0)\" onclick=\"javascript:window.open(" .
+//						"'trans_info.php?trans_num=$data[trans_num]'" . 
+//						",'Task Event Info','location=0,directories=no" .
+//						",status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">";
+//			print "&nbsp;&nbsp;$data[diff_time]<a>\n\t</td>\n</tr>\n";
 
 			//print "<a href=\"javascript:void(0)\" onclick=\"javascript:window.open('trans_info.php?trans_num=$data[trans_num]','Task Event Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$data[start_date]: $data[diff_time]</a>\n";
 		//					"</tr></td>\n";

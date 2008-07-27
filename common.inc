@@ -1,5 +1,5 @@
 <?php {
-//$Header: /cvsroot/tsheet/timesheet.php/common.inc,v 1.23 2005/05/23 05:39:39 vexil Exp $
+//$Header: /cvsroot/tsheet/timesheet.php/common.inc,v 1.24 2005/09/12 23:58:09 vexil Exp $
 if (!defined("COMMON_INC")) {
 		define("COMMON_INC", 1);
 
@@ -415,10 +415,46 @@ if (!defined("COMMON_INC")) {
 	}
 
 
+	/*
+	 * Function to build an HTML uni-select widget.
+	 * Parameters:
+	 *     $name: Name of the input select
+	 *     $values: An array of strings. Each string is of the form
+	 *         value_part:display_part
+	 *     $selected: If supplied, it contains the value_part which should
+	 *         be selected by default. Its default value is NULl.
+	 * Returns: A string containing the text to build the required uni-select
+	 *     widget.
+	 */
+	function build_uni_select($name, $values, $selected=NULL) {
+		if (empty($name)) {
+			echo "build_uni_select: first parameter must be non-empty string";
+			return "";
+		}
+		if (!is_array($values)) {
+			echo "build_uni_select: second parameter is not an array";
+			return "";
+		}
+		$ret = "<select name=\"" . $name . "\" id=\"" . $name . "\">\n";
+		$len = count($values);
+		$idx = 0;
+		while ($idx < $len) {
+			$val = explode(':', $values[$idx], 2);
+			if (!(empty($selected)) && ($val[0] == $selected)) {
+				$ret .= "<option value=\"$val[0]\" selected>$val[1]</option>\n";
+			} else {
+				$ret .= "<option value=\"$val[0]\">$val[1]</option>\n";
+			}
+			$idx++;
+		}
+		$ret .= "</select>\n";
+		return $ret;
+	}
+
 	function user_select_droplist($username='', $disabled='false') {
 		include("table_names.inc");
 
-		$query = "SELECT uid, username, first_name, last_name FROM $USER_TABLE ORDER BY first_name, last_name";
+		$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE ORDER BY last_name, first_name";
 
 		print "<select name=\"uid\" onChange=\"submit()\" style=\"width: 100%;\"";
 		if ($disabled == 'true')
@@ -429,7 +465,7 @@ if (!defined("COMMON_INC")) {
 		if ($num > 0) {
 			while ($return = dbResult($qh)) {
 				$current_username = stripslashes($return["username"]);
-				$current_name = stripslashes($return["first_name"] . " " . $return["last_name"] );
+				$current_name = stripslashes($return["last_name"] . " " . $return["first_name"] );
 				print "<option value=\"$current_username\"";
 				if ($current_username == $username)
 					print " selected";
@@ -474,9 +510,9 @@ if (!defined("COMMON_INC")) {
 			}
 			print "</select></td><td width=\"0\">";
 			print "<input type=\"button\" name=\"info\" value=\"Info\"";
-			print "	onclick=window.open(\"client_info.php?client_id=$client_id\",";
-			print "	\"Client_Info\",";
-			print "	\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\")>";
+			print "onclick=window.open(\"client_info.php?client_id=$client_id\",";
+			print "\"Client_Info\",";
+			print "\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\")>";
 			print "</td></tr></table>";
 		}
 		else
@@ -491,6 +527,7 @@ if (!defined("COMMON_INC")) {
 							"title, " .
 							"organisation " .
 							"FROM $PROJECT_TABLE, $CLIENT_TABLE ".
+							"WHERE $PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id ".
 							"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
 		print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";

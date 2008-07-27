@@ -29,6 +29,7 @@ SERVERS WITHOUT SHELL ACCESS AND WINDOWS SYSTEMS
 	__DBNAME__ the name of the database you want to create (e.g. "timesheet")
 	__DBHOST__ the hostname which mysql is runnning on
 	__DBPASS__ the password for the username which will access it
+	__DBPASSWORDFUNCTION__ either "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. (See footnote)
 
 	Now rename it to "timesheet_create.sql"
 
@@ -58,6 +59,7 @@ If you don't use this script, be sure to set the privileges on the new database.
 	$DATABASE_USER - (The username which you will connect to the database with)
 	$DATABASE_PASS - (The password which you will connect to the database with)
 	$DATABASE_DB - (The name of the database you created - usually 'timesheet')
+	$DATABASE_PASSWORD_FUNCTION (either "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. [See footnote])
 
 	Now rename this fine to "database_credentials.inc"
  
@@ -73,3 +75,20 @@ If you don't use this script, be sure to set the privileges on the new database.
 6. Upload the files to your web server.
 
 7. Test the installation by logging in to 'login.php' with the username 'admin', and the password entered above.
+FOOTNOTE
+--------
+
+Due to changes to MySQL in version 4.1, the way that passwords are stored and
+accessed has changed. There are 3 different functions and you must choose the
+correct one according to your version of MySQL.
+
+You can determine your local version of mysql by typing
+
+mysql --version
+
+You will need to choose one of the folling password functions:
+
+SHA1 (Use this for version 4.1 and later)
+PASSWORD (Use this for versions below 4.1)
+OLD_PASSWORD (For versions above 4.1 when SHA1 fails)
+

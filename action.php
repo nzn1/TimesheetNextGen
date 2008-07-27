@@ -1,5 +1,5 @@
 <?
-// $Header: /cvsroot/tsheet/timesheet.php/action.php,v 1.9 2005/05/10 11:42:52 vexil Exp $
+// $Header: /cvsroot/tsheet/timesheet.php/action.php,v 1.10 2005/06/17 01:42:51 vexil Exp $
 
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -199,7 +199,7 @@ else
 		list($qh,$num) = dbQuery($querystring);
 		$data = dbResult($qh);
 		if ($num == 0)
-			errorPage("You are not currently clocked on. You must clock on before you can clock off.", $fromPopupWindow);
+			errorPage("You are not currently clocked on. You must clock on before you can clock off. If you have just clocked on please wait at least one minute before clocking off", $fromPopupWindow);	
 		//also check that the clockoff time is after the clockon time
 		else if ($data["valid"] == 0)
 			errorPage("You must clock off <i>after</i> you clock on.", $fromPopupWindow);

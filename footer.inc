@@ -8,11 +8,10 @@ parse_and_echo(stripslashes($configData["footerhtml"]));
 <table width="100%" class="grey_area">
 	<tr>
 		<td class="timesheet_logo">
-			Timesheet.php
+			TimesheetNextGen
 		</td>
 		<td align="left">
-			&copy; 2002-2005 Dominic J. Gamble, <a href="http://www.advancen.com">Advancen</a><br>
-			&copy; 1998-1999 Peter D. Kovacs.
+			&copy; 2008 <a href="http://sourceforge.net/projects/tsheetx">Tsheetx Development Team</a><br>
 		</td>
 		<td align="right">
 			Usage under terms of <A HREF="http://www.gnu.org/copyleft/gpl.html">GPL</a>.

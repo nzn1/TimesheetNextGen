@@ -1,5 +1,5 @@
 <?php
-//$Header: /cvsroot/tsheet/timesheet.php/calendar.php,v 1.9 2005/05/23 05:39:38 vexil Exp $
+//$Header: /cvsroot/tsheet/timesheet.php/calendar.php,v 1.10 2006/03/15 13:24:28 raghuprasad Exp $
 
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -199,7 +199,7 @@ include ("banner.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" alt="spacer" width="150" height="1" /></td>
 											</tr>
 										</table>
 									</td>
@@ -211,7 +211,7 @@ include ("banner.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" alt="spacer" width="150" height="1" /></td>
 											</tr>
 										</table>
 									</td>
@@ -219,7 +219,7 @@ include ("banner.inc");
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-							<? echo date('F Y',mktime(0,0,0,$month, 1, $year)); ?>
+							<? echo strftime('%B %Y',mktime(0,0,0,$month, 1, $year)); ?>
 						</td>
 						<td align="right" nowrap>
 							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?client_id=<? echo $client_id; ?>&proj_id=<? echo $proj_id; ?>&task_id=<? echo $task_id; ?>&year=<? echo $last_year ?>&month=<? echo $last_month ?>&day=<? echo $todayDay; ?>" class="outer_table_action">Prev</a>
@@ -305,7 +305,7 @@ include ("banner.inc");
 		print "<tr><td valign=\"top\"><A HREF=\"daily.php?month=$month&year=$year&".
 			"day=$day&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$day</a></td>";
 		print "<td valign=\"top\" align=\"right\"><a href=\"$popup_href\" class=\"action_link\">".
-				"<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\">".
+    				 "<img src=\"images/add.gif\" alt=\"spacer\" width=\"11\" height=\"11\" border=\"0\">".
 				"</a></td>";
 		print "</tr>";
 		print "</table></td></tr>";
