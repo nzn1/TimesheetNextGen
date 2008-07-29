@@ -244,7 +244,7 @@ else {
 			 * Update by robsearles 26 Jan 2008
 			 * Added a "Clock Off" link to make it easier to stop timing a task
 			 */
-			$stop_link = '<a href="action.php?client_id='.$data['client_id'].'&proj_id='.
+			$stop_link = '<a href="clock_action.php?client_id='.$data['client_id'].'&proj_id='.
 				$data['proj_id'].'&task_id='.$data['task_id'].
 				'&clock_off_check=on&clock_off_radio=now" class="action_link\">Clock Off</a>, ';
 			print $stop_link;
@@ -296,7 +296,7 @@ else {
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
-		<form action="action.php" method="post" name="addForm" id="theForm">
+		<form action="clock_action.php" method="post" name="addForm" id="theForm">
 		<input type="hidden" name="destination" value="daily">
 		<input type="hidden" name="year" value="<?echo $year; ?>">
 		<input type="hidden" name="month" value="<?echo $month; ?>">

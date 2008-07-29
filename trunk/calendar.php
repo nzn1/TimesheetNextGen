@@ -169,7 +169,7 @@ include ("header.inc");
 echo "<body width=\"100%\" height=\"100%\"";
 include ("body.inc");
 if (isset($popup))
-	echo "onLoad=window.open(\"popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
+	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
 echo ">\n";
 
 include ("banner.inc");
@@ -291,7 +291,7 @@ include ("banner.inc");
 		/*print "<tr><td valign=\"top\"><tt><A HREF=\"daily.php?month=$month&year=$year&".
 			"day=$day&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$day</a></tt></td></tr>";*/
 
-		$popup_href = "javascript:void(0)\" onclick=window.open(\"popup.php".
+		$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
 											"?client_id=$client_id".
 											"&proj_id=$proj_id".
 											"&task_id=$task_id".

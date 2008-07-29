@@ -1,5 +1,5 @@
 <?
-// $Header: /cvsroot/tsheet/timesheet.php/action.php,v 1.10 2005/06/17 01:42:51 vexil Exp $
+// $Header: /cvsroot/tsheet/timesheet.php/clock_action.php,v 1.10 2005/06/17 01:42:51 vexil Exp $
 
 // Authenticate
 require("class.AuthenticationManager.php");

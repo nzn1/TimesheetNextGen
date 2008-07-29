@@ -567,7 +567,7 @@ if (!defined("COMMON_INC")) {
 	?>
 <HTML>
 <BODY BGCOLOR="#FFFFFF" >
-<FORM ACTION="action.php" METHOD=POST>
+<FORM ACTION="clock_action.php" METHOD=POST>
 <TABLE BORDER=1 ALIGN=CENTER>
 	<?{
 	if ($destination)
