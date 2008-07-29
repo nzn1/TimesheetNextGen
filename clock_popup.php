@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/popup.php,v 1.12 2005/05/24 03:15:05 vexil Exp $
+// $Header: /cvsroot/tsheet/timesheet.php/clock_popup.php,v 1.12 2005/05/24 03:15:05 vexil Exp $
 
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -137,7 +137,7 @@ function resizePopupWindow() {
 <? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<form action="action.php" method="post" name="addForm" id="theForm">
+		<form action="clock_action.php" method="post" name="addForm" id="theForm">
 		<input type="hidden" name="year" value="<?echo $year; ?>">
 		<input type="hidden" name="month" value="<?echo $month; ?>">
 		<input type="hidden" name="day" value="<?echo $day; ?>">

@@ -533,7 +533,7 @@ for ($i=0; $i<$num4; $i++) {
 echo "<body width=\"100%\" height=\"100%\" onLoad=\"populateExistingSelects();\"";
 include ("body.inc");
 if (isset($popup))
-	echo "onLoad=window.open(\"popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
+	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
 echo ">\n";
 
 include ("banner.inc");

@@ -88,7 +88,7 @@ function resizePopupWindow() {
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
-		<form action="action.php" method="post" name="mainForm" id="theForm">
+		<form action="clock_action.php" method="post" name="mainForm" id="theForm">
 		<input type="hidden" name="year" value="<? echo date('Y'); ?>">
 		<input type="hidden" name="month" value="<? echo date('m'); ?>">
 		<input type="hidden" name="day" value="<? echo date('j'); ?>">

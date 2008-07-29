@@ -41,7 +41,7 @@ include ("header.inc");
 <?
 include ("banner.inc");
 ?>
-<form action="action.php" method="post">
+<form action="clock_action.php" method="post">
 	<input type="hidden" name="origin" value="<?php echo $origin; ?>">
 	<input type="hidden" name="destination" value="<?php echo $destination; ?>">
 	<input type="hidden" name="clock_on_time_hour" value="<? echo $clock_on_time_hour; ?>">
