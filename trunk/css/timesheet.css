@@ -125,7 +125,7 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 
 .command_current { color: #6D72C6; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; font-size: 11; }
 
-.login_image { background-image: url(/timesheet/images/logo.gif); width: 136; height: 46; margin-right: 20; }
+.login_image { background-image: url(../images/logo.gif); width: 136; height: 46; margin-right: 20; }
 
 .face_padding_cell { padding: 5px; background: #FFFFFF; }
 

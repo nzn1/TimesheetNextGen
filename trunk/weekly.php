@@ -101,7 +101,8 @@ $query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
 						"$TASK_TABLE.name AS taskName, " .
 						"$TIMES_TABLE.proj_id, " .
 						"$TIMES_TABLE.task_id, " .
-						"$CLIENT_TABLE.organisation AS clientName " .
+						"$CLIENT_TABLE.organisation AS clientName, " .
+						"$CLIENT_TABLE.client_id AS clientId " .
 						"FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE WHERE " .
 						"uid='$contextUser' AND ";
 
@@ -187,7 +188,7 @@ include ("banner.inc");
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-							Week Start: <? echo strftime('%a %d %B %Y',mktime(0,0,0,$startMonth, $startDay, $startYear)); ?>
+							Week Start: <? echo date('D F j, Y',mktime(0,0,0,$startMonth, $startDay, $startYear)); ?>
 						</td>
 						<td align="right" nowrap>
 							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?proj_id=<?echo $proj_id; ?>&task_id=<? echo $task_id; ?>&year=<?echo $previousWeekYear ?>&month=<? echo $previousWeekMonth ?>&day=<? echo $previousWeekDay ?>" class="outer_table_action">Prev</a>
@@ -204,7 +205,7 @@ include ("banner.inc");
 			<td>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 					<tr class="inner_table_head">
-						<td class="inner_table_column_heading" align="center">
+						<td class="inner_table_column_heading" align="left">
 <?php
 
 						if ($client_id == 0)
@@ -223,7 +224,7 @@ include ("banner.inc");
 						for ($i=0; $i<7; $i++) {
 							$currentDayStr = strftime("%A", $currentDayDate);
 							$currentDayDate += A_DAY;
-							print "	<td class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>\n";
+							print "	<td class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>";
 						}
 						?>
 						<td align="center">&nbsp;</td>
@@ -243,13 +244,15 @@ include ("banner.inc");
 		var $projectTitle;
 		var $taskName;
 		var $clientName;
+		var $clientId;
 
-		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName) {
+		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName, $clientId) {
 			parent::Pair($value1, $value2);
 			$this->projectId = $projectId;
 			$this->projectTitle = $projectTitle;
 			$this->taskName = $taskName;
 			$this->clientName = $clientName;
+			$this->clientId = $clientId;
 		}
 	}
 
@@ -292,6 +295,7 @@ include ("banner.inc");
 		$currentProjectTitle = $data["projectTitle"];
 		$currentProjectId = $data["proj_id"];
 		$currentClientName = $data["clientName"];
+		$currentClientId = $data["clientId"];
 
 		//debug
 		//print "<p>taskId:$currentTaskId '$data[taskName]', start time:$data[start_time_str], end time:$data[end_time_str]</p>";
@@ -341,7 +345,8 @@ include ("banner.inc");
 											$currentProjectId,
 											$currentProjectTitle,
 											$currentTaskName,
-											$currentClientName);
+											$currentClientName,
+											$currentClientId);
 
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
@@ -418,14 +423,14 @@ include ("banner.inc");
 
 		//should we print the client name?
 		if ($client_id == 0)
-			print "<div class=\"client_name_small\">$matchedPair->clientName</div>";
+			print "<span class=\"client_name_small\">$matchedPair->clientName / </span>";
 
 		//print the project title
 		if ($proj_id == 0)
-			print "<div class=\"project_name_small\">$matchedPair->projectTitle</div>";
+			print "<span class=\"project_name_small\">$matchedPair->projectTitle / </span>";
 
 		//print the task name
-		print "<div class=\"task_name_small\">$matchedPair->taskName</div>";
+		print "<span class=\"task_name_small\">$matchedPair->taskName</span>";
 		print "</td>\n";
 
 		//print the spacer column
@@ -464,7 +469,7 @@ include ("banner.inc");
 						$emptyCell = false;
 					else
 						//print a break for the next entry
-						print "<br>";
+						print "&nbsp;"; //"<br>";
 
 					//format printable times
 					$formattedStartTime = $currentTaskEntry["start"];
@@ -493,10 +498,24 @@ include ("banner.inc");
 				}
 			}
 
-			//make sure the cell has at least a space in it so that its rendered by the browser
-			if ($emptyCell)
-				print "&nbsp;";
-
+			//If the cell is empty put a popup link in the cell
+			//if ($emptyCell) {
+				$cellDay = date("j", $todaysStartTime);
+				$cellMonth = date("m", $todaysStartTime);
+				$cellYear = date("Y", $todaysStartTime);				
+				$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
+					"?client_id=$matchedPair->clientId".
+					"&proj_id=$matchedPair->projectId".
+					"&task_id=$matchedPair->value1".
+					"&year=$cellYear".
+					"&month=$cellMonth".
+					"&day=$cellDay".
+					"&destination=$_SERVER[PHP_SELF]".
+					"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+				print "<a href=\"$popup_href\" class=\"action_link\">".
+					"<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\">".
+					"</a>";
+			//}
 			//close the times class
 			print "</span>";
 
@@ -553,7 +572,8 @@ include ("banner.inc");
 											"&destination=$_SERVER[PHP_SELF]".
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 		print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
-		print "<a href=\"$popup_href\" class=\"action_link\">Add</a></td>\n";
+		print "<a href=\"$popup_href\" class=\"action_link\">Add</a>,";
+		print "<a href=\"daily.php?month=$currentMonth&year=$currentYear&day=$currentDay\">Edit</a></td>\n";
 		$currentDayDate += A_DAY;
 	}
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";

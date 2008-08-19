@@ -105,8 +105,8 @@ else {
 		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
 		print "<td class=\"calendar_cell_middle\">$emailField</td>";
 		print "<td class=\"calendar_cell_disabled_right\">\n";
-		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>,&nbsp;\n";
-		print "	<a href=\"client_edit.php?client_id=$data[client_id]\">Edit</a>\n";
+		print "	<a href=\"client_edit.php?client_id=$data[client_id]\">Edit</a>,&nbsp;\n";
+		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>\n";
 		print "</td>\n";
 	}
 }

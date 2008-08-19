@@ -20,7 +20,7 @@ if ($client_id == 0)
 	$client_id = getFirstClient();
 
 // Calculate the previous month.
-setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time, $time_middle_month);
+setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
 
 function format_seconds($seconds) {
 	$temp = $seconds;
@@ -100,7 +100,7 @@ $grand_total_time = 0;
 ?>
 <html>
 <head>
-<title>Timesheet.php Report: Hours for a specific client</title>
+<title>Report: Hours for a specific client</title>
 <?php include ("header.inc"); ?>
 </head>
 <body <?php include ("body.inc"); ?> >
@@ -109,6 +109,7 @@ $grand_total_time = 0;
 <form action="admin_report_specific_client.php" method="get">
 <input type="hidden" name="month" value="<? echo $month; ?>">
 <input type="hidden" name="year" value="<? echo $year; ?>">
+<input type="hidden" name="mode" value="<? echo $mode; ?>">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -130,11 +131,11 @@ $grand_total_time = 0;
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<? echo strftime('%B %Y',mktime(0,0,0,$month, 1, $year)); ?>
+						<? echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						</td>
 						<td align="right" nowrap>
 						<?
-							printPrevNext($time, $next_week, $prev_week, $next_month, $prev_month, $time_middle_month,"client_id=$client_id", $mode);
+							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "client_id=$client_id", $mode);
 						?>
 						</td>
 					</tr>

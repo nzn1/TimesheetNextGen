@@ -1,4 +1,4 @@
-Timesheet.php installation.
+TimesheetNextGen installation.
 
 UNIX SYSTEMS WITH SHELL ACCESS
 
@@ -63,7 +63,7 @@ If you don't use this script, be sure to set the privileges on the new database.
 
 	Now rename this fine to "database_credentials.inc"
  
-5. Set the admin password for timesheet.php, by running the following SQL command:
+5. Set the admin password for TimesheetNextGen, by running the following SQL command:
 
 	INSERT INTO user VALUES ('admin', 10, PASSWORD('mypassword'), '.*', 'Timesheet', 'Admin', '', '', '0.00', '', 'OUT', '1');
 
@@ -75,6 +75,7 @@ If you don't use this script, be sure to set the privileges on the new database.
 6. Upload the files to your web server.
 
 7. Test the installation by logging in to 'login.php' with the username 'admin', and the password entered above.
+
 FOOTNOTE
 --------
 

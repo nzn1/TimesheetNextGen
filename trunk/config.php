@@ -22,7 +22,7 @@ $resultset = dbResult($qh);
 ?>
 <html>
 <head>
-<title>Timesheet.php Configuration Parameters</title>
+<title>Timesheet Configuration Parameters</title>
 <?
 include ("header.inc");
 ?>
@@ -222,10 +222,10 @@ include ("banner.inc");
 					</tr>
 					<tr>
 						<td>
-						This form allows you to change the basic operating parameters of timesheet.php.
+						This form allows you to change the basic operating parameters of TimesheetNextGen.
 						Please be careful here, as errors may cause pages not to display properly.
 						Somewhere in one of these, you should include the placeholder %commandMenu%.
-						This is where timesheet.php will place the menu options.
+						This is where TimesheetNextGen will place the menu options.
 						</td>
 					</tr>
 				</table>
@@ -553,7 +553,7 @@ include ("banner.inc");
 					<b>locale</b>:
 				</td>
 				<td align="left" width="100%">
-					The locale in which you want timesheet.php to work. This affects regional settings. Leave it blank if you want to use the system locale. An example locale is <code>en_AU</code>, for Australia.
+					The locale in which you want TimesheetNextGen to work. This affects regional settings. Leave it blank if you want to use the system locale. An example locale is <code>en_AU</code>, for Australia.
 				</td>
 			</tr>
 			<tr>

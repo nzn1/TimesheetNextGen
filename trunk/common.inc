@@ -14,7 +14,7 @@ if (!defined("COMMON_INC")) {
 		$TABLE_BGCOLOR="#b3c4de";	// Background color for table cells
 		$TABLE_BGCOLOR2="#AFAFEF";	// Background color for table cells
 
-		function get_time_date($month, $year, $id, $proj_id, $client_id) {
+		function get_time_date($month, $year, $id, $proj_id=0, $client_id=0) {
 			include("table_names.inc");
 			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 			$configData = dbResult($qhq);
@@ -709,7 +709,7 @@ if (!defined("COMMON_INC")) {
 					</script>
 				</head>
 				<body onLoad="javascript:loadAndClose();">
-					You don't have javascript enabled. Javascript is required for timesheet.php
+					You do not have javascript enabled. Javascript is required for TimesheetNextGen
 				</body>
 			</html>
 		<?
@@ -783,7 +783,7 @@ if (!defined("COMMON_INC")) {
 			return $configData["timeformat"];
 	}
 
-	function setReportDate(&$year, &$month, &$day, &$next_week, &$prev_week, &$next_month, &$prev_month, &$time, &$time_middle_month) {
+	function setReportDate(&$year, &$month, &$day, &$next_week, &$prev_week, &$next_month, &$prev_month, &$time) {
 		// Current date
 		if (!$month) $month = $todayMonth;
 		if (!$year) $year = $todayYear;
@@ -800,7 +800,27 @@ if (!defined("COMMON_INC")) {
 		$prev_month = strtotime("-1 month",$time_middle_month);
 	}
 
-	function printPrevNext($time, $next_week, $prev_week, $next_month, $prev_month, $time_middle_month, $post, $mode = "all") {
+	function printPrevNext($next_week, $prev_week, $next_month, $prev_month, $post, $mode = "all") {
+		if ($mode == "all" || $mode == "yearly") {	
+			$roughly_now =  strtotime("-1 month",$next_month);
+			$next_year =  strtotime("+1 year",$roughly_now);
+			$prev_year =  strtotime("-1 year",$roughly_now);
+			print "<a href=\"$_SERVER[PHP_SELF]?";
+			if ($post) print "$post";
+			print "&month=".date('n',$prev_year).
+				  "&year=".date('Y',$prev_year).
+				  "&day=15".
+				  "&mode=".$mode."\" class=\"outer_table_action\">Prev Year</a>&nbsp;/&nbsp;";
+			print "<a HREF=\"$_SERVER[PHP_SELF]?";
+			if ($post) print "$post";
+			print "&month=".date('n',$next_year).
+				  "&year=".date('Y',$next_year).
+				  "&day=15".
+				  "&mode=".$mode."\" class=\"outer_table_action\">Next Year</a>";
+		}
+		if ($mode == "all") {
+			print "<br>";
+		}
 		if ($mode == "all" || $mode == "monthly") {
 			print "<a href=\"$_SERVER[PHP_SELF]?";
 			if ($post) print "$post";
