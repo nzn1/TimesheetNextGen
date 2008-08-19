@@ -41,7 +41,6 @@ $queryString = "DELETE FROM $TIMES_TABLE WHERE ".
 								"start_time < '$endYear-$endMonth-$endDay 00:00:00'";
 dbQuery($queryString);
 
-//TODO:...
 //TODO: write meaningful todos ;)
 for ($i=0; $i<$totalRows; $i++) {
 	$projectId = $_POST["projectSelect_row" . $i];

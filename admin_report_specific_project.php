@@ -29,7 +29,7 @@ if ($proj_id == 0)
 
 
 // Set default months
-setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time, $time_middle_month);
+setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
 
 function format_seconds($seconds) {
 	$temp = $seconds;
@@ -95,7 +95,7 @@ $grand_total_time = 0;
 ?>
 <html>
 <head>
-<title>Timesheet.php Report: Hours for a specific project</title>
+<title>Report: Hours for a specific project</title>
 <?php include ("header.inc"); ?>
 </head>
 <body <?php include ("body.inc"); ?> >
@@ -140,7 +140,7 @@ $grand_total_time = 0;
 						</td>
 						<td align="right" nowrap>
 						<?
-							printPrevNext($time, $next_week, $prev_week, $next_month, $prev_month, $time_middle_month,"proj_id=$proj_id", $mode);
+							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "proj_id=$proj_id", $mode);
 						?>
 						</td>
 					</tr>

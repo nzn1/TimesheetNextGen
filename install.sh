@@ -17,12 +17,12 @@ echo "# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   #"
 echo "# GNU General Public License for more details.                    #"
 echo "###################################################################"
 
-echo "Welcome to the timesheet.php Installation. This script will attempt to "
-echo "install timesheet.php onto your webserver. Timesheet.php has only been "
+echo "Welcome to the TimesheetNextGen Installation. This script will attempt to "
+echo "install TimesheetNextGen onto your webserver. This has only been "
 echo "tested under PHP4, MySQL, and Apache. Other configurations may work, and "
 echo "if they do not, any efforts to get them to work would be appreciated."
 echo ""
-echo "If you want to upgrade from a previous version of timesheet.php, please "
+echo "If you want to upgrade from a previous version of TimesheetNextGen, please "
 echo "use the upgrade script (upgrade.sh). That script can upgrade versions "
 echo "1.1 thru $TIMESHEET_LAST_VERSION to the current version ($TIMESHEET_NEW_VERSION)"
 echo ""
@@ -62,9 +62,9 @@ if [ "$PASSWORD_FUNCTION_NUMBER" = "2" ]; then
 fi
 
 echo ""
-echo "Timesheet.php can create its tables in an existing database, or can "
+echo "TimesheetNextGen can create its tables in an existing database, or can "
 echo "create a new database called 'timesheet' to store its tables. If you "
-echo "are installing timesheet.php onto a shared server, then it is likely "
+echo "are installing TimesheetNextGen onto a shared server, then it is likely "
 echo "that you do not have permission to create a new database, but you have "
 echo "an existing database which was set up for you by the system administrator."
 echo ""
@@ -129,7 +129,7 @@ else
 		echo ""
 		echo "A new account will be created specifically for accessing the "
 		echo "timesheet database. The username and password will be stored in "
-		echo "the timesheet.php's configuration file 'database_credentials.inc'."
+		echo "the TimesheetNextGen's configuration file 'database_credentials.inc'."
 		echo ""
 		echo -n "Please choose a password for the MySQL timesheet account:"
 		read DBPASS
@@ -156,7 +156,7 @@ else
 fi
 
 echo ""
-echo "Timesheet.php prefixes all tables used with a string, so to avoid "
+echo "TimesheetNextGen prefixes all tables used with a string, so to avoid "
 echo "name clashes with other tables in the database. This prefix is "
 echo " normally 'timesheet_', however you can choose another string to "
 echo "meet your requirements."
@@ -177,7 +177,7 @@ sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > table_names.inc
 sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sample_data.sql.in > sample_data.sql
 
 echo ""
-echo "Timesheet.php installation will now create the necessary tables "
+echo "TimesheetNextGen installation will now create the necessary tables "
 echo "in the $DBNAME database:"
 echo ""
 mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet.sql

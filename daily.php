@@ -13,15 +13,16 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 $dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
+//load local vars from superglobals
+$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
+$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
+$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
+
 if (empty($contextUser))
 	errorPage("Could not determine the context user");
 
 //define the command menu
 include("timesheet_menu.inc");
-
-//check that the client id is valid
-if ($client_id == 0)
-	$client_id = getFirstClient();
 
 //check that project id is valid
 if ($proj_id == 0)
@@ -85,7 +86,7 @@ include("client_proj_task_javascript.inc");
 
 	function delete_entry(transNum) {
 				if (confirm('Are you sure you want to delete this time entry?'))
-					location.href = 'delete.php?client_id=<?php echo $client_id; ?>&proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&trans_num=' + transNum;
+			location.href = 'delete.php?month=<?php echo $month; ?>&year=<?php echo $year; ?>&day=<?php echo $day; ?>&client_id=<?php echo $client_id; ?>&proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&trans_num=' + transNum;
 	}
 
 </script>

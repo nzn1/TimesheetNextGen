@@ -30,7 +30,7 @@ if ($proj_id == 0)
 ?>
 <html>
 <head>
-	<title>Timesheet.php Stopwatch, <? echo $contextUser; ?></title>
+	<title><? echo $contextUser; ?> Stopwatch</title>
 <?php
 include ("header.inc");
 include("client_proj_task_javascript.inc");

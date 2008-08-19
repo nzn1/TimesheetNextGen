@@ -1,6 +1,6 @@
 <?{
 
-//Include file for timesheet.php date related functions
+//Include file for date related functions
 
 	//Base class for a form input. Holds the 'name' parameter
 	class FormInput {

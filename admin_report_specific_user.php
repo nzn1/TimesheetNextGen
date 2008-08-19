@@ -23,7 +23,7 @@ else
 include("timesheet_menu.inc");
 
 // Set default months
-setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time, $time_middle_month);
+setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
 
 function format_seconds($seconds) {
 	$temp = $seconds;
@@ -100,7 +100,7 @@ $grand_total_time = 0;
 ?>
 <html>
 <head>
-<title>Timesheet.php Report: Hours for a specific user</title>
+<title>Report: Hours for a specific user</title>
 <?php include ("header.inc"); ?>
 </head>
 <body <?php include ("body.inc"); ?> >
@@ -143,7 +143,7 @@ $grand_total_time = 0;
 						</td>
 						<td align="right" nowrap>
 						<?
-							printPrevNext($time, $next_week, $prev_week, $next_month, $prev_month, $time_middle_month,"uid=$uid", $mode);
+							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "uid=$uid", $mode);
 						?>
 						</td>
 					</tr>

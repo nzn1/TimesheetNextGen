@@ -24,14 +24,14 @@ if ($action == "add" || $action == "edit") {
 	$task_status = $_REQUEST["task_status"];
 }
 
+//create a time string for >>now<<
+$time_string = date("Y-m-d H:i:00");
+
 if (!isset($action))
 	Header("Location: $HTTP_REFERER");
 elseif ($action == "add") {
 	$name = addslashes($name);
 	$description = addslashes($description);
-
-	//create a time string for >>now<<
-	$time_string = date("Y-m-d H:i:00");
 
 	list($qh, $num) = dbQuery("INSERT INTO $TASK_TABLE (proj_id, name, description, assigned, started, status) VALUES ".
 						"('$proj_id', '$name','$description', ".
@@ -52,7 +52,9 @@ elseif ($action == "edit") {
 
 	$query = "UPDATE $TASK_TABLE SET name='$name',description='$description',".
 				" status='$task_status' ".
-				" WHERE task_id=$task_id";
+	if ($task_status=='Complete')
+		$query .=	",completed='$time_string'";
+	$query .=		" WHERE task_id=$task_id";
 
 	list($qh,$num) = dbquery($query);
 

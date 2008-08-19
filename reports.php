@@ -20,11 +20,11 @@ $uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']: $contextUser;
 include("timesheet_menu.inc");
 
 // Set default months
-setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time, $time_middle_month);
+setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
 
 ?>
 <html>
-<head><title>Timesheet.php Reports Page</title>
+<head><title>Timesheet Reports Page</title>
 <?php include ("header.inc"); ?>
 </head>
 <body <? include ("body.inc"); ?> >
@@ -47,7 +47,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 						</td>
 						<td align="right" nowrap>
 						<?
-							printPrevNext($time, $next_week, $prev_week, $next_month, $prev_month, $time_middle_month,$uid);
+							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "uid=$uid");
 						?>
 						</td>
 					</tr>
