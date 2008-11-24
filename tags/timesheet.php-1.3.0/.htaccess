@@ -1,6 +1,0 @@
-# don't allow people to retrieve non-cgi executable files or our private data
-<FilesMatch \.inc$>
-  deny from all
-</FilesMatch>
-Options +ExecCGI
-DirectoryIndex calendar.php
