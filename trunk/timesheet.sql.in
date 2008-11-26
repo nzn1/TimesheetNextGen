@@ -84,6 +84,8 @@ CREATE TABLE __TABLE_PREFIX__config (
   LDAPBindUsername varchar(255) default '',
   LDAPBindPassword varchar(255) default '',
   LDAPBindByUser tinyint(4) NOT NULL default '0',
+  LDAPReferrals bit(1) default 0,
+  LDAPFallback bit(1) default 0,
   aclStopwatch enum('Admin','Mgr','Basic','None') NOT NULL default 'Basic',
   aclDaily enum('Admin','Mgr','Basic','None') NOT NULL default 'Basic',
   aclWeekly enum('Admin','Mgr','Basic','None') NOT NULL default 'Basic',
