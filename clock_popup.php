@@ -32,8 +32,8 @@ $todayMonth = date("n", $today);
 $todayDay = date("j", $today);
 
 //check that the client id is valid
-if ($client_id == 0 || empty($client_id))
-	$client_id = getFirstClient();
+//if ($client_id == 0 || empty($client_id))
+//	$client_id = getFirstClient();
 
 //check that project id is valid
 if ($proj_id == 0)

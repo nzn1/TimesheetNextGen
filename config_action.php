@@ -58,6 +58,7 @@ $aclClients = $_REQUEST["aclClients"];
 $aclProjects = $_REQUEST["aclProjects"];
 $aclTasks = $_REQUEST["aclTasks"];
 $aclReports = $_REQUEST["aclReports"];
+$aclRates = $_REQUEST["aclRates"];
 $simpleTimesheetLayout = $_REQUEST["simpleTimesheetLayout"];
 $startPage = $_REQUEST["startPage"];
 
@@ -118,6 +119,7 @@ elseif ($action == "edit") {
 		"aclProjects='$aclProjects', " .
 		"aclTasks='$aclTasks', " .
 		"aclReports='$aclReports', " .
+		"aclRates='$aclRates', " .
 		"simpleTimesheetLayout= '$simpleTimesheetLayout', " .
 		"startPage='$startPage' " .
 		"WHERE config_set_id='1';";
@@ -154,6 +156,7 @@ elseif ($action == "edit") {
 		resetConfigValue("aclProjects");
 		resetConfigValue("aclTasks");
 		resetConfigValue("aclReports");
+		resetConfigValue("aclRates");
 	}
 }
 

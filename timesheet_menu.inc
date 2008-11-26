@@ -38,16 +38,18 @@ if ($authenticationManager->hasAccess('aclDaily'))
 	$commandMenu->add(new IconTextCommand("Daily Timesheet", true, "daily.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$todayMonth&year=$todayYear&day=$todayDay", "images/icon_daily.gif"));
 if ($authenticationManager->hasAccess('aclWeekly'))
 	$commandMenu->add(new IconTextCommand("Weekly Timesheet", true, "weekly.php?month=$todayMonth&year=$todayYear&day=$todayDay", "images/icon_daily.gif"));
-if ($authenticationManager->hasAccess('aclCalendar'))
-	$commandMenu->add(new IconTextCommand("Calendar", true, "calendar.php?month=$month&year=$year&day=$day", "images/icon_calendar.gif"));
 if ($authenticationManager->hasAccess('aclSimple'))
 	$commandMenu->add(new IconTextCommand("Simple Timesheet", true, "simple.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$todayMonth&year=$todayYear&day=$todayDay", "images/icon_daily.gif"));
+if ($authenticationManager->hasAccess('aclCalendar'))
+	$commandMenu->add(new IconTextCommand("Calendar", true, "calendar.php?month=$month&year=$year&day=$day", "images/icon_calendar.gif"));
+if ($authenticationManager->hasAccess('aclAbsences'))
+	$commandMenu->add(new IconTextCommand("Absences", true, "absences.php?month=$month&year=$year&day=$day", "images/icon_calendar.gif"));
 if ($authenticationManager->hasAccess('aclClients'))
 	$commandMenu->add(new IconTextCommand("Clients", true, "client_maint.php", "images/icon_clients.gif"));
-if ($authenticationManager->hasAccess('aclProjects')) {
+if ($authenticationManager->hasAccess('aclProjects'))
 	$commandMenu->add(new IconTextCommand("Projects", true, "proj_maint.php", "images/icon_projects.gif"));
+if ($authenticationManager->hasAccess('aclRates'))
 	$commandMenu->add(new IconTextCommand("Projects-Rates", true, "project_user_rates.php", "images/icon_projects_user_rates.gif"));
-}
 if ($authenticationManager->hasAccess('aclTasks'))
 	$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint.php", "images/icon_tasks.gif"));
 if ($authenticationManager->hasAccess('aclReports'))

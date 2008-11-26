@@ -521,6 +521,7 @@ include ("banner.inc");
 					<span class="label" nowrap>Projects:</span><? acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>
 					<span class="label" nowrap>Tasks:</span><? acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>
 					<span class="label" nowrap>Reports:</span><? acl_select_droplist("aclReports", $resultset["aclReports"]); ?>
+					<span class="label" nowrap>Rates:</span><? acl_select_droplist("aclRates", $resultset["aclRates"]); ?>
 				</td>
 			</tr>
 
