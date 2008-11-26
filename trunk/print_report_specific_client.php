@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/admin_report_specific_client.php,v 1.13 2005/05/23 10:42:46 vexil Exp $ modified by ivan_nz 25/08/08
+// $Header: /cvsroot/tsheet/timesheet.php/report_specific_client.php,v 1.13 2005/05/23 10:42:46 vexil Exp $ modified by ivan_nz 25/08/08
 
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -44,6 +44,12 @@ function format_seconds($seconds) {
 	return "$hour:$minutes:$sec";
 }
 
+//get the client name
+	$query = "select organisation from $CLIENT_TABLE where client_id='$client_id'"; 
+	list($qh,$num) = dbQuery($query);
+	$data = dbResult($qh);
+	$client_name = $data['organisation'];
+    
 // Change the date-format for internationalization...
 if ($mode == "all") $mode = "monthly";
 if ($mode == "weekly") {
@@ -103,10 +109,16 @@ $grand_total_time = 0;
 <title>Report: Hours for a specific client</title>
 <?php include ("header.inc"); ?>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php include ("banner.inc"); ?>
+<?php
+echo "<body width=\"100%\" height=\"100%\"";
+include ("body.inc");
 
-<form action="admin_report_specific_client.php" method="get">
+echo "onLoad=window.print();";
+echo ">\n";
+
+?>
+
+<form action="print_report_specific_client.php" method="get">
 <input type="hidden" name="month" value="<? echo $month; ?>">
 <input type="hidden" name="year" value="<? echo $year; ?>">
 <input type="hidden" name="mode" value="<? echo $mode; ?>">
@@ -115,18 +127,14 @@ $grand_total_time = 0;
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap>
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
-									<td align="right" width="0" class="outer_table_heading">Client:</td>
-									<td align="left" width="100%">
-											<? client_select_droplist($client_id, false); ?>
-									</td>
+									<td align="left" width="100%" class="outer_table_heading">Client: <? echo $client_name ?></td>
+									
 								</tr>
 							</table>
 						</td>
@@ -134,15 +142,10 @@ $grand_total_time = 0;
 						<? echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						</td>
 						<td align="right" nowrap>
-						<?
-							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "client_id=$client_id", $mode);
-						?>
 						</td>
 					</tr>
 				</table>
 
-<!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -237,17 +240,26 @@ $grand_total_time = 0;
 ?>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
+				<table width="100%" border="1" cellspacing="0" cellpadding="0">
 
+					<tr>
+						<td width="30%"><table><tr><td>Employee Signature:</td></tr></table></td>
+						<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+					</tr>
+					<tr>
+						<td width="30%"><table><tr><td>Manager Signature:</td></tr></table></td>
+						<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+					</tr>
+					<tr>
+						<td width="30%"><table><tr><td>Client Signature:</td></tr></table></td>
+						<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+					</tr>
+				</table>	
 </form>
-<?
-include ("footer.inc");
-?>
 </BODY>
 </HTML>
 

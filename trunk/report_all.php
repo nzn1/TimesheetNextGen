@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/admin_report_all.php,v 1.5 2005/05/23 10:42:46 vexil Exp $
+// $Header: /cvsroot/tsheet/timesheet.php/report_all.php,v 1.5 2005/05/23 10:42:46 vexil Exp $
 
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -82,18 +82,26 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 						<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=username&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Username</a></td>
 						<td class="inner_table_column_heading">Hours</td>
 						<td class="inner_table_column_heading">
-							<b><a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=<? echo $PROJECT_TABLE; ?>.proj_id&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Project</a>&nbsp;/&nbsp;
-							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=<? echo $TASK_TABLE; ?>.task_id&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Task</a></b>
+							<b><a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=proj_id&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Project</a>&nbsp;/&nbsp;
+							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=task_id&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Task</a></b>
 						</td>
 					</tr>
 <?
 
-	$query = "SELECT DISTINCT first_name, last_name, $USER_TABLE.username, $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, ".
-					"$TASK_TABLE.name, $TASK_TABLE.task_id ".
-		"FROM $USER_TABLE, $PROJECT_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE, $TASK_ASSIGNMENTS_TABLE WHERE ".
-			"$ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id and $TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id ".
-			"AND $PROJECT_TABLE.proj_id = $TASK_TABLE.proj_id AND ".
-			"$ASSIGNMENTS_TABLE.username = $USER_TABLE.username and $USER_TABLE.username NOT IN ('admin','guest') ORDER BY $orderby";
+	$query = "SELECT DISTINCT first_name, last_name, $USER_TABLE.username, $PROJECT_TABLE.title, ".
+			"$PROJECT_TABLE.proj_id, $TASK_TABLE.name, $TASK_TABLE.task_id ".
+		"FROM $USER_TABLE, $PROJECT_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE, $TASK_ASSIGNMENTS_TABLE ".
+		"WHERE $ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id ".
+		"AND $TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id ".
+		"AND $PROJECT_TABLE.proj_id = $TASK_TABLE.proj_id ".
+		"AND $ASSIGNMENTS_TABLE.username = $USER_TABLE.username ".
+		"AND $USER_TABLE.username NOT IN ('admin','guest') ";
+	if ($orderby=="username")
+		$query .= "ORDER BY username,$PROJECT_TABLE.proj_id,$TASK_TABLE.task_id";
+	else if ($orderby=="proj_id")
+		$query .= "ORDER BY $PROJECT_TABLE.proj_id,$TASK_TABLE.task_id,username";
+	else //($orderby=="task_id")
+		$query .= "ORDER BY $TASK_TABLE.task_id,$PROJECT_TABLE.proj_id,username";
 
 	list ($qh,$num) = dbQuery($query);
 	$last_username = "";
@@ -125,7 +133,7 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 			if ($last_username != $name_data["username"]) {
 				$last_username = $name_data["username"];
 				print "<td class=\"calendar_cell_middle\">$name_data[first_name] $name_data[last_name]</TD>\n";
-				print "<td class=\"calendar_cell_middle\"><A HREF=\"admin_report_specific_user.php?uid=$name_data[username]&month=$month&year=$year\">$name_data[username]</A></TD>\n";
+				print "<td class=\"calendar_cell_middle\"><A HREF=\"report_specific_user.php?uid=$name_data[username]&month=$month&year=$year\">$name_data[username]</A></TD>\n";
 			}
 			else {
 				print "<td class=\"calendar_cell_middle\">&nbsp;</td>\n";
