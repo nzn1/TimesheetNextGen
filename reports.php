@@ -67,28 +67,44 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 					<tr>
 						<td class="calendar_cell_middle">Hours worked by a specific user</td>
 						<td class="calendar_cell_disabled_right">
-							<a href="admin_report_specific_user.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a> /
-							<a href="admin_report_specific_user.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=weekly">Generate weekly</a>
+							<a href="report_specific_user.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a> /
+							<a href="report_specific_user.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					<tr>
 					<tr>
 						<td class="calendar_cell_middle">Hours worked on specific project</td>
 						<td class="calendar_cell_disabled_right">
-							<a href="admin_report_specific_project.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a> /
-							<a href="admin_report_specific_project.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=weekly">Generate weekly</a>
+							<a href="report_specific_project.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a> /
+							<a href="report_specific_project.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<tr>
 						<td class="calendar_cell_middle">Hours worked for a specific client</td>
 						<td class="calendar_cell_disabled_right">
-							<a href="admin_report_specific_client.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a> /
-							<a href="admin_report_specific_client.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=weekly">Generate weekly</a>
+							<a href="report_specific_client.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a> /
+							<a href="report_specific_client.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<tr>
 						<td class="calendar_cell_middle">Hours worked by all users on all projects</td>
 						<td class="calendar_cell_disabled_right">
-							<a href="admin_report_all.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a>
+							<a href="report_all.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a>
+						</td>
+					</tr>
+					<tr class="inner_table_head">
+						<td class="inner_table_column_heading">Special Reports</td>
+						<td class="inner_table_column_heading">Actions</td>
+					</tr>
+					<tr>
+						<td class="calendar_cell_middle">Absence Report</td>
+						<td class="calendar_cell_disabled_right">
+							<a href="report_absences.php?month=<? print $month; ?>&year=<? print $year; ?>">Generate monthly</a>
+						</td>
+					</tr>
+					<tr>
+						<td class="calendar_cell_middle">User Hours</td>
+						<td class="calendar_cell_disabled_right">
+							<a href="report_hours.php?month=<? print $month; ?>&year=<? print $year; ?>">Generate yearly</a>
 						</td>
 					</tr>
 				</table>
