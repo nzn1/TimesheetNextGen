@@ -66,6 +66,8 @@ function enableLDAP(value) {
 	document.getElementById('LDAPBindByUser').disabled = !value;
 	document.getElementById('LDAPBindUsername').disabled = !value;
 	document.getElementById('LDAPBindPassword').disabled = !value;
+	document.getElementById('LDAPReferrals').disabled = !value;
+	document.getElementById('LDAPFallback').disabled = !value;
 }
 
 function buildLDAPUrlFromDb() {
@@ -192,6 +194,16 @@ function onSubmit() {
 	else
 		document.getElementById('LDAPBindByUser').value = 0;
 
+	if (document.getElementById('LDAPReferralsCheck').checked)
+		document.getElementById('LDAPReferrals').value = 1;
+	else
+		document.getElementById('LDAPReferrals').value = 0;
+
+	if (document.getElementById('LDAPFallbackCheck').checked)
+		document.getElementById('LDAPFallback').value = 1;
+	else
+		document.getElementById('LDAPFallback').value = 0;
+
 	//re-enable the fields just before submitting because otherwise they are not send in mozilla
 	enableLDAP(true);
 
@@ -218,6 +230,9 @@ include ("banner.inc");
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
 							Configuration Parameters:
+						</td>
+						<td align="right">
+							<input type="button" value="Save Changes" name="submitButton" id="submitButton" onClick="onSubmit();">
 						</td>
 					</tr>
 					<tr>
@@ -371,6 +386,23 @@ include ("banner.inc");
 																	<option value="2" <? if ($resultset["LDAPProtocolVersion"] == "2") print "selected"; ?>>2</option>
 																	<option value="1" <? if ($resultset["LDAPProtocolVersion"] == "1") print "selected"; ?>>1</option>
 																</select>
+															</td>
+															<td nowrap>
+																<span class="label" nowrap>Use LDAP Referrals:</span>
+															</td>
+															<td>&nbsp;</td>
+															<td width="100%">
+																<input type="checkbox" name="LDAPReferralsCheck" id="LDAPReferralsCheck" <?php if ( $resultset['LDAPReferrals'] == 1 ) echo "checked"; ?> />
+																<input type="hidden" name="LDAPReferrals" id="LDAPReferrals"></input>
+															</td>
+															<td>&nbsp;</td>
+															<td nowrap>
+																<span class="label" nowrap>Fallback to local Authentication on fail:</span>
+															</td>
+															<td>&nbsp;</td>
+															<td width="100%">
+																<input type="checkbox" name="LDAPFallbackCheck" id="LDAPFallbackCheck" <?php if ( $resultset['LDAPFallback'] == 1 ) echo "checked"; ?> />
+																<input type="hidden" name="LDAPFallback" id="LDAPFallback"></input>
 															</td>
 														</tr>
 													</table>
@@ -792,17 +824,6 @@ include ("banner.inc");
 				</table>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_bottom_panel">
 
-			<!-- form submission -->
-			<tr>
-				<td colspan="2" align="center">
-					<table width="100%">
-						<tr>
-							<td align="center">
-								<input type="button" value="Submit Changes" name="submitButton" id="submitButton" onClick="onSubmit();"></input>
-							</td>
-					</table>
-				</td>
-			</tr>
 		</table>
 
 			</td>

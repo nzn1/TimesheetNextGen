@@ -108,31 +108,18 @@ class AuthenticationManager {
 
 		//check whether we are using ldap
 		if ($this->usingLDAP()) {
-			//check that the module is availble
-			$ldapMaxLinks = ini_get("ldap.max_links");
-			if (empty($ldapMaxLinks)) {
-				$this->errorCode = AUTH_FAILED_NO_LDAP_MODULE;
-				$this->errorText = "Could not access LDAP module - is it installed?";
-				return false;
-			}
-
 			//check their credentials with LDAP
-			if (!$this->ldapLogin($username, $password)) {
-				$this->errorCode = AUTH_FAILED_LDAP_LOGIN;
-				$this->errorText = "Authentication via LDAP failed";
-				return false;
+			if ( !$this->ldapAuth($username, $password) ) {
+				if ($this->usingFallback()) {
+					if(!$this->dbAuth($username, $password)){
+						return false;
+					}
+				} else {
+					return false;
+				}
 			}
-		}
-		else {
-			//query the user table for authentication details
-			list($qh,$num) = dbQuery("SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2 ".
-										"FROM $USER_TABLE WHERE username='$username'");
-			$data = dbResult($qh);
-
-			//is the password correct?
-			if ($num == 0 || $data["passwd1"] != $data["passwd2"]) {
-				$this->errorCode = AUTH_FAILED_INCORRECT_PASSWORD;
-				$this->errorText = "Incorrect username or password";
+		} else {
+			if(!$this->dbAuth($username, $password)){
 				return false;
 			}
 		}
@@ -150,6 +137,48 @@ class AuthenticationManager {
 		$this->errorCode = AUTH_SUCCESS;
 		$this->errorText = "Authentication succeeded";
 
+		return true;
+	}
+
+	/* 
+	* Login using ldap database	
+	*/
+	function ldapAuth($username, $password){
+		// check that the module is availble
+		$ldapMaxLinks = ini_get( "ldap.max_links" );
+		if ( empty( $ldapMaxLinks ) ){
+			$this->errorCode = AUTH_FAILED_NO_LDAP_MODULE;
+			$this->errorText = "Could not access LDAP module - is it installed?";
+			return false;
+		}
+		// check their credentials with LDAP
+		if ( !$this->ldapLogin( $username, $password ) ){
+			$this->errorCode = AUTH_FAILED_LDAP_LOGIN;
+			$this->errorText = "Authentication via LDAP failed";
+			return false;
+		}
+		return true;
+	}
+	
+	/* 
+	* Login using local database 
+	*/
+	function dbAuth($username, $password){
+		require( "table_names.inc" );
+		require( "database_credentials.inc" );
+		// query the user table for authentication details
+		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2 " . "FROM $USER_TABLE WHERE username='$username'" );
+		$data = dbResult( $qh );
+		// is the password correct?
+		if ( $num == 0 || $data["passwd1"] != $data["passwd2"] ){
+			$this->errorCode =  AUTH_FAILED_INCORRECT_PASSWORD;
+			if((isset($this->errorText))){
+				$this->errorText = $this->errorText . " or Incorrect username or password";
+			} else {
+				$this->errorText = "Incorrect username or password";
+			}
+			return false;
+		}
 		return true;
 	}
 
@@ -224,13 +253,24 @@ class AuthenticationManager {
 		return $data['useLDAP'] == 1;
 	}
 
+	/* 
+	* This function returns true if the system is configured to fallback to local authentication should LDAP authentication fail
+	* DB Field should perhaps be renamed to LOCALFallback
+	*/
+	function usingFallback(){
+		require( "table_names.inc" );
+		list( $qh, $num ) = dbQuery( "SELECT BIN(LDAPFallback) FROM $CONFIG_TABLE WHERE config_set_id='1'" );
+		$data = dbResult( $qh );
+		return $data['BIN(LDAPFallback)'] == 1;
+	}
+
 	function ldapLogin($username, $password) {
 		require("table_names.inc");
 		require("database_credentials.inc");
 		//get the connection settings from the database
 		list($qh, $num) = dbQuery("SELECT LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, " .
 															"LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, " .
-															"LDAPBindByUser, LDAPBindUsername, LDAPBindPassword " .
+															"LDAPBindByUser, LDAPBindUsername, LDAPBindPassword, LDAPReferrals " .
 															"FROM $CONFIG_TABLE WHERE config_set_id='1'");
 		$data = dbResult($qh);
 
@@ -295,6 +335,11 @@ class AuthenticationManager {
 				$userFilter = substr($userFilter, 1, $length-2);
 
 			$filter = "(&(" . $userFilter . ")(" . $filter . "))";
+		}
+
+		// Always avoid referals if flag is not set (they are enabled by default in php ldap module)
+		if ( $data["LDAPReferrals"] != 1) {
+			@ldap_set_option( $connection, LDAP_OPT_REFERRALS, 0 );
 		}
 
 		if ($data["LDAPSearchScope"] == "base") {

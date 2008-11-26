@@ -2,6 +2,8 @@ ALTER TABLE __TABLE_PREFIX__config ADD COLUMN LDAPBindByUser tinyint(4) NOT NULL
 ALTER TABLE __TABLE_PREFIX__config ADD `aclStopwatch` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclDaily` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclWeekly` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclCalendar` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclSimple` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclClients` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclProjects` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclTasks` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL, ADD `aclReports` ENUM('Admin','Mgr','Basic','None') DEFAULT 'Basic' NOT NULL;
 ALTER TABLE __TABLE_PREFIX__config ADD `startPage` enum('stopwatch', 'daily', 'weekly', 'calendar', 'simple') NOT NULL DEFAULT 'calendar';
 ALTER TABLE __TABLE_PREFIX__config ADD `simpleTimesheetLayout` enum('small work description field', 'big work description field', 'no work description field') NOT NULL DEFAULT 'small work description field';
+ALTER TABLE __TABLE_PREFIX__config ADD `LDAPReferrals` BIT(1) NOT NULL AFTER `LDAPBindByUser`, ADD `LDAPFallback` BIT(1) NOT NULL AFTER `LDAPReferrals`;
+
 ALTER TABLE __TABLE_PREFIX__times CHANGE `log_message` `log_message` TEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL;
 ALTER TABLE __TABLE_PREFIX__assignments ADD `rate_id` INT DEFAULT '0' NOT NULL ;
 ALTER TABLE __TABLE_PREFIX__user DROP `allowed_realms` ;

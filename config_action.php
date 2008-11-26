@@ -34,6 +34,8 @@ $aclReset = isset($_REQUEST["aclReset"]) ? $_REQUEST["aclReset"]: false;
 $timezoneReset = isset($_REQUEST["timezoneReset"]) ? $_REQUEST["timezoneReset"]: false;
 $timeformatReset = isset($_REQUEST["timeformatReset"]) ? $_REQUEST["timeformatReset"]: false;
 $useLDAP = isset($_REQUEST["useLDAP"]) ? $_REQUEST["useLDAP"]: false;
+$LDAPFallback = isset( $_REQUEST["LDAPFallback"] ) ? $_REQUEST["LDAPFallback"]: false;
+$LDAPReferrals = isset( $_REQUEST["LDAPReferrals"] ) ? $_REQUEST["LDAPReferrals"]: false;
 $LDAPScheme = $_REQUEST["LDAPScheme"];
 $LDAPHost = $_REQUEST["LDAPHost"];
 $LDAPPort = $_REQUEST["LDAPPort"];
@@ -105,6 +107,8 @@ elseif ($action == "edit") {
 		"LDAPBindUsername='$LDAPBindUsername', ".
 		"LDAPBindPassword='$LDAPBindPassword', ".
 		"LDAPBindByUser='$LDAPBindByUser', " .
+		"LDAPReferrals='$LDAPReferrals', " .
+		"LDAPFallback='$LDAPFallback', " .
 		"aclStopwatch='$aclStopwatch', " .
 		"aclDaily='$aclDaily', " .
 		"aclWeekly='$aclStopwatch', " .
@@ -114,7 +118,7 @@ elseif ($action == "edit") {
 		"aclProjects='$aclProjects', " .
 		"aclTasks='$aclTasks', " .
 		"aclReports='$aclReports', " .
-		"simpleTimesheetLayout='$simpleTimesheetLayout', " .
+		"simpleTimesheetLayout= '$simpleTimesheetLayout', " .
 		"startPage='$startPage' " .
 		"WHERE config_set_id='1';";
 	list($qh,$num) = dbquery($query);
