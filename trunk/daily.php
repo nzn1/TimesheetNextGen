@@ -85,7 +85,7 @@ include("client_proj_task_javascript.inc");
 <script language="Javascript">
 
 	function delete_entry(transNum) {
-				if (confirm('Are you sure you want to delete this time entry?'))
+		if (confirm('Are you sure you want to delete this time entry?'))
 			location.href = 'delete.php?month=<?php echo $month; ?>&year=<?php echo $year; ?>&day=<?php echo $day; ?>&client_id=<?php echo $client_id; ?>&proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&trans_num=' + transNum;
 	}
 

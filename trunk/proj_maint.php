@@ -130,9 +130,9 @@ include ("banner.inc");
 												<td valign="center">
 <?php
 			if ($data["http_link"] != "")
-				print "<a href=\"$data[http_link]\"><span class=\"project_title\">$data[title]</span></a>";
+				print "<a href=\"$data[http_link]\"><span class=\"project_title\">$data[organisation] / $data[title]</span></a>";
 			else
-				print "<span class=\"project_title\">$data[title]</span>";
+				print "<span class=\"project_title\">$data[organisation] / $data[title]</span>";
 
 			print "&nbsp;&nbsp;<span class=\"project_status\">&lt;$data[proj_status]&gt;</span>"
 ?>
