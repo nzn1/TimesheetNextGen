@@ -118,4 +118,38 @@
 		}
 	}
 
+	class AbsenceInput extends SelectInput {
+
+		function create($selected="") 	{
+			$this->printSelect();
+			
+			echo "<option value=\"1\"";
+			if ("" == $selected)
+				echo " selected";
+			echo "></option>\n";
+			echo "<option value=\"2\"";
+			if ("Holiday" == $selected)
+				echo " selected";
+			echo ">Holiday</option>\n";
+			echo "<option value=\"3\"";
+			if ("Sick" == $selected)
+				echo " selected";
+			echo ">Sick</option>\n";
+			echo "<option value=\"4\"";
+			if ("Military/Civil" == $selected)
+				echo " selected";
+			echo ">Military/Civil</option>\n";
+			echo "<option value=\"5\"";
+			if ("Other Absence" == $selected)
+				echo " selected";
+			echo ">Other Absence</option>\n";
+			echo "<option value=\"6\"";
+			if ("Apprentice School" == $selected)
+				echo " selected";
+			echo ">Apprentice School</option>\n";
+
+			$this->printEndSelect();
+		}
+	}
+
 }?>
