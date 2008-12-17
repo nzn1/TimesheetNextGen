@@ -260,7 +260,11 @@ include ("banner.inc");
 	}
 
 	// Get the Monthly data.
-	list($num, $qh) = get_time_date($month, $year, $contextUser, $proj_id, $client_id);
+	list($num, $qh) = get_month_times($month, $year, $contextUser, $proj_id, $client_id);
+	list($qhol, $holnum) = get_absences($month, $year, $contextUser);
+	$ihol = 0; $holtitle = "";
+	if ($holnum>$ihol)
+		$holdata = dbResult($qhol, $ihol);
 
 	$i=0; $day = 1; $tot_sec = 0; $week_tot_sec = 0; $day_tot_sec = 0;
 	while (checkdate($month, $day, $year)) {
@@ -281,10 +285,51 @@ include ("banner.inc");
 
 		//define subtable
 		if (($dayCol % 7) == 6)
-			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_right\">\n";
-		else
-			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_middle\">\n";
+			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_right\">\n";
+		else if (($dayCol % 7 ) == 5)
+			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_middle\">\n";
+		else {
+			$cellstyle = 'calendar_cell_middle';
+			if ($holnum>$ihol) {
+				if ($holdata['day_of_month']==$day) {
+					$cellstyle = 'calendar_cell_holiday_middle';
+					if ($holdata['user']=='') 
+					{
+						$holtitle = urldecode($holdata['subject']);
+						if (($holdata['AM_PM']=='AM')||($holdata['AM_PM']=='PM'))
+							$holtitle .= " (".$holdata['AM_PM'].")";
+					}
+					else
+						$holtitle = $holdata['user'].": ".urldecode($holdata['type'])." ".$holdata['AM_PM'];
+					$ihol++;
+					if ($holnum>$ihol)
+					{
+						$holdata = dbResult($qhol, $ihol);
+						if ($holdata['day_of_month']==$day) 
+						{
+							if ($holdata['user']=='')
+							{
+								$holtitle .= " ".urldecode($holdata['subject']);
+								if (($holdata['AM_PM']=='AM')||($holdata['AM_PM']=='PM'))
+									$holtitle .= " (".$holdata['AM_PM'].")";
+							}
+							else {
+								if ($holtitle==$holdata['user'].": ".urldecode($holdata['type'])." AM")
+									$holtitle = $holdata['user'].": ".urldecode($holdata['type']);
+								else
+									$holtitle .= " ".$holdata['user'].": ".urldecode($holdata['type'])." ".$holdata['AM_PM'];
+							}
+							$ihol++;
+							if ($holnum>$ihol)
+								$holdata = dbResult($qhol, $ihol);
+						}
+					}
 
+				}
+			}
+			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"".$cellstyle."\">\n";
+		}
+		
 		print "	<table width=\"100%\">\n";
 
 		// Print out date.
@@ -303,7 +348,7 @@ include ("banner.inc");
 
 		print "<tr><td valign=\"top\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
 		print "<tr><td valign=\"top\"><A HREF=\"daily.php?month=$month&year=$year&".
-			"day=$day&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$day</a></td>";
+			"day=$day&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$day <span class=\"task_time_small\">$holtitle</span></a></td>";
 		print "<td valign=\"top\" align=\"right\"><a href=\"$popup_href\" class=\"action_link\">".
 				 "<img src=\"images/add.gif\" alt=\"spacer\" width=\"11\" height=\"11\" border=\"0\">".
 				"</a></td>";
@@ -312,6 +357,7 @@ include ("banner.inc");
 
 
 		$data_seen = 0;
+		$holtitle = ""; // used already
 
 		// If the day has data, print it.
 		for ($i=0;$i<$num; $i++) {
