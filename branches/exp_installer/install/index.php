@@ -52,6 +52,8 @@ switch (check_is_installed()) {
  */
 function check_is_installed() {
 	global $db_inc_file;
+	if(!file_exists($db_inc_file)) { return 0; }
+	
 	include_once($db_inc_file);
 	if($TIMESHEET_INSTALLED == '__INSTALLED__') { return 0; }
 	if(version_compare($TIMESHEET_VERSION, VERSION) == -1) { return 1; }
