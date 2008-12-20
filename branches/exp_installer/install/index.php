@@ -1,6 +1,5 @@
 <?php 
 define('VERSION', '1.3.1');
-
 // set up the global variable that holds any error messages
 // don't really like using globals, but this is quick and dirty
 $_ERROR = '';
@@ -28,16 +27,22 @@ th { vertical-align: top; text-align: left; }
 //  0 if not installed, 
 //  1 if installed but lower version, 
 //  2 if installed and up-to-date
-switch (check_is_installed()) {
-	case 2:
-		install_success();
-		break;
-	case 1:
-		upgrade();
-		break;
-	default:
-		install();
+if(!isset($_REQUEST['step'])) {
+	switch (check_is_installed()) {
+	 	case 3:
+			install_success();
+			break;
+		case 2:
+			upgrade();
+			break;
+		case 1:
+			step_three_display();
+			break;
+		default:
+			install();
+	}
 }
+else { install(); }
 ?>
 </body>
 </html>
@@ -47,8 +52,9 @@ switch (check_is_installed()) {
  * Checks to see if Timesheet NG is already installed
  * @returns int:
  *   0 if not installed, 
- *   1 if installed but lower version, 
- *   2 if installed and up-to-date
+ *   1 if installed but no admin user
+ *   2 if installed but lower version, 
+ *   3 if installed and up-to-date
  */
 function check_is_installed() {
 	global $db_inc_file;
@@ -56,8 +62,10 @@ function check_is_installed() {
 	
 	include_once($db_inc_file);
 	if($TIMESHEET_INSTALLED == '__INSTALLED__') { return 0; }
-	if(version_compare($TIMESHEET_VERSION, VERSION) == -1) { return 1; }
-	return 2;
+	if(version_compare($TIMESHEET_VERSION, VERSION) == -1) { return 2; }
+	
+	if(check_admin_user()) { return 3; }
+	else { return 1; }
 }
 /** 
  * install()
@@ -426,7 +434,6 @@ function admin_user_create($username, $password) {
 	// clean up input
 	$username = mysql_real_escape_string($username);
 	$password = mysql_real_escape_string($password);
-	
 	// connect to the database
 	if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
 		return fatal_error(); 
@@ -453,7 +460,31 @@ function admin_user_create($username, $password) {
 	}	
 	return true;
 }
-
+/**
+ * check_admin_user()
+ * Checks to see if an admin user has been created. 
+ * @return bool true if created
+ */
+function check_admin_user() {
+	global $_ERROR, $db_inc_file, $table_inc_file, $mysql_db_inc;
+	
+	include($db_inc_file);
+	include($table_inc_file);
+	
+	if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
+		return fatal_error(); 
+	}	
+	
+	$sql = 'SELECT COUNT(*) FROM '.$USER_TABLE.' WHERE level=10';
+	$result = mysql_query($sql);
+	if(!$result) {
+		$_ERROR .= 'Could not add user to default assignment<br />';
+		$_ERROR .= 'Database said: '.mysql_error().'<br />';		
+		return false;
+	}	
+	$row = mysql_fetch_row($result);
+	return $row[0];	
+}
 function database_connect($db_host, $db_name, $db_user, $db_pass) {
 	global $_ERROR;
 	$link = @mysql_connect($db_host, $db_user, $db_pass);
