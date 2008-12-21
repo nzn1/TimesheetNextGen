@@ -75,6 +75,12 @@ function install() {
 	global $table_inc_file, $db_inc_file;
 	$step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 'one';
 	switch ($step) {
+		case 'up-one':
+			upgrade_step_two();
+			break;
+		case 'up-two':
+			upgrade_step_three();
+			break;
 		case 'two':
 			step_three();
 			break;
@@ -95,15 +101,6 @@ function install() {
 	}
 }
 /**
- * upgrade()
- * No upgrade functionality yet
- * @return unknown_type
- */
-function upgrade() {
-	echo "<h2>Upgrade</h2><p>Sorry, this functionality hasn't been written yet</p>";
-}
-
-/**
  * step_one()
  * Output the first step (default) page
  */
@@ -118,14 +115,14 @@ It'll just take a few more minutes to get it installed and working on your syste
 <li>The ability to delete directories on your server</li>
 </ul>
 
-<h2>Step One: Setup File</h2>
+<h2>Step One: Configuration Files</h2>
 <p>Firstly you need to rename the files <code>database_credentials.inc.in</code> to <code>database_credentials.inc</code>
 and <code>table_names.inc.in</code> to <code>table_names.inc</code>
-and make it writable by the webserver</p>
+and make it writeable by the webserver</p>
 <p>Once you've done this, please refresh this page and proceed to Step Two</p>
 <?php if(file_exists($setup_location)) { ?>
-<p><em class="warn">Warning: <code>setup.php</code> exists, but it <strong>is not writable</strong>. Please make 
-this file writable and refresh this page</em></p>
+<p><em class="warn">Warning: <code>setup.php</code> exists, but it <strong>is not writeable</strong>. Please make 
+this file writeable and refresh this page</em></p>
 <?php } ?>
 <p><a href="./">Refresh Page</a></p>
 <?php 
@@ -336,6 +333,151 @@ function fatal_error() {
 <p class="error"><?php echo $_ERROR;?></p>
 <?php 
 }
+
+
+
+/**
+ * upgrade()
+ * Initial page for the upgrade script
+ */
+function upgrade() {
+	global $table_inc_file, $db_inc_file;
+	?>
+<p>Thank you for downloading Timesheet Next Gen. 
+It'll just take a few more minutes to get it installed and working on your system</p>
+<h2>Upgrade</h2>
+<p>This script will help you upgrade from version 1.2.1 to the current version <?php echo VERSION; ?>.</p>
+<p>If you are trying to upgrade from a verion that isn't 1.2.1, please 
+<a href="http://wiki.timesheetng.org/user-docs/update">see our wiki</a> for more details.</p>
+<h2>Step One: Configuration Files</h2>
+<p>Please confirm that the configuration files <code>database_credentials.inc</code> and 
+<code>table_names.inc</code> are both writeable by the webserver</p>
+	<?php 
+	if(
+		file_exists($table_inc_file) && is_writable($table_inc_file) &&
+		file_exists($db_inc_file) && is_writable($db_inc_file)			
+		) {
+		echo '<p><a href="?step=up-one">Proceed to step 2</a></p>';
+	}
+	else {
+		echo '<p style="color: red">Files do not exist or are not writeable. Please fix and refresh this page</p>';		
+	}
+}
+/**
+ * upgrade_step_two()
+ * Step two of the upgrade script
+ */
+function upgrade_step_two() {
+	global $_ERROR, $table_inc_file, $db_inc_file;
+	include($db_inc_file);
+	
+	if(isset($_REQUEST['db_host'])) { $DATABASE_HOST = $_REQUEST['db_host']; }
+	if(isset($_REQUEST['db_name'])) { $DATABASE_DB = $_REQUEST['db_name']; }
+	if(isset($_REQUEST['db_user'])) { $DATABASE_USER = $_REQUEST['db_user']; }
+	if(isset($_REQUEST['db_pass'])) { $DATABASE_PASS = $_REQUEST['db_pass']; }
+	if(isset($_REQUEST['db_pass_func'])) { $DATABASE_PASSWORD_FUNCTION = $_REQUEST['db_pass_func']; }
+	
+	// try to work out the prefix
+	if(isset($_REQUEST['db_prefix'])) {
+		$prefix = $_REQUEST['db_prefix'];
+	}
+	else {
+		include($table_inc_file);
+		$pos = strpos(strtolower($CONFIG_TABLE), 'config');
+		$prefix = substr($CONFIG_TABLE, 0, $pos);
+	}
+	?>
+<h2>Step Two: Database Configuration</h2>
+<form action="<?php echo $SCRIPT_NAME; ?>" method="post">
+<p>Please confirm your database credentials below are correct</p>
+<?php if($_ERROR) {?>
+<h3 class="error">There was an error</h3>
+<p class="error"><?php echo $_ERROR; ?></p>
+<?php } ?>
+<table border="0">
+<tr>
+<th>Host</th><td><input type="text" name="db_host" value="<?php echo $DATABASE_HOST; ?>" /></td>
+</tr>
+<tr>
+<th rowspan="2">Database Name</th><td><input type="text" name="db_name" value="<?php echo $DATABASE_DB; ?>" /></td>
+</tr>
+<tr><td>Please make sure that this database exist and you have sufficient permissions to create and alter tables</td></tr>
+<tr>
+<th>Table Prefix</th><td><input type="text" name="db_prefix" value="<?php echo $prefix; ?>" /></td>
+</tr>
+<tr>
+<th>Username</th><td><input type="text" name="db_user" value="<?php echo $DATABASE_USER; ?>"/></td>
+</tr>
+<tr>
+<th>Password</th><td><input type="password" name="db_pass" value="" /></td>
+</tr>
+<tr>
+<th rowspan="2">Password Function</th>
+<td><select name="db_pass_func">
+<option value="SHA1" <?php if ($DATABASE_PASSWORD_FUNCTION == 'SHA1') { echo 'selected="selected"'; } ?>>SHA1</option>
+<option value="PASSWORD" <?php if ($DATABASE_PASSWORD_FUNCTION == 'PASSWORD') { echo 'selected="selected"'; } ?>>PASSWORD</option>
+<option value="OLD_PASSWORD" <?php if ($DATABASE_PASSWORD_FUNCTION == 'OLD_PASSWORD') { echo 'selected="selected"'; } ?>>OLD PASSWORD</option>
+</select></td>
+</tr>
+<tr><td>This is the function the database uses to encrypt the passwords. If your MySQL version is 4.1 or above
+you should use SHA1. PASSWORD should be used on MySQL version 4.0 or below, and OLD PASSWORD for MySQL
+version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA1.</em></td></tr>
+<tr><td colspan="2">
+<input type="button" value="Test Configuration" onclick="alert('Sorry, this doesn\'t work yet');"/>
+<input type="submit" value="Proceed to Step Three" />
+</td></tr>
+</table>
+<input type="hidden" name="step" value="up-two" />
+</form>
+	<?php 
+}
+/**
+ * upgrade_step_three()
+ * Step three of the upgrade script,
+ * This does the main bulk of the upgrading:
+ *  1. Writes the config files
+ *  2. upgrades the database
+ *  3. reports success or fail
+ */
+function upgrade_step_three() {
+	global $_ERROR;
+	
+	// get the passed data
+	$db_host = (isset($_REQUEST['db_host']) && $_REQUEST['db_host']) ? $_REQUEST['db_host'] : false;
+	$db_name = (isset($_REQUEST['db_name']) && $_REQUEST['db_name']) ? $_REQUEST['db_name'] : false;
+	//$db_name_exist = (isset($_REQUEST['db_name_exist']) && $_REQUEST['db_name_exist']) ? $_REQUEST['db_name_exist'] : 'yes';
+	$db_prefix = (isset($_REQUEST['db_prefix']) && $_REQUEST['db_prefix']) ? $_REQUEST['db_prefix'] : false;
+	$db_user = (isset($_REQUEST['db_user']) && $_REQUEST['db_user']) ? $_REQUEST['db_user'] : false;
+	$db_pass = (isset($_REQUEST['db_pass']) && $_REQUEST['db_pass']) ? $_REQUEST['db_pass'] : false;
+	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA1';
+	
+	// check that we have all we need
+	$_ERROR = '';
+	if(!$db_host) { $_ERROR .= 'You have not specified a database host<br />'; }
+	if(!$db_name) { $_ERROR .= 'You have not specified a database name<br />'; }
+	if(!$db_user) { $_ERROR .= 'You have not specified a database username<br />'; }
+	if($_ERROR != '') {
+		return upgrade_step_two();
+	}
+	
+	// connect to the database
+	if(!database_connect($db_host, $db_name, $db_user, $db_pass)) { 
+		return upgrade_step_two(); 
+	}	
+	
+	// now create the tables
+	if(!upgrade_tables($db_prefix)) { 
+		return upgrade_step_two(); 
+	}		
+	
+	// finally write the include files
+	if(!write_includes_upgrade($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func)) {
+		return fatal_error();
+	}
+	return install_success();
+}
+
+
 /**
  * create_database()
  * Creates the database
@@ -813,5 +955,124 @@ function install_create_table_allowances($db_prefix) {
 		$_ERROR .= 'Database said: '.mysql_error().'<br />';		
 		return false;
 	}
+	return true;
+}
+/* Database Upgrade */
+function upgrade_tables($db_prefix) {
+	$db_prefix = mysql_real_escape_string($db_prefix);
+	return upgrade_tables_1_3_1($db_prefix);	
+}
+function upgrade_tables_1_3_1($db_prefix) {
+	global $_ERROR;
+	// tables to install
+	install_create_table_absences($db_prefix);
+	install_create_table_allowances($db_prefix);
+	
+	// alter tables
+	$sql = sprintf(
+		'ALTER TABLE %sconfig 
+		ADD COLUMN LDAPBindByUser tinyint(4) NOT NULL default "0", 
+		ADD aclStopwatch ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
+		ADD aclDaily ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
+		ADD aclWeekly ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
+		ADD aclCalendar ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
+		ADD aclSimple ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
+		ADD aclClients ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
+		ADD aclProjects ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
+		ADD aclTasks ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
+		ADD aclReports ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL,
+		ADD startPage enum("stopwatch", "daily", "weekly", "calendar", "simple") NOT NULL DEFAULT "calendar",
+		ADD simpleTimesheetLayout enum("small work description field", "big work description field", "no work description field") NOT NULL DEFAULT "small work description field",
+		ADD aclRates ENUM("Admin", "Mgr", "Basic", "None") DEFAULT "None" NOT NULL AFTER aclReports, 
+		ADD aclAbsences ENUM("Admin", "Mgr", "Basic", "None") DEFAULT "None" NOT NULL AFTER aclRates,
+		ADD LDAPReferrals BIT(1) NOT NULL AFTER LDAPBindByUser, 
+		ADD LDAPFallback BIT(1) NOT NULL AFTER LDAPReferrals;',
+		$db_prefix);
+	if(!mysql_query($sql)) {
+		$_ERROR .= 'Could not alter <strong>config</strong> table<br />';
+		$_ERROR .= 'Database said: '.mysql_error().'<br />';		
+		return false;
+	}
+	$sql = sprintf(
+		'ALTER TABLE %stimes CHANGE log_message log_message TEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL',
+		$db_prefix);
+	if(!mysql_query($sql)) {
+		$_ERROR .= 'Could not alter <strong>times</strong> table<br />';
+		$_ERROR .= 'Database said: '.mysql_error().'<br />';		
+		return false;
+	}
+	$sql = sprintf(
+		'ALTER TABLE %sassignments ADD rate_id INT DEFAULT "0" NOT NULL',
+		$db_prefix);
+	if(!mysql_query($sql)) {
+		$_ERROR .= 'Could not alter <strong>assignments</strong> table<br />';
+		$_ERROR .= 'Database said: '.mysql_error().'<br />';		
+		return false;
+	}
+	$sql = sprintf(
+		'ALTER TABLE %suser DROP allowed_realms, DROP bill_rate, DROP phone',
+		$db_prefix);
+	if(!mysql_query($sql)) {
+		$_ERROR .= 'Could not alter <strong>user</strong> table<br />';
+		$_ERROR .= 'Database said: '.mysql_error().'<br />';		
+		return false;
+	}
+	return true;
+}
+
+/**
+ * write_includes()
+ * Writes the configuration to the include files 
+ * @param $db_host
+ * @param $db_name
+ * @param $db_user
+ * @param $db_pass
+ * @param $db_prefix
+ * @param $db_pass_func
+ * @return bool true if successfully written
+ */
+function write_includes_upgrade($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func) {
+	global $_ERROR, $table_inc_file, $db_inc_file;
+	// make sure the values are safe
+	$db_host = mysql_real_escape_string($db_host);
+	$db_name = mysql_real_escape_string($db_name);
+	$db_user = mysql_real_escape_string($db_user);
+	$db_pass = mysql_real_escape_string($db_pass);
+	$db_prefix = mysql_real_escape_string($db_prefix);
+	$db_pass_func = mysql_real_escape_string($db_pass_func);
+	
+	// first write the database credentials: read in current file
+	$contents = file_get_contents($db_inc_file.'.in');
+	// edit the file	
+	$contents = str_replace("__INSTALLED__", 1, $contents);
+	$contents = str_replace("__VERSION__", VERSION, $contents);
+	$contents = str_replace("__DBHOST__", $db_host, $contents);
+	$contents = str_replace("__DBUSER__", $db_user, $contents);
+	$contents = str_replace("__DBPASS__", $db_pass, $contents);
+	$contents = str_replace("__DBNAME__", $db_name, $contents);
+	$contents = str_replace("__DBPASSWORDFUNCTION__", $db_pass_func, $contents);	
+	// re-write it
+	if (!$handle = fopen($db_inc_file, 'w')) {
+		$_ERROR .= 'Could not open <code>'.$db_inc_file.'</code> file for writing';
+		return false;
+    }
+    if (fwrite($handle, $contents) === FALSE) {
+		$_ERROR .= 'Could not write to <code>'.$db_inc_file.'</code>';
+		return false;
+    }
+    fclose($handle);
+	
+	// now the table names
+	$contents = file_get_contents($table_inc_file.'.in');
+	$contents = str_replace("__TABLE_PREFIX__", $db_prefix, $contents);
+	if (!$handle = fopen($table_inc_file, 'w')) {
+		$_ERROR .= 'Could not open <code>'.$table_inc_file.'</code> file for writing';
+		return false;
+    }
+    if (fwrite($handle, $contents) === FALSE) {
+		$_ERROR .= 'Could not write to <code>'.$table_inc_file.'</code>';
+		return false;
+    }
+    fclose($handle);
 	return true;
 }
