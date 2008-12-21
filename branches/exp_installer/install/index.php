@@ -182,7 +182,7 @@ function step_two() {
 you should use SHA1. PASSWORD should be used on MySQL version 4.0 or below, and OLD PASSWORD for MySQL
 version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA1.</em></td></tr>
 <tr><td colspan="2">
-<input type="button" value="Test Configuration" />
+<input type="button" value="Test Configuration" onclick="alert('Sorry, this doesn\'t work yet');"/>
 <input type="submit" value="Proceed to Step Three" />
 </td></tr>
 </table>
@@ -622,6 +622,7 @@ function install_create_table_config($db_prefix) {
 		aclTasks enum("Admin","Mgr","Basic","None") NOT NULL default "Basic",
 		aclReports enum("Admin","Mgr","Basic","None") NOT NULL default "Basic",
 		aclRates enum("Admin","Mgr","Basic","None") NOT NULL default "Basic",
+		aclAbsences ENUM("Admin", "Mgr", "Basic", "None") NOT NULL default "None",
 		simpleTimesheetLayout enum("small work description field","big work description field","no work description field") NOT NULL DEFAULT "small work description field",
 		startPage enum("stopwatch", "daily", "weekly", "calendar", "simple") NOT NULL DEFAULT "calendar",
 		PRIMARY KEY  (config_set_id)
