@@ -6,15 +6,13 @@ if (!defined("COMMON_INC")) {
 		include("database_credentials.inc");
 		include("mysql.db.inc");
 
+		//a useful constant
+		define("A_DAY", 24 * 60 * 60);
+
 		$BREAK_RATIO = (0);
 		// For an hour break every 8 hours this would be: (1/8)
 
-		$BODY_BGCOLOR="#FFFFFF";	// Background color for every page.
-		//$BODY_BGCOLOR="#AFAFEF";	// Background color for every page.
-		$TABLE_BGCOLOR="#b3c4de";	// Background color for table cells
-		$TABLE_BGCOLOR2="#AFAFEF";	// Background color for table cells
-
-		function get_time_date($month, $year, $id, $proj_id=0, $client_id=0) {
+		function get_month_times($month, $year, $id, $proj_id=0, $client_id=0) {
 			include("table_names.inc");
 			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 			$configData = dbResult($qhq);
@@ -27,15 +25,16 @@ if (!defined("COMMON_INC")) {
 			else
 				$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') AS start, ";
 
-			$query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
-			"end_time AS end_time_str, ".
-			"start_time AS start_time_str, ".
-			"unix_timestamp(start_time) AS start_time, ".
-			"unix_timestamp(end_time) AS end_time, ".
-			"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id, ".
-			"$PROJECT_TABLE.title, $CLIENT_TABLE.organisation, $PROJECT_TABLE.client_id ".
-			"FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE ".
-			"WHERE uid='$id' AND ";
+			$query .= 
+				"unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
+				"end_time AS end_time_str, ".
+				"start_time AS start_time_str, ".
+				"unix_timestamp(start_time) AS start_time, ".
+				"unix_timestamp(end_time) AS end_time, ".
+				"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id, ".
+				"$PROJECT_TABLE.title, $CLIENT_TABLE.organisation, $PROJECT_TABLE.client_id ".
+				"FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE ".
+				"WHERE uid='$id' AND ";
 
 			if ($proj_id > 0) //otherwise want all records no matter what project
 				$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
@@ -57,38 +56,185 @@ if (!defined("COMMON_INC")) {
 			return array($num, $my_qh);
 		}
 
-		function get_daily_times($month, $day, $year, $id, $proj_id) {
+		function get_times($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
 			include("table_names.inc");
 			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 			$configData = dbResult($qhq);
 
-			$query = "SELECT date_format(start_time,'%d') as day_of_month, trans_num, ";
+			$query = "SELECT date_format(start_time,'%d') AS day_of_month, trans_num, ";
 
 			if ($configData["timeformat"] == "12")
-				$query .= "date_format(end_time, '%l:%i%p') as endd, date_format(start_time, '%l:%i%p') as start, ";
+				$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
 			else
-				$query .= "date_format(end_time, '%k:%i') as endd, date_format(start_time, '%k:%i') as start, ";
+				$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') as start, ";
 
-			$query .= "unix_timestamp(end_time) - unix_timestamp(start_time) as diff_sec, ".
-			"unix_timestamp(start_time) as start_time, ".
-			"unix_timestamp(end_time) as end_time, ".
-			"end_time as end_time_str, ".
-			"start_time as start_time_str, ".
-			"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id  FROM $TIMES_TABLE, $TASK_TABLE WHERE uid='$id' AND ";
-
-			if ($proj_id > 0) //otherwise want all records no matter what project
-				$query .=	"$TIMES_TABLE.proj_id=$proj_id AND ";
+			$query .= 
+				"unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
+				"unix_timestamp(start_time) AS start_time, ".
+				"unix_timestamp(end_time) As end_time, ".
+				"end_time As end_time_str, ".
+				"start_time AS start_time_str, ".
+				"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id ".
+				"FROM $TIMES_TABLE, $TASK_TABLE WHERE uid='$id' AND ";
 
 			$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
-			"((start_time >= '$year-$month-$day 00:00:00' AND start_time <= '$year-$month-$day 23:59:59') ".
-			" OR (end_time >= '$year-$month-$day 00:00:00' AND end_time <= '$year-$month-$day 23:59:59') ".
-			" OR (start_time < '$year-$month-$day 00:00:00' AND end_time > '$year-$month-$day 23:59:59')) ".
-			" ORDER BY day_of_month, proj_id, task_id, start_time";
+				"((start_time >= '$start_year-$start_month-$start_day 00:00:00' AND start_time <= '$end_year-$end_month-$end_day 23:59:59') ".
+				" OR (end_time >= '$start_year-$start_month-$start_day 00:00:00' AND end_time <= '$end_year-$end_month-$end_day 23:59:59') ".
+				" OR (start_time < '$start_year-$start_month-$start_day 00:00:00' AND end_time > '$end_year-$end_month-$end_day 23:59:59')) ".
+				" ORDER BY day_of_month, proj_id, task_id, start_time";
 
 			list($my_qh, $num) = dbQuery($query);
 
 			return array($num, $my_qh);
 		}
+
+	function get_absences($month, $year, $user='', $day=0) {
+		include("table_names.inc");
+		$last_day = get_last_day($month, $year);
+		$query = "SELECT date_format(date,'%d') AS day_of_month, ".
+			"unix_timestamp(date) AS date, ".
+			"date AS date_str, ".
+			"user, type, ".
+			"AM_PM, subject FROM $ABSENCE_TABLE WHERE ";
+		if ($user=='') //want only the public holidays
+			$query .= "(type='Public') AND ";
+		else
+			$query .= "((user='$user') OR (type='Public') OR ((type='Other') AND (user=''))) AND ";
+
+		if ($day==0) //want the whole month's entries
+			$query .= "(date >= '$year-$month-1 00:00:00' AND date <= '$year-$month-$last_day 23:59:59') ";
+		else
+			$query .= "(date >= '$year-$month-$day 00:00:00' AND date <= '$year-$month-$day 23:59:59') ";
+		$query .= " ORDER BY day_of_month, AM_PM";
+
+		list($my_qh, $num) = dbQuery($query);
+		return array($my_qh, $num);
+	}
+
+	function get_start_date($user) {
+		include("table_names.inc");
+		$query = "SELECT min(date) as start_date FROM $ALLOWANCE_TABLE WHERE username='$user'";
+		list($my_qu, $num) = dbQuery($query); //num should only be 1
+		$userdata = dbResult($my_qu, 1);
+		return $userdata['start_date'];
+	}
+
+	function get_allowance($day, $month, $year, $user, $type='Holiday') {
+		include("table_names.inc");
+		$user_start_date = get_start_date($user);
+
+		if ($type=='Holiday')
+			$query = "SELECT sum(Holiday) ";
+		else
+			$query = "SELECT sum(glidetime) ";
+		$query .= "AS balance FROM $ALLOWANCE_TABLE WHERE (username='$user') ";
+		$query .= "AND (date >= '$user_start_date 00:00:00' AND date <= '$year-$month-$day 23:59:59')";
+		list($my_qu, $num) = dbQuery($query);
+		$data = dbResult($my_qu, 1);
+		return $data['balance'];
+	}
+
+	function get_balance($day, $month, $year, $user, $type='Holiday') {
+		include("table_names.inc");
+		$current_allowance = get_allowance($day, $month, $year, $user, $type);
+		$user_start_date = get_start_date($user);
+		if($user_start_date) {
+			$user_start_date_parts = explode('-',$user_start_date);
+			$user_start_day = $user_start_date_parts[2];
+			$user_start_month = $user_start_date_parts[1];
+			$user_start_year = $user_start_date_parts[0];
+		}
+		else {
+			$user_start_date_parts = false;
+			$user_start_day = false;
+			$user_start_month = false;
+			$user_start_year = false;	
+		}
+		
+		if ($type!='glidetime') {
+			//Holidays are easy
+			$count = $current_allowance - count_absences($day, $month, $year, $user, $type);
+		} else {
+			//glidetime takes some work
+			//First count the attendance
+			list($num, $qh) = get_times($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user);
+			$worked_sec = 0;
+			for ($currentEntry=0;$currentEntry<$num;$currentEntry++) {
+				$data = DbResult($qh, $currentEntry);
+				//Due to a bug in mysql with converting to unix timestamp from the string,
+				//we are going to use php's strtotime to make the timestamp from the string.
+				//the problem has something to do with timezones.
+				$data["start_time"] = strtotime($data["start_time_str"]);
+				$data["end_time"] = strtotime($data["end_time_str"]);
+
+				//if ($data["start_time"] < mktime(0,0,0,$month,1,$year))
+				//	$total_sec += $data["end_time"] - mktime(0,0,0,$month,1,$year);
+				if ($data["end_time"] > mktime(23,59,59,$month,$day,$year))
+					$worked_sec += mktime(23,59,59,$month,$day,$year) - $data["start_time"];
+				else
+					$worked_sec += $data["end_time"] - $data["start_time"];
+			}
+			//Then calculate the expected working time
+			$working_time = 0;
+			$the_day = mktime(0,0,0,$user_start_date_parts[1],$user_start_date_parts[2],$user_start_date_parts[0]);
+			$end_day = mktime(0,0,0,$month,$day,$year);
+			while ($the_day<$end_day) {
+				if ((date('w', $the_day) != 6)&&(date('w', $the_day) != 0)) {
+					$working_time += 8;
+				}
+				$the_day += A_DAY;
+			}
+
+			$working_time -= count_absences($day, $month, $year, '', 'Public');
+			$working_time -= count_absences($day, $month, $year, '', 'Other');
+			$working_time -= count_absences($day, $month, $year, $user, 'Sick');
+			$working_time -= count_absences($day, $month, $year, $user, 'Holiday');
+			$working_time -= count_absences($day, $month, $year, $user, 'Training');
+			$working_time -= count_absences($day, $month, $year, $user, 'Military');
+			$working_time -= count_absences($day, $month, $year, $user, 'Other');
+			$working_time -= count_absences($day, $month, $year, $user, 'Compensation');
+			$count = ($current_allowance*60*60 + $worked_sec - $working_time*60*60)/(60*60);
+		}
+		return $count;
+	}
+
+	function count_absences($day, $month, $year, $user, $type='Holiday') {
+		include("table_names.inc");
+		$user_start_date = get_start_date($user);
+		$query = "SELECT date,AM_PM FROM $ABSENCE_TABLE WHERE ".
+				"(type='$type') AND (user='$user') AND ".
+				"(date >= '$user_start_date 00:00:00' AND date < '$year-$month-$day 23:59:59') ".
+				" ORDER BY date, AM_PM";
+		list($my_qh, $num) = dbQuery($query);
+		$count = 0;
+		for($i=0;$i<$num;$i++) {
+			$entry = dbResult($my_qh, $i);
+			if ($entry['AM_PM']=='day')
+				$count = $count + 8; //hours per day
+			else
+				$count = $count + 4;
+		}
+		return $count;
+	}
+
+	function count_absences_in_month($month, $year, $user, $type='Holiday') {
+		include("table_names.inc");
+		$day = get_last_day($month, $year);
+		$holquery = "SELECT date,AM_PM FROM $ABSENCE_TABLE WHERE ".
+				"(type='$type') AND (user='$user') AND ".
+				"(date >= '$year-$month-1 00:00:00' AND date <= '$year-$month-$day 23:59:59') ".
+				" ORDER BY date, AM_PM";
+		$count = 0;
+		list($my_qh, $num) = dbQuery($holquery);
+		for($i=0;$i<$num;$i++) {
+			$holdata = dbResult($my_qh, $i);
+			if ($holdata['AM_PM']=='day')
+				$count = $count + 8; //hours per day
+			else
+				$count = $count + 4;
+		}
+		return $count;
+	}
 
 		function get_last_day($month, $year) {
 			$last_day = 28;
@@ -140,7 +286,7 @@ if (!defined("COMMON_INC")) {
 
 		function get_acl_level($page) {
 			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclCalendar,aclSimple,aclClients,aclProjects,aclTasks,aclReports FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+			list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclCalendar,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 			$configData = dbResult($qhq);
 			return $configData[$page];
 		}
@@ -486,6 +632,20 @@ if (!defined("COMMON_INC")) {
 	<option value="Basic" <? if ($selected== 'Basic') echo 'selected'?>>Basic</option>
 	<option value="None" <? if ($selected== 'None') echo 'selected'?>>None</option>
 	</select>
+<?	}
+
+	function absence_select_droplist($selected='', $disabled='false', $id) {
+?>
+	<SELECT NAME="<? echo $id; ?>" onChange="OnChange()" id="<? echo $id; ?>" <? if ($disabled=='true') echo 'readonly'?>>
+	<OPTION VALUE="" <? if ($selected == '') echo 'SELECTED'?>></OPTION>
+	<OPTION VALUE="Holiday" <? if ($selected== 'Holiday') echo 'SELECTED'?>>Holiday</OPTION>
+	<OPTION VALUE="Sick" <? if ($selected== 'Sick') echo 'SELECTED'?>>Sick</OPTION>
+	<OPTION VALUE="Military" <? if ($selected== 'Military') echo 'SELECTED'?>>Mil/Civ</OPTION>
+	<OPTION VALUE="Training" <? if ($selected== 'Training') echo 'SELECTED'?>>Training</OPTION>
+	<OPTION VALUE="Compensation" <? if ($selected== 'Compensation') echo 'SELECTED'?>>Compensation</OPTION>
+	<OPTION VALUE="Other" <? if ($selected== 'Other') echo 'SELECTED'?>>Other</OPTION>
+	<OPTION VALUE="Public" <? if ($selected== 'Public') echo 'SELECTED'?>>Public</OPTION>
+	</SELECT>
 <?	}
 
 	function client_select_droplist($client_id=1, $disabled='false') {

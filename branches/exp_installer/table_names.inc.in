@@ -9,5 +9,7 @@
 	$TIMES_TABLE = "__TABLE_PREFIX__times";
 	$USER_TABLE = "__TABLE_PREFIX__user";
 	$RATE_TABLE = "__TABLE_PREFIX__billrate";
+	$ABSENCE_TABLE = "__TABLE_PREFIX__absences";
+	$ALLOWANCE_TABLE = "__TABLE_PREFIX__allowances";
 
 }?>

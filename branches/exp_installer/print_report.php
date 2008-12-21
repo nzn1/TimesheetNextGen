@@ -51,7 +51,7 @@ for ($i=$start_date; $i <= $end_date; $i++) {
 	$tot_sec = 0; $tot_min = 0; $tot_hor = 0;
 	list($day,$month,$year) = explode("/",$date);
 
-	list($num, $qh) = get_time_date($i, $id, $proj_id);
+	list($num, $qh) = get_month_times($i, $id, $proj_id);
 	if ($num > 0) {
 		print "<TD WIDTH=\"14%\" VALIGN=TOP><tt>$day/$month</tt><br>";
 		while (list($start_time,$end_time,$diff,$num_end) = mysql_fetch_row($qh)) {

@@ -10,3 +10,22 @@ ALTER TABLE __TABLE_PREFIX__assignments ADD `rate_id` INT DEFAULT '0' NOT NULL ;
 ALTER TABLE __TABLE_PREFIX__user DROP `allowed_realms` ;
 ALTER TABLE __TABLE_PREFIX__user DROP `bill_rate` ;
 ALTER TABLE __TABLE_PREFIX__user DROP `phone` ;
+
+CREATE TABLE __TABLE_PREFIX__absences (
+  `entry_id` int(6) NOT NULL auto_increment,
+  `date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `AM_PM` enum('day','AM','PM') NOT NULL default 'day',
+  `subject` varchar(127) NOT NULL default '',
+  `type` enum('Holiday','Sick','Military','Training','Compensation','Other','Public') NOT NULL default 'Holiday',
+  `user` varchar(32) NOT NULL default '0',
+  PRIMARY KEY  (`entry_id`)
+);
+
+CREATE TABLE `__TABLE_PREFIX__allowances` (
+  `entry_id` INT NOT NULL AUTO_INCREMENT, 
+  `username` varchar(32) NOT NULL default '0',
+  `date` DATE NOT NULL, 
+  `Holiday` INT NOT NULL, 
+  `glidetime` TIME NOT NULL, 
+  PRIMARY KEY (`entry_id`)
+);

@@ -81,6 +81,9 @@ else if ($action == "addupdate") {
 							"'$last_name','$email_address',0,'OUT')");
 		dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
 		dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
+		//create a time string for >>now<<
+		$today_stamp = date("Y-m-d H:i:00");
+		dbquery("INSERT INTO $ALLOWANCE_TABLE VALUES (NULL,'$username', '$today_stamp', 0, 0.0)"); // add default allowance
 	}
 }
 
