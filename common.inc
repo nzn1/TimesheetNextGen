@@ -113,7 +113,7 @@ if (!defined("COMMON_INC")) {
 
 	function get_start_date($user) {
 		include("table_names.inc");
-		$query = "SELECT min(date) as start_date FROM $ALLOWANCE_TABLE WHERE user='$user'";
+		$query = "SELECT min(date) as start_date FROM $ALLOWANCE_TABLE WHERE username='$user'";
 		list($my_qu, $num) = dbQuery($query); //num should only be 1
 		$userdata = dbResult($my_qu, 1);
 		return $userdata['start_date'];
@@ -127,7 +127,7 @@ if (!defined("COMMON_INC")) {
 			$query = "SELECT sum(Holiday) ";
 		else
 			$query = "SELECT sum(glidetime) ";
-		$query .= "AS balance FROM $ALLOWANCE_TABLE WHERE (user='$user') ";
+		$query .= "AS balance FROM $ALLOWANCE_TABLE WHERE (username='$user') ";
 		$query .= "AND (date >= '$user_start_date 00:00:00' AND date <= '$year-$month-$day 23:59:59')";
 		list($my_qu, $num) = dbQuery($query);
 		$data = dbResult($my_qu, 1);
@@ -138,11 +138,19 @@ if (!defined("COMMON_INC")) {
 		include("table_names.inc");
 		$current_allowance = get_allowance($day, $month, $year, $user, $type);
 		$user_start_date = get_start_date($user);
-		$user_start_date_parts = explode('-',$user_start_date);
-		$user_start_day = $user_start_date_parts[2];
-		$user_start_month = $user_start_date_parts[1];
-		$user_start_year = $user_start_date_parts[0];
-
+		if($user_start_date) {
+			$user_start_date_parts = explode('-',$user_start_date);
+			$user_start_day = $user_start_date_parts[2];
+			$user_start_month = $user_start_date_parts[1];
+			$user_start_year = $user_start_date_parts[0];
+		}
+		else {
+			$user_start_date_parts = false;
+			$user_start_day = false;
+			$user_start_month = false;
+			$user_start_year = false;	
+		}
+		
 		if ($type!='glidetime') {
 			//Holidays are easy
 			$count = $current_allowance - count_absences($day, $month, $year, $user, $type);

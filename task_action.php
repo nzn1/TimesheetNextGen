@@ -51,9 +51,10 @@ elseif ($action == "edit") {
 	$description = addslashes($description);
 
 	$query = "UPDATE $TASK_TABLE SET name='$name',description='$description',".
-				" status='$task_status' ".
-	if ($task_status=='Complete')
+				" status='$task_status' ";
+	if ($task_status=='Complete') {
 		$query .=	",completed='$time_string'";
+	}
 	$query .=		" WHERE task_id=$task_id";
 
 	list($qh,$num) = dbquery($query);
