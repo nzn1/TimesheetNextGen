@@ -195,7 +195,6 @@ if (!checkdate($last_month, 1, $last_year)) {
 	$last_month += 12;
 	$last_year --;
 }
-
 $holidays_taken = count_absences_in_month($month, $year, $uid);
 $holiday_allowance = get_balance(get_last_day($last_month, $last_year), $last_month, $last_year, $uid);
 $holiday_remaining = $holiday_allowance - $holidays_taken;
