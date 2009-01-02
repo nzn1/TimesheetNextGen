@@ -1,5 +1,5 @@
 <?
-// $Header: /cvsroot/tsheet/timesheet.php/action.php,v 1.9 2005/05/10 11:42:52 vexil Exp $
+// $Header: /cvsroot/tsheet/timesheet.php/clock_action.php,v 1.10 2005/06/17 01:42:51 vexil Exp $
 
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -101,20 +101,20 @@ else
 							$clock_on_time_min, $clock_off_time_min, $clockonoff;
 		global $log_message, $log_message_presented, $fromPopupWindow;
 
-		if ($log_message_presented == false) 	{
+		if ($log_message_presented == false) {
 			$targetWindowLocation = "log_message.php".
-													 "?origin=$origin&destination=$destination".
-													 "&clock_on_time_hour=$clock_on_time_hour".
-													 "&clock_off_time_hour=$clock_off_time_hour".
-													 "&clock_on_time_min=$clock_on_time_min".
-													 "&clock_off_time_min=$clock_off_time_min".
-													 "&year=$year".
-													 "&month=$month".
-													 "&day=$day".
-													 "&client_id=$client_id".
-													 "&proj_id=$proj_id".
-													 "&task_id=$task_id".
-													 "&clockonoff=$clockonoff";
+						"?origin=$origin&destination=$destination".
+						"&clock_on_time_hour=$clock_on_time_hour".
+						"&clock_off_time_hour=$clock_off_time_hour".
+						"&clock_on_time_min=$clock_on_time_min".
+						"&clock_off_time_min=$clock_off_time_min".
+						"&year=$year".
+						"&month=$month".
+						"&day=$day".
+						"&client_id=$client_id".
+						"&proj_id=$proj_id".
+						"&task_id=$task_id".
+						"&clockonoff=$clockonoff";
 
 			if ($fromPopupWindow) {
 				//close this popup window and load the log message page in the main window.
@@ -138,15 +138,15 @@ else
 
 		//check that we are not already clocked on
 		$querystring = "SELECT $TIMES_TABLE.start_time, $TASK_TABLE.name FROM ".
-												"$TIMES_TABLE, $TASK_TABLE WHERE ".
-											 "uid='$contextUser' AND ".
-											 "end_time='0' AND ".
-											 //"start_time>='$year-$month-$day' AND ".
-											 //"start_time<='$year-$month-$day 23:59:59' AND ".
-				     				 "$TIMES_TABLE.task_id=$task_id AND ".
-				     				 "$TIMES_TABLE.proj_id=$proj_id AND ".
-				     				 "$TASK_TABLE.task_id=$task_id AND ".
-				     				 "$TASK_TABLE.proj_id=$proj_id";
+				"$TIMES_TABLE, $TASK_TABLE WHERE ".
+				"uid='$contextUser' AND ".
+				"end_time='0' AND ".
+				//"start_time>='$year-$month-$day' AND ".
+				//"start_time<='$year-$month-$day 23:59:59' AND ".
+				"$TIMES_TABLE.task_id=$task_id AND ".
+				"$TIMES_TABLE.proj_id=$proj_id AND ".
+				"$TASK_TABLE.task_id=$task_id AND ".
+				"$TASK_TABLE.proj_id=$proj_id";
 
 		list($qh,$num) = dbQuery($querystring);
 		$resultset = dbResult($qh);
@@ -156,7 +156,7 @@ else
 
 		//now insert the record for this clock on
 		$querystring = "INSERT INTO $TIMES_TABLE (uid, start_time, proj_id,task_id) ".
-											 "VALUES ('$contextUser','$timeString', $proj_id, $task_id)";
+				"VALUES ('$contextUser','$timeString', $proj_id, $task_id)";
 		list($qh,$num) = dbQuery($querystring);
 
 		//now output an ok page, the redirect back
@@ -184,24 +184,24 @@ else
 		//import global vars
 		global $contextUser, $year, $month, $day, $task_id, $proj_id, $Location;
 		global $destination, $clock_on_time_hour, $clock_off_time_hour,
-					 $clock_on_time_min, $clock_off_time_min, $clockonoff;
+					$clock_on_time_min, $clock_off_time_min, $clockonoff;
 		global $log_message, $log_message_presented, $fromPopupWindow;
 
 		//check that we are actually clocked on
 		$querystring = "SELECT start_time, start_time < '$timeString' AS valid FROM $TIMES_TABLE WHERE ".
-									 "uid='$contextUser' AND ".
-									 "end_time=0 AND ".
-									 //"start_time >= '$year-$month-$day' AND ".
-									 //"start_time <= '$year-$month-$day 23:59:59' AND ".
-									 "proj_id=$proj_id AND ".
-									 "task_id=$task_id";
+				"uid='$contextUser' AND ".
+				"end_time=0 AND ".
+				//"start_time >= '$year-$month-$day' AND ".
+				//"start_time <= '$year-$month-$day 23:59:59' AND ".
+				"proj_id=$proj_id AND ".
+				"task_id=$task_id";
 
 		list($qh,$num) = dbQuery($querystring);
 		$data = dbResult($qh);
 		if ($num == 0)
-			errorPage("You are not currently clocked on. You must clock on before you can clock off.", $fromPopupWindow);
+			errorPage("You are not currently clocked on. You must clock on before you can clock off. If you have just clocked on please wait at least one minute before clocking off", $fromPopupWindow);	
 		//also check that the clockoff time is after the clockon time
-   else if ($data["valid"] == 0)
+		else if ($data["valid"] == 0)
 			errorPage("You must clock off <i>after</i> you clock on.", $fromPopupWindow);
 
 		//do we need to present the user with a log message screen?
@@ -211,23 +211,23 @@ else
 		//now insert the record for this clock off
 		$log_message = addslashes($log_message);
 		$querystring = "UPDATE $TIMES_TABLE SET log_message='$log_message', end_time='$timeString' WHERE ".
-									 "uid='$contextUser' AND ".
-									 "proj_id=$proj_id AND ".
-									 "end_time=0 AND ".
-									 //"start_time >= '$year-$month-$day' AND ".
-									 //"start_time < '$year-$month-$day 23:59:59' AND ".
-									 "task_id=$task_id";
+				"uid='$contextUser' AND ".
+				"proj_id=$proj_id AND ".
+				"end_time=0 AND ".
+				//"start_time >= '$year-$month-$day' AND ".
+				//"start_time < '$year-$month-$day 23:59:59' AND ".
+				"task_id=$task_id";
 		list($qh,$num) = dbQuery($querystring);
 		Header("Location: $Location");
 	}
 
-	function clockonandoff() 	{
+	function clockonandoff() {
 		include("table_names.inc");
 
 		//import global vars
 		global $contextUser, $year, $month, $day, $task_id, $proj_id, $Location;
 		global $destination, $clock_on_time_hour, $clock_off_time_hour,
-					 $clock_on_time_min, $clock_off_time_min, $clockonoff;
+					$clock_on_time_min, $clock_off_time_min, $clockonoff;
 		global $log_message, $log_message_presented;
 		global $clock_on_radio, $clock_off_radio, $fromPopupWindow;
 
@@ -257,11 +257,11 @@ else
 		if ($log_message_presented == false)
 			getLogMessage();
 
-   $log_message = addslashes($log_message);
+		$log_message = addslashes($log_message);
 		$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, proj_id, task_id, log_message) ".
-									 "VALUES ('$contextUser','$year-$month-$day $clock_on_time_hour:$clock_on_time_min:00', ".
-									 "'$year-$month-$day $clock_off_time_hour:$clock_off_time_min:00', ".
-									 "$proj_id, $task_id, '$log_message')";
+				"VALUES ('$contextUser','$year-$month-$day $clock_on_time_hour:$clock_on_time_min:00', ".
+				"'$year-$month-$day $clock_off_time_hour:$clock_off_time_min:00', ".
+				"$proj_id, $task_id, '$log_message')";
 		list($qh,$num) = dbQuery($queryString);
 
 		Header("Location: $Location");

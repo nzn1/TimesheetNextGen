@@ -3,8 +3,8 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclTasks'));
 	exit;
 }
 
@@ -34,7 +34,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -51,8 +51,8 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
-				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">				
+			<td>
+				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Task Name:</td>
 						<td><input type="text" name="name" size="42" style="width: 100%"></td>
@@ -72,7 +72,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 				</table>
 			</td>
 		</tr>
-		<tr>						
+		<tr>
 			<td>
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
@@ -83,7 +83,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 				</table>
 			</td>
 		</tr>
-	</table>	
+	</table>
 
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
@@ -91,9 +91,9 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 		</td>
 	</tr>
 </table>
-	
+
 </form>
-	
+
 <?php include("footer.inc"); ?>
 </body>
 </html>

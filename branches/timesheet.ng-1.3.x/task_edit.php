@@ -3,8 +3,8 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclTasks'));
 	exit;
 }
 
@@ -19,18 +19,18 @@ $task_id = $_REQUEST['task_id'];
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 //query database for existing task values
-list($qh, $num) = dbQuery("select task_id, proj_id, name, description, status from $TASK_TABLE where task_id = $task_id ");
+list($qh, $num) = dbQuery("SELECT task_id, proj_id, name, description, status FROM $TASK_TABLE WHERE task_id = $task_id ");
 $data = dbResult($qh);
 
-list($qh, $num) = dbQuery("SELECT username from $TASK_ASSIGNMENTS_TABLE where proj_id = $data[proj_id] AND task_id = $task_id");
+list($qh, $num) = dbQuery("SELECT username FROM $TASK_ASSIGNMENTS_TABLE WHERE proj_id = $data[proj_id] AND task_id = $task_id");
 $selected_array = array();
 $i = 0;
-while ($datanext = dbResult($qh)) {	
+while ($datanext = dbResult($qh)) {
 	$selected_array[$i] = $datanext["username"];
 	$i++;
 }
 
-?> 
+?>
 <html>
 <head>
 	<title>Edit Task</title>
@@ -47,7 +47,7 @@ while ($datanext = dbResult($qh)) {
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -64,8 +64,8 @@ while ($datanext = dbResult($qh)) {
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
-				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">				
+			<td>
+				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Task Name:</td>
 						<td><input type="text" name="name" size="42" value="<? echo $data["name"]; ?>" style="width: 100%"></td>
@@ -96,7 +96,7 @@ while ($datanext = dbResult($qh)) {
 				</table>
 			</td>
 		</tr>
-	</table>	
+	</table>
 
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
@@ -104,9 +104,9 @@ while ($datanext = dbResult($qh)) {
 		</td>
 	</tr>
 </table>
-	
+
 </form>
-	
+
 <?php include("footer.inc"); ?>
 </body>
 </html>

@@ -7,8 +7,8 @@ ini_set('display_errors', true);
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 require("class.Pair.php");
-if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclWeekly')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclWeekly'));
 	exit;
 }
 
@@ -37,9 +37,6 @@ if ($proj_id != 0 && $client_id != 0) { // id 0 means 'All Projects'
 else
 	$task_id = 0;
 
-
-//a useful constant
-define("A_DAY", 24 * 60 * 60);
 
 //get the passed date (context date)
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
@@ -81,7 +78,7 @@ $nextWeekMonth = date("n", $nextWeekDate);
 $nextWeekDay = date("j", $nextWeekDate);
 
 //get the timeformat
-list($qh2, $numq) = dbQuery("select timeformat from $CONFIG_TABLE where config_set_id = '1'");
+list($qh2, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qh2);
 
 //build the database query
@@ -101,12 +98,13 @@ $query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
 						"$TASK_TABLE.name AS taskName, " .
 						"$TIMES_TABLE.proj_id, " .
 						"$TIMES_TABLE.task_id, " .
-						"$CLIENT_TABLE.organisation AS clientName " .
+						"$CLIENT_TABLE.organisation AS clientName, " .
+						"$CLIENT_TABLE.client_id AS clientId " .
 						"FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE WHERE " .
 						"uid='$contextUser' AND ";
 
 if ($proj_id > 0) //otherwise want all records no matter what project
-	$query .=	"$TIMES_TABLE.proj_id=$proj_id AND ";
+	$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
 else if ($client_id > 0) //only records for projects of the given client
 	$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
 
@@ -136,7 +134,7 @@ include ("header.inc");
 echo "<body width=\"100%\" height=\"100%\"";
 include ("body.inc");
 if (isset($popup))
-	echo "onLoad=window.open(\"popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
+	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
 echo ">\n";
 
 include ("banner.inc");
@@ -204,7 +202,7 @@ include ("banner.inc");
 			<td>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 					<tr class="inner_table_head">
-						<td class="inner_table_column_heading" align="center">
+						<td class="inner_table_column_heading" align="left">
 <?php
 
 						if ($client_id == 0)
@@ -223,7 +221,7 @@ include ("banner.inc");
 						for ($i=0; $i<7; $i++) {
 							$currentDayStr = strftime("%A", $currentDayDate);
 							$currentDayDate += A_DAY;
-							print "	<td class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>\n";
+							print "	<td class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>";
 						}
 						?>
 						<td align="center">&nbsp;</td>
@@ -243,13 +241,15 @@ include ("banner.inc");
 		var $projectTitle;
 		var $taskName;
 		var $clientName;
+		var $clientId;
 
-		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName) {
-			 parent::Pair($value1, $value2);
-			 $this->projectId = $projectId;
-			 $this->projectTitle = $projectTitle;
-			 $this->taskName = $taskName;
-			 $this->clientName = $clientName;
+		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName, $clientId) {
+			parent::Pair($value1, $value2);
+			$this->projectId = $projectId;
+			$this->projectTitle = $projectTitle;
+			$this->taskName = $taskName;
+			$this->clientName = $clientName;
+			$this->clientId = $clientId;
 		}
 	}
 
@@ -292,6 +292,7 @@ include ("banner.inc");
 		$currentProjectTitle = $data["projectTitle"];
 		$currentProjectId = $data["proj_id"];
 		$currentClientName = $data["clientName"];
+		$currentClientId = $data["clientId"];
 
 		//debug
 		//print "<p>taskId:$currentTaskId '$data[taskName]', start time:$data[start_time_str], end time:$data[end_time_str]</p>";
@@ -337,11 +338,12 @@ include ("banner.inc");
 
 			//create a new pair
 			$matchedPair = new TaskInfo($currentTaskId,
-																					 $daysArray,
-																					 $currentProjectId,
-																					 $currentProjectTitle,
-																					 $currentTaskName,
-																					 $currentClientName);
+											$daysArray,
+											$currentProjectId,
+											$currentProjectTitle,
+											$currentTaskName,
+											$currentClientName,
+											$currentClientId);
 
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
@@ -364,7 +366,7 @@ include ("banner.inc");
 			$endsOnFollowingDay = ($currentTaskEndDate >= ($startDate + ($k + 1) * A_DAY));
 			$startsToday = ($currentTaskStartDate >= ($startDate + $k * A_DAY) &&
 													$currentTaskStartDate < ($startDate + ($k + 1) * A_DAY));
-			$endsToday = 	($currentTaskEndDate >= ($startDate + $k * A_DAY) &&
+			$endsToday = ($currentTaskEndDate >= ($startDate + $k * A_DAY) &&
 													$currentTaskEndDate < ($startDate + ($k + 1) * A_DAY));
 
 			//$currentTaskStartDateStr = strftime("%D %T", $currentTaskStartDate);
@@ -418,14 +420,14 @@ include ("banner.inc");
 
 		//should we print the client name?
 		if ($client_id == 0)
-			print "<div class=\"client_name_small\">$matchedPair->clientName</div>";
+			print "<span class=\"client_name_small\">$matchedPair->clientName / </span>";
 
 		//print the project title
 		if ($proj_id == 0)
-			print "<div class=\"project_name_small\">$matchedPair->projectTitle</div>";
+			print "<span class=\"project_name_small\">$matchedPair->projectTitle / </span>";
 
 		//print the task name
-		print "<div class=\"task_name_small\">$matchedPair->taskName</div>";
+		print "<span class=\"task_name_small\">$matchedPair->taskName</span>";
 		print "</td>\n";
 
 		//print the spacer column
@@ -464,7 +466,7 @@ include ("banner.inc");
 						$emptyCell = false;
 					else
 						//print a break for the next entry
-						print "<br>";
+						print "&nbsp;"; //"<br>";
 
 					//format printable times
 					$formattedStartTime = $currentTaskEntry["start"];
@@ -493,10 +495,24 @@ include ("banner.inc");
 				}
 			}
 
-			//make sure the cell has at least a space in it so that its rendered by the browser
-			if ($emptyCell)
-				print "&nbsp;";
-
+			//If the cell is empty put a popup link in the cell
+			//if ($emptyCell) {
+				$cellDay = date("j", $todaysStartTime);
+				$cellMonth = date("m", $todaysStartTime);
+				$cellYear = date("Y", $todaysStartTime);				
+				$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
+					"?client_id=$matchedPair->clientId".
+					"&proj_id=$matchedPair->projectId".
+					"&task_id=$matchedPair->value1".
+					"&year=$cellYear".
+					"&month=$cellMonth".
+					"&day=$cellDay".
+					"&destination=$_SERVER[PHP_SELF]".
+					"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+				print "<a href=\"$popup_href\" class=\"action_link\">".
+					"<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\">".
+					"</a>";
+			//}
 			//close the times class
 			print "</span>";
 
@@ -543,7 +559,7 @@ include ("banner.inc");
 		$currentDay = date("j", $currentDayDate);
 		$currentMonth = date("m", $currentDayDate);
 		$currentYear = date("Y", $currentDayDate);
-		$popup_href = "javascript:void(0)\" onclick=window.open(\"popup.php".
+		$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
 											"?client_id=$client_id".
 											"&proj_id=$proj_id".
 											"&task_id=$task_id".
@@ -553,7 +569,8 @@ include ("banner.inc");
 											"&destination=$_SERVER[PHP_SELF]".
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 		print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
-		print "<a href=\"$popup_href\" class=\"action_link\">Add</a></td>\n";
+		print "<a href=\"$popup_href\" class=\"action_link\">Add</a>,";
+		print "<a href=\"daily.php?month=$currentMonth&year=$currentYear&day=$currentDay\">Edit</a></td>\n";
 		$currentDayDate += A_DAY;
 	}
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";

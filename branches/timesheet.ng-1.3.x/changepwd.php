@@ -36,30 +36,29 @@ include("timesheet_menu.inc");
 
 //check for guest user
 if ($loggedInUser == 'guest')
-  $errormsg = "Guest may not change password.";
+	$errormsg = "Guest may not change password.";
 
 //check that passwords match
 if ($passwd1 != $passwd2)
-  $errormsg = "Passwords do not match, please try again";
+	$errormsg = "Passwords do not match, please try again";
 
-if (empty($errormsg) && !empty($old_pass))
-{
-	$qh = mysql_query("select password, $DATABASE_PASSWORD_FUNCTION('$old_pass') from $USER_TABLE where username='$contextUser'") or die("Unable to select ". mysql_error());
+if (empty($errormsg) && !empty($old_pass)) {
+	$qh = mysql_query("SELECT password, $DATABASE_PASSWORD_FUNCTION('$old_pass') FROM $USER_TABLE WHERE username='$contextUser'") or die("Unable to select ". mysql_error());
 	list($check1, $check2) = mysql_fetch_row($qh);
-	if ($check1 != $check2)	{
-  	$errormsg = "Wrong password, sorry!";
+	if ($check1 != $check2) {
+		$errormsg = "Wrong password, sorry!";
 	}
-	else	{
-		$qh = mysql_query("update $USER_TABLE set password=$DATABASE_PASSWORD_FUNCTION('$passwd1') where username='$contextUser'");
-		Header("Location: calendar.php");
+	else {
+		$qh = mysql_query("UPDATE $USER_TABLE SET password=$DATABASE_PASSWORD_FUNCTION('$passwd1') WHERE username='$contextUser'");
+		gotoStartPage();
 		exit;
 	}
 }
 
 //if errors, redirect to an error page.
 if (!empty($errormsg)) {
-  Header("Location: error.php?errormsg=$errormsg");
-  exit;
+	Header("Location: error.php?errormsg=$errormsg");
+	exit;
 }
 
 ?>
@@ -77,7 +76,7 @@ if (!empty($errormsg)) {
 <table width="436" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -94,7 +93,7 @@ if (!empty($errormsg)) {
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
+			<td>
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td width="150" align="right" nowrap>Old Password:</td>
@@ -111,7 +110,7 @@ if (!empty($errormsg)) {
 				</table>
 			</td>
 		</tr>
-		<tr>						
+		<tr>
 			<td>
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
@@ -122,7 +121,7 @@ if (!empty($errormsg)) {
 				</table>
 			</td>
 		</tr>
-	</table>	
+	</table>
 
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
@@ -130,9 +129,9 @@ if (!empty($errormsg)) {
 		</td>
 	</tr>
 </table>
-	
+
 </form>
-			
+
 <?
 include ("footer.inc");
 ?>

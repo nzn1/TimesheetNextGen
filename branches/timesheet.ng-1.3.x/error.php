@@ -17,7 +17,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:back()"));
 ?>
 <HTML>
 	<HEAD>
-    <TITLE>Error, <? echo $loggedInUser; ?></TITLE>
+	<title>Error, <? echo $loggedInUser; ?></title>
 <?
 include ("header.inc");
 ?>

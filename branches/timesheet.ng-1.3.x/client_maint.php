@@ -2,8 +2,8 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclClients')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclClients'));
 	exit;
 }
 
@@ -12,7 +12,7 @@ $dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //make sure "No Client exists with client_id of 1
-//execute the query	
+//execute the query
 tryDbQuery("INSERT INTO $CLIENT_TABLE VALUES (1,'No Client', 'This is required, do not edit or delete this client record', '', '', '', '', '', '', '', '', '', '', '', '', '', '');");
 tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1'");
 
@@ -23,7 +23,7 @@ include("timesheet_menu.inc");
 
 <HTML>
 <HEAD>
-<TITLE>Client Management Page</TITLE>
+<title>Client Management Page</title>
 <?
 include ("header.inc");
 ?>
@@ -45,7 +45,7 @@ include ("banner.inc");
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -65,12 +65,12 @@ include ("banner.inc");
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
+			<td>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 <?php
 
-//execute the query	
-list($qh,$num) = dbQuery("select * from $CLIENT_TABLE where client_id > 1 order by organisation");
+//execute the query
+list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE WHERE client_id > 1 ORDER BY organisation");
 
 //are there any results?
 if ($num == 0) {
@@ -85,7 +85,7 @@ else {
 						<td class="inner_table_column_heading">Phone</td>
 						<td class="inner_table_column_heading">Contact Email</td>
 						<td class="inner_table_column_heading"><i>Actions</i></td>
-					</tr>			
+					</tr>
 <?php
 
 	while ($data = dbResult($qh)) {
@@ -99,16 +99,16 @@ else {
 		$emailField = $data["contact_email"];
 		if (empty($emailField))
 			$emailField = "&nbsp;";
-   print "<tr>";
-   print "<td class=\"calendar_cell_middle\"><A HREF=\"javascript:void(0)\" ONCLICK=window.open(\"client_info.php?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=240\")>$organisationField</A></TD>";
-   print "<td class=\"calendar_cell_middle\">$contactNameField</td>";   
-   print "<td class=\"calendar_cell_middle\">$phoneField</td>";
-   print "<td class=\"calendar_cell_middle\">$emailField</td>";
-   print "<td class=\"calendar_cell_disabled_right\">\n";
-		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>,&nbsp;\n";
-		print "	<a href=\"client_edit.php?client_id=$data[client_id]\">Edit</a>\n";
+		print "<tr>";
+		print "<td class=\"calendar_cell_middle\"><A HREF=\"javascript:void(0)\" ONCLICK=window.open(\"client_info.php?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=240\")>$organisationField</A></TD>";
+		print "<td class=\"calendar_cell_middle\">$contactNameField</td>";
+		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
+		print "<td class=\"calendar_cell_middle\">$emailField</td>";
+		print "<td class=\"calendar_cell_disabled_right\">\n";
+		print "	<a href=\"client_edit.php?client_id=$data[client_id]\">Edit</a>,&nbsp;\n";
+		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>\n";
 		print "</td>\n";
-  }
+	}
 }
 ?>
 				</TABLE>
@@ -122,7 +122,7 @@ else {
 		</td>
 	</tr>
 </table>
-		
+
 </form>
 <?
 include ("footer.inc");

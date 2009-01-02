@@ -1,11 +1,11 @@
 <?php
-//$Header: /cvsroot/tsheet/timesheet.php/calendar.php,v 1.9 2005/05/23 05:39:38 vexil Exp $
+//$Header: /cvsroot/tsheet/timesheet.php/calendar.php,v 1.10 2006/03/15 13:24:28 raghuprasad Exp $
 
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclCalendar')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclCalendar'));
 	exit;
 }
 
@@ -30,16 +30,12 @@ $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 
 // Check project assignment.
 if ($proj_id != 0) { // id 0 means 'All Projects'
-	list($qh, $num) = dbQuery("select * from $ASSIGNMENTS_TABLE where proj_id='$proj_id' and username='$contextUser'");
+	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE WHERE proj_id='$proj_id' AND username='$contextUser'");
 	if ($num < 1)
 		errorPage("You cannot access this project, because you are not assigned to it.");
 }
 else
 	$task_id = 0;
-
-
-//a useful constant
-define("A_DAY", 24 * 60 * 60);
 
 
 //get the passed date (context date)
@@ -169,7 +165,7 @@ include ("header.inc");
 echo "<body width=\"100%\" height=\"100%\"";
 include ("body.inc");
 if (isset($popup))
-	echo "onLoad=window.open(\"popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
+	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
 echo ">\n";
 
 include ("banner.inc");
@@ -199,7 +195,7 @@ include ("banner.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" alt="spacer" width="150" height="1" /></td>
 											</tr>
 										</table>
 									</td>
@@ -211,7 +207,7 @@ include ("banner.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" alt="spacer" width="150" height="1" /></td>
 											</tr>
 										</table>
 									</td>
@@ -249,21 +245,25 @@ include ("banner.inc");
 					<tr>
 <?php {
 
-	//define the variable dayRow
-	$dayRow = 0;
+	//define the variable dayCol
+	$dayCol = 0;
 
 	// Print last months' days spots.
 	for ($i=0; $i<$leadInDays; $i++) {
-	//while (($dayRow < $dowForFirstOfMonth) && ($dowForFirstOfMonth != 0)) {
+	//while (($dayCol < $dowForFirstOfMonth) && ($dowForFirstOfMonth != 0)) {
 		print "<td width=\"14%\" HEIGHT=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
-		$dayRow++;
+		$dayCol++;
 	}
 
 	// Get the Monthly data.
-	list($num, $qh) = get_time_date($month, $year, $contextUser, $proj_id, $client_id);
+	list($num, $qh) = get_month_times($month, $year, $contextUser, $proj_id, $client_id);
+	list($qhol, $holnum) = get_absences($month, $year, $contextUser);
+	$ihol = 0; $holtitle = "";
+	if ($holnum>$ihol)
+		$holdata = dbResult($qhol, $ihol);
 
-  $i=0; $day = 1; $tot_sec = 0; $week_tot_sec = 0; $day_tot_sec = 0;
-  while (checkdate($month, $day, $year)) {
+	$i=0; $day = 1; $tot_sec = 0; $week_tot_sec = 0; $day_tot_sec = 0;
+	while (checkdate($month, $day, $year)) {
 		// Reset daily variables;
 		$day_tot_sec = 0;
 		$last_task_id = -1;
@@ -271,7 +271,7 @@ include ("banner.inc");
 		$last_client_id = -1;
 
 		// New Week.
-		if ((($dayRow % 7) == 0) && ($dowForFirstOfMonth != 0)) {
+		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
 			print_totals($week_tot_sec, "weekly", $year, $month, $day);
 			$week_tot_sec = 0;
 			print "</tr>\n<tr>\n";
@@ -280,18 +280,59 @@ include ("banner.inc");
 			$dowForFirstOfMonth = 1;
 
 		//define subtable
-		if (($dayRow % 7) == 6)
-			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_right\">\n";
-		else
-			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_middle\">\n";
+		if (($dayCol % 7) == 6)
+			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_right\">\n";
+		else if (($dayCol % 7 ) == 5)
+			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_middle\">\n";
+		else {
+			$cellstyle = 'calendar_cell_middle';
+			if ($holnum>$ihol) {
+				if ($holdata['day_of_month']==$day) {
+					$cellstyle = 'calendar_cell_holiday_middle';
+					if ($holdata['user']=='') 
+					{
+						$holtitle = urldecode($holdata['subject']);
+						if (($holdata['AM_PM']=='AM')||($holdata['AM_PM']=='PM'))
+							$holtitle .= " (".$holdata['AM_PM'].")";
+					}
+					else
+						$holtitle = $holdata['user'].": ".urldecode($holdata['type'])." ".$holdata['AM_PM'];
+					$ihol++;
+					if ($holnum>$ihol)
+					{
+						$holdata = dbResult($qhol, $ihol);
+						if ($holdata['day_of_month']==$day) 
+						{
+							if ($holdata['user']=='')
+							{
+								$holtitle .= " ".urldecode($holdata['subject']);
+								if (($holdata['AM_PM']=='AM')||($holdata['AM_PM']=='PM'))
+									$holtitle .= " (".$holdata['AM_PM'].")";
+							}
+							else {
+								if ($holtitle==$holdata['user'].": ".urldecode($holdata['type'])." AM")
+									$holtitle = $holdata['user'].": ".urldecode($holdata['type']);
+								else
+									$holtitle .= " ".$holdata['user'].": ".urldecode($holdata['type'])." ".$holdata['AM_PM'];
+							}
+							$ihol++;
+							if ($holnum>$ihol)
+								$holdata = dbResult($qhol, $ihol);
+						}
+					}
 
+				}
+			}
+			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"".$cellstyle."\">\n";
+		}
+		
 		print "	<table width=\"100%\">\n";
 
 		// Print out date.
-    /*print "<tr><td valign=\"top\"><tt><A HREF=\"daily.php?month=$month&year=$year&".
-      "day=$day&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$day</a></tt></td></tr>";*/
+		/*print "<tr><td valign=\"top\"><tt><A HREF=\"daily.php?month=$month&year=$year&".
+			"day=$day&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$day</a></tt></td></tr>";*/
 
-		$popup_href = "javascript:void(0)\" onclick=window.open(\"popup.php".
+		$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
 											"?client_id=$client_id".
 											"&proj_id=$proj_id".
 											"&task_id=$task_id".
@@ -301,19 +342,20 @@ include ("banner.inc");
 											"&destination=$_SERVER[PHP_SELF]".
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 
-    print "<tr><td valign=\"top\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
-    print "<tr><td valign=\"top\"><A HREF=\"daily.php?month=$month&year=$year&".
-      "day=$day&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$day</a></td>";
-    print "<td valign=\"top\" align=\"right\"><a href=\"$popup_href\" class=\"action_link\">".
-    				 "<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\">".
-				    "</a></td>";
-    print "</tr>";
-    print "</table></td></tr>";
+		print "<tr><td valign=\"top\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
+		print "<tr><td valign=\"top\"><A HREF=\"daily.php?month=$month&year=$year&".
+			"day=$day&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$day <span class=\"task_time_small\">$holtitle</span></a></td>";
+		print "<td valign=\"top\" align=\"right\"><a href=\"$popup_href\" class=\"action_link\">".
+				 "<img src=\"images/add.gif\" alt=\"spacer\" width=\"11\" height=\"11\" border=\"0\">".
+				"</a></td>";
+		print "</tr>";
+		print "</table></td></tr>";
 
 
-    $data_seen = 0;
+		$data_seen = 0;
+		$holtitle = ""; // used already
 
-    // If the day has data, print it.
+		// If the day has data, print it.
 		for ($i=0;$i<$num; $i++) {
 			$data = dbResult($qh,$i);
 
@@ -330,28 +372,27 @@ include ("banner.inc");
 					&& ($data["start_time"] <= mktime(23,59,59,$month,$day,$year))) ||
 					(($data["end_time"] >= mktime(0,0,0,$month,$day,$year))
 					&& ($data["end_time"] <= mktime(23,59,59,$month,$day,$year)))
-				 )
-			{
-			  // This day has data in it.  Therefore we want to print out a summary at the bottom of each day.
-			  $data_seen = 1;
-			  $todays_total_sec=0;
+				) {
+				// This day has data in it.  Therefore we want to print out a summary at the bottom of each day.
+				$data_seen = 1;
+				$todays_total_sec=0;
 
-			  //print out client name if its a new client
-			  if ($client_id == 0 && $last_client_id != $data["client_id"]) {
-			  	$last_client_id = $data["client_id"];
-			  	$clientName = $data["organisation"];
- 					print "<tr><td valign=\"top\" class=\"client_name_small\">$clientName</td></tr>";
-			  }
+				//print out client name if its a new client
+				if ($client_id == 0 && $last_client_id != $data["client_id"]) {
+					$last_client_id = $data["client_id"];
+					$clientName = $data["organisation"];
+					print "<tr><td valign=\"top\" class=\"client_name_small\">$clientName</td></tr>";
+				}
 
-			  //print out project name if its a new project
-			  if ($proj_id == 0 && $last_proj_id != $data["proj_id"]) {
+				//print out project name if its a new project
+				if ($proj_id == 0 && $last_proj_id != $data["proj_id"]) {
 					$last_proj_id = $data["proj_id"];
 					$projectName = $data["title"];
- 					print "<tr><td valign=\"top\" class=\"project_name_small\">$projectName</td></tr>";
-			  }
+					print "<tr><td valign=\"top\" class=\"project_name_small\">$projectName</td></tr>";
+				}
 
-			  // Print out task name if it's a new task
-			  if ($last_task_id != $data["task_id"]) {
+				// Print out task name if it's a new task
+				if ($last_task_id != $data["task_id"]) {
 					$last_task_id = $data["task_id"];
 					$taskName = $data["name"];
 					print "<tr><td valign=\"top\" class=\"task_name_small\">$taskName</td></tr>";
@@ -366,7 +407,7 @@ include ("banner.inc");
 					//if end time is not today
 					elseif ($data["end_time"] > mktime(23,59,59,$month,$day,$year)) {
 						$today_diff_sec = mktime(0,0,0, $month,$day,$year) + 24*60*60 - $data["start_time"];
-				    print "<tr><td valign=\"top\" class=\"task_time_small\">$data[start]-...</td></tr>";
+						print "<tr><td valign=\"top\" class=\"task_time_small\">$data[start]-...</td></tr>";
 					}
 					//elseif start time is not today
 					elseif ($data["start_time"] < mktime(0,0,0,$month,$day,$year)) {
@@ -377,13 +418,13 @@ include ("banner.inc");
 						$today_diff_sec = $data["diff_sec"];
 						$startTimeStr = $data["start"];
 						$endTimeStr = $data["endd"];
-				    print "<tr><td valign=\"top\" class=\"task_time_small\">$startTimeStr-$endTimeStr</td></tr>";
+						print "<tr><td valign=\"top\" class=\"task_time_small\">$startTimeStr-$endTimeStr</td></tr>";
 					}
 
-			    $tot_sec += $today_diff_sec;
-			    $week_tot_sec += $today_diff_sec;
-			    $day_tot_sec += $today_diff_sec;
-	  		}
+					$tot_sec += $today_diff_sec;
+					$week_tot_sec += $today_diff_sec;
+					$day_tot_sec += $today_diff_sec;
+				}
 				else {
 					$startTimeStr = $data["start"];
 					print "<tr><td valign=\"top\" class=\"task_time_small\">$startTimeStr-...</td></tr>";
@@ -391,27 +432,27 @@ include ("banner.inc");
 			}
 		}
 
-    if ($data_seen == 1)	{
-      print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . formatSeconds($day_tot_sec) ."</td></tr>";
-    }
+		if ($data_seen == 1) {
+			print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . formatSeconds($day_tot_sec) ."</td></tr>";
+		}
 		else {
-      print "<tr><td>&nbsp;</td></tr>";
-    }
+			print "<tr><td>&nbsp;</td></tr>";
+		}
 
 		//end subtable
 		print "		</table>\n";
 		print " </td>\n";
 
-    $day++;
-    $dayRow++;
-  }
-  // Print the rest of the calendar.
-	while (($dayRow % 7) != 0) {
-		if (($dayRow % 7) == 6)
+		$day++;
+		$dayCol++;
+	}
+	// Print the rest of the calendar.
+	while (($dayCol % 7) != 0) {
+		if (($dayCol % 7) == 6)
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</TD>\n ";
 		else
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</TD>\n ";
-		$dayRow++;
+		$dayCol++;
 	}
 	print_totals($week_tot_sec, "weekly", $year, $month, $day);
 	$week_tot_sec = 0;

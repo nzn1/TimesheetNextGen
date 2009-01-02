@@ -3,4 +3,4 @@
   deny from all
 </FilesMatch>
 Options +ExecCGI
-DirectoryIndex calendar.php
+DirectoryIndex index.php

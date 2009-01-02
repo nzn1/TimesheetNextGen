@@ -1,11 +1,11 @@
 #!/bin/sh
 
-TIMESHEET_NEW_VERSION="1.2.1";
-TIMESHEET_LAST_VERSION="1.2.0";
+TIMESHEET_NEW_VERSION="1.3.1";
+TIMESHEET_LAST_VERSION="1.2.1";
 
 echo "###################################################################"
-echo "# Timesheet.php $TIMESHEET_NEW_VERSION (c) 1998-1999 Peter D. Kovacs               #"
-echo "#                   (c) 2004 Dominic J. Gamble, Advancen          #"
+echo "# TimesheetNextGen $TIMESHEET_NEW_VERSION "
+echo "# (c) 2008 Tsheetx Development Team                               #"
 echo "###################################################################"
 echo "# This program is free software; you can redistribute it and/or   #"
 echo "# modify it under the terms of the GNU General Public License     #"
@@ -17,12 +17,12 @@ echo "# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   #"
 echo "# GNU General Public License for more details.                    #"
 echo "###################################################################"
 
-echo "Welcome to the timesheet.php Installation. This script will attempt to "
-echo "install timesheet.php onto your webserver. Timesheet.php has only been "
+echo "Welcome to the TimesheetNextGen Installation. This script will attempt to "
+echo "install TimesheetNextGen onto your webserver. This has only been "
 echo "tested under PHP4, MySQL, and Apache. Other configurations may work, and "
 echo "if they do not, any efforts to get them to work would be appreciated."
 echo ""
-echo "If you want to upgrade from a previous version of timesheet.php, please "
+echo "If you want to upgrade from a previous version of TimesheetNextGen, please "
 echo "use the upgrade script (upgrade.sh). That script can upgrade versions "
 echo "1.1 thru $TIMESHEET_LAST_VERSION to the current version ($TIMESHEET_NEW_VERSION)"
 echo ""
@@ -62,9 +62,9 @@ if [ "$PASSWORD_FUNCTION_NUMBER" = "2" ]; then
 fi
 
 echo ""
-echo "Timesheet.php can create its tables in an existing database, or can "
+echo "TimesheetNextGen can create its tables in an existing database, or can "
 echo "create a new database called 'timesheet' to store its tables. If you "
-echo "are installing timesheet.php onto a shared server, then it is likely "
+echo "are installing TimesheetNextGen onto a shared server, then it is likely "
 echo "that you do not have permission to create a new database, but you have "
 echo "an existing database which was set up for you by the system administrator."
 echo ""
@@ -77,9 +77,9 @@ done
 
 SUCCESS=0
 
-if [ "$NEWEXIST" = "e" -o "$NEWEXIST" = "E" ]; then	
+if [ "$NEWEXIST" = "e" -o "$NEWEXIST" = "E" ]; then
 	until [ $SUCCESS = 1 ]
-	do	
+	do
 		echo -n "Please enter the name of the existing database:"
 		read DBNAME
 		echo ""
@@ -91,7 +91,7 @@ if [ "$NEWEXIST" = "e" -o "$NEWEXIST" = "E" ]; then
 		read DBUSER
 		echo -n "$DBNAME MySQL password:"
 		read DBPASS
-	
+
 		#now test
 		mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < test.sql > /dev/null
 
@@ -112,9 +112,9 @@ else
 	fi
 
 	DBUSER=$DBNAME
-	
+
 	until [ $SUCCESS = 1 ]
-	do				
+	do
 		echo ""
 		echo "To create a new database, you must provide the MySQL administrators "
 		echo "username and password. This should have been set up when you installed "
@@ -129,7 +129,7 @@ else
 		echo ""
 		echo "A new account will be created specifically for accessing the "
 		echo "timesheet database. The username and password will be stored in "
-		echo "the timesheet.php's configuration file 'database_credentials.inc'."
+		echo "the TimesheetNextGen's configuration file 'database_credentials.inc'."
 		echo ""
 		echo -n "Please choose a password for the MySQL timesheet account:"
 		read DBPASS
@@ -140,13 +140,13 @@ else
 		sed s/__DBUSER__/$DBUSER/g | \
 		sed s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g | \
 		sed s/__DBPASS__/$DBPASS/g > timesheet_create.sql
-	
+
 		#execute the script
 		mysql -h $DBHOST -u $MYSQLADMINUSER --password=$MYSQLADMINPASS < timesheet_create.sql
 
 		if [ $? = 0 ]; then
 			SUCCESS=1
-		else 
+		else
 			SUCCESS=0
 			echo ""
 			echo "There was an error creating the database. "
@@ -154,9 +154,9 @@ else
 		fi
 	done
 fi
-	
+
 echo ""
-echo "Timesheet.php prefixes all tables used with a string, so to avoid "
+echo "TimesheetNextGen prefixes all tables used with a string, so to avoid "
 echo "name clashes with other tables in the database. This prefix is "
 echo " normally 'timesheet_', however you can choose another string to "
 echo "meet your requirements."
@@ -177,17 +177,17 @@ sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > table_names.inc
 sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sample_data.sql.in > sample_data.sql
 
 echo ""
-echo "Timesheet.php installation will now create the necessary tables "
+echo "TimesheetNextGen installation will now create the necessary tables "
 echo "in the $DBNAME database:"
 echo ""
 mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet.sql
 
 if [ $? != 0 ]; then
 	echo ""
-	echo "An unexpected error occured when creating the tables. Please report this to dominic@advancen.com"
+	echo "An unexpected error occured when creating the tables. Please report this."
 	exit 1;
 fi
-		
+
 #replace the DBNAME, DBUSER, and DBPASS in the database_credentials.inc.in file
 sed s/__DBHOST__/$DBHOST/g database_credentials.inc.in | \
 sed s/__DBNAME__/$DBNAME/g | \
@@ -236,7 +236,7 @@ if [ ! -d $INSTALL_DIR/images ]; then
 		exit 1
 	fi
 fi
-	
+
 echo ""
 echo "Installing files..."
 cp *.php *.inc *.html .htaccess $INSTALL_DIR
@@ -274,13 +274,13 @@ echo -n "Please enter a password for the account:"
 read ADMIN_PASS
 
 echo -n "INSERT INTO $TABLE_PREFIX" > sql.tmp
-echo -n "user VALUES ('$ADMIN_USER',10,$DBPASSWORDFUNCTION('" >> sql.tmp
+echo -n "user (username,level,password,first_name,last_name) VALUES ('$ADMIN_USER',10,$DBPASSWORDFUNCTION('" >> sql.tmp
 echo -n $ADMIN_PASS >> sql.tmp
-echo "'),'.*','Timesheet','Admin','','','0.00','','OUT','1');" >> sql.tmp
+echo "'),'Timesheet','Admin')" >> sql.tmp
 mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < sql.tmp
 
 echo -n "INSERT INTO $TABLE_PREFIX" > sql.tmp
-echo -n "assignments VALUES(1,'$ADMIN_USER');" >> sql.tmp
+echo -n "assignments VALUES(1,'$ADMIN_USER', 1);" >> sql.tmp
 mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < sql.tmp
 
 echo -n "INSERT INTO $TABLE_PREFIX" > sql.tmp
@@ -301,13 +301,5 @@ echo "at http://www.php.net"
 echo ""
 echo "Once that is done, point your browser to the installation and log"
 echo "in as $ADMIN_USER with the password you gave above. "
-echo ""
-echo "If you have any questions or comments, or would just like to say"
-echo "thanks, please contact dominic@advancen.com"
-echo ""
-echo "If you find this program useful we ask that you make a donation to"
-echo "help fund further development of timesheet.php for everyones "
-echo "benefit. You can also sponsor specific changes for features which"
-echo "you would like to see in timesheet.php."
 echo ""
 

@@ -1,18 +1,18 @@
 <?{
 
-//Include file for timesheet.php date related functions
+//Include file for date related functions
 
 	//Base class for a form input. Holds the 'name' parameter
 	class FormInput {
 		var $name;
-	
+
 		function FormInput($name) {
 			$this->name = $name;
 		}
 	}
 
 	//Base class for a <select...> input. Defines functions which print the start/end tags
-	class SelectInput extends FormInput	{
+	class SelectInput extends FormInput {
 		function printSelect() {
 			//print the input
 			echo "<select name=\"" . $this->name . "\" id=\"" . $this->name . "\">";
@@ -22,26 +22,26 @@
 			echo "</select>";
 		}
 	}
-	
-	class HourInput extends SelectInput	{	
-	
+
+	class HourInput extends SelectInput {
+
 		function create($selectedIndex = 9) {
 			$this->printSelect();
 
 			//work out whether we want to display time in 12 or 24 hour format
 			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("select timeformat from $CONFIG_TABLE where config_set_id = '1'");
+			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 			$configdata = dbResult($qhq);
-			
-			if ($configdata[timeformat] == "12")
+
+			if ($configdata['timeformat'] == "12")
 				$this->create_12hour($selectedIndex);
 			else
 				$this->create_24hour($selectedIndex);
-			
+
 			$this->printEndSelect();
 		}
-	
-		function create_12hour($selectedIndex = 9) {			
+
+		function create_12hour($selectedIndex = 9) {
 			for ($i=0;$i<24;$i++) {
 				if ($i == 0)
 					$display_time = "12 am";
@@ -51,18 +51,18 @@
 					$display_time = $i-12 . " pm";
 				else
 					$display_time = "$i am";
-					
+
 				if ($i == $selectedIndex)
 					echo "<option value=\"$i\" selected>$display_time</option>";
 				else
 					echo "<option value=\"$i\">$display_time</option>";
 			}
 		}
-		
-		function create_24hour($selectedIndex = 9) {			
+
+		function create_24hour($selectedIndex = 9) {
 			for ($i=0;$i<24;$i++) {
 				$display_time = "$i";
-					
+
 				if ($i == $selectedIndex)
 					echo "<option value=\"$i\" selected>$display_time</option>";
 				else
@@ -73,9 +73,9 @@
 
 	class MinuteInput extends SelectInput {
 
-		function create($selectedMinute = 0) 	{
+		function create($selectedMinute = 0) {
 			$this->printSelect();
-		
+
 			for ($i=0;$i<60;$i+=5) {
 				echo "<option value=\"$i\"";
 					if ($selectedMinute > $i - 2 && $selectedMinute < $i + 3)
@@ -84,14 +84,14 @@
 			}
 
 			$this->printEndSelect();
-		}		
+		}
 	}
 
 	class MonthInput extends SelectInput {
-		function create($selectedMonth = 1)	{
+		function create($selectedMonth = 1) {
 			$this->printSelect();
-			
-			for ($i=1; $i<=12; $i++) {	
+
+			for ($i=1; $i<=12; $i++) {
 				echo "<option value=\"$i\"";
 				if ($i == $selectedMonth)
 					echo " selected";
@@ -104,15 +104,49 @@
 
 	class DayInput extends SelectInput {
 
-		function create($selectedDay = 1) 	{
+		function create($selectedDay = 1) {
 			$this->printSelect();
-			
+
 			for ($i=1; $i<=31; $i++) {
 				echo "<option value=\"$i\"";
 				if ($i == $selectedDay)
 					echo " selected";
 				echo ">$i</option>\n";
 			}
+
+			$this->printEndSelect();
+		}
+	}
+
+	class AbsenceInput extends SelectInput {
+
+		function create($selected="") 	{
+			$this->printSelect();
+			
+			echo "<option value=\"1\"";
+			if ("" == $selected)
+				echo " selected";
+			echo "></option>\n";
+			echo "<option value=\"2\"";
+			if ("Holiday" == $selected)
+				echo " selected";
+			echo ">Holiday</option>\n";
+			echo "<option value=\"3\"";
+			if ("Sick" == $selected)
+				echo " selected";
+			echo ">Sick</option>\n";
+			echo "<option value=\"4\"";
+			if ("Military/Civil" == $selected)
+				echo " selected";
+			echo ">Military/Civil</option>\n";
+			echo "<option value=\"5\"";
+			if ("Other Absence" == $selected)
+				echo " selected";
+			echo ">Other Absence</option>\n";
+			echo "<option value=\"6\"";
+			if ("Apprentice School" == $selected)
+				echo " selected";
+			echo ">Apprentice School</option>\n";
 
 			$this->printEndSelect();
 		}

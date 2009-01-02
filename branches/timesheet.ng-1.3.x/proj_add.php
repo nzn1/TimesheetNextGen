@@ -3,8 +3,8 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -17,7 +17,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 //load client id from superglobals
 $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
-	
+
 ?>
 <html>
 <head>
@@ -26,14 +26,14 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 </head>
 <body <? include ("body.inc"); ?> >
 <?php include ("banner.inc"); ?>
-	
+
 <form action="proj_action.php" method="post">
 <input type="hidden" name="action" value="add">
 
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -50,7 +50,7 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
+			<td>
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Project Title:</td>
@@ -91,7 +91,7 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 				</table>
 			</td>
 		</tr>
-		<tr>						
+		<tr>
 			<td>
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
@@ -102,7 +102,7 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 				</table>
 			</td>
 		</tr>
-	</table>	
+	</table>
 
 <!-- include the timesheet face up until the end -->
 <? include("timesheet_face_part_3.inc"); ?>
@@ -110,9 +110,9 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 		</td>
 	</tr>
 </table>
-	
+
 </form>
-	
+
 <?php include("footer.inc"); ?>
 </body>
 </html>

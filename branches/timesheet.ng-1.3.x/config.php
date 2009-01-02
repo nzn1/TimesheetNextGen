@@ -16,17 +16,13 @@ $contextUser = strtolower($_SESSION['contextUser']);
 include("timesheet_menu.inc");
 
 //Get the result set for the config set 1
-list($qh, $num) = dbQuery("select locale, timezone, timeformat, headerhtml, bodyhtml, footerhtml, " .
-		"errorhtml, bannerhtml, tablehtml, useLDAP, LDAPScheme, LDAPHost, LDAPPort, " .
-		"LDAPBaseDN, LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, ".
-		"LDAPBindUsername, LDAPBindPassword, weekstartday " .
-		"from $CONFIG_TABLE where config_set_id = '1'");
+list($qh, $num) = dbQuery("SELECT * FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $resultset = dbResult($qh);
 
 ?>
 <html>
 <head>
-<title>Timesheet.php Configuration Parameters</title>
+<title>Timesheet Configuration Parameters</title>
 <?
 include ("header.inc");
 ?>
@@ -39,19 +35,19 @@ var currentLDAPEntryMethod = 'normal';
 function onChangeLDAPEntryMethod() {
 	if (document.configurationForm.LDAPEntryMethod.value == 'normal') {
 		document.getElementById('normalLDAPEntry').style.display='block';
-		document.getElementById('advancedLDAPEntry').style.display='none';		
+		document.getElementById('advancedLDAPEntry').style.display='none';
 	}
 	else {
 		document.getElementById('normalLDAPEntry').style.display='none';
-		document.getElementById('advancedLDAPEntry').style.display='block';		
+		document.getElementById('advancedLDAPEntry').style.display='block';
 	}
-	
+
 	//copy data from one to the other when it changes
 	if (currentLDAPEntryMethod == 'normal' && document.configurationForm.LDAPEntryMethod.value != 'normal')
 		buildLDAPUrlFromForm();
 	else if (currentLDAPEntryMethod != 'normal' && document.configurationForm.LDAPEntryMethod.value == 'normal')
 		fillOutLDAPFieldsFromUrl();
-	
+
 	//update the current LDAP entry method variable
 	currentLDAPEntryMethod = document.configurationForm.LDAPEntryMethod.value;
 }
@@ -67,8 +63,11 @@ function enableLDAP(value) {
 	document.getElementById('LDAPFilter').disabled = !value;
 	document.getElementById('LDAPUrl').disabled = !value;
 	document.getElementById('LDAPProtocolVersion').disabled = !value;
+	document.getElementById('LDAPBindByUser').disabled = !value;
 	document.getElementById('LDAPBindUsername').disabled = !value;
 	document.getElementById('LDAPBindPassword').disabled = !value;
+	document.getElementById('LDAPReferrals').disabled = !value;
+	document.getElementById('LDAPFallback').disabled = !value;
 }
 
 function buildLDAPUrlFromDb() {
@@ -80,8 +79,8 @@ function buildLDAPUrlFromDb() {
 	var usernameAttribute = '<? echo $resultset['LDAPUsernameAttribute']; ?>';
 	var searchScope = '<? echo $resultset['LDAPSearchScope']; ?>';
 	var filter = '<? echo $resultset['LDAPFilter']; ?>';
-	
-	buildLDAPUrl(scheme, host, port, baseDN, usernameAttribute, searchScope, filter);		
+
+	buildLDAPUrl(scheme, host, port, baseDN, usernameAttribute, searchScope, filter);
 }
 
 function buildLDAPUrlFromForm() {
@@ -111,12 +110,12 @@ function buildLDAPUrl(scheme, host, port, baseDN, usernameAttribute, searchScope
 		searchScope = 'base';
 
 	//combine into one string
-	var url = scheme + '://' + host + ':' + port + '/' + baseDN + '?' + usernameAttribute + '?' 
+	var url = scheme + '://' + host + ':' + port + '/' + baseDN + '?' + usernameAttribute + '?'
 		+ searchScope;
-	
+
 	if (filter != '')
 		url += '?' + filter;
-	
+
 	//set in the form
 	document.getElementById('LDAPUrl').value = url;
 }
@@ -130,7 +129,7 @@ function fillOutLDAPFieldsFromUrl() {
 		document.getElementById('LDAPScheme').selectedIndex = 1;
 	else
 		document.getElementById('LDAPScheme').selectedIndex = 0;
-	
+
 	//find the host
 	var pos1 = url.indexOf('://') + 2;
 	if (pos1 == -1)
@@ -139,26 +138,26 @@ function fillOutLDAPFieldsFromUrl() {
 	if (pos2 == -1)
 		return;
 	document.getElementById('LDAPHost').value = url.substring(pos1+1, pos2);
-	
+
 	//find the port
 	var pos3 = url.indexOf('/', pos2+1);
 	if (pos3 == -1)
 		return false;
 	document.getElementById('LDAPPort').value = url.substring(pos2+1, pos3);
-	
+
 	//find the base dn
 	var pos4 = url.indexOf('?', pos3+1);
 	if (pos4 == -1)
 		return false;
 	document.getElementById('LDAPBaseDN').value = url.substring(pos3+1, pos4);
-	
+
 	//find the username attribute
 	var pos5 = url.indexOf('?', pos4+1);
 	if (pos5 == -1)
 		return false;
 	document.getElementById('LDAPUsernameAttribute').value = url.substring(pos4+1, pos5);
-	
-	//find the search scope	
+
+	//find the search scope
 	var pos6 = url.indexOf('?', pos5+1);
 	if (pos6 == -1)
 		pos6 = url.length;
@@ -170,8 +169,8 @@ function fillOutLDAPFieldsFromUrl() {
 	else
 		document.getElementById('LDAPSearchScope').selectedIndex = 0;
 	if (pos6 == -1)
-		return true;		
-	
+		return true;
+
 	//the filter
 	document.getElementById('LDAPFilter').value = url.substring(pos6+1, url.length);
 	return true;
@@ -189,10 +188,25 @@ function onSubmit() {
 		document.getElementById('useLDAP').value = 1;
 	else
 		document.getElementById('useLDAP').value = 0;
-	
+
+	if (document.getElementById('LDAPBindByUsercheck').checked)
+		document.getElementById('LDAPBindByUser').value = 1;
+	else
+		document.getElementById('LDAPBindByUser').value = 0;
+
+	if (document.getElementById('LDAPReferralsCheck').checked)
+		document.getElementById('LDAPReferrals').value = 1;
+	else
+		document.getElementById('LDAPReferrals').value = 0;
+
+	if (document.getElementById('LDAPFallbackCheck').checked)
+		document.getElementById('LDAPFallback').value = 1;
+	else
+		document.getElementById('LDAPFallback').value = 0;
+
 	//re-enable the fields just before submitting because otherwise they are not send in mozilla
 	enableLDAP(true);
-	
+
 	//submit the form
 	document.configurationForm.submit();
 }
@@ -203,12 +217,12 @@ function onSubmit() {
 include ("banner.inc");
 ?>
 <form action="config_action.php" name="configurationForm" method="post">
-<input type="hidden" name="action" value="edit">							
+<input type="hidden" name="action" value="edit">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-		
+
 <!-- include the timesheet face up until the heading start section -->
 <? include("timesheet_face_part_1.inc"); ?>
 
@@ -217,13 +231,16 @@ include ("banner.inc");
 						<td align="left" nowrap class="outer_table_heading" nowrap>
 							Configuration Parameters:
 						</td>
+						<td align="right">
+							<input type="button" value="Save Changes" name="submitButton" id="submitButton" onClick="onSubmit();">
+						</td>
 					</tr>
 					<tr>
 						<td>
-						This form allows you to change the basic operating parameters of timesheet.php.
+						This form allows you to change the basic operating parameters of TimesheetNextGen.
 						Please be careful here, as errors may cause pages not to display properly.
 						Somewhere in one of these, you should include the placeholder %commandMenu%.
-						This is where timesheet.php will place the menu options.
+						This is where TimesheetNextGen will place the menu options.
 						</td>
 					</tr>
 				</table>
@@ -233,12 +250,12 @@ include ("banner.inc");
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>			
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">					
+			<td>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 					<tr>
 						<td>
-						
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">					
+
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 
 
 			<!-- LDAP configurationForm -->
@@ -256,7 +273,7 @@ include ("banner.inc");
 				<td align="left" width="100%">
 					<fieldset>
 						<legend>Connection Details</legend>
-						<table width="100%">								
+						<table width="100%">
 							<tr>
 								<td>
 									<b>&nbsp;Data entry style:</b>
@@ -285,12 +302,12 @@ include ("banner.inc");
 													<span class="label">Host:</span>
 													<input id="LDAPHost" name="LDAPHost" type="text" value="<? echo $resultset['LDAPHost']; ?>" style="width:100%;"></input>
 												</td>
-												<td width="20">&nbsp;</td>												
+												<td width="20">&nbsp;</td>
 												<td width="50%">
 													<span class="label">Port:</span>
 													<input id="LDAPPort" name="LDAPPort" type="text" size="10" maxlength="10" value="<? echo $resultset['LDAPPort']; ?>"></input>
 												</td>
-											</tr>		
+											</tr>
 											<tr>
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
@@ -304,7 +321,7 @@ include ("banner.inc");
 															</td>
 														</tr>
 													</table>
-												</td>											
+												</td>
 											</tr>
 											<tr>
 												<td colspan="3">
@@ -315,11 +332,11 @@ include ("banner.inc");
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
-																<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<? echo $resultset["LDAPUsernameAttribute"]; ?>" size="30"></input>				
+																<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<? echo $resultset["LDAPUsernameAttribute"]; ?>" size="30"></input>
 															</td>
 														</tr>
 													</table>
-												</td>											
+												</td>
 											</tr>
 											<tr>
 												<td colspan="3">
@@ -331,14 +348,14 @@ include ("banner.inc");
 															<td>&nbsp;</td>
 															<td width="100%">
 																<select id="LDAPSearchScope" name="LDAPSearchScope">
-																	<option value="base" <? if ($resultset["LDAPSearchScope"] == "base") print "selected"; ?>>Base DN search only</option>
-																	<option value="one" <? if ($resultset["LDAPSearchScope"] == "one") print "selected"; ?>>One level search</option>
-																	<option value="sub" <? if ($resultset["LDAPSearchScope"] == "sub") print "selected"; ?>>Full sub-tree search</option>
-																</select>													
+																	<option value="base" <? if ($resultset["LDAPSearchScope"] == "base") print "selected"; ?>>Base DN search only (LDAPRead)</option>
+																	<option value="one" <? if ($resultset["LDAPSearchScope"] == "one") print "selected"; ?>>One level search (LDAPList)</option>
+																	<option value="sub" <? if ($resultset["LDAPSearchScope"] == "sub") print "selected"; ?>>Full sub-tree search (LDAPSearch)</option>
+																</select>
 															</td>
 														</tr>
 													</table>
-												</td>											
+												</td>
 											</tr>
 											<tr>
 												<td colspan="3">
@@ -353,8 +370,8 @@ include ("banner.inc");
 															</td>
 														</tr>
 													</table>
-												</td>											
-											</tr>																																
+												</td>
+											</tr>
 											<tr>
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
@@ -368,12 +385,29 @@ include ("banner.inc");
 																	<option value="3" <? if ($resultset["LDAPProtocolVersion"] == "3") print "selected"; ?>>3</option>
 																	<option value="2" <? if ($resultset["LDAPProtocolVersion"] == "2") print "selected"; ?>>2</option>
 																	<option value="1" <? if ($resultset["LDAPProtocolVersion"] == "1") print "selected"; ?>>1</option>
-																</select>													
+																</select>
+															</td>
+															<td nowrap>
+																<span class="label" nowrap>Use LDAP Referrals:</span>
+															</td>
+															<td>&nbsp;</td>
+															<td width="100%">
+																<input type="checkbox" name="LDAPReferralsCheck" id="LDAPReferralsCheck" <?php if ( $resultset['LDAPReferrals'] == 1 ) echo "checked"; ?> />
+																<input type="hidden" name="LDAPReferrals" id="LDAPReferrals"></input>
+															</td>
+															<td>&nbsp;</td>
+															<td nowrap>
+																<span class="label" nowrap>Fallback to local Authentication on fail:</span>
+															</td>
+															<td>&nbsp;</td>
+															<td width="100%">
+																<input type="checkbox" name="LDAPFallbackCheck" id="LDAPFallbackCheck" <?php if ( $resultset['LDAPFallback'] == 1 ) echo "checked"; ?> />
+																<input type="hidden" name="LDAPFallback" id="LDAPFallback"></input>
 															</td>
 														</tr>
 													</table>
-												</td>											
-											</tr>											
+												</td>
+											</tr>
 											<tr>
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
@@ -383,13 +417,25 @@ include ("banner.inc");
 															</td>
 														</tr>
 													</table>
-												</td>											
+												</td>
 											</tr>
 											<tr>
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0" border="0">
 														<tr>
-															<td width="50%">																
+															<td width="50%">
+																<table width="100%" cellpadding="0" cellspacing="0" border="0">
+																	<tr>
+																		<td nowrap>
+																			<span class="label" nowrap>Use LDAP by user authentication:</span>
+																		</td>
+																		<td width="5">&nbsp;</td>
+																		<td width="100%">
+																			<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <? if ($resultset['LDAPBindByUser'] == 1) echo "checked"; ?>></input>
+																			<input type="hidden" name="LDAPBindByUser" id="LDAPBindByUser"></input>
+																		</td>
+																	</tr>
+																</table>
 																<table width="100%" cellpadding="0" cellspacing="0" border="0">
 																	<tr>
 																		<td nowrap>
@@ -403,7 +449,7 @@ include ("banner.inc");
 																</table>
 															</td>
 															<td>&nbsp;&nbsp;&nbsp;</td>
-															<td width="50%">																
+															<td width="50%">
 																<table width="100%" cellpadding="0" cellspacing="0" border="0">
 																	<tr>
 																		<td nowrap>
@@ -418,9 +464,9 @@ include ("banner.inc");
 															</td>
 														</tr>
 													</table>
-												</td>											
+												</td>
 											</tr>
-																						
+
 										</table>
 									</div>
 									<div id="advancedLDAPEntry" style="display:none;">
@@ -438,7 +484,7 @@ include ("banner.inc");
 															</td>
 														</tr>
 													</table>
-												</td>											
+												</td>
 											</tr>
 										</table>
 									</div>
@@ -448,17 +494,100 @@ include ("banner.inc");
 					</fieldset>
 				</td>
 			</tr>
-			
+
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">		
-		
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
+		<!-- ACL-->
+			<tr>
+				<td align="left" valign="top">
+					<b>ACL</b>:
+				</td>
+				<td align="left" width="100%">
+					The ACL defines the access given to pages for the different user roles defined. It is possible to disable a page by giving no access.
+				</td>
+			</tr>
+			<tr>
+				<td align="left" class="label" nowrap width="90">
+					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" >Reset</input>
+				</td>
+				<td align="left" width="100%">
+					<span class="label" nowrap>Stopwatch:</span><? acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>
+					<span class="label" nowrap>Daily:</span><? acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>
+					<span class="label" nowrap>Weekly:</span><? acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>
+					<span class="label" nowrap>Calendar:</span><? acl_select_droplist("aclCalendar", $resultset["aclCalendar"]); ?>
+					<span class="label" nowrap>Simple:</span><? acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>
+					<span class="label" nowrap>Clients:</span><? acl_select_droplist("aclClients", $resultset["aclClients"]); ?>
+					<span class="label" nowrap>Projects:</span><? acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>
+					<span class="label" nowrap>Tasks:</span><? acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>
+					<span class="label" nowrap>Reports:</span><? acl_select_droplist("aclReports", $resultset["aclReports"]); ?>
+					<span class="label" nowrap>Rates:</span><? acl_select_droplist("aclRates", $resultset["aclRates"]); ?>
+					<span class="label" nowrap>Absences:</span><? acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>
+				</td>
+			</tr>
+
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
+		<!-- simple timesheet layout -->
+			<tr>
+				<td align="left" valign="top">
+					<b>simple layout</b>:
+				</td>
+				<td align="left" width="100%">
+					Select a layout of the simple timesheet plugin. You can choose to show a text field to describe the work you did with plain text and additionally choose between two different sizes of that field.
+				</td>
+			</tr>
+			<tr>
+				<td align="left" class="label" nowrap width="90">
+					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);">Reset</input>
+				</td>
+				<td align="left" width="100%">
+					<select name="simpleTimesheetLayout" id="simpleTimesheetLayout">
+						<option value="small work description field" <? if ($resultset["simpleTimesheetLayout"] == 'small work description field') echo 'selected'?>>small work description field</option>
+						<option value="big work description field" <? if ($resultset["simpleTimesheetLayout"] == 'big work description field') echo 'selected'?>>big work description field</option>
+						<option value="no work description field" <? if ($resultset["simpleTimesheetLayout"] == 'no work description field') echo 'selected'?>>no work description field</option>
+					</select>
+				</td>
+			</tr>
+
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
+		<!-- start page -->
+			<tr>
+				<td align="left" valign="top">
+					<b>start page</b>:
+				</td>
+				<td align="left" width="100%">
+					Select a default page to go to after login. 
+				</td>
+			</tr>
+			<tr>
+				<td align="left" class="label" nowrap width="90">
+					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);">Reset</input>
+				</td>
+				<td align="left" width="100%">
+					<select name="startPage" id="startPage">
+						<option value="stopwatch" <? if ($resultset["startPage"] == 'stopwatch') echo 'selected'?>>Stopwatch</option>
+						<option value="daily" <?     if ($resultset["startPage"] == 'daily')     echo 'selected'?>>Daily Timesheet</option>
+						<option value="weekly" <?    if ($resultset["startPage"] == 'weekly')    echo 'selected'?>>Weekly Timesheet</option>
+						<option value="calendar" <?  if ($resultset["startPage"] == 'calendar')  echo 'selected'?>>Calendar</option>
+						<option value="simple" <?    if ($resultset["startPage"] == 'simple')    echo 'selected'?>>Simple Timesheet</option>
+					</select>
+				</td>
+			</tr>
+
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
 		<!-- locale -->
 			<tr>
 				<td align="left" valign="top">
 					<b>locale</b>:
 				</td>
 				<td align="left" width="100%">
-					The locale in which you want timesheet.php to work. This affects regional settings. Leave it blank if you want to use the system locale. An example locale is <code>en_AU</code>, for Australia.
+					The locale in which you want TimesheetNextGen to work. This affects regional settings. Leave it blank if you want to use the system locale. An example locale is <code>en_AU</code>, for Australia.
 				</td>
 			</tr>
 			<tr>
@@ -469,10 +598,10 @@ include ("banner.inc");
 					<input type="text" name="locale" size="75" maxlength="254" value="<? echo htmlentities(trim(stripslashes($resultset["locale"]))); ?>" style="width: 100%;">
 				</td>
 			</tr>
-			
+
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">					
-			
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
 		<!-- timezone -->
 			<tr>
 				<td align="left" valign="top">
@@ -492,8 +621,8 @@ include ("banner.inc");
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">	
-			
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
 			<!-- timeformat -->
 			<tr>
 				<td align="left" valign="top">
@@ -507,7 +636,7 @@ include ("banner.inc");
 			</tr>
 			<tr>
 				<td align="left" class="label" nowrap width="90">
-				 <input type="checkbox" name="timeformatReset" value="off" onclick="document.configurationForm.timeformat.disabled=(this.checked);">Reset</input>
+					<input type="checkbox" name="timeformatReset" value="off" onclick="document.configurationForm.timeformat.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
 					<select name="timeformat" style="width: 100%;">
@@ -531,32 +660,32 @@ include ("banner.inc");
 					<b>Week Start Day</b>:
 				</td>
 				<td align="left" width="100%">
-					The starting day of the week. Some people prefer to calculate the week starting 
+					The starting day of the week. Some people prefer to calculate the week starting
 					from Monday rather than Sunday.
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" nowrap width="90">
-				 <input type="checkbox" name="weekStartDayReset" value="off" onclick="document.configurationForm.weekstartday.disabled=(this.checked);">Reset</input>
+					<input type="checkbox" name="weekStartDayReset" value="off" onclick="document.configurationForm.weekstartday.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<select name="weekstartday" style="width: 100%;">					
-						<? 
+					<select name="weekstartday" style="width: 100%;">
+						<?
 								//get the current time
 								$dowDate = time();
-								
+
 								//make it sunday
 								$dowDate -= (24*60*60) * date("w", $dowDate);
-						
+
 								//for each day of the week
 								for ($i=0; $i<7; $i++) {
 									$dowString = strftime("%A", $dowDate);
 									print "<option value=\"$i\"";
 									if ($resultset["weekstartday"] == $i)
-										print " selected";									
+										print " selected";
 									print ">$dowString</option>";
 									//increment the day
-									$dowDate += (24*60*60); 								
+									$dowDate += (24*60*60);
 								}
 						?>
 					</select>
@@ -564,8 +693,8 @@ include ("banner.inc");
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">			
-			
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
 			<!-- headerhtml -->
 			<tr>
 				<td align="left" valign="top">
@@ -585,8 +714,8 @@ include ("banner.inc");
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">					
-			
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
 			<!-- bodyhtml -->
 			<tr>
 				<td align="left" valign="top">
@@ -606,7 +735,7 @@ include ("banner.inc");
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">					
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 
 			<!-- bannerhtml -->
 			<tr>
@@ -627,8 +756,8 @@ include ("banner.inc");
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">					
-			
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
 			<!-- footerhtml -->
 			<tr>
 				<td align="left" valign="top">
@@ -648,8 +777,8 @@ include ("banner.inc");
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">	
-			
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
 			<!-- errorhtml -->
 			<tr>
 				<td align="left" valign="top">
@@ -669,9 +798,9 @@ include ("banner.inc");
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">					
-			
-			
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+
+
 			<!-- tablehtml -->
 			<tr>
 				<td align="left" valign="top">
@@ -692,24 +821,13 @@ include ("banner.inc");
 
 						</table>
 					</td>
-				</tr>	
-						
-				</table>				
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_bottom_panel">					
+				</tr>
 
-			<!-- form submission -->
-			<tr>
-				<td colspan="2" align="center">
-					<table width="100%">
-						<tr>
-							<td align="center">
-								<input type="button" value="Submit Changes" name="submitButton" id="submitButton" onClick="onSubmit();"></input>
-							</td>
-					</table>
-				</td>
-			</tr>					
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_bottom_panel">
+
 		</table>
-	
+
 			</td>
 		</tr>
 	</table>
@@ -720,9 +838,9 @@ include ("banner.inc");
 		</td>
 	</tr>
 </table>
-		
+
 </form>
-		
+
 <?
 include ("footer.inc");
 ?>
