@@ -36,9 +36,6 @@ else
 
 $action = 0;
 
-//a useful constant
-//define("A_DAY", 24 * 60 * 60);
-
 //get the passed date (context date)
 $todayDate = mktime(0, 0, 0, $month, $day, $year);
 $todayYear = date("Y", $todayDate);
