@@ -31,39 +31,6 @@ include("timesheet_menu.inc");
 // Set default months
 setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
 
-function format_seconds($seconds) {
-	$temp = $seconds;
-	if ($seconds < 0) {
-		$temp = 0 - $seconds;
-		$sign = '-';
-	}
-	else {
-		$sign = '';
-	}
-	$hour = (int) ($temp / (60*60));
-
-	if ($hour < 10)
-		$hour = '0'. $hour;
-
-	$temp -= (60*60)*$hour;
-	$minutes = (int) ($temp / 60);
-
-	if ($minutes < 10)
-		$minutes = '0'. $minutes;
-
-	$temp -= (60*$minutes);
-	$sec = $temp;
-
-	if ($sec > 30)
-		$minutes += 1;
-
-//	if ($sec < 10)
-//		$sec = '0'. $sec;		// Totally wierd PHP behavior.  There needs to
-//						// be a space after the . operator for this to work.
-//	return "$hour:$minutes:$sec";
-	return "$sign$hour:$minutes";
-}
-
 ?>
 <html>
 <head>
@@ -140,14 +107,14 @@ function format_seconds($seconds) {
 		for ($currentDay=1;$currentDay<=$last_day;$currentDay++) {
 			$currentDate = mktime(0,0,0,$currentMonth,$currentDay,$year);
 			if ((date('w', $currentDate) != 6)&&(date('w', $currentDate) != 0)) {
-				$hours[$currentMonth]["working_hours"] += 8;
+				$hours[$currentMonth]["working_hours"] += WORK_DAY;
 			}
 		}
-		$hourstr = format_seconds($hours[$currentMonth]["working_hours"]*60*60);
+		$hourstr = format_hours_minutes($hours[$currentMonth]["working_hours"]*SECONDS_PER_HOUR);
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$hourstr</td>";
 		$hours["total"]["working_hours"] += $hours[$currentMonth]["working_hours"];
 	}
-	$totalstr = format_seconds($hours["total"]["working_hours"]*60*60);
+	$totalstr = format_hours_minutes($hours["total"]["working_hours"]*SECONDS_PER_HOUR);
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$totalstr</b></td>";
 	print "</tr>";
 
@@ -174,12 +141,12 @@ function format_seconds($seconds) {
 				$total_sec += $data["end_time"] - $data["start_time"];
 
 		}
-		$hourstr = format_seconds($total_sec);
+		$hourstr = format_hours_minutes($total_sec);
 		$hours[$currentMonth]["attendance"] = $total_sec;
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$hourstr</td>";
 		$hours["total"]["attendance"] += $total_sec;
 	}
-	$totalstr = format_seconds($hours["total"]["attendance"]);
+	$totalstr = format_hours_minutes($hours["total"]["attendance"]);
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$totalstr</b></td>";
 	print "</tr>";
 
@@ -229,12 +196,12 @@ function format_seconds($seconds) {
 				$total_sec += $data["end_time"] - $data["start_time"];
 
 		}
-		$hourstr = format_seconds($total_sec);
+		$hourstr = format_hours_minutes($total_sec);
 		$hours[$currentMonth]["weekend"] = $total_sec;
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$hourstr</td>";
 		$hours["total"]["weekend"] += $total_sec;
 	}
-	$totalstr = format_seconds($hours["total"]["weekend"]);
+	$totalstr = format_hours_minutes($hours["total"]["weekend"]);
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$totalstr</b></td>";
 	print "</tr>";
 
@@ -244,11 +211,11 @@ function format_seconds($seconds) {
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = count_absences_in_month($currentMonth, $year, $uid, 'Compensation');
 		$hours[$currentMonth]["compensation"] = $holidays;
-		$hourstr = format_seconds($hours[$currentMonth]["compensation"]*60*60);
+		$hourstr = format_hours_minutes($hours[$currentMonth]["compensation"]*SECONDS_PER_HOUR);
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$hourstr</td>";
 		$hours["total"]["compensation"] += $hours[$currentMonth]["compensation"];
 	}
-	$totalstr = format_seconds($hours["total"]["compensation"]*60*60);
+	$totalstr = format_hours_minutes($hours["total"]["compensation"]*SECONDS_PER_HOUR);
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$totalstr</b></td>";
 	print "</tr>";
 
@@ -258,11 +225,11 @@ function format_seconds($seconds) {
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = count_absences_in_month($currentMonth, $year, $uid, 'Training');
 		$hours[$currentMonth]["training"] = $holidays;
-		$hourstr = format_seconds($hours[$currentMonth]["training"]*60*60);
+		$hourstr = format_hours_minutes($hours[$currentMonth]["training"]*SECONDS_PER_HOUR);
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$hourstr</td>";
 		$hours["total"]["training"] += $hours[$currentMonth]["training"];
 	}
-	$totalstr = format_seconds($hours["total"]["training"]*60*60);
+	$totalstr = format_hours_minutes($hours["total"]["training"]*SECONDS_PER_HOUR);
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$totalstr</b></td>";
 	print "</tr>";
 
@@ -272,11 +239,11 @@ function format_seconds($seconds) {
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = count_absences_in_month($currentMonth, $year, $uid, 'Sick');
 		$hours[$currentMonth]["sick"] = $holidays;
-		$hourstr = format_seconds($hours[$currentMonth]["sick"]*60*60);
+		$hourstr = format_hours_minutes($hours[$currentMonth]["sick"]*SECONDS_PER_HOUR);
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$hourstr</td>";
 		$hours["total"]["sick"] += $hours[$currentMonth]["sick"];
 	}
-	$totalstr = format_seconds($hours["total"]["sick"]*60*60);
+	$totalstr = format_hours_minutes($hours["total"]["sick"]*SECONDS_PER_HOUR);
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$totalstr</b></td>";
 	print "</tr>";
 
@@ -286,11 +253,11 @@ function format_seconds($seconds) {
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = count_absences_in_month($currentMonth, $year, $uid, 'Military');
 		$hours[$currentMonth]["military"] = $holidays;
-		$hourstr = format_seconds($hours[$currentMonth]["military"]*60*60);
+		$hourstr = format_hours_minutes($hours[$currentMonth]["military"]*SECONDS_PER_HOUR);
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$hourstr</td>";
 		$hours["total"]["military"] += $hours[$currentMonth]["military"];
 	}
-	$totalstr = format_seconds($hours["total"]["military"]*60*60);
+	$totalstr = format_hours_minutes($hours["total"]["military"]*SECONDS_PER_HOUR);
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$totalstr</b></td>";
 	print "</tr>";
 
@@ -300,11 +267,11 @@ function format_seconds($seconds) {
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = count_absences_in_month($currentMonth, $year, $uid, 'Other');
 		$hours[$currentMonth]["other"] = $holidays;
-		$hourstr = format_seconds($hours[$currentMonth]["other"]*60*60);
+		$hourstr = format_hours_minutes($hours[$currentMonth]["other"]*SECONDS_PER_HOUR);
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$hourstr</td>";
 		$hours["total"]["other"] += $hours[$currentMonth]["other"];
 	}
-	$totalstr = format_seconds($hours["total"]["other"]*60*60);
+	$totalstr = format_hours_minutes($hours["total"]["other"]*SECONDS_PER_HOUR);
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$totalstr</b></td>";
 	print "</tr>";
 
@@ -314,19 +281,19 @@ function format_seconds($seconds) {
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = count_absences_in_month($currentMonth, $year, $uid);
 		$hours[$currentMonth]["holiday"] = $holidays;
-		$hourstr = format_seconds($hours[$currentMonth]["holiday"]*60*60);
+		$hourstr = format_hours_minutes($hours[$currentMonth]["holiday"]*SECONDS_PER_HOUR);
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$hourstr</td>";
 		$hours["total"]["holiday"] += $hours[$currentMonth]["holiday"];
 	}
-	$totalstr = format_seconds($hours["total"]["holiday"]*60*60);
+	$totalstr = format_hours_minutes($hours["total"]["holiday"]*SECONDS_PER_HOUR);
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$totalstr</b></td>";
 	print "</tr>";
 
 	// Holiday remaining
 	print "<tr><td class=\"calendar_cell_middle\"><b>Holiday remaining</b></td>";
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
-		$holidays = get_balance(1, $currentMonth, $year, $uid);
-		$holiday_remaining = format_seconds(($holidays - $hours[$currentMonth]["holiday"])*60*60);
+		$holidays = get_balance(get_last_day($currentMonth, $year), $currentMonth, $year, $uid);
+		$holiday_remaining = format_hours_minutes($holidays*SECONDS_PER_HOUR);
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$holiday_remaining</td>";
 	}
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$holiday_remaining</b></td>";
@@ -334,18 +301,9 @@ function format_seconds($seconds) {
 
 	// glidetime remaining
 	print "<tr><td class=\"calendar_cell_middle\"><b>Glidetime</b></td>";
-	$remaining = get_balance(1, 1, $year, $uid, 'glidetime');
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
-		$remaining = $hours[$currentMonth]["attendance"]
-				- $hours[$currentMonth]["working_hours"]*60*60
-				+ $hours[$currentMonth]["holiday"]*60*60
-				+ $hours[$currentMonth]["sick"]*60*60
-				+ $hours[$currentMonth]["training"]*60*60
-				+ $hours[$currentMonth]["military"]*60*60
-				+ $hours[$currentMonth]["other"]*60*60
-				- $hours[$currentMonth]["compensation"]
-				+ $remaining;
-		$glidetime = format_seconds($remaining);
+		$remaining = get_balance(get_last_day($currentMonth, $year), $currentMonth, $year, $uid, 'glidetime');
+		$glidetime = format_hours_minutes($remaining*SECONDS_PER_HOUR);
 		print "<td align=\"right\" class=\"calendar_cell_middle\">$glidetime</td>";
 	}
 	print "<td align=\"right\" class=\"calendar_cell_disabled_right\"><b>$glidetime</b></td>";
