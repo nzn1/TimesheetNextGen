@@ -31,28 +31,6 @@ include("timesheet_menu.inc");
 // Set default months
 setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
 
-function format_seconds($seconds) {
-	$temp = $seconds;
-	$hour = (int) ($temp / (60*60));
-
-	if ($hour < 10)
-		$hour = '0'. $hour;
-
-	$temp -= (60*60)*$hour;
-	$minutes = (int) ($temp / 60);
-
-	if ($minutes < 10)
-		$minutes = '0'. $minutes;
-
-	$temp -= (60*$minutes);
-	$sec = $temp;
-
-	if ($sec < 10)
-		$sec = '0'. $sec;		// Totally wierd PHP behavior.  There needs to
-						// be a space after the . operator for this to work.
-	return "$hour:$minutes:$sec";
-}
-
 //run the query
 list($qh,$num) = get_absences($month, $year, $uid);
 $ihol = 0;
@@ -196,13 +174,15 @@ if (!checkdate($last_month, 1, $last_year)) {
 	$last_year --;
 }
 $holidays_taken = count_absences_in_month($month, $year, $uid);
-$holiday_allowance = get_balance(get_last_day($last_month, $last_year), $last_month, $last_year, $uid);
-$holiday_remaining = $holiday_allowance - $holidays_taken;
+$holiday_remaining = get_balance(get_last_day($month, $year), $month, $year, $uid);
+$holiday_allowance = $holiday_remaining + $holidays_taken;
 $glidetime_allowance = get_balance(get_last_day($last_month, $last_year), $last_month, $last_year, $uid, 'glidetime');
 $glidetime_paid = get_allowance(get_last_day($month, $year), $month, $year, $uid, 'glidetime') 
 					- get_allowance(get_last_day($last_month, $last_year), $last_month, $last_year, $uid, 'glidetime');
 $compensation_taken = count_absences_in_month($month, $year, $uid, 'Compensation');
-$glidetime_remaining = get_balance(get_last_day($month, $year), $month, $year, $uid, 'glidetime') - $compensation_taken - $glidetime_paid;
+$worked_time = count_worked_secs(1, $month, $year, get_last_day($month, $year), $month, $year, $uid);
+$working_time = count_working_time(1, $month, $year, get_last_day($month, $year), $month, $year, $uid);
+$glidetime_remaining = $glidetime_allowance + $worked_time/SECONDS_PER_HOUR -$working_time - $compensation_taken - $glidetime_paid;
 ?>
 				<tr>
 					<td colspan=3><br><br><b>Comments:</b><br><br><br></td>
@@ -218,10 +198,12 @@ $glidetime_remaining = get_balance(get_last_day($month, $year), $month, $year, $
 				</tr>
 				<tr>
 					<td colspan=3>
-						Glidetime Allowance: <? printf("%2.2f", $glidetime_allowance); ?><br>
-						Paid-out in Month: <? echo $glidetime_paid; ?><br>
-						Compensation Taken: <? echo $compensation_taken; ?><br>
-						Glidetime Remaining: <? printf("%2.2f", $glidetime_remaining); ?><br>
+						Glidetime Allowance: <? echo format_hours_minutes($glidetime_allowance*SECONDS_PER_HOUR); ?><br>
+						Worked in Month: <? echo format_hours_minutes($worked_time); ?><br>
+						Paid-out in Month: <? echo format_hours_minutes($glidetime_paid*SECONDS_PER_HOUR); ?><br>
+						Compensation Taken: <? echo format_hours_minutes($compensation_taken*SECONDS_PER_HOUR); ?><br>
+						Working-Time in Month: <? echo format_hours_minutes($working_time*SECONDS_PER_HOUR); ?><br>
+						Glidetime Remaining: <? echo format_hours_minutes($glidetime_remaining*SECONDS_PER_HOUR); ?><br>
 					</td>
 					<td><b>Bookkeeping:</b><br>Signature/Date<br><br></td>
 				</tr>
