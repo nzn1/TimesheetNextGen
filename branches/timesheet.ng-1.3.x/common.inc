@@ -6,11 +6,11 @@ if (!defined("COMMON_INC")) {
 		include("database_credentials.inc");
 		include("mysql.db.inc");
 
-		//Useful constants
-		define("A_DAY", 24 * 60 * 60);  //seconds per day
-		define("WORK_DAY", 8); //hours per day
-		define("SECONDS_PER_HOUR", 60 * 60);
-		$BREAK_RATIO = (0);     // For an hour break every 8 hours this would be: (1/8)
+		//a useful constant
+		define("A_DAY", 24 * 60 * 60);
+
+		$BREAK_RATIO = (0);
+		// For an hour break every 8 hours this would be: (1/8)
 
 		function get_month_times($month, $year, $id, $proj_id=0, $client_id=0) {
 			include("table_names.inc");
@@ -56,7 +56,7 @@ if (!defined("COMMON_INC")) {
 			return array($num, $my_qh);
 		}
 
-		function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
+		function get_times($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
 			include("table_names.inc");
 			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 			$configData = dbResult($qhq);
@@ -85,54 +85,8 @@ if (!defined("COMMON_INC")) {
 
 			list($my_qh, $num) = dbQuery($query);
 
-			$worked_sec = 0;
-			for ($currentEntry=0;$currentEntry<$num;$currentEntry++) {
-				$data = DbResult($my_qh, $currentEntry);
-				//Due to a bug in mysql with converting to unix timestamp from the string,
-				//we are going to use php's strtotime to make the timestamp from the string.
-				//the problem has something to do with timezones.
-				$data["start_time"] = strtotime($data["start_time_str"]);
-				$data["end_time"] = strtotime($data["end_time_str"]);
-
-				if ($data["start_time"] < mktime(0,0,0,$start_month,$start_day,$start_year))
-					$total_sec += $data["end_time"] - mktime(0,0,0,$start_month,$start_day,$start_year);
-				if ($data["end_time"] > mktime(23,59,59,$end_month,$end_day,$end_year))
-					$worked_sec += mktime(23,59,59,$end_month,$end_day,$end_year) - $data["start_time"];
-				else
-					$worked_sec += $data["end_time"] - $data["start_time"];
-			}
-
-			return $worked_sec;
+			return array($num, $my_qh);
 		}
-
-	function format_hours_minutes($seconds) {
-		$temp = $seconds;
-		if ($seconds < 0) {
-			$temp = 0 - $seconds;
-			$sign = '-';
-		}
-		else {
-			$sign = '';
-		}
-		$hour = (int) ($temp / (60*60));
-
-		if ($hour < 10)
-			$hour = '0'. $hour;
-
-		$temp -= (60*60)*$hour;
-		$minutes = (int) ($temp / 60);
-
-		if ($minutes < 10)
-			$minutes = '0'. $minutes;
-
-		$temp -= (60*$minutes);
-		$sec = $temp;
-
-		if ($sec > 30)
-			$minutes += 1;
-
-		return "$sign$hour:$minutes";
-	}
 
 	function get_absences($month, $year, $user='', $day=0) {
 		include("table_names.inc");
@@ -194,67 +148,92 @@ if (!defined("COMMON_INC")) {
 			$user_start_date_parts = false;
 			$user_start_day = false;
 			$user_start_month = false;
-			$user_start_year = false;
+			$user_start_year = false;	
 		}
 		
 		if ($type!='glidetime') {
 			//Holidays are easy
-			$count = $current_allowance - count_absences($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user, $type);
+			$count = $current_allowance - count_absences($day, $month, $year, $user, $type);
 		} else {
 			//glidetime takes some work
 			//First count the attendance
-			$worked_sec = count_worked_secs($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user);
+			list($num, $qh) = get_times($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user);
+			$worked_sec = 0;
+			for ($currentEntry=0;$currentEntry<$num;$currentEntry++) {
+				$data = DbResult($qh, $currentEntry);
+				//Due to a bug in mysql with converting to unix timestamp from the string,
+				//we are going to use php's strtotime to make the timestamp from the string.
+				//the problem has something to do with timezones.
+				$data["start_time"] = strtotime($data["start_time_str"]);
+				$data["end_time"] = strtotime($data["end_time_str"]);
+
+				//if ($data["start_time"] < mktime(0,0,0,$month,1,$year))
+				//	$total_sec += $data["end_time"] - mktime(0,0,0,$month,1,$year);
+				if ($data["end_time"] > mktime(23,59,59,$month,$day,$year))
+					$worked_sec += mktime(23,59,59,$month,$day,$year) - $data["start_time"];
+				else
+					$worked_sec += $data["end_time"] - $data["start_time"];
+			}
 			//Then calculate the expected working time
-			$working_time = count_working_time($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user);
-			// handle times and seconds
+			$working_time = 0;
+			$the_day = mktime(0,0,0,$user_start_date_parts[1],$user_start_date_parts[2],$user_start_date_parts[0]);
+			$end_day = mktime(0,0,0,$month,$day,$year);
+			while ($the_day<$end_day) {
+				if ((date('w', $the_day) != 6)&&(date('w', $the_day) != 0)) {
+					$working_time += 8;
+				}
+				$the_day += A_DAY;
+			}
+
+			$working_time -= count_absences($day, $month, $year, '', 'Public');
+			$working_time -= count_absences($day, $month, $year, '', 'Other');
+			$working_time -= count_absences($day, $month, $year, $user, 'Sick');
+			$working_time -= count_absences($day, $month, $year, $user, 'Holiday');
+			$working_time -= count_absences($day, $month, $year, $user, 'Training');
+			$working_time -= count_absences($day, $month, $year, $user, 'Military');
+			$working_time -= count_absences($day, $month, $year, $user, 'Other');
+			$working_time -= count_absences($day, $month, $year, $user, 'Compensation');
 			$count = ($current_allowance*60*60 + $worked_sec - $working_time*60*60)/(60*60);
 		}
 		return $count;
 	}
 
-	function count_working_time($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user) {
-		$working_time = 0;
-		$the_day = mktime(0,0,0,$start_month,$start_day,$start_year);
-		$last_day = mktime(23,59,59,$end_month,$end_day,$end_year);
-		while ($the_day<$last_day) {
-			if ((date('w', $the_day) != 6)&&(date('w', $the_day) != 0)) {
-				$working_time += WORK_DAY;
-			}
-			$the_day += A_DAY;
-		}
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, '', 'Public');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, '', 'Other');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Sick');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Holiday');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Training');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Military');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Other');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Compensation');
-
-		return $working_time;
-	}
-
-	function count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, $type='Holiday') {
+	function count_absences($day, $month, $year, $user, $type='Holiday') {
 		include("table_names.inc");
-		$query = "SELECT date,AM_PM,type,user FROM $ABSENCE_TABLE WHERE ".
+		$user_start_date = get_start_date($user);
+		$query = "SELECT date,AM_PM FROM $ABSENCE_TABLE WHERE ".
 				"(type='$type') AND (user='$user') AND ".
-				"(date >= '$start_year-$start_month-$start_day 00:00:00' AND date <= '$end_year-$end_month-$end_day 23:59:59') ".
+				"(date >= '$user_start_date 00:00:00' AND date < '$year-$month-$day 23:59:59') ".
 				" ORDER BY date, AM_PM";
 		list($my_qh, $num) = dbQuery($query);
 		$count = 0;
 		for($i=0;$i<$num;$i++) {
 			$entry = dbResult($my_qh, $i);
 			if ($entry['AM_PM']=='day')
-				$count = $count + WORK_DAY; //hours per day
+				$count = $count + 8; //hours per day
 			else
-				$count = $count + WORK_DAY/2;
+				$count = $count + 4;
 		}
 		return $count;
 	}
 
 	function count_absences_in_month($month, $year, $user, $type='Holiday') {
+		include("table_names.inc");
 		$day = get_last_day($month, $year);
-		return count_absences(1, $month, $year, $day, $month, $year, $user, $type);
+		$holquery = "SELECT date,AM_PM FROM $ABSENCE_TABLE WHERE ".
+				"(type='$type') AND (user='$user') AND ".
+				"(date >= '$year-$month-1 00:00:00' AND date <= '$year-$month-$day 23:59:59') ".
+				" ORDER BY date, AM_PM";
+		$count = 0;
+		list($my_qh, $num) = dbQuery($holquery);
+		for($i=0;$i<$num;$i++) {
+			$holdata = dbResult($my_qh, $i);
+			if ($holdata['AM_PM']=='day')
+				$count = $count + 8; //hours per day
+			else
+				$count = $count + 4;
+		}
+		return $count;
 	}
 
 		function get_last_day($month, $year) {

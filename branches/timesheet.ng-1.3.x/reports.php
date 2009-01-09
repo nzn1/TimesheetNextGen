@@ -91,9 +91,8 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 							<a href="report_all.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
-<? if ($authenticationManager->hasAccess('aclAbsences')) { ?>
 					<tr class="inner_table_head">
-						<td class="inner_table_column_heading">Attendance Reports</td>
+						<td class="inner_table_column_heading">Special Reports</td>
 						<td class="inner_table_column_heading">Actions</td>
 					</tr>
 					<tr>
@@ -108,8 +107,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 							<a href="report_hours.php?month=<? print $month; ?>&year=<? print $year; ?>">Generate yearly</a>
 						</td>
 					</tr>
-<? } ?>
-					</table>
+				</table>
 			</td>
 		</tr>
 	</table>
