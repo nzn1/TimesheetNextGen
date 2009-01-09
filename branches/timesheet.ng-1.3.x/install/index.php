@@ -317,7 +317,7 @@ function install_success() {
 <li>Make <code>table_names.inc</code> <strong>read only</strong></li>
 <li>Delete the <code>install</code> directory and all its contents</li>
 </ol>
-<p>Once you have done those, then you can <a href="../">contine to Timesheet Next Gen</a></p>
+<p>Once you have done those, then you can <a href="../">continue to Timesheet Next Gen</a></p>
 <?php 	
 }
 /**
