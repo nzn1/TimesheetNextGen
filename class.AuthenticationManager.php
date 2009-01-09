@@ -3,6 +3,28 @@
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
+/**
+ * Added 11 Dec 2008
+ * Installation script. As this file is called by every other file,
+ * it makes sense to check to see if this app has been installed here.
+ */	
+if(
+	!file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'database_credentials.inc') ||
+	!file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'table_names.inc') 
+	) {
+	// this app has not been installed yet, redirect to the installation pages
+	header("Location: ./install/");
+	exit;
+}
+elseif(file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'install')) {
+	// the install directory has not been deleted, redirect to "delete install dir" pages
+	// NOTE: this may also mean that the user has upgraded. The "delete install dir"
+	// pages also check the version number to see if the user is running the latest
+	// version, if not takes user to the "upgrade" pages
+	header("Location: ./install/");
+	exit;	
+}
+	
 require("table_names.inc");
 require("common.inc");
 require("timezone.inc");
