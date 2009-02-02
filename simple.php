@@ -135,7 +135,6 @@ $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.title, $PROJE
 													"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
 													"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
 													"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
-
 list($qh3, $num3) = dbQuery($getProjectsQuery);
 
 //iterate through results
@@ -169,7 +168,6 @@ for ($i=0; $i<$num4; $i++) {
 
 	//function to populate existing rows with project and task names and select the right one in each
 	function populateExistingSelects() {
-
 		//get the number of existing rows
 		var existingRows = parseInt(document.getElementById('existingRows').value);
 		//alert('There are ' + existingRows + ' existing rows');
@@ -178,33 +176,35 @@ for ($i=0; $i<$num4; $i++) {
 		for (var i=0; i<=existingRows; i++) {
 			//alert('existing row ' + i);
 
-			//get the project and task id for this row
+			//get the client, project and task id for this row
+			var clientId = document.getElementById('client_row' + i).value;
 			var projectId = document.getElementById('project_row' + i).value;
 			var taskId = document.getElementById('task_row' + i).value;
-
+			
 			//get the selects
+			var clientSelect = document.getElementById('clientSelect_row' + i);
 			var projectSelect = document.getElementById('projectSelect_row' + i);
 			var taskSelect = document.getElementById('taskSelect_row' + i);
 
 			//add None to the selects
+			clientSelect.options[clientSelect.options.length] = new Option('None', '-1');
 			projectSelect.options[projectSelect.options.length] = new Option('None', '-1');
-			taskSelect.options[taskSelect.options.length] = new Option('None', '-1');
+			taskSelect.options[taskSelect.options.length] = new Option('None', '-1');			
 
-			//add the projects
-			var clientId = -1;
+			//add the clients
+			//var clientId = -1;
 			for (var key in projectTasksHash) {
 				if (projectTasksHash[key]['clientId'] != clientId) {
-					projectSelect.options[projectSelect.options.length] = new Option('[' + projectTasksHash[key]['clientName'] + ']', -1);
+					//projectSelect.options[projectSelect.options.length] = new Option('[' + projectTasksHash[key]['clientName'] + ']', -1);
+					clientSelect.options[clientSelect.options.length] = new Option(projectTasksHash[key]['clientName'], projectTasksHash[key]['clientId']);
 					clientId = projectTasksHash[key]['clientId'];
 				}
 
-				projectSelect.options[projectSelect.options.length] = new Option(String.fromCharCode(160, 160) + projectTasksHash[key]['name'], key);
-
-				// Add for select last project like default project
-				if (projectId == -1)
-					projectId=key;
-				if (key == projectId)
-					projectSelect.options[projectSelect.options.length-1].selected = true;
+				if (key == projectId && projectTasksHash[key]['clientId'] == clientId)
+				{
+					populateProjectSelect(i, clientId, key);
+					clientSelect.options[clientSelect.options.length-1].selected = true;
+				}
 			}
 
 			if (projectId != -1) {
@@ -234,6 +234,22 @@ for ($i=0; $i<$num4; $i++) {
 		}
 	}
 
+	function populateProjectSelect(row, clientId, selectedProjectId) {
+		//get the project select for this row
+		var projectSelect = document.getElementById('projectSelect_row' + row);
+
+		//add the projects
+		for (key in projectTasksHash) {
+			if (projectTasksHash[key]['clientId'] == clientId) {
+				projectSelect.options[projectSelect.options.length] = new Option(projectTasksHash[key]['name'], key);
+				if (key == selectedProjectId)
+				{
+					projectSelect.options[projectSelect.options.length-1].selected = true;
+				}
+			}
+		}
+	}	
+
 	function clearTaskSelect(row) {
 		taskSelect = document.getElementById('taskSelect_row' + row);
 		for (var i=1; i<taskSelect.options.length; i++)
@@ -246,6 +262,16 @@ for ($i=0; $i<$num4; $i++) {
 		taskSelect.options[0].selected = true;
 
 		onChangeTaskSelectRow(row);
+	}
+
+	function clearProjectSelect(row) {
+		projectSelect = document.getElementById('projectSelect_row' + row);
+		for (i=1; i<projectSelect.options.length; i++) {
+			projectSelect.options[i] = null;
+		}
+
+		projectSelect.options.length = 1;
+		projectSelect.options[0].selected = true;
 	}
 
 	function clearWorkDescriptionField(row) {
@@ -280,8 +306,21 @@ for ($i=0; $i<$num4; $i++) {
 		if (projectId != -1)
 			//populate the select with tasks for this project
 			populateTaskSelect(row, projectId);
-
+			
 			setDirty();
+	}
+
+	function onChangeClientSelect(idStr) {
+		row = rowFromIdStr(idStr);
+		clearProjectSelect(row);
+		clearTaskSelect(row);
+
+		var clientSelect = document.getElementById('clientSelect_row' + row);
+		var clientId = clientSelect.options[clientSelect.selectedIndex].value;
+
+		if (clientId != -1) {
+			populateProjectSelect(row, clientId);
+		} 
 	}
 
 	function onChangeTaskSelect(idStr) {
@@ -332,14 +371,15 @@ for ($i=0; $i<$num4; $i++) {
 				// clear the work description field
 				clearWorkDescriptionField(totalRows);
 
-				//select default project
+				clearProjectSelect(totalRows);
+				/* //select default project
 				var oldProjectSelect = document.getElementById('projectSelect_row' + row);
 				var newProjectSelect = document.getElementById('projectSelect_row' + (row+1));
 				newProjectSelect.options[oldProjectSelect.selectedIndex].selected = true;
 
 				//repopulate task
 				var projectId = newProjectSelect.options[newProjectSelect.selectedIndex].value;
-				populateTaskSelect(row+1, projectId);
+				populateTaskSelect(row+1, projectId); */
 
 			}
 
@@ -574,7 +614,7 @@ include ("banner.inc");
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 					<tr class="inner_table_head">
 						<td class="inner_table_column_heading" align="center">
-							Project / Task<?php if(strstr($layout, 'no work description') == '') echo ' / Work Description'; ?>
+							Client / Project / Task<?php if(strstr($layout, 'no work description') == '') echo ' / Work Description'; ?>
 						</td>
 						<td align="center" width="2">&nbsp;</td>
 						<?php
@@ -639,11 +679,15 @@ include ("banner.inc");
 					switch ($layout) {
 						case "no work description field":
 							?>
-							<td align="left" style="width:50%;">
+							<td align="left" style="width:33%;">
+								<input type="hidden" id="client_row<? echo $rowIndex; ?>" name="client_row<? echo $rowIndex; ?>" value="<? echo $clientId; ?>" />
+								<select id="clientSelect_row<? echo $rowIndex; ?>" name="clientSelect_row<? echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+							</td>
+							<td align="left" style="width:33%;">
 								<input type="hidden" id="project_row<? echo $rowIndex; ?>" name="project_row<? echo $rowIndex; ?>" value="<? echo $projectId; ?>" />
 								<select id="projectSelect_row<? echo $rowIndex; ?>" name="projectSelect_row<? echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
 							</td>
-							<td align="left" style="width:50%;">
+							<td align="left" style="width:33%;">
 								<input type="hidden" id="task_row<? echo $rowIndex; ?>" name="task_row<? echo $rowIndex; ?>" value="<? echo $taskId; ?>" />
 								<select id="taskSelect_row<? echo $rowIndex; ?>" name="taskSelect_row<? echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
 							</td>
@@ -653,6 +697,10 @@ include ("banner.inc");
 						case "big work description field":
 							// big work description field
 							?>
+							<td align="left" style="width:100px;">
+								<input type="hidden" id="client_row<? echo $rowIndex; ?>" name="client_row<? echo $rowIndex; ?>" value="<? echo $clientId; ?>" />
+								<select id="clientSelect_row<? echo $rowIndex; ?>" name="clientSelect_row<? echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+							</td>
 							<td align="left" style="width:160px;">
 								<input type="hidden" id="project_row<? echo $rowIndex; ?>" name="project_row<? echo $rowIndex; ?>" value="<? echo $projectId; ?>" />
 								<select id="projectSelect_row<? echo $rowIndex; ?>" name="projectSelect_row<? echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
@@ -671,10 +719,14 @@ include ("banner.inc");
 							// small work description field = default layout
 							?>
 							<td align="left" style="width:100px;">
+								<input type="hidden" id="client_row<? echo $rowIndex; ?>" name="client_row<? echo $rowIndex; ?>" value="<? echo $clientId; ?>" />
+								<select id="clientSelect_row<? echo $rowIndex; ?>" name="clientSelect_row<? echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+							</td>
+							<td align="left" style="width:100px;">
 								<input type="hidden" id="project_row<? echo $rowIndex; ?>" name="project_row<? echo $rowIndex; ?>" value="<? echo $projectId; ?>" />
 								<select id="projectSelect_row<? echo $rowIndex; ?>" name="projectSelect_row<? echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
 							</td>
-							<td align="left" style="width:160px;">
+							<td align="left" style="width:140px;">
 								<input type="hidden" id="task_row<? echo $rowIndex; ?>" name="task_row<? echo $rowIndex; ?>" value="<? echo $taskId; ?>" />
 								<select id="taskSelect_row<? echo $rowIndex; ?>" name="taskSelect_row<? echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
 							</td>
