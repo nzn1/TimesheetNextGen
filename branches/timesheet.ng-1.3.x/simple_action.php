@@ -22,9 +22,6 @@ $startYear = $_POST["startYear"];
 $startMonth = $_POST["startMonth"];
 $startDay = $_POST["startDay"];
 
-//a useful constant
-define("A_DAY", 24 * 60 * 60);
-
 //convert the start date to a timestamp
 $startDate = mktime(0, 0, 0,$startMonth, $startDay, $startYear);
 
