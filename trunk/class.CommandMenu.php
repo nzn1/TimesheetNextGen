@@ -58,7 +58,7 @@ class IconTextCommand extends TextCommand {
 	}
 
 	function toString() {
-		if (true)
+		if (!file_exists($this->img))
 			return parent::toString();
 		else
 			return "<img src=\"" . $this->img . "\" align=\"absbottom\">" . parent::toString();

@@ -794,6 +794,18 @@ if (!defined("COMMON_INC")) {
 	<OPTION VALUE="Complete" <? if ($status == 'Complete') echo 'SELECTED'?>>Complete</OPTION>
 	</SELECT>
 <?
+	}	
+	
+	function proj_status_list_filter($name, $status='', $onChange='submit();') {
+?>
+	<SELECT NAME=<? echo $name ?> onChange="<?=$onChange?>" >
+	<OPTION VALUE="All" <? if ($status == 'All') echo 'SELECTED'?>>All</OPTION>
+	<OPTION VALUE="Pending" <? if ($status == 'Pending') echo 'SELECTED'?>>Pending</OPTION>
+	<OPTION VALUE="Started" <? if ($status == 'Started') echo 'SELECTED'?>>Started</OPTION>
+	<OPTION VALUE="Suspended" <? if ($status == 'Suspended') echo 'SELECTED'?>>Suspended</OPTION>
+	<OPTION VALUE="Complete" <? if ($status == 'Complete') echo 'SELECTED'?>>Complete</OPTION>
+	</SELECT>
+<?
 	}
 
 
