@@ -15,6 +15,9 @@ $contextUser = strtolower($_SESSION['contextUser']);
 //define the command menu
 include("timesheet_menu.inc");
 
+//set seleced project status to started when nothing is chosen in the dropdown list
+$proj_status = isset($_REQUEST['proj_status']) ? $_REQUEST['proj_status'] : "Started";
+
 //set up query
 $query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, ".
 						"$CLIENT_TABLE.organisation, $PROJECT_TABLE.description, " .
@@ -25,6 +28,10 @@ $query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT
 					"WHERE ";
 if ($client_id != 0)
 	$query .= "$PROJECT_TABLE.client_id = $client_id AND ";
+	
+if ($proj_status !== 0 and $proj_status !== 'All' ) {
+	$query .= " $PROJECT_TABLE.proj_status = '$proj_status' AND ";
+}
 
 $query .= "$PROJECT_TABLE.proj_id > 0 AND $CLIENT_TABLE.client_id = $PROJECT_TABLE.client_id ".
 						"ORDER BY $PROJECT_TABLE.title";
@@ -68,6 +75,7 @@ include ("banner.inc");
 							<tr>
 								<td><table width="50"><tr><td>Client:</td></tr></table></td>
 								<td width="100%"><? client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
+								<td>&nbsp;Status:&nbsp;</td><td><? proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>
 							</tr>
 						</table>
 						</form>
