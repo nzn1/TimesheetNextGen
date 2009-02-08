@@ -1,25 +1,25 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/stopwatch.php,v 1.5 2005/05/17 03:38:37 vexil Exp $
+//$Header: /cvsroot/tsheet/timesheet.php/stopwatch.php,v 1.5 2005/05/17 03:38:37 vexil Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn()) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
-// load local vars from superglobals
-$proj_id = isset( $_REQUEST["proj_id"] ) ? $_REQUEST["proj_id"]: 0;
-$task_id = isset( $_REQUEST["task_id"] ) ? $_REQUEST["task_id"]: 0;
-$client_id = isset( $_REQUEST["client_id"] ) ? $_REQUEST["client_id"]: 0;
+$contextUser = strtolower($_SESSION['contextUser']);
+//load local vars from superglobals
+$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
+$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
+$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 $destination = $_REQUEST["destination"];
-// check that the client id is valid
-if ( $client_id == 0 )
+//check that the client id is valid
+if ($client_id == 0)
 	$client_id = getFirstClient();
-// check that project id is valid
-if ( $proj_id == 0 )
+//check that project id is valid
+if ($proj_id == 0)
 	$task_id = 0;
 
 ?>
@@ -29,8 +29,8 @@ if ( $proj_id == 0 )
 
 ?></title>
 <?php
-include ( "header.inc" );
-include( "client_proj_task_javascript.inc" );
+include ("header.inc");
+include("client_proj_task_javascript.inc");
 
 ?>
 
@@ -51,7 +51,7 @@ function resizePopupWindow() {
 
 </script>
 </head>
-<body style="margin: 0;"  class="face_padding_cell" <?php include ( "body.inc" );
+<body style="margin: 0;"  class="face_padding_cell" <?php include ("body.inc");
 
 ?> onload="doOnLoad();">
 
@@ -60,7 +60,7 @@ function resizePopupWindow() {
 			<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -73,20 +73,20 @@ function resizePopupWindow() {
 				</table>
 
 <!-- include the timesheet face up until the next start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
 		<form action="action.php" method="post" name="mainForm" id="theForm">
-		<input type="hidden" name="year" value="<?php echo date( 'Y' );
+		<input type="hidden" name="year" value="<?php echo date('Y');
 
 ?>">
-		<input type="hidden" name="month" value="<?php echo date( 'm' );
+		<input type="hidden" name="month" value="<?php echo date('m');
 
 ?>">
-		<input type="hidden" name="day" value="<?php echo date( 'j' );
+		<input type="hidden" name="day" value="<?php echo date('j');
 
 ?>">
 		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id;
@@ -190,7 +190,7 @@ function resizePopupWindow() {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 

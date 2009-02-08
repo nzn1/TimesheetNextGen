@@ -1,14 +1,14 @@
 <?php
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-// continue session
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+//continue session
 session_start();
-// get the logged in user
+//get the logged in user
 $loggedInUser = $_SESSION['loggedInUser'];
-// load local vars from superglobals
-$errormsg = stripslashes( $_REQUEST['errormsg'] );
-// define the command menu
-$commandMenu->add( new TextCommand( "Back", true, "javascript:back()" ) );
+//load local vars from superglobals
+$errormsg = stripslashes($_REQUEST['errormsg']);
+//define the command menu
+$commandMenu->add(new TextCommand("Back", true, "javascript:back()"));
 
 ?>
 <HTML>
@@ -16,16 +16,16 @@ $commandMenu->add( new TextCommand( "Back", true, "javascript:back()" ) );
     <TITLE>Error, <?php echo $loggedInUser;
 ?></TITLE>
 <?php
-include ( "header.inc" );
+include ("header.inc");
 
 ?>
 </HEAD>
-<BODY <?php include ( "body.inc" );
+<BODY <?php include ("body.inc");
 ?> >
 <?php
-include ( "banner.inc" );
-include ( "error.inc" );
-include ( "footer.inc" );
+include ("banner.inc");
+include ("error.inc");
+include ("footer.inc");
 
 ?>
 </BODY>

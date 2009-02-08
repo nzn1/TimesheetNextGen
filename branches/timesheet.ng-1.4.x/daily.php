@@ -1,42 +1,42 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/daily.php,v 1.7 2005/05/10 11:42:53 vexil Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn()) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
+$contextUser = strtolower($_SESSION['contextUser']);
 
-if ( empty( $contextUser ) )
-	errorPage( "Could not determine the context user" );
+if (empty($contextUser))
+	errorPage("Could not determine the context user");
 // define the command menu
-include( "timesheet_menu.inc" );
-// check that the client id is valid
-if ( $client_id == 0 )
+include("timesheet_menu.inc");
+//check that the client id is valid
+if ($client_id == 0)
 	$client_id = getFirstClient();
-// check that project id is valid
-if ( $proj_id == 0 )
+//check that project id is valid
+if ($proj_id == 0)
 	$task_id = 0;
-// calculate tomorrow and yesterday for "prev" & "next" buttons
-$yesterday = mktime( 0, 0, 0, $month, $day, $year ) - 24 * 60 * 60;
-$tomorrow = mktime( 0, 0, 0, $month, $day, $year ) + 24 * 60 * 60;
+//calculate tomorrow and yesterday for "prev" & "next" buttons
+$yesterday = mktime(0,0,0,$month,$day,$year) - 24*60*60;
+$tomorrow = mktime(0,0,0,$month,$day,$year) + 24*60*60;
 
 /**
-* Updated by robsearles 26 Jan 2008
-* Updated the query in getDailyTimes() to get the client_id
-*/
-function getDailyTimes( $month, $day, $year, $id, $proj_id ){
-	include( "table_names.inc" );
-	list( $qhq, $numq ) = dbQuery( "select timeformat from $CONFIG_TABLE where config_set_id = '1'" );
-	$configData = dbResult( $qhq );
+ * Updated by robsearles 26 Jan 2008
+ * Updated the query in getDailyTimes() to get the client_id
+ */
+function getDailyTimes($month, $day, $year, $id, $proj_id) {
+	include("table_names.inc");
+	list($qhq, $numq) = dbQuery("select timeformat from $CONFIG_TABLE where config_set_id = '1'");
+	$configData = dbResult($qhq);
 
 	$query = "select date_format(start_time,'%d') as day_of_month, trans_num, ";
 
-	if ( $configData["timeformat"] == "12" )
+	if ($configData["timeformat"] == "12")
 		$query .= "date_format(end_time, '%l:%i%p') as endd, date_format(start_time, '%l:%i%p') as start, ";
 	else
 		$query .= "date_format(end_time, '%k:%i') as endd, date_format(start_time, '%k:%i') as start, ";
@@ -44,13 +44,13 @@ function getDailyTimes( $month, $day, $year, $id, $proj_id ){
 								$TIMES_TABLE.proj_id, $TIMES_TABLE.task_id " . "FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE " . "WHERE $TASK_TABLE.proj_id=$PROJECT_TABLE.proj_id AND " . "uid='$id' AND ";
 
 	$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND " . "((start_time >= '$year-$month-$day 00:00:00' AND start_time <= '$year-$month-$day 23:59:59') " . " OR (end_time >= '$year-$month-$day 00:00:00' AND end_time <= '$year-$month-$day 23:59:59') " . " OR (start_time < '$year-$month-$day 00:00:00' AND end_time > '$year-$month-$day 23:59:59')) " . " order by day_of_month, start_time";
-	list( $my_qh, $num ) = dbQuery( $query );
-	return array( $num, $my_qh );
+	list($my_qh, $num) = dbQuery($query);
+	return array($num, $my_qh);
 }
-// include date input classes
+//include date input classes
 include "form_input.inc";
 
-list( $num, $qh ) = getDailyTimes( $month, $day, $year, $contextUser, $proj_id );
+list($num, $qh) = getDailyTimes($month, $day, $year, $contextUser, $proj_id);
 ?>
 <html>
 <head>
@@ -58,15 +58,15 @@ list( $num, $qh ) = getDailyTimes( $month, $day, $year, $contextUser, $proj_id )
 
 ?></title>
 <?php
-include( "header.inc" );
-include( "client_proj_task_javascript.inc" );
+include("header.inc");
+include("client_proj_task_javascript.inc");
 
 ?>
 <script language="Javascript">
 
 	function delete_entry(transNum) {
-				if (confirm('Are you sure you want to delete this time entry?'))
-					location.href = 'delete.php?client_id=<?php echo $client_id;
+		if (confirm('Are you sure you want to delete this time entry?'))
+			location.href = 'delete.php?client_id=<?php echo $client_id;
 
 ?>&proj_id=<?php echo $proj_id;
 
@@ -77,11 +77,11 @@ include( "client_proj_task_javascript.inc" );
 
 </script>
 </HEAD>
-<BODY <?php include ( "body.inc" );
+<BODY <?php include ("body.inc");
 
 ?> onload="doOnLoad();">
 <?php
-include ( "banner.inc" );
+include ("banner.inc");
 
 ?>
 
@@ -90,7 +90,7 @@ include ( "banner.inc" );
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -100,29 +100,29 @@ include ( "banner.inc" );
 							Daily Timesheet
 						</td>
 						<td align="left" nowrap class="outer_table_heading">
-							<?php echo strftime( "%A %B %d, %Y", mktime( 0, 0, 0, $month, $day, $year ) );
+							<?php echo strftime("%A %B %d, %Y", mktime(0, 0, 0, $month, $day, $year));
 
 ?>
 						</td>
 						<td align="right" nowrap>
 							<a href="<?php echo $_SERVER["PHP_SELF"];
 
-?>?month=<?php echo date( "m", $yesterday );
+?>?month=<?php echo date("m", $yesterday);
 
-?>&year=<?php echo date( "Y", $yesterday );
+?>&year=<?php echo date("Y", $yesterday);
 
-?>&day=<?php echo date( "d", $yesterday );
+?>&day=<?php echo date("d", $yesterday);
 
 ?>&proj_id=<?php echo $proj_id;
 
 ?>" class="outer_table_action">Prev</a>
 							<a href="<?php echo $_SERVER["PHP_SELF"];
 
-?>?month=<?php echo date( "m", $tomorrow );
+?>?month=<?php echo date("m", $tomorrow);
 
-?>&year=<?php echo date( "Y", $tomorrow );
+?>&year=<?php echo date("Y", $tomorrow);
 
-?>&day=<?php echo date( "d", $tomorrow );
+?>&day=<?php echo date("d", $tomorrow);
 
 ?>&proj_id=<?php echo $proj_id;
 
@@ -132,7 +132,7 @@ include ( "banner.inc" );
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -149,7 +149,7 @@ include ( "banner.inc" );
 						<td class="inner_table_column_heading" align="center"><i>Actions</i></td>
 					</tr>
 <?php
-if ( $num == 0 ){
+if ($num == 0) {
 	print "	<tr>\n";
 	print "		<td class=\"calendar_cell_middle\"><i>No hours recorded.</i></td>\n";
 	print "		<td class=\"calendar_cell_middle\">&nbsp;</td>\n";
@@ -159,68 +159,71 @@ if ( $num == 0 ){
 	print "		<td class=\"calendar_cell_disabled_right\">&nbsp;</td>\n";
 	print "	</tr>\n";
 	print "</table>\n";
-} else{
+}
+else {
 	$last_task_id = -1;
 	$today_total_sec = 0;
 	$total_diff_sec = 0;
 
-	while ( $data = dbResult( $qh ) ){
-		// Due to an inconsistency with mysql and php with converting to unix timestamp from the string,
-		// we are going to use php's strtotime to make the timestamp from the string.
-		// the problem has something to do with timezones.
-		$data["start_time"] = strtotime( $data["start_time_str"] );
-		$data["end_time"] = strtotime( $data["end_time_str"] );
-		// get the project title and task name
-		$projectTitle = stripslashes( $data["project_title"] );
-		$taskName = stripslashes( $data["name"] );
-		// start printing details of the task
+	while ($data = dbResult($qh)) {
+		//Due to an inconsistency with mysql and php with converting to unix timestamp from the string,
+		//we are going to use php's strtotime to make the timestamp from the string.
+		//the problem has something to do with timezones.
+		$data["start_time"] = strtotime($data["start_time_str"]);
+		$data["end_time"] = strtotime($data["end_time_str"]);
+		//get the project title and task name
+		$projectTitle = stripslashes($data["project_title"]);
+		$taskName = stripslashes($data["name"]);
+		//start printing details of the task
 		print "<tr>\n";
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('proj_info.php?proj_id=$data[proj_id]','Project Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$projectTitle</a></td>\n";
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('task_info.php?task_id=$data[task_id]','Task Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=300,height=150')\">$taskName</a></td>\n";
 
-		if ( $data["diff_sec"] > 0 ){
-			// if both start and end time are not today
-			if ( $data["start_time"] < mktime( 0, 0, 0, $month, $day, $year ) && $data["end_time"] > mktime( 23, 59, 59, $month, $day, $year ) ){
+		if ($data["diff_sec"] > 0) {
+			//if both start and end time are not today
+			if ($data["start_time"] < mktime(0, 0, 0, $month, $day, $year) && $data["end_time"] > mktime(23, 59, 59, $month, $day, $year)) {
 				$today_diff_sec = 24 * 60 * 60; //all day - no one should work this hard!
 
-				echo "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["start"] . "," . "<a href=\"daily.php?month=" . date( "m", $data["start_time"] ) . "&year=" . date( "Y", $data["start_time"] ) . "&day=" . date( "d", $data["start_time"] ) . "&proj_id=$proj_id\"><i>" . date( "d-M", $data["start_time"] ) . "</a></i></font>" . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["endd"] . "," . "<a href=\"daily.php?month=" . date( "m", $data["end_time"] ) . "&year=" . date( "Y", $data["end_time"] ) . "&day=" . date( "d", $data["end_time"] ) . "&proj_id=$proj_id\"><i>" . date( "d-M", $data["end_time"] ) . "</a></i></font>" . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds( $today_diff_sec ) . "<font color=\"#909090\"><i> of " .
-				formatSeconds( $data["diff_sec"] ) . "</i></font></TD>\n";
+				echo "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["start"] . "," . "<a href=\"daily.php?month=" . date("m", $data["start_time"]) . "&year=" . date("Y", $data["start_time"]) . "&day=" . date("d", $data["start_time"]) . "&proj_id=$proj_id\"><i>" . date("d-M", $data["start_time"]) . "</a></i></font>" . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["endd"] . "," . "<a href=\"daily.php?month=" . date("m", $data["end_time"]) . "&year=" . date("Y", $data["end_time"]) . "&day=" . date("d", $data["end_time"]) . "&proj_id=$proj_id\"><i>" . date("d-M", $data["end_time"]) . "</a></i></font>" . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($today_diff_sec) . "<font color=\"#909090\"><i> of " .
+				formatSeconds($data["diff_sec"]) . "</i></font></TD>\n";
 			}
-			// if end time is not today
-			elseif ( $data["end_time"] > mktime( 23, 59, 59, $month, $day, $year ) ){
-				$today_diff_sec = mktime( 0, 0, 0, $month, $day, $year ) + 24 * 60 * 60 - $data["start_time"];
+			//if end time is not today
+			elseif ($data["end_time"] > mktime(23,59,59,$month,$day,$year)) {
+				$today_diff_sec = mktime(0,0,0, $month,$day,$year) + 24*60*60 - $data["start_time"];
 
-				echo "<td class=\"calendar_cell_middle\" align=\"right\">" . $data["start"] . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["endd"] . "," . "<a href=\"daily.php?month=" . date( "m", $data["end_time"] ) . "&year=" . date( "Y", $data["end_time"] ) . "&day=" . date( "d", $data["end_time"] ) . "&proj_id=$proj_id\"><i>" . date( "d-M", $data["end_time"] ) . "</a></i></font>" . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds( $today_diff_sec ) . "<font color=\"#909090\"><i> of " . formatSeconds( $data["diff_sec"] ) . "</i></font></td>\n";
+				echo "<td class=\"calendar_cell_middle\" align=\"right\">" . $data["start"] . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["endd"] . "," . "<a href=\"daily.php?month=" . date("m", $data["end_time"]) . "&year=" . date("Y", $data["end_time"]) . "&day=" . date("d", $data["end_time"]) . "&proj_id=$proj_id\"><i>" . date("d-M", $data["end_time"]) . "</a></i></font>" . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($today_diff_sec) . "<font color=\"#909090\"><i> of " . formatSeconds($data["diff_sec"]) . "</i></font></td>\n";
 			}
-			// elseif start time is not today
-			elseif ( $data["start_time"] < mktime( 0, 0, 0, $month, $day, $year ) ){
-				$today_diff_sec = $data["end_time"] - mktime( 0, 0, 0, $month, $day, $year );
+			//elseif start time is not today
+			elseif ($data["start_time"] < mktime(0,0,0,$month,$day,$year)) {
+				$today_diff_sec = $data["end_time"] - mktime(0,0,0, $month,$day,$year);
 
-				echo "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["start"] . "," . "<a href=\"daily.php?month=" . date( "m", $data["start_time"] ) . "&year=" . date( "Y", $data["start_time"] ) . "&day=" . date( "d", $data["start_time"] ) . "&proj_id=$proj_id\"><i>" . date( "d-M", $data["start_time"] ) . "</a></i></font>" . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\">" . $data["endd"] . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds( $today_diff_sec ) . "<font color=\"#909090\"><i> of " .
-				formatSeconds( $data["diff_sec"] ) . "</i></font></td>\n";
-			} else{
+				echo "<td class=\"calendar_cell_middle\" align=\"right\"><font color=\"#909090\"><i>" . $data["start"] . "," . "<a href=\"daily.php?month=" . date("m", $data["start_time"]) . "&year=" . date("Y", $data["start_time"]) . "&day=" . date("d", $data["start_time"]) . "&proj_id=$proj_id\"><i>" . date("d-M", $data["start_time"]) . "</a></i></font>" . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\">" . $data["endd"] . "</td>" . "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($today_diff_sec) . "<font color=\"#909090\"><i> of " .
+				formatSeconds($data["diff_sec"]) . "</i></font></td>\n";
+			}
+			else {
 				$today_diff_sec = $data["diff_sec"];
 				print "<td class=\"calendar_cell_middle\" align=\"right\">$data[start]</td>\n";
 				print "<td class=\"calendar_cell_middle\" align=\"right\">$data[endd]</td>\n";
-				print "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds( $data["diff_sec"] ) . "</td>\n";
+				print "<td class=\"calendar_cell_middle\" align=\"right\">" . formatSeconds($data["diff_sec"]) . "</td>\n";
 			}
 
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\">\n";
 			print "	<a href=\"edit.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]&year=$year&month=$month&day=$day\" class=\"action_link\">Details</a>,&nbsp;\n";
-			// print "	<a href=\"delete.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
+			//print "	<a href=\"delete.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
 			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
 			print "</td>";
-			// add to todays total
+			//add to todays total
 			$today_total_sec += $today_diff_sec;
-		} else{
+		}
+		else {
 			print "<td class=\"calendar_cell_middle\" align=\"right\">$data[start]</td>\n";
 			print "<td class=\"calendar_cell_middle\" align=\"right\">&nbsp;</td>\n";
 			print "<td class=\"calendar_cell_middle\" align=\"right\">&nbsp;</td>\n";
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\">\n";
 			/**
-			* Update by robsearles 26 Jan 2008
-			* Added a "Clock Off" link to make it easier to stop timing a task
-			*/
+			 * Update by robsearles 26 Jan 2008
+			 * Added a "Clock Off" link to make it easier to stop timing a task
+			 */
 			$stop_link = '<a href="action.php?client_id=' . $data['client_id'] . '&proj_id=' . $data['proj_id'] . '&task_id=' . $data['task_id'] . '&clock_off_check=on&clock_off_radio=now" class="action_link\">Clock Off</a>, ';
 			print $stop_link;
 			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
@@ -231,7 +234,7 @@ if ( $num == 0 ){
 	}
 	print "<tr>\n";
 	print "	<td class=\"calendar_totals_line_weekly_right\" colspan=\"5\" align=\"right\">";
-	print " Daily Total: <span class=\"calendar_total_value_weekly\">" . formatSeconds( $today_total_sec ) . "</span></td>\n";
+	print " Daily Total: <span class=\"calendar_total_value_weekly\">" . formatSeconds($today_total_sec) . "</span></td>\n";
 	print "	<td class=\"calendar_cell_disabled_right\" align=\"right\">&nbsp;</td>\n";
 	print "</tr>\n";
 	print "</table>";
@@ -245,7 +248,7 @@ if ( $num == 0 ){
 
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -258,7 +261,7 @@ if ( $num == 0 ){
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -271,7 +274,7 @@ if ( $num == 0 ){
 				</table>
 
 <!-- include the timesheet face up until the next start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -358,17 +361,17 @@ if ( $num == 0 ){
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
-if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j' ) ) ): ?>
+if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 																	<input type="radio" name="clock_on_radio" value="date" id="clock_on_radio_date" onclick="enableClockOn();" checked>
 																<?php endif;
 
 ?>
-																<?php $hourInput = new HourInput( "clock_on_time_hour" );
-$hourInput->create( 10 );
+																<?php $hourInput = new HourInput("clock_on_time_hour");
+$hourInput->create(10);
 
 ?>
 																:
-																<?php $minuteInput = new MinuteInput( "clock_on_time_min" );
+																<?php $minuteInput = new MinuteInput("clock_on_time_min");
 $minuteInput->create();
 
 ?>
@@ -378,7 +381,7 @@ $minuteInput->create();
 															</td>
 														</tr>
 														<?php // If the current day is today:
-if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j' ) ) ): ?>
+if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_on_text">
@@ -401,17 +404,17 @@ if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
-if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j' ) ) ): ?>
+if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 																	<input type="radio" name="clock_off_radio" id="clock_off_radio_date" value="date" onclick="enableClockOff();">
 																<?php endif;
 
 ?>
-																<?php $hourInput = new HourInput( "clock_off_time_hour" );
-$hourInput->create( 17 );
+																<?php $hourInput = new HourInput("clock_off_time_hour");
+$hourInput->create(17);
 
 ?>
 																:
-																<?php $minuteInput = new MinuteInput( "clock_off_time_min" );
+																<?php $minuteInput = new MinuteInput("clock_off_time_min");
 $minuteInput->create();
 
 ?>
@@ -421,7 +424,7 @@ $minuteInput->create();
 															</td>
 														</tr>
 														<?php // If the current day is today:
-if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j' ) ) ): ?>
+if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_off_text">
@@ -453,7 +456,7 @@ if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -462,7 +465,7 @@ if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j
 	</table>
 
 <?php
-include ( "footer.inc" );
+include ("footer.inc");
 
 ?>
 </BODY>

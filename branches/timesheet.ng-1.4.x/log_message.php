@@ -1,15 +1,15 @@
 <?php
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn()) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
-// load local vars from superglobals
+$contextUser = strtolower($_SESSION['contextUser']);
+//load local vars from superglobals
 $month = $_REQUEST['month'];
 $day = $_REQUEST['day'];
 $year = $_REQUEST['year'];
@@ -24,21 +24,21 @@ $clock_off_time_hour = $_REQUEST['clock_off_time_hour'];
 $clock_off_time_min = $_REQUEST['clock_off_time_min'];
 $clockonoff = $_REQUEST['clockonoff'];
 // create the command menu cancel option
-$commandMenu->add( new TextCommand( "Cancel", true, "$destination?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&year=$year&month=$month&day=$day" ) );
+$commandMenu->add(new TextCommand("Cancel", true, "$destination?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&year=$year&month=$month&day=$day"));
 
 ?>
 <html>
 <head>
 	<title>Clock off - Enter log message</title>
 <?php
-include ( "header.inc" );
+include ("header.inc");
 
 ?>
 </head>
-<body <?php include ( "body.inc" );
+<body <?php include ("body.inc");
 ?> >
 <?php
-include ( "banner.inc" );
+include ("banner.inc");
 
 ?>
 <form action="action.php" method="post">
@@ -74,7 +74,7 @@ include ( "banner.inc" );
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 ?>
 
 				<table width="100%" border="0">
@@ -86,7 +86,7 @@ include ( "banner.inc" );
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
@@ -118,7 +118,7 @@ include ( "banner.inc" );
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 ?>
 
 		</td>
@@ -128,7 +128,7 @@ include ( "banner.inc" );
 </form>
 
 <?php
-include ( "footer.inc" );
+include ("footer.inc");
 
 ?>
 	</body>

@@ -1,33 +1,33 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/reports.php,v 1.5 2005/03/02 22:22:38 stormer Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance( CLEARANCE_ADMINISTRATOR ) ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
-// load local vars from superglobals
-$uid = isset( $_REQUEST['uid'] ) ? $_REQUEST['uid']: $contextUser;
-// define the command menu
-include( "timesheet_menu.inc" );
+$contextUser = strtolower($_SESSION['contextUser']);
+//load local vars from superglobals
+$uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']: $contextUser;
+//define the command menu
+include("timesheet_menu.inc");
 // Set default months
-setReportDate( $year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time, $time_middle_month );
+setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time, $time_middle_month);
 
 ?>
 <html>
 <head><title>Timesheet.php Reports Page</title>
-<?php include ( "header.inc" );
+<?php include ("header.inc");
 
 ?>
 </head>
-<body <?php include ( "body.inc" );
+<body <?php include ("body.inc");
 
 ?> >
-<?php include ( "banner.inc" );
+<?php include ("banner.inc");
 
 ?>
 
@@ -36,7 +36,7 @@ setReportDate( $year, $month, $day, $next_week, $prev_week, $next_month, $prev_m
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -46,11 +46,11 @@ setReportDate( $year, $month, $day, $next_week, $prev_week, $next_month, $prev_m
 							Reports
 						</td>
 						<td align="left" nowrap class="outer_table_heading">
-			  			<?php echo date( 'F d, Y', $time ) ?>
+			  			<?php echo date('F d, Y', $time) ?>
 						</td>
 						<td align="right" nowrap>
 						<?php
-printPrevNext( $time, $next_week, $prev_week, $next_month, $prev_month, $time_middle_month, $uid );
+printPrevNext($time, $next_week, $prev_week, $next_month, $prev_month, $time_middle_month, $uid);
 
 ?>
 						</td>
@@ -58,7 +58,7 @@ printPrevNext( $time, $next_week, $prev_week, $next_month, $prev_month, $time_mi
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -131,7 +131,7 @@ printPrevNext( $time, $next_week, $prev_week, $next_month, $prev_month, $time_mi
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -140,7 +140,7 @@ printPrevNext( $time, $next_week, $prev_week, $next_month, $prev_month, $time_mi
 </table>
 
 <?php
-include ( "footer.inc" );
+include ("footer.inc");
 
 ?>
 </BODY>

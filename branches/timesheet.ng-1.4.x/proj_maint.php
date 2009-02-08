@@ -1,20 +1,20 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/proj_maint.php,v 1.10 2005/05/17 03:38:37 vexil Exp $
+//$Header: /cvsroot/tsheet/timesheet.php/proj_maint.php,v 1.10 2005/05/17 03:38:37 vexil Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance( CLEARANCE_ADMINISTRATOR ) ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
-// define the command menu
-include( "timesheet_menu.inc" );
-// set up query
+$contextUser = strtolower($_SESSION['contextUser']);
+//define the command menu
+include("timesheet_menu.inc");
+//set up query
 $query = "select distinct $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, " . "$CLIENT_TABLE.organisation, $PROJECT_TABLE.description, " . "DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " . "DATE_FORMAT(deadline, '%M %d, %Y') as deadline, " . "$PROJECT_TABLE.proj_status, http_link, proj_leader " . "FROM $PROJECT_TABLE, $CLIENT_TABLE, $USER_TABLE " . "WHERE ";
-if ( $client_id != 0 )
+if ($client_id != 0)
 	$query .= "$PROJECT_TABLE.client_id = $client_id AND ";
 
 $query .= "$PROJECT_TABLE.proj_id > 0 AND $CLIENT_TABLE.client_id = $PROJECT_TABLE.client_id " . "ORDER BY $PROJECT_TABLE.title";
@@ -24,7 +24,7 @@ $query .= "$PROJECT_TABLE.proj_id > 0 AND $CLIENT_TABLE.client_id = $PROJECT_TAB
 <head>
 <title>Projects</title>
 <?php
-include ( "header.inc" );
+include ("header.inc");
 
 ?>
 <script language="Javascript">
@@ -39,11 +39,11 @@ include ( "header.inc" );
 
 </script>
 </head>
-<body <?php include ( "body.inc" );
+<body <?php include ("body.inc");
 
 ?> >
 <?php
-include ( "banner.inc" );
+include ("banner.inc");
 
 ?>
 
@@ -52,7 +52,7 @@ include ( "banner.inc" );
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -65,7 +65,7 @@ include ( "banner.inc" );
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td><table width="50"><tr><td>Client:</td></tr></table></td>
-								<td width="100%"><?php client_select_list( $client_id, 0, false, false, true, false, "submit();", false );
+								<td width="100%"><?php client_select_list($client_id, 0, false, false, true, false, "submit();", false);
 
 ?></td>
 							</tr>
@@ -84,7 +84,7 @@ include ( "banner.inc" );
 			</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -95,36 +95,36 @@ include ( "banner.inc" );
 
 <?php
 // execute the query
-list( $qh, $num ) = dbQuery( $query );
+list($qh, $num) = dbQuery($query);
 // are there any results?
-if ( $num == 0 ){
-	if ( $client_id != 0 )
+if ($num == 0) {
+	if ($client_id != 0)
 		print "<tr><td align=\"center\"><br>There are no projects for this client.<br><br></td></tr>";
 	else
 		print "<tr><td align=\"center\"><br>There are no projects.<br><br></td></tr>";
 } else{
 	// iterate through results
-	for( $j = 0; $j < $num; $j++ ){
+	for($j = 0; $j < $num; $j++) {
 		// get the current record
-		$data = dbResult( $qh );
+		$data = dbResult($qh);
 		// strip slashes
-		$data["title"] = stripslashes( $data["title"] );
-		$data["organisation"] = stripslashes( $data["organisation"] );
-		$data["description"] = stripslashes( $data["description"] );
+		$data["title"] = stripslashes($data["title"]);
+		$data["organisation"] = stripslashes($data["organisation"]);
+		$data["description"] = stripslashes($data["description"]);
 
-		list( $billqh, $bill_num ) = dbquery( "select sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, " . "sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))) as billed " . "from $TIMES_TABLE, $USER_TABLE " . "where end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] AND $USER_TABLE.username = $TIMES_TABLE.uid " );
-		$bill_data = dbResult( $billqh );
+		list($billqh, $bill_num) = dbquery("select sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, " . "sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))) as billed " . "from $TIMES_TABLE, $USER_TABLE " . "where end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] AND $USER_TABLE.username = $TIMES_TABLE.uid ");
+		$bill_data = dbResult($billqh);
 		// start the row
 		?>
 								<tr>
 									<td>
-										<table width="100%" border="0"<?php if ( $j + 1 < $num ) print "class=\"section_body\"";
+										<table width="100%" border="0"<?php if ($j + 1 < $num) print "class=\"section_body\"";
 
 		?>>
 											<tr>
 												<td valign="center">
 <?php
-		if ( $data["http_link"] != "" )
+		if ($data["http_link"] != "")
 			print "<a href=\"$data[http_link]\"><span class=\"project_title\">$data[title]</span></a>";
 		else
 			print "<span class=\"project_title\">$data[title]</span>";
@@ -134,7 +134,7 @@ if ( $num == 0 ){
 												</td>
 												<td align="right">
 <?php
-		if ( isset( $data["start_date"] ) && $data["start_date"] != '' && $data["deadline"] != '' )
+		if (isset($data["start_date"]) && $data["start_date"] != '' && $data["deadline"] != '')
 			print "<span class=\"label\">Start:</span> $data[start_date]<br><span class=\"label\">Deadline:</span> $data[deadline]";
 		else
 			print "&nbsp;";
@@ -171,10 +171,10 @@ if ( $num == 0 ){
 																<table border="0" cellpadding="0" cellspacing="0">
 																	<tr>
 																		<td>
-																			<span class="label">Total time:</span> <?php echo ( isset( $bill_data["total_time"] ) ? formatSeconds( $bill_data["total_time"] ): "0h 0m" );
+																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? formatSeconds($bill_data["total_time"]): "0h 0m");
 
 		?><br>
-														    	   <span class="label">Total bill:</span> <b>$<?php echo ( isset( $bill_data["billed"] ) ? $bill_data["billed"]: "0.00" );
+														    	   <span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? $bill_data["billed"]: "0.00");
 
 		?></b>
 																		</td>
@@ -183,21 +183,21 @@ if ( $num == 0 ){
 
 
 <?php
-		// display project leader
+		//display project leader
 		print "<tr><td><span class=\"label\">Project Leader:</span> $data[proj_leader] </td></tr>";
-		// display assigned users
-		list( $qh2, $num_workers ) = dbQuery( "select distinct username from $ASSIGNMENTS_TABLE where proj_id = $data[proj_id]" );
-		if ( $num_workers == 0 ){
+		//display assigned users
+		list($qh2, $num_workers) = dbQuery("select distinct username from $ASSIGNMENTS_TABLE where proj_id = $data[proj_id]");
+		if ($num_workers == 0) {
 			print "<tr><td><font size=\"-1\">Nobody assigned to this project</font></td></tr>\n";
 		} else{
 			$workers = '';
 			print "<tr><td><span class=\"label\">Assigned Users:</span> ";
-			for ( $k = 0; $k < $num_workers; $k++ ){
-				$worker = dbResult( $qh2 );
+			for ($k = 0; $k < $num_workers; $k++) {
+				$worker = dbResult($qh2);
 				$workers .= "$worker[username], ";
 			}
 
-			$workers = ereg_replace( ", $", "", $workers );
+			$workers = ereg_replace(", $", "", $workers);
 			print $workers;
 			print "</td></tr>";
 		}
@@ -214,11 +214,11 @@ if ( $num == 0 ){
 		?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br>
 <?php
 		// get tasks
-		list( $qh3, $num_tasks ) = dbQuery( "select name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]" );
-		// are there any tasks?
-		if ( $num_tasks > 0 ){
-			while ( $task_data = dbResult( $qh3 ) ){
-				$taskName = str_replace( " ", "&nbsp;", $task_data["name"] );
+		list($qh3, $num_tasks) = dbQuery("select name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]");
+		//are there any tasks?
+		if ($num_tasks > 0) {
+			while ($task_data = dbResult($qh3)) {
+				$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
 				print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br>";
 			}
 		} else
@@ -247,7 +247,7 @@ if ( $num == 0 ){
 			</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -256,7 +256,7 @@ if ( $num == 0 ){
 </table>
 
 <?php
-include ( "footer.inc" );
+include ("footer.inc");
 
 ?>
 </BODY>

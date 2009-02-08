@@ -1,30 +1,28 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/user_maint.php,v 1.7 2005/02/03 09:15:44 vexil Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance( CLEARANCE_ADMINISTRATOR ) ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-// define the command menu
-include( "timesheet_menu.inc" );
+//define the command menu
+include("timesheet_menu.inc");
 
 ?>
 <head><title>User Management Page</title>
 <?php
-include ( "header.inc" );
+include ("header.inc");
 
 ?>
 <script language="javascript">
 
-	function deleteUser(uid, username)
-	{
+	function deleteUser(uid, username) {
 		//get confirmation
-		if (confirm("Deleting user '" + username + "' will also remove all related project and task assignments."))
-		{
+		if (confirm("Deleting user '" + username + "' will also remove all related project and task assignments.")) {
 			document.userForm.action.value = "delete";
 			document.userForm.uid.value = uid;
 			document.userForm.username.value = username;
@@ -32,8 +30,7 @@ include ( "header.inc" );
 		}
 	}
 
-	function editUser(uid, firstName, lastName, username, emailAddress, phone, billRate, password, isAdministrator)
-	{
+	function editUser(uid, firstName, lastName, username, emailAddress, phone, billRate, password, isAdministrator) {
 		document.userForm.uid.value = uid;
 		document.userForm.first_name.value = firstName;
 		document.userForm.last_name.value = lastName;
@@ -47,15 +44,13 @@ include ( "header.inc" );
 		document.location.href = "#AddEdit";
 	}
 
-	function addUser()
-	{
+	function addUser() {
 		//validation
 		if (document.userForm.username.value == "")
 			alert("You must enter a username that the user will log on with.");
 		else if (document.userForm.password.value == "")
 			alert("You must enter a password that the user will log on with.");
-		else
-		{
+		else {
 			document.userForm.action.value = "addupdate";
 			document.userForm.submit();
 		}
@@ -68,11 +63,11 @@ include ( "header.inc" );
 
 </script>
 </HEAD>
-<BODY <?php include ( "body.inc" );
+<BODY <?php include ("body.inc");
 
 ?> >
 <?php
-include ( "banner.inc" );
+include ("banner.inc");
 
 ?>
 <form action="user_action.php" name="userForm" method="post">
@@ -84,7 +79,7 @@ include ( "banner.inc" );
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -97,7 +92,7 @@ include ( "banner.inc" );
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -117,21 +112,21 @@ include ( "banner.inc" );
 					</tr>
 <?php
 
-list( $qh, $num ) = dbQuery( "select * from $USER_TABLE where username!='guest' order by last_name, first_name" );
+list($qh, $num) = dbQuery("select * from $USER_TABLE where username!='guest' order by last_name, first_name");
 
-while ( $data = dbResult( $qh ) ){
-	$firstNameField = empty( $data["first_name"] ) ? "&nbsp;": $data["first_name"];
-	$lastNameField = empty( $data["last_name"] ) ? "&nbsp;": $data["last_name"];
-	$usernameField = empty( $data["username"] ) ? "&nbsp;": $data["username"];
-	$emailAddressField = empty( $data["email_address"] ) ? "&nbsp;": $data["email_address"];
-	$phoneField = empty( $data["phone"] ) ? "&nbsp;": $data["phone"];
-	$billRateField = empty( $data["bill_rate"] ) ? "&nbsp;": $data["bill_rate"];
-	$isAdministrator = ( $data["level"] >= 10 );
+while ($data = dbResult($qh)) {
+	$firstNameField = empty($data["first_name"]) ? "&nbsp;": $data["first_name"];
+	$lastNameField = empty($data["last_name"]) ? "&nbsp;": $data["last_name"];
+	$usernameField = empty($data["username"]) ? "&nbsp;": $data["username"];
+	$emailAddressField = empty($data["email_address"]) ? "&nbsp;": $data["email_address"];
+	$phoneField = empty($data["phone"]) ? "&nbsp;": $data["phone"];
+	$billRateField = empty($data["bill_rate"]) ? "&nbsp;": $data["bill_rate"];
+	$isAdministrator = ($data["level"] >= 10);
 
 	print "<tr>\n";
 	print "<td class=\"calendar_cell_middle\">$firstNameField</td>";
 	print "<td class=\"calendar_cell_middle\">$lastNameField</td>";
-	if ( $isAdministrator )
+	if ($isAdministrator)
 		print "<td class=\"calendar_cell_middle\"><span class=\"calendar_total_value_weekly\">Admin</span></td>";
 	else
 		print "<td class=\"calendar_cell_middle\">Basic</td>";
@@ -153,7 +148,7 @@ while ( $data = dbResult( $qh ) ){
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -166,7 +161,7 @@ while ( $data = dbResult( $qh ) ){
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -179,7 +174,7 @@ while ( $data = dbResult( $qh ) ){
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -219,7 +214,7 @@ while ( $data = dbResult( $qh ) ){
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -229,7 +224,7 @@ while ( $data = dbResult( $qh ) ){
 
 </form>
 <?php
-include ( "footer.inc" );
+include ("footer.inc");
 
 ?>
 </BODY>

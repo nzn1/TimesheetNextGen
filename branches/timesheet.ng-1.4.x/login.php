@@ -1,28 +1,29 @@
 <?php
 // Authenticate
-require( "class.AuthenticationManager.php" );
-// check that this form has been submitted
-if ( isset( $_POST["username"] ) && isset( $_POST["password"] ) ){
-	// try logging the user in
-	if ( !$authenticationManager->login( $_POST["username"], $_POST["password"] ) )
+require("class.AuthenticationManager.php");
+//check that this form has been submitted
+if (isset($_POST["username"]) && isset($_POST["password"])) {
+	//try logging the user in
+	if (!$authenticationManager->login($_POST["username"], $_POST["password"]))
 		$loginFailure = true;
-	else{
-		if ( !empty( $_REQUEST["redirect"] ) )
-			header( "Location: $_REQUEST[redirect]" );
+	else {
+		if (!empty($_REQUEST["redirect"]))
+			header("Location: $_REQUEST[redirect]");
 		else
-			header( "Location: calendar.php" );
+			header("Location: calendar.php");
 
 		exit();
 	}
-} else
-	// destroy the session by logging out
+}
+else
+	//destroy the session by logging out
 	$authenticationManager->logout();
 
-function printMessage( $message ){
+function printMessage($message) {
 	print "<tr>" . "	<td>&nbsp;</td>" . "	<td colspan=\"3\">" . "		<table width=\"100%\" border=\"0\" bgcolor=\"black\" cellspacing=\"0\" cellpadding=\"1\">" . "			<tr>" . "				<td>" . "					<table width=\"100%\" border=\"0\" bgcolor=\"yellow\">" . "						<tr><td class=\"login_error\">$message</td></tr>" . "					</table>" . "				</td>" . "			</tr>" . "		</table>" . "	</td>" . "</tr>";
 }
 
-$redirect = isset( $_REQUEST["redirect"] ) ? $_REQUEST["redirect"] : "";
+$redirect = isset($_REQUEST["redirect"]) ? $_REQUEST["redirect"] : "";
 
 ?>
 
@@ -30,7 +31,7 @@ $redirect = isset( $_REQUEST["redirect"] ) ? $_REQUEST["redirect"] : "";
 <head>
 <title>Timesheet Login</title>
 <?php
-include ( "header.inc" );
+include ("header.inc");
 
 ?>
 </head>
@@ -45,7 +46,7 @@ include ( "header.inc" );
 		<td style="padding-top: 100;">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 ?>
 
 				<table border="0">
@@ -57,7 +58,7 @@ include ( "header.inc" );
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 ?>
 
 			<table width="300" cellspacing="0" cellpadding="5" class="box">
@@ -67,16 +68,16 @@ include ( "header.inc" );
 					<td class="label">Password:<br><input type="password" name="password" size="25" maxlength="25"></td>
 					<td class="label"><br><input type="submit" name="Login" value="submit"></td>
 				</tr>
-				<?php if ( isset( $loginFailure ) )
-	printMessage( $authenticationManager->getErrorMessage() );
-else if ( isset( $_REQUEST["clearanceRequired"] ) )
-	printMessage( "$_REQUEST[clearanceRequired] clearance is required for the page you have tried to access." );
+				<?php if (isset($loginFailure))
+	printMessage($authenticationManager->getErrorMessage());
+else if (isset($_REQUEST["clearanceRequired"]))
+	printMessage("$_REQUEST[clearanceRequired] clearance is required for the page you have tried to access.");
 
 ?>
 			</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 ?>
 
 		</td>

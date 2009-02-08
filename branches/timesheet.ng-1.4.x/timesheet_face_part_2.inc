@@ -28,7 +28,7 @@
 							</tr>
 							<tr>
 								<td width="13" height="100%">
-									<img src="images/timesheet_face_15.gif" width="13" height="100%" /></td>			
+									<img src="images/timesheet_face_15.gif" width="13" height="100%" /></td>
 							</tr>
 							<tr>
 								<td width="13" height="6">
@@ -42,11 +42,10 @@
 								<td width="5" height="17">
 									<img src="images/timesheet_face_10.gif" width="5" height="17" alt="" /></td>
 								<td width="100%" height="17">
-									<img src="images/timesheet_face_11.gif" width="100%" height="17" alt="" /></td>								
+									<img src="images/timesheet_face_11.gif" width="100%" height="17" alt="" /></td>
 								<td width="4" height="17">
 									<img src="images/timesheet_face_12.gif" width="4" height="17" alt="" /></td>
 							</tr>
 							<tr height="100%">
 								<td colspan="3" width="100%" height="100%" class="faceBackground">
 								<!-- BREAK POINT 2 -->
-								

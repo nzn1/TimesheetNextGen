@@ -1,32 +1,32 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/proj_add.php,v 1.9 2005/05/16 01:39:57 vexil Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance( CLEARANCE_ADMINISTRATOR ) ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
-// define the command menu
-$commandMenu->add( new TextCommand( "Back", true, "javascript:history.back()" ) );
-// load client id from superglobals
-$client_id = isset( $_REQUEST['client_id'] ) ? $_REQUEST['client_id']: 1;
+$contextUser = strtolower($_SESSION['contextUser']);
+//define the command menu
+$commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
+//load client id from superglobals
+$client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 
 ?>
 <html>
 <head>
 <title>Add New Project</title>
-<?php include ( "header.inc" );
+<?php include ("header.inc");
 
 ?>
 </head>
-<body <?php include ( "body.inc" );
+<body <?php include ("body.inc");
 
 ?> >
-<?php include ( "banner.inc" );
+<?php include ("banner.inc");
 
 ?>
 
@@ -38,7 +38,7 @@ $client_id = isset( $_REQUEST['client_id'] ) ? $_REQUEST['client_id']: 1;
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -51,7 +51,7 @@ $client_id = isset( $_REQUEST['client_id'] ) ? $_REQUEST['client_id']: 1;
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -65,7 +65,7 @@ $client_id = isset( $_REQUEST['client_id'] ) ? $_REQUEST['client_id']: 1;
 					</tr>
 					<tr>
 						<td align="right">Client:</td>
-						<td><?php client_select_list( $client_id, 0, false, false, false, true, "", false );
+						<td><?php client_select_list($client_id, 0, false, false, false, true, "", false);
 
 ?></td>
 					</tr>
@@ -75,23 +75,23 @@ $client_id = isset( $_REQUEST['client_id'] ) ? $_REQUEST['client_id']: 1;
 					</tr>
 					<tr>
 						<td align="right">Start Date:</td>
-						<td><?php day_button( "start_day" );
-month_button( "start_month" );
-year_button( "start_year" );
+						<td><?php day_button("start_day");
+month_button("start_month");
+year_button("start_year");
 
 ?></td>
 					</tr>
 					<tr>
 						<td align="right">Deadline:</td>
-						<td><?php day_button( "end_day" );
-month_button( "end_month" );
-year_button( "end_year" );
+						<td><?php day_button("end_day");
+month_button("end_month");
+year_button("end_year");
 
 ?></td>
 					</tr>
 					<tr>
 						<td align="right">Status:</td>
-						<td><?php proj_status_list( "proj_status", "Started" );
+						<td><?php proj_status_list("proj_status", "Started");
 
 ?></td>
 					</tr>
@@ -101,13 +101,13 @@ year_button( "end_year" );
 					</tr>
 					<tr>
 						<td align="right" valign="top">Assignments:</td>
-						<td><?php multi_user_select_list( "assigned[]" );
+						<td><?php multi_user_select_list("assigned[]");
 
 ?></td>
 					</tr>
 					<tr>
 						<td align="right">Project Leader:</td>
-						<td><?php single_user_select_list( "project_leader" );
+						<td><?php single_user_select_list("project_leader");
 
 ?></td>
 					</tr>
@@ -128,7 +128,7 @@ year_button( "end_year" );
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -138,7 +138,7 @@ year_button( "end_year" );
 
 </form>
 
-<?php include( "footer.inc" );
+<?php include("footer.inc");
 
 ?>
 </body>

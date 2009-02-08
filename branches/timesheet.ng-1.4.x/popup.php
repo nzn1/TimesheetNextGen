@@ -1,49 +1,49 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/popup.php,v 1.11 2005/05/17 03:38:37 vexil Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn()) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
+$contextUser = strtolower($_SESSION['contextUser']);
 
-if ( empty( $contextUser ) )
-	errorPage( "Could not determine the context user" );
+if (empty($contextUser))
+	errorPage("Could not determine the context user");
 // load local vars from superglobals
 $year = $_REQUEST["year"];
 $month = $_REQUEST["month"];
 $day = $_REQUEST["day"];
 $destination = $_REQUEST["destination"];
-$proj_id = isset( $_REQUEST["proj_id"] ) ? $_REQUEST["proj_id"]: 0;
-$task_id = isset( $_REQUEST["task_id"] ) ? $_REQUEST["task_id"]: 0;
-$client_id = isset( $_REQUEST["client_id"] ) ? $_REQUEST["client_id"]: 0;
+$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
+$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
+$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 // get todays values
 $today = time();
-$todayYear = date( "Y", $today );
-$todayMonth = date( "n", $today );
-$todayDay = date( "j", $today );
+$todayYear = date("Y", $today);
+$todayMonth = date("n", $today);
+$todayDay = date("j", $today);
 // check that the client id is valid
-if ( $client_id == 0 || empty( $client_id ) )
+if ($client_id == 0 || empty($client_id))
 	$client_id = getFirstClient();
 // check that project id is valid
-if ( $proj_id == 0 )
+if ($proj_id == 0)
 	$task_id = 0;
 // calculate tomorrow and yesterday for "prev" & "next" buttons
-$yesterday = mktime( 0, 0, 0, $month, $day, $year ) - 24 * 60 * 60;
-$tomorrow = mktime( 0, 0, 0, $month, $day, $year ) + 24 * 60 * 60;
+$yesterday = mktime(0, 0, 0, $month, $day, $year) - 24 * 60 * 60;
+$tomorrow = mktime(0, 0, 0, $month, $day, $year) + 24 * 60 * 60;
 
-function getDailyTimes( $month, $day, $year, $id, $proj_id ){
-	include( "table_names.inc" );
-	list( $qhq, $numq ) = dbQuery( "select timeformat from $CONFIG_TABLE where config_set_id = '1'" );
-	$configData = dbResult( $qhq );
+function getDailyTimes($month, $day, $year, $id, $proj_id) {
+	include("table_names.inc");
+	list($qhq, $numq) = dbQuery("select timeformat from $CONFIG_TABLE where config_set_id = '1'");
+	$configData = dbResult($qhq);
 
 	$query = "select date_format(start_time,'%d') as day_of_month, trans_num, ";
 
-	if ( $configData["timeformat"] == "12" )
+	if ($configData["timeformat"] == "12")
 		$query .= "date_format(end_time, '%l:%i%p') as endd, date_format(start_time, '%l:%i%p') as start, ";
 	else
 		$query .= "date_format(end_time, '%k:%i') as endd, date_format(start_time, '%k:%i') as start, ";
@@ -51,13 +51,13 @@ function getDailyTimes( $month, $day, $year, $id, $proj_id ){
 
 	$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND " . "((start_time >= '$year-$month-$day 00:00:00' AND start_time <= '$year-$month-$day 23:59:59') " . " OR (end_time >= '$year-$month-$day 00:00:00' AND end_time <= '$year-$month-$day 23:59:59') " . " OR (start_time < '$year-$month-$day 00:00:00' AND end_time > '$year-$month-$day 23:59:59')) " . " order by day_of_month, start_time";
 
-	list( $my_qh, $num ) = dbQuery( $query );
-	return array( $num, $my_qh );
+	list($my_qh, $num) = dbQuery($query);
+	return array($num, $my_qh);
 }
 // include date input classes
 include "form_input.inc";
 
-list( $num, $qh ) = getDailyTimes( $month, $day, $year, $contextUser, $proj_id );
+list($num, $qh) = getDailyTimes($month, $day, $year, $contextUser, $proj_id);
 
 ?>
 <html>
@@ -65,8 +65,8 @@ list( $num, $qh ) = getDailyTimes( $month, $day, $year, $contextUser, $proj_id )
 <title>Update timesheet for <?php echo $contextUser;
 ?></title>
 <?php
-include( "header.inc" );
-include( "client_proj_task_javascript.inc" );
+include("header.inc");
+include("client_proj_task_javascript.inc");
 
 ?>
 <script language="Javascript">
@@ -81,14 +81,14 @@ function resizePopupWindow() {
 
 </script>
 </HEAD>
-<body style="margin: 0; padding: 0;" class="face_padding_cell" <?php include ( "body.inc" );
+<body style="margin: 0; padding: 0;" class="face_padding_cell" <?php include ("body.inc");
 ?> onload="doOnLoad();">
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
 		<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 ?>
 
 				<table width="100%" border="0">
@@ -97,14 +97,14 @@ function resizePopupWindow() {
 							Clock On / Off
 						</td>
 						<td align="right" nowrap class="outer_table_heading">
-							<?php echo strftime( "%A %B %d, %Y", mktime( 0, 0, 0, $month, $day, $year ) );
+							<?php echo strftime("%A %B %d, %Y", mktime(0, 0, 0, $month, $day, $year));
 ?>
 						</td>
 					</tr>
 				</table>
 
 <!-- include the timesheet face up until the next start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
@@ -180,15 +180,15 @@ function resizePopupWindow() {
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
-if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j' ) ) ): ?>
+if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 																	<input type="radio" name="clock_on_radio" id="clock_on_radio_date" value="date" onclick="enableClockOn();" checked>
 																<?php endif;
 ?>
-																<?php $hourInput = new HourInput( "clock_on_time_hour" );
-$hourInput->create( 10 );
+																<?php $hourInput = new HourInput("clock_on_time_hour");
+$hourInput->create(10);
 ?>
 																:
-																<?php $minuteInput = new MinuteInput( "clock_on_time_min" );
+																<?php $minuteInput = new MinuteInput("clock_on_time_min");
 $minuteInput->create();
 ?>
 															</td>
@@ -197,7 +197,7 @@ $minuteInput->create();
 															</td>
 														</tr>
 														<?php // If the current day is today:
-if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j' ) ) ): ?>
+if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_on_text">
@@ -219,15 +219,15 @@ if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
-if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j' ) ) ): ?>
+if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 																	<input type="radio" name="clock_off_radio" id="clock_off_radio_date" value="date" onclick="enableClockOff();">
 																<?php endif;
 ?>
-																<?php $hourInput = new HourInput( "clock_off_time_hour" );
-$hourInput->create( 17 );
+																<?php $hourInput = new HourInput("clock_off_time_hour");
+$hourInput->create(17);
 ?>
 																:
-																<?php $minuteInput = new MinuteInput( "clock_off_time_min" );
+																<?php $minuteInput = new MinuteInput("clock_off_time_min");
 $minuteInput->create();
 ?>
 															</td>
@@ -236,7 +236,7 @@ $minuteInput->create();
 															</td>
 														</tr>
 														<?php // If the current day is today:
-if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j' ) ) ): ?>
+if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_off_text">
@@ -267,7 +267,7 @@ if ( ( $year == date( 'Y' ) ) && ( $month == date( 'm' ) ) && ( $day == date( 'j
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 ?>
 
 			</td>

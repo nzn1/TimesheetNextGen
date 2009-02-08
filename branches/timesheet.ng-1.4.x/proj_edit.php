@@ -1,28 +1,28 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/proj_edit.php,v 1.7 2005/05/16 01:39:57 vexil Exp $
+//$Header: /cvsroot/tsheet/timesheet.php/proj_edit.php,v 1.7 2005/05/16 01:39:57 vexil Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance( CLEARANCE_ADMINISTRATOR ) ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
-// load local vars from superglobals
+$contextUser = strtolower($_SESSION['contextUser']);
+//load local vars from superglobals
 $proj_id = $_REQUEST['proj_id'];
-// define the command menu
-$commandMenu->add( new TextCommand( "Back", true, "javascript:history.back()" ) );
+//define the command menu
+$commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 $dbh = dbConnect();
-list( $qh, $num ) = dbQuery( "select proj_id, title, client_id, description, DATE_FORMAT(start_date, '%m') as start_month, " . "date_format(start_date, '%d') as start_day, date_format(start_date, '%Y') as start_year, " . "DATE_FORMAT(deadline, '%m') as end_month, date_format(deadline, '%d') as end_day, date_format(deadline, '%Y') as end_year, " . "http_link, proj_status, proj_leader from $PROJECT_TABLE where proj_id = $proj_id order by proj_id" );
-$data = dbResult( $qh );
+list($qh, $num) = dbQuery("select proj_id, title, client_id, description, DATE_FORMAT(start_date, '%m') as start_month, " . "date_format(start_date, '%d') as start_day, date_format(start_date, '%Y') as start_year, " . "DATE_FORMAT(deadline, '%m') as end_month, date_format(deadline, '%d') as end_day, date_format(deadline, '%Y') as end_year, " . "http_link, proj_status, proj_leader from $PROJECT_TABLE where proj_id = $proj_id order by proj_id");
+$data = dbResult($qh);
 
-list( $qh, $num ) = dbQuery( "SELECT username from $ASSIGNMENTS_TABLE where proj_id = $proj_id" );
+list($qh, $num) = dbQuery("SELECT username from $ASSIGNMENTS_TABLE where proj_id = $proj_id");
 $selected_array = array();
 $i = 0;
-while ( $datanext = dbResult( $qh ) ){
+while ($datanext = dbResult($qh)) {
 	$selected_array[$i] = $datanext["username"];
 	$i++;
 }
@@ -32,14 +32,14 @@ while ( $datanext = dbResult( $qh ) ){
 <html>
 <head>
 <title>Edit Project</title>
-<?php include ( "header.inc" );
+<?php include ("header.inc");
 
 ?>
 </head>
-<body <?php include ( "body.inc" );
+<body <?php include ("body.inc");
 
 ?> >
-<?php include ( "banner.inc" );
+<?php include ("banner.inc");
 
 ?>
 
@@ -54,14 +54,14 @@ while ( $datanext = dbResult( $qh ) ){
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
-							Edit Project: <?php echo stripslashes( $data["title"] );
+							Edit Project: <?php echo stripslashes($data["title"]);
 
 ?>
 						</td>
@@ -69,7 +69,7 @@ while ( $datanext = dbResult( $qh ) ){
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -79,42 +79,42 @@ while ( $datanext = dbResult( $qh ) ){
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Project Title:</td>
-						<td><input type="text" name="title" size="42" value="<?php echo stripslashes( $data["title"] );
+						<td><input type="text" name="title" size="42" value="<?php echo stripslashes($data["title"]);
 
 ?>" style="width: 100%;" maxlength="200"></td>
 					</tr>
 					<tr>
 						<td align="right">Client:</td>
-						<td><?php client_select_list( $data["client_id"], 0, false, false, false, true, "", false );
+						<td><?php client_select_list($data["client_id"], 0, false, false, false, true, "", false);
 
 ?></td>
 					</tr>
 					<tr>
 						<td align="right" valign="top">Description:</td>
-						<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%;"><?php $data["description"] = stripslashes( $data["description"] );
+						<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%;"><?php $data["description"] = stripslashes($data["description"]);
 echo $data["description"];
 
 ?></textarea></td>
 					</tr>
 					<tr>
 						<td align="right">Start Date:</td>
-						<td><?php day_button( "start_day", $data["start_day"] );
-month_button( "start_month", $data["start_month"] );
-year_button( "start_year", $data["start_year"] );
+						<td><?php day_button("start_day", $data["start_day"]);
+month_button("start_month", $data["start_month"]);
+year_button("start_year", $data["start_year"]);
 
 ?></td>
 					</tr>
 					<tr>
 						<td align="right">Deadline:</td>
-						<td><?php day_button( "end_day", $data["end_day"] );
-month_button( "end_month", $data["end_month"] );
-year_button( "end_year", $data["end_year"] );
+						<td><?php day_button("end_day", $data["end_day"]);
+month_button("end_month", $data["end_month"]);
+year_button("end_year", $data["end_year"]);
 
 ?></td>
 					</tr>
 					<tr>
 						<td align="right">Status:</td>
-						<td><?php proj_status_list( "proj_status", $data["proj_status"] );
+						<td><?php proj_status_list("proj_status", $data["proj_status"]);
 
 ?></td>
 					</tr>
@@ -126,13 +126,13 @@ year_button( "end_year", $data["end_year"] );
 					</tr>
 					<tr>
 						<td align="right" valign="top">Assignments:</td>
-						<td><?php multi_user_select_list( "assigned[]", $selected_array );
+						<td><?php multi_user_select_list("assigned[]", $selected_array);
 
 ?></td>
 					</tr>
 					<tr>
 						<td align="right">Project Leader:</td>
-						<td><?php single_user_select_list( "project_leader", $data["proj_leader"] );
+						<td><?php single_user_select_list("project_leader", $data["proj_leader"]);
 
 ?></td>
 					</tr>
@@ -153,7 +153,7 @@ year_button( "end_year", $data["end_year"] );
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -163,7 +163,7 @@ year_button( "end_year", $data["end_year"] );
 
 </form>
 
-<?php include ( "footer.inc" );
+<?php include ("footer.inc");
 
 ?>
 </BODY>

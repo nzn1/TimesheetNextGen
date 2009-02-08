@@ -1,27 +1,27 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/task_edit.php,v 1.6 2004/07/02 14:15:56 vexil Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance( CLEARANCE_ADMINISTRATOR ) ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
-// load local vars from superglobals
+$contextUser = strtolower($_SESSION['contextUser']);
+//load local vars from superglobals
 $task_id = $_REQUEST['task_id'];
-// define the command menu
-$commandMenu->add( new TextCommand( "Back", true, "javascript:history.back()" ) );
-// query database for existing task values
-list( $qh, $num ) = dbQuery( "select task_id, proj_id, name, description, status from $TASK_TABLE where task_id = $task_id " );
-$data = dbResult( $qh );
+//define the command menu
+$commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
+//query database for existing task values
+list($qh, $num) = dbQuery("select task_id, proj_id, name, description, status from $TASK_TABLE where task_id = $task_id ");
+$data = dbResult($qh);
 
-list( $qh, $num ) = dbQuery( "SELECT username from $TASK_ASSIGNMENTS_TABLE where proj_id = $data[proj_id] AND task_id = $task_id" );
+list($qh, $num) = dbQuery("SELECT username from $TASK_ASSIGNMENTS_TABLE where proj_id = $data[proj_id] AND task_id = $task_id");
 $selected_array = array();
 $i = 0;
-while ( $datanext = dbResult( $qh ) ){
+while ($datanext = dbResult($qh)) {
 	$selected_array[$i] = $datanext["username"];
 	$i++;
 }
@@ -30,14 +30,14 @@ while ( $datanext = dbResult( $qh ) ){
 <html>
 <head>
 	<title>Edit Task</title>
-<?php include ( "header.inc" );
+<?php include ("header.inc");
 
 ?>
 </head>
-<body <?php include ( "body.inc" );
+<body <?php include ("body.inc");
 
 ?> >
-<?php include ( "banner.inc" );
+<?php include ("banner.inc");
 
 ?>
 
@@ -55,7 +55,7 @@ while ( $datanext = dbResult( $qh ) ){
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -70,7 +70,7 @@ while ( $datanext = dbResult( $qh ) ){
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -86,20 +86,20 @@ while ( $datanext = dbResult( $qh ) ){
 					</tr>
 					<tr>
 						<td align="right" valign="top">Description:</td>
-						<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%"><?php $data["description"] = stripslashes( $data["description"] );
+						<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%"><?php $data["description"] = stripslashes($data["description"]);
 echo $data["description"];
 
 ?></textarea></td>
 					</tr>
 					<tr>
 						<td align="right">Status:</td>
-						<td><?php proj_status_list( "task_status", $data["status"] );
+						<td><?php proj_status_list("task_status", $data["status"]);
 
 ?></td>
 					</tr>
 					<tr>
 						<td align="right" valign="top">Assignments:</td>
-						<td><?php multi_user_select_list( "assigned[]", $selected_array );
+						<td><?php multi_user_select_list("assigned[]", $selected_array);
 
 ?></td>
 					</tr>
@@ -120,7 +120,7 @@ echo $data["description"];
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -130,7 +130,7 @@ echo $data["description"];
 
 </form>
 
-<?php include( "footer.inc" );
+<?php include("footer.inc");
 
 ?>
 </body>

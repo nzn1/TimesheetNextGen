@@ -1,26 +1,26 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/task_maint.php,v 1.11 2005/05/17 03:38:37 vexil Exp $
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance( CLEARANCE_ADMINISTRATOR ) ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
-// define the command menu
-include( "timesheet_menu.inc" );
+$contextUser = strtolower($_SESSION['contextUser']);
+//define the command menu
+include("timesheet_menu.inc");
 
-if ( empty( $proj_id ) )
+if (empty($proj_id))
 	$proj_id = 1;
-// make sure the selected project is valid for this client
-if ( $client_id != 0 ){
-	if ( !isValidProjectForClient( $proj_id, $client_id ) )
-		$proj_id = getValidProjectForClient( $client_id );
+//make sure the selected project is valid for this client
+if ($client_id != 0) {
+	if (!isValidProjectForClient($proj_id, $client_id))
+		$proj_id = getValidProjectForClient($client_id);
 }
-// set up the required queries
+//set up the required queries
 $query_task = "select distinct task_id, name, description,status, " . "DATE_FORMAT(assigned, '%M %d, %Y') as assigned," . "DATE_FORMAT(started, '%M %d, %Y') as started," . "DATE_FORMAT(suspended, '%M %d, %Y') as suspended," . "DATE_FORMAT(completed, '%M %d, %Y') as completed " . "from $TASK_TABLE " . "where $TASK_TABLE.proj_id=$proj_id " . "order by $TASK_TABLE.task_id";
 
 $query_project = "select distinct title, description," . "DATE_FORMAT(start_date, '%M %d, %Y') as start_date," . "DATE_FORMAT(deadline, '%M %d, %Y') as deadline," . "proj_status, proj_leader " . "from $PROJECT_TABLE " . "where $PROJECT_TABLE.proj_id=$proj_id";
@@ -31,7 +31,7 @@ $query_project = "select distinct title, description," . "DATE_FORMAT(start_date
 <head>
 	<title>Tasks</title>
 <?php
-include ( "header.inc" );
+include ("header.inc");
 
 ?>
 <script language="Javascript">
@@ -45,11 +45,11 @@ include ( "header.inc" );
 
 </script>
 </head>
-<body <?php include ( "body.inc" );
+<body <?php include ("body.inc");
 
 ?> >
 <?php
-include ( "banner.inc" );
+include ("banner.inc");
 
 ?>
 
@@ -62,7 +62,7 @@ include ( "banner.inc" );
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 
 ?>
 
@@ -75,7 +75,7 @@ include ( "banner.inc" );
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><?php client_select_list( $client_id, 0, false, false, true, false, "submit();", false );
+												<td width="100%"><?php client_select_list($client_id, 0, false, false, true, false, "submit();", false);
 
 ?></td>
 											</tr>
@@ -89,7 +89,7 @@ include ( "banner.inc" );
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><?php project_select_list( $client_id, false, $proj_id, 0, false, false, "submit();", false );
+												<td width="100%"><?php project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false);
 
 ?></td>
 											</tr>
@@ -106,7 +106,7 @@ include ( "banner.inc" );
 							Tasks</td>
 						</td>
 						<td align="right" nowrap>
-							<?php if ( $proj_id != 0 ){
+							<?php if ($proj_id != 0) {
 
 	?>
 							<a href="task_add.php?proj_id=<?php echo $proj_id;
@@ -124,7 +124,7 @@ include ( "banner.inc" );
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 
 ?>
 
@@ -133,11 +133,11 @@ include ( "banner.inc" );
 					<td>
 						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 <?php
-// execute query
-list( $qh_task, $num_task ) = dbQuery( $query_task );
-// were there any results
-if ( $num_task == 0 ){
-	if ( $proj_id == 0 ){
+//execute query
+list($qh_task, $num_task) = dbQuery($query_task);
+//were there any results
+if ($num_task == 0) {
+	if ($proj_id == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
 		print "			<i><br>Please select a client with projects, or 'All Clients'.<br><br></i>\n";
@@ -151,25 +151,25 @@ if ( $num_task == 0 ){
 		print "	</tr>\n";
 	}
 } else{
-	// iterate through tasks
-	for ( $j = 0; $j < $num_task; $j++ ){
-		$data_task = dbResult( $qh_task );
+	//iterate through tasks
+	for ($j = 0; $j < $num_task; $j++) {
+		$data_task = dbResult($qh_task);
 		// start the row
 		?>
 		<tr>
 			<td>
-				<table width="100%" border="0"<?php if ( $j + 1 < $num_task ) print "class=\"section_body\"";
+				<table width="100%" border="0"<?php if ($j + 1 < $num_task) print "class=\"section_body\"";
 
 		?>>
 					<tr>
 						<td valign="center">
-							<span class="project_title"><?php echo stripslashes( $data_task["name"] );
+							<span class="project_title"><?php echo stripslashes($data_task["name"]);
 
 		?></span>
 							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"];
 
 		?>&gt;</span><br>
-								<?php echo stripslashes( $data_task["description"] );
+								<?php echo stripslashes($data_task["description"]);
 
 		?>
 						</td>
@@ -190,9 +190,9 @@ if ( $num_task == 0 ){
 							<span class="label">Assigned persons:</span><br>
 <?php
 		// get assigned users
-		list( $qh3, $num_3 ) = dbQuery( "select username, task_id from $TASK_ASSIGNMENTS_TABLE where task_id=$data_task[task_id]" );
-		if ( $num_3 > 0 ){
-			while ( $data_3 = dbResult( $qh3 ) ){
+		list($qh3, $num_3) = dbQuery("select username, task_id from $TASK_ASSIGNMENTS_TABLE where task_id=$data_task[task_id]");
+		if ($num_3 > 0) {
+			while ($data_3 = dbResult($qh3)) {
 				print "$data_3[username] ";
 			}
 		} else{
@@ -217,7 +217,7 @@ if ( $num_task == 0 ){
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 
 ?>
 
@@ -227,7 +227,7 @@ if ( $num_task == 0 ){
 
 </form>
 <?php
-include ( "footer.inc" );
+include ("footer.inc");
 
 ?>
 </BODY>

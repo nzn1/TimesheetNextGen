@@ -1,55 +1,56 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/common.inc,v 1.23 2005/05/23 05:39:39 vexil Exp $
-if ( !defined( "COMMON_INC" ) ){
-	define( "COMMON_INC", 1 );
+//$Header: /cvsroot/tsheet/timesheet.php/common.inc,v 1.23 2005/05/23 05:39:39 vexil Exp $
+if (!defined("COMMON_INC")) {
+		define("COMMON_INC", 1);
 
-	include( "database_credentials.inc" );
-	include( "mysql.db.inc" );
+		include("database_credentials.inc");
+		include("mysql.db.inc");
 
-	$BREAK_RATIO = ( 0 );
-	// For an hour break every 8 hours this would be: (1/8)
-	$BODY_BGCOLOR = "#FFFFFF"; // Background color for every page.
-	// $BODY_BGCOLOR="#AFAFEF";	// Background color for every page.
-	$TABLE_BGCOLOR = "#b3c4de"; // Background color for table cells
-	$TABLE_BGCOLOR2 = "#AFAFEF"; // Background color for table cells
+		$BREAK_RATIO = (0);
+		// For an hour break every 8 hours this would be: (1/8)
+		$BODY_BGCOLOR = "#FFFFFF"; // Background color for every page.
+		// $BODY_BGCOLOR="#AFAFEF";	// Background color for every page.
+		$TABLE_BGCOLOR = "#b3c4de"; // Background color for table cells
+		$TABLE_BGCOLOR2 = "#AFAFEF"; // Background color for table cells
 
 
-	function get_time_date( $month, $year, $id, $proj_id, $client_id ){
-		include( "table_names.inc" );
-		list( $qhq, $numq ) = dbQuery( "SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'" );
-		$configData = dbResult( $qhq );
+		function get_time_date($month, $year, $id, $proj_id, $client_id) {
+			include("table_names.inc");
+			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+			$configData = dbResult($qhq);
 
-		$last_day = get_last_day( $month, $year );
-		$query = "SELECT date_format(start_time,'%d') AS day_of_month, ";
+			$last_day = get_last_day($month, $year);
+			$query = "SELECT date_format(start_time,'%d') AS day_of_month, ";
 
-		if ( $configData["timeformat"] == "12" ){
-			$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
-		} else{
+			if ($configData["timeformat"] == "12") {
+				$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
+		}
+		else {
 			$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') AS start, ";
 		}
 
 		$query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, " . "end_time AS end_time_str, " . "start_time AS start_time_str, " . "unix_timestamp(start_time) AS start_time, " . "unix_timestamp(end_time) AS end_time, " . "$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id, " . "$PROJECT_TABLE.title, $CLIENT_TABLE.organisation, $PROJECT_TABLE.client_id " . "FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE " . "WHERE uid='$id' AND ";
 
-		if ( $proj_id > 0 ){ // otherwise want all records no matter what project
+		if ($proj_id > 0) { // otherwise want all records no matter what project
 			$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
-		} else if ( $client_id > 0 ){ // only records for projects of the given client
+		} else if ($client_id > 0) { // only records for projects of the given client
 			$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
 		}
 
 		$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND " . "$TASK_TABLE.proj_id = $PROJECT_TABLE.proj_id AND " . "$PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id AND " . "((start_time >= '$year-$month-1 00:00:00' AND start_time <= '$year-$month-$last_day 23:59:59') " . " OR (end_time >= '$year-$month-1 00:00:00' AND end_time <= '$year-$month-$last_day 23:59:59') " . " OR (start_time < '$year-$month-1 00:00:00' AND end_time > '$year-$month-$last_day 23:59:59')) " . "ORDER BY day_of_month, proj_id, task_id, start_time";
 		// print "<p>Query: $query</p>";
-		list( $my_qh, $num ) = dbQuery( $query );
-		return array( $num, $my_qh );
+		list($my_qh, $num) = dbQuery($query);
+		return array($num, $my_qh);
 	}
 
-	function get_daily_times( $month, $day, $year, $id, $proj_id ){
-		include( "table_names.inc" );
-		list( $qhq, $numq ) = dbQuery( "select timeformat from $CONFIG_TABLE where config_set_id = '1'" );
-		$configData = dbResult( $qhq );
+	function get_daily_times($month, $day, $year, $id, $proj_id) {
+		include("table_names.inc");
+		list($qhq, $numq) = dbQuery("select timeformat from $CONFIG_TABLE where config_set_id = '1'");
+		$configData = dbResult($qhq);
 
 		$query = "select date_format(start_time,'%d') as day_of_month, trans_num, ";
 
-		if ( $configData["timeformat"] == "12" ){
+		if ($configData["timeformat"] == "12") {
 			$query .= "date_format(end_time, '%l:%i%p') as endd, date_format(start_time, '%l:%i%p') as start, ";
 		} else{
 			$query .= "date_format(end_time, '%k:%i') as endd, date_format(start_time, '%k:%i') as start, ";
@@ -57,179 +58,184 @@ if ( !defined( "COMMON_INC" ) ){
 
 		$query .= "unix_timestamp(end_time) - unix_timestamp(start_time) as diff_sec, " . "unix_timestamp(start_time) as start_time, " . "unix_timestamp(end_time) as end_time, " . "end_time as end_time_str, " . "start_time as start_time_str, " . "$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id  from $TIMES_TABLE, $TASK_TABLE WHERE uid='$id' AND ";
 
-		if ( $proj_id > 0 ){ // otherwise want all records no matter what project
+		if ($proj_id > 0) { // otherwise want all records no matter what project
 			$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
 		}
 
 		$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND " . "((start_time >= '$year-$month-$day 00:00:00' AND start_time <= '$year-$month-$day 23:59:59') " . " OR (end_time >= '$year-$month-$day 00:00:00' AND end_time <= '$year-$month-$day 23:59:59') " . " OR (start_time < '$year-$month-$day 00:00:00' AND end_time > '$year-$month-$day 23:59:59')) " . " order by day_of_month, proj_id, task_id, start_time";
 
-		list( $my_qh, $num ) = dbQuery( $query );
+		list($my_qh, $num) = dbQuery($query);
 
-		return array( $num, $my_qh );
+		return array($num, $my_qh);
 	}
 
-	function get_last_day( $month, $year ){
-		$last_day = 28;
-		while ( checkdate( $month, $last_day, $year ) ){
-			$last_day++;
-		}
-		return $last_day-1;
-	}
-
-	function formatSeconds( $seconds ){
-		$hours = ( int )( $seconds / 3600 );
-		$seconds -= $hours * 3600;
-		$minutes = ( int )( $seconds / 60 );
-		$seconds -= $minutes * 60;
-
-		return "${hours}h ${minutes}m";
-	}
-
-	function get_project_info( $proj_id ){
-		include( "table_names.inc" );
-		// Retreives title, $CLIENT_TABLE, description, deadline and link from database for a given proj_id
-		$result = array();
-		if ( $proj_id > 0 ){
-			$sql = "SELECT * from $PROJECT_TABLE where proj_id=$proj_id";
-			list( $my_qh, $num ) = dbQuery( $sql );
-			$result = dbResult( $my_qh );
-		}
-		return $result;
-	}
-
-	function get_trans_info( $trans_num ){
-		include( "table_names.inc" );
-
-		$result = array();
-		if ( $trans_num > 0 ){
-			$query = "SELECT $PROJECT_TABLE.client_id, $TIMES_TABLE.proj_id, task_id, log_message, " . "end_time as end_time_str, " . "start_time as start_time_str, " . "unix_timestamp(start_time) as start_time, " . "unix_timestamp(end_time) as end_time " . "FROM $TIMES_TABLE, $PROJECT_TABLE WHERE " . "trans_num='$trans_num' AND " . "$TIMES_TABLE.proj_id = $PROJECT_TABLE.proj_id";
-
-			list( $my_qh, $num ) = dbQuery( $query );
-			$result = dbResult( $my_qh );
-		}
-		return $result;
-	}
-
-	function day_button( $name, $today = 0 ){
-		if ( !$today ){
-			$today = date( "d" );
+		function get_last_day($month, $year) {
+			$last_day = 28;
+			while (checkdate($month, $last_day, $year)) { $last_day++; }
+			return $last_day-1;
 		}
 
-		$i = 0;
-		echo "<select name=\"$name\">\n";
-		print "<option value=0>None</A>";
+		function formatSeconds($seconds) {
+			$hours = (int)($seconds/3600);
+			$seconds -= $hours * 3600;
+			$minutes = (int)($seconds/60);
+			$seconds -= $minutes * 60;
 
-		while ( $i < 31 ){
-			$i++;
-			switch ( $i ){
+			return "${hours}h ${minutes}m";
+		}
+
+		function get_project_info($proj_id) {
+			include("table_names.inc");
+			// Retreives title, $CLIENT_TABLE, description, deadline and link from database for a given proj_id
+			$result = array();
+			if ($proj_id > 0) {
+				$sql = "SELECT * FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
+				list($my_qh, $num) = dbQuery($sql);
+				$result = dbResult($my_qh);
+			}
+			return $result;
+		}
+
+		function get_trans_info($trans_num) {
+			include("table_names.inc");
+
+			$result = array();
+			if ($trans_num > 0) {
+				$query = "SELECT $PROJECT_TABLE.client_id, $TIMES_TABLE.proj_id, task_id, log_message, ".
+								"end_time as end_time_str, ".
+								"start_time as start_time_str, ".
+								"unix_timestamp(start_time) as start_time, ".
+								"unix_timestamp(end_time) as end_time ".
+								"FROM $TIMES_TABLE, $PROJECT_TABLE WHERE ".
+								"trans_num='$trans_num' AND ".
+								"$TIMES_TABLE.proj_id = $PROJECT_TABLE.proj_id";
+
+				list($my_qh, $num) = dbQuery($query);
+				$result = dbResult($my_qh);
+			}
+			return $result;
+		}
+
+		function day_button($name, $today=0) {
+			if (!$today) {
+				$today = date("d");
+			}
+
+			$i = 0;
+			echo "<select name=\"$name\">\n";
+			print "<option value=0>None</A>";
+
+			while ($i < 31) {
+				$i++;
+				switch ($i) {
 				case $today:
 					echo "<option value=\"$i\" selected>$i\n";
 					break;
 				default:
 					echo "<option value=\"$i\">$i\n";
+				}
 			}
-		}
-		echo "</select>";
-	}
-
-	function month_button ( $name, $month = 0 ){
-		if( !$month ){
-			$month = date( "m" );
+			echo "</select>";
 		}
 
-		$i = 1;
-		echo "<select name=\"$name\">\n";
-		print "<option value=0>None</A>";
-		while ( $i <= 12 ){
-			switch ( $i ){
+		function month_button ($name, $month=0) {
+			if(!$month) {
+				$month = date("m");
+			}
+
+			$i = 1;
+			echo "<select name=\"$name\">\n";
+			print "<option value=0>None</A>";
+			while ($i <= 12) {
+				switch ($i) {
 				case $month:
-					echo "<option value=\"$i\" selected>" . date( "M", mktime( 0, 0, 0, $i, 1, 1999 ) ) . "\n";
-					break;
+					echo "<option value=\"$i\" selected>" . date("M",mktime(0,0,0,$i,1,1999)) . "\n";
+				break;
 				default:
-					echo "<option value=\"$i\">" . date( "M", mktime( 0, 0, 0, $i, 1, 1999 ) ) . "\n";
+					echo "<option value=\"$i\">". date("M",mktime(0,0,0,$i,1,1999)) . "\n";
+				}
+				$i++;
 			}
-			$i++;
-		}
-		echo "</select>";
-	}
-
-	function year_button ( $name, $year = 0 ){
-		if( !$year ){
-			$year = date( "Y" );
+			echo "</select>";
 		}
 
-		$i = $year;
-		echo "<select name=\"$name\">\n";
-		print "<option value=0>None</A>";
-		while ( $i <= $year + 10 ){
-			switch ( $i ){
+		function year_button ($name, $year = 0) {
+			if(!$year) {
+				$year = date("Y");
+			}
+
+			$i = $year;
+			echo "<select name=\"$name\">\n";
+			print "<option value=0>None</A>";
+			while ($i <= $year + 10) {
+				switch($i) {
 				case $year:
 					echo "<option value=\"$i\" selected>$i\n";
 					break;
 				default:
 					echo "<option value=\"$i\">$i\n";
+				}
+				$i++;
 			}
-			$i++;
+			echo "</select>";
 		}
-		echo "</select>";
-	}
 
-	function single_user_select_list( $name, $default = '' ){
-		include( "table_names.inc" );
+	function single_user_select_list($name, $default='') {
+		include("table_names.inc");
 
-		list( $qh, $num ) = dbQuery( "select username from $USER_TABLE ORDER BY username" );
+		list($qh,$num) = dbQuery("SELECT username FROM $USER_TABLE ORDER BY username");
 		print "<SELECT NAME=\"$name\">";
-		while ( $data = dbResult( $qh ) ){
-			print "<OPTION NAME=\"$data[username]\"";
-			if ( $default == $data["username"] ) print " SELECTED ";
-			print ">$data[username]</OPTION>\n";
+		while ($data = dbResult($qh)) {
+				print "<OPTION NAME=\"$data[username]\"";
+				if ($default == $data["username"]) print " SELECTED ";
+				print ">$data[username]</OPTION>\n";
 		}
 		print "</SELECT>";
 	}
 
-	function multi_user_select_list( $name, $selected_array = array() ){
-		include( "table_names.inc" );
+	function multi_user_select_list($name, $selected_array=array()) {
+		include("table_names.inc");
 
-		list( $qh, $num ) = dbQuery( "select username from $USER_TABLE ORDER BY username" );
+		list($qh,$num) = dbQuery("SELECT username FROM $USER_TABLE ORDER BY username");
 		print "<SELECT NAME=\"$name\" multiple size=\"11\">\n";
-		while ( $data = dbResult( $qh ) ){
+		while ($data = dbResult($qh)) {
 			print "<OPTION NAME=\"$data[username]\"";
-			if ( in_array( $data["username"], $selected_array ) )
+			if (in_array($data["username"], $selected_array))
 				print " SELECTED ";
 			print ">$data[username]</OPTION>\n";
 		}
 		print "</SELECT>";
 	}
 
-	function client_select_list( $currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange = "", $restrictedList = true ){
-		include( "table_names.inc" );
+	function client_select_list($currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange = "", $restrictedList = true) {
+		include("table_names.inc");
 
-		if ( $restrictedList ){
-			list( $qh, $num ) = dbQuery( "SELECT $CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation, " . "$PROJECT_TABLE.client_id, $PROJECT_TABLE.proj_id, " . "$ASSIGNMENTS_TABLE.proj_id, $ASSIGNMENTS_TABLE.username " . "from $CLIENT_TABLE, $PROJECT_TABLE, $ASSIGNMENTS_TABLE " . "WHERE $CLIENT_TABLE.client_id > 1 " . "AND $CLIENT_TABLE.client_id=$PROJECT_TABLE.client_id " . "AND $PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id " . "AND $ASSIGNMENTS_TABLE.username='$contextUser' " . "GROUP BY $CLIENT_TABLE.client_id " . "ORDER BY organisation" );
+		if ($restrictedList) {
+			list($qh, $num) = dbQuery("SELECT $CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation, " . "$PROJECT_TABLE.client_id, $PROJECT_TABLE.proj_id, " . "$ASSIGNMENTS_TABLE.proj_id, $ASSIGNMENTS_TABLE.username " . "from $CLIENT_TABLE, $PROJECT_TABLE, $ASSIGNMENTS_TABLE " . "WHERE $CLIENT_TABLE.client_id > 1 " . "AND $CLIENT_TABLE.client_id=$PROJECT_TABLE.client_id " . "AND $PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id " . "AND $ASSIGNMENTS_TABLE.username='$contextUser' " . "GROUP BY $CLIENT_TABLE.client_id " . "ORDER BY organisation");
 		} else{
-			list( $qh, $num ) = dbQuery( "SELECT client_id, organisation " . "FROM $CLIENT_TABLE WHERE client_id > 1 " . "ORDER BY organisation" );
+			list($qh, $num) = dbQuery("SELECT client_id, organisation " . "FROM $CLIENT_TABLE WHERE client_id > 1 " . "ORDER BY organisation");
 		}
 
 		print "<select name=\"client_id\" onChange=\"$onChange\" style=\"width:100%;\"";
-		if ( $isMultiple ){
+		if ($isMultiple) {
 			print "multiple size=\"4\"";
 		}
 		print ">\n";
-		// should we show the 'Select Client' option
-		if ( $showSelectClient ){
+		//should we show the 'Select Client' option
+		if ($showSelectClient) {
 			print "<option value=\"0\">Select Client</option>\n";
-		} else if ( $showAllClients ){
+		} else if ($showAllClients) {
 			print "<option value=\"0\">All Clients</option>\n";
 		}
-		// should we show the 'No Client' option
-		if ( $showNoClient ){
+		//should we show the 'No Client' option
+		if ($showNoClient) {
 			print "<option value=\"1\"";
-			if ( $currentClientId == 1 )
+			if ($currentClientId == 1)
 				print " selected";
 			print ">No Client</option>\n";
-		} while ( $result = dbResult( $qh ) ){
+		} while ($result = dbResult($qh)) {
 			print "<option value=\"$result[client_id]\"";
-			if ( $currentClientId == $result["client_id"] )
+			if ($currentClientId == $result["client_id"])
 				echo " selected";
 			print ">";
 			/*$printComma = false;
@@ -252,31 +258,31 @@ if ( !defined( "COMMON_INC" ) ){
 		print "</select>";
 	}
 
-	function project_select_list( $currentClientId, $needsClient, $currentProjectId, $contextUser, $showSelectProject, $showAllProjects, $onChange = "", $disabled = false ){
-		include( "table_names.inc" );
+	function project_select_list($currentClientId, $needsClient, $currentProjectId, $contextUser, $showSelectProject, $showAllProjects, $onChange = "", $disabled = false) {
+		include("table_names.inc");
 
-		if ( $currentClientId == 0 && $needsClient ){
+		if ($currentClientId == 0 && $needsClient) {
 			print "<select name=\"dummy\" disabled=\"true\" style=\"width: 100%;\">\n";
 			print "  <option>Please select a client</option>\n";
 			print "</select>\n";
 			return;
 		}
 
-		if ( empty( $contextUser ) ){
+		if (empty($contextUser)) {
 			$query = "SELECT proj_id, title FROM $PROJECT_TABLE ";
-			if ( $currentClientId != 0 )
+			if ($currentClientId != 0)
 				$query .= "WHERE $PROJECT_TABLE.client_id = $currentClientId ";
 			$query .= "ORDER BY title";
 		} else{
 			$query = "SELECT DISTINCT $ASSIGNMENTS_TABLE.proj_id, $PROJECT_TABLE.title FROM " . "$ASSIGNMENTS_TABLE, $PROJECT_TABLE WHERE ";
-			if ( $currentClientId != 0 )
+			if ($currentClientId != 0)
 				$query .= "$PROJECT_TABLE.client_id = $currentClientId AND ";
 			$query .= "$ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id AND " . "$ASSIGNMENTS_TABLE.username='$contextUser' AND " . "$ASSIGNMENTS_TABLE.proj_id > 0 AND " . "$PROJECT_TABLE.proj_status='Started' " . "ORDER BY $PROJECT_TABLE.title,$ASSIGNMENTS_TABLE.proj_id";
 		}
 
-		list( $qh, $num ) = dbQuery( $query );
-		if ( $num == 0 ){
-			if ( !empty( $contextUser ) ){
+		list($qh, $num) = dbQuery($query);
+		if ($num == 0) {
+			if (!empty($contextUser)) {
 				print "<select name=\"dummy\" disabled=\"true\" style=\"width: 100%;\">\n";
 				print "  <option>There are no projects assigned to you</option>\n";
 				print "</select>\n";
@@ -289,27 +295,27 @@ if ( !defined( "COMMON_INC" ) ){
 		}
 
 		print "<select name=\"proj_id\" onChange=\"$onChange\" style=\"width:100%;\"";
-		if ( $disabled == 'true' ){
+		if ($disabled == 'true') {
 			print " disabled";
 		}
 		print ">\n";
-		// should we show the 'Select Project' option
-		if ( $showSelectProject ){
+		//should we show the 'Select Project' option
+		if ($showSelectProject) {
 			print "<option value=\"0\">Select Project</option>\n";
 		}
 
-		if ( $showAllProjects ){
+		if ($showAllProjects) {
 			print "<option value=\"0\"";
-			if ( $currentProjectId == 0 )
+			if ($currentProjectId == 0)
 				print " selected";
 			print ">All Projects</option>\n";
 		}
 
-		if ( $num > 0 ){
-			while ( $return = dbResult( $qh ) ){
-				$title = stripslashes( $return["title"] );
+		if ($num > 0) {
+			while ($return = dbResult($qh)) {
+				$title = stripslashes($return["title"]);
 				print "<option value=\"$return[proj_id]\"";
-				if ( $currentProjectId == $return["proj_id"] )
+				if ($currentProjectId == $return["proj_id"])
 					print " selected";
 				print ">$title</option>\n";
 			}
@@ -317,17 +323,17 @@ if ( !defined( "COMMON_INC" ) ){
 		print "</select>";
 	}
 
-	function task_select_list ( $currentProjectId, $currentTaskId, $contextUser = "", $onChange = "" ){
-		include( "table_names.inc" );
+	function task_select_list ($currentProjectId, $currentTaskId, $contextUser = "", $onChange = "") {
+		include("table_names.inc");
 
-		if ( $currentProjectId == 0 ){
+		if ($currentProjectId == 0) {
 			print "<select name=\"dummy\" disabled=\"true\" style=\"width: 100%;\">\n";
 			print "  <option>Please select a project</option>\n";
 			print "</select>\n";
 			return;
 		}
 
-		if ( $contextUser == '' ){
+		if ($contextUser == '') {
 			$query = "select task_id, name, status from $TASK_TABLE where proj_id=$currentProjectId";
 		} else{
 			// $query = "select distinct $TASK_ASSIGNMENTS_TABLE.task_id, $TASK_TABLE.name from $TASK_ASSIGNMENTS_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE where ".
@@ -336,12 +342,12 @@ if ( !defined( "COMMON_INC" ) ){
 			$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_TABLE.task_id, $TASK_TABLE.name " . "FROM $TASK_ASSIGNMENTS_TABLE, $TASK_TABLE WHERE " . "$TASK_TABLE.proj_id=$currentProjectId AND " . "$TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id AND " . "$TASK_ASSIGNMENTS_TABLE.username = '$contextUser' AND " . "$TASK_TABLE.status='Started' " . "ORDER BY $TASK_ASSIGNMENTS_TABLE.name,$TASK_ASSIGNMENTS_TABLE.task_id";
 		}
 
-		list( $qh, $num ) = dbQuery( $query );
-		if ( $num > 0 ){
+		list($qh, $num) = dbQuery($query);
+		if ($num > 0) {
 			print "<select name=\"task_id\" onChange=\"$onChange\" style=\"width:100%;\">\n";
-			while ( $return = dbResult( $qh ) ){
+			while ($return = dbResult($qh)) {
 				print "<option value=\"$return[task_id]\"";
-				if ( $currentTaskId == $return["task_id"] )
+				if ($currentTaskId == $return["task_id"])
 					print " selected";
 				print ">$return[name]</option>\n";
 			}
@@ -353,26 +359,26 @@ if ( !defined( "COMMON_INC" ) ){
 		}
 	}
 
-	function user_select_droplist( $username = '', $disabled = 'false' ){
-		include( "table_names.inc" );
+	function user_select_droplist($username = '', $disabled = 'false') {
+		include("table_names.inc");
 
 		$query = "select uid, username, first_name, last_name from $USER_TABLE order by first_name, last_name";
 
 		print "<select name=\"uid\" onChange=\"submit()\" style=\"width: 100%;\"";
-		if ( $disabled == 'true' ){
+		if ($disabled == 'true') {
 			print " disabled";
 		}
 		print ">\n";
 
-		list( $qh, $num ) = dbQuery( $query );
-		if ( $num > 0 ){
-			while ( $return = dbResult( $qh ) ){
-				$current_username = stripslashes( $return["username"] );
-				$current_name = stripslashes( $return["first_name"] . " " . $return["last_name"] );
+		list($qh, $num) = dbQuery($query);
+		if ($num > 0) {
+			while ($return = dbResult($qh)) {
+				$current_username = stripslashes($return["username"]);
+				$current_name = stripslashes($return["first_name"] . " " . $return["last_name"]);
 				print "<option value=\"$current_username\"";
-				if ( $current_username == $username )
+				if ($current_username == $username)
 					print " selected";
-				if ( $current_name == " " )
+				if ($current_name == " ")
 					print ">$current_username</option>\n";
 				else
 					print ">$current_name</option>\n";
@@ -381,23 +387,23 @@ if ( !defined( "COMMON_INC" ) ){
 		print "</select>";
 	}
 
-	function client_select_droplist( $client_id = 1, $disabled = 'false' ){
-		include( "table_names.inc" );
+	function client_select_droplist($client_id = 1, $disabled = 'false') {
+		include("table_names.inc");
 
 		$query = "select client_id, organisation from $CLIENT_TABLE order by organisation";
 
 		print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"client_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
-		if ( $disabled == 'true' )
+		if ($disabled == 'true')
 			print " disabled";
 		print ">\n";
 
-		list( $qh, $num ) = dbQuery( $query );
-		if ( $num > 0 ){
-			while ( $return = dbResult( $qh ) ){
-				$current_organisation = stripslashes( $return["organisation"] );
+		list($qh, $num) = dbQuery($query);
+		if ($num > 0) {
+			while ($return = dbResult($qh)) {
+				$current_organisation = stripslashes($return["organisation"]);
 				print "<option value=\"$return[client_id]\"";
-				if ( $return["client_id"] == $client_id )
+				if ($return["client_id"] == $client_id)
 					print " selected";
 				print ">$current_organisation</option>\n";
 			}
@@ -411,31 +417,31 @@ if ( !defined( "COMMON_INC" ) ){
 			print "</select></td></tr></table>";
 	}
 
-	function project_select_droplist( $proj_id = 1, $disabled = 'false' ){
-		include( "table_names.inc" );
+	function project_select_droplist($proj_id = 1, $disabled = 'false') {
+		include("table_names.inc");
 
 		$query = "select " . "proj_id, " . "title, " . "organisation " . "FROM $PROJECT_TABLE, $CLIENT_TABLE " . "ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
 		print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"proj_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
-		if ( $disabled == 'true' ){
+		if ($disabled == 'true') {
 			print " disabled";
 		}
 		print ">\n";
 
-		list( $qh, $num ) = dbQuery( $query );
+		list($qh, $num) = dbQuery($query);
 		$current_organisation = null;
-		if ( $num > 0 ){
-			while ( $return = dbResult( $qh ) ){
-				if ( $current_organisation != stripslashes( $return["organisation"] ) ){
-					if ( $current_organisation != null )
+		if ($num > 0) {
+			while ($return = dbResult($qh)) {
+				if ($current_organisation != stripslashes($return["organisation"])) {
+					if ($current_organisation != null)
 						print "</optgroup>";
-					$current_organisation = stripslashes( $return["organisation"] );
+					$current_organisation = stripslashes($return["organisation"]);
 					print "<optgroup label=\"" . $current_organisation . "\">\n";
 				}
 				$current_title = $return['title'];
 				print "<option value=\"$return[proj_id]\"";
-				if ( $return["proj_id"] == $proj_id )
+				if ($return["proj_id"] == $proj_id)
 					print " selected";
 				print ">$current_title</option>\n";
 			}
@@ -447,7 +453,7 @@ if ( !defined( "COMMON_INC" ) ){
 		}
 	}
 
-	function present_log_message( $action ){
+	function present_log_message($action) {
 		global $check_in_time_hour, $check_out_time_hour, $check_in_time_min, $check_out_time_min, $year,
 		$month, $day, $proj_id, $task_id, $destination;
 
@@ -457,7 +463,7 @@ if ( !defined( "COMMON_INC" ) ){
 <FORM ACTION="action.php" METHOD=POST>
 <TABLE BORDER=1 ALIGN=CENTER>
 <?php
-		if ( $destination ){
+		if ($destination) {
 			print "<INPUT TYPE=HIDDEN NAME=destination VALUE=$destination>\n";
 		}
 		print "<INPUT TYPE=HIDDEN NAME=check_in_time_hour VALUE=\"$check_in_time_hour\">\n";
@@ -469,7 +475,7 @@ if ( !defined( "COMMON_INC" ) ){
 		print "<INPUT TYPE=HIDDEN NAME=day VALUE=\"$day\">\n";
 		print "<INPUT TYPE=HIDDEN NAME=proj_id VALUE=\"$proj_id\">\n";
 		print "<INPUT TYPE=HIDDEN NAME=task_id VALUE=\"$task_id\">\n";
-		switch ( $action ){
+		switch ($action) {
 			case "inout":
 				print "<INPUT TYPE=HIDDEN NAME=check_in_out_x VALUE=1>\n";
 				break;
@@ -493,26 +499,26 @@ if ( !defined( "COMMON_INC" ) ){
       <?php
 	}
 
-	function proj_status_list( $name, $status = '' ){
+	function proj_status_list($name, $status = '') {
 
 		?>
 	<SELECT NAME="<?php echo $name ?>">
-	<OPTION VALUE="Pending" <?php if ( $status == 'Pending' ){
+	<OPTION VALUE="Pending" <?php if ($status == 'Pending') {
 			echo 'SELECTED';
 		}
 
 		?> >Pending</OPTION>
-	<OPTION VALUE="Started" <?php if ( $status == 'Started' ){
+	<OPTION VALUE="Started" <?php if ($status == 'Started') {
 			echo 'SELECTED';
 		}
 
 		?> >Started</OPTION>
-	<OPTION VALUE="Suspended" <?php if ( $status == 'Suspended' ){
+	<OPTION VALUE="Suspended" <?php if ($status == 'Suspended') {
 			echo 'SELECTED';
 		}
 
 		?> >Suspended</OPTION>
-	<OPTION VALUE="Complete" <?php if ( $status == 'Complete' ){
+	<OPTION VALUE="Complete" <?php if ($status == 'Complete') {
 			echo 'SELECTED';
 		}
 
@@ -525,49 +531,49 @@ if ( !defined( "COMMON_INC" ) ){
 	} // end if
 	*/
 
-	function parse_and_echo( $text ){
-		// replace commandMenu string
-		if ( isset( $GLOBALS["commandMenu"] ) ){
-			$text = str_replace( "%commandmenu%", $GLOBALS["commandMenu"]->toString(), $text );
+	function parse_and_echo($text) {
+		//replace commandMenu string
+		if (isset($GLOBALS["commandMenu"])) {
+			$text = str_replace("%commandmenu%", $GLOBALS["commandMenu"]->toString(), $text);
 		}
 
 		global $errormsg;
-		// replace errormsg string
-		$text = str_replace( "%errormsg%", $errormsg, $text );
-		// replace username
-		if ( isset( $_SESSION['loggedInUser'] ) ){
-			$text = str_replace( "%username%", $_SESSION["loggedInUser"], $text );
+		//replace errormsg string
+		$text = str_replace("%errormsg%", $errormsg, $text);
+		//replace username
+		if (isset($_SESSION['loggedInUser'])) {
+			$text = str_replace("%username%", $_SESSION["loggedInUser"], $text);
 		}
-		// replace time
-		$text = str_replace( "%time%", date( "g:ia" ), $text );
-		// replace date
-		$text = str_replace( "%date%", strftime( "%A %B %d, %Y" ), $text );
-		// replace timezone
-		$text = str_replace( "%timezone%", getenv( "TZ" ), $text );
-		// output the result
+		//replace time
+		$text = str_replace("%time%", date("g:ia"), $text);
+		//replace date
+		$text = str_replace("%date%", strftime("%A %B %d, %Y"), $text);
+		//replace timezone
+		$text = str_replace("%timezone%", getenv("TZ"), $text);
+		//output the result
 		echo $text;
 	}
-	// reverses the effects of htmlentities (see PHP manual)
-	function unhtmlentities( $str ){
-		$trans = get_html_translation_table( HTML_ENTITIES );
-		$trans = array_flip( $trans );
-		return strtr( $str, $trans );
+	//reverses the effects of htmlentities (see PHP manual)
+	function unhtmlentities($str) {
+		$trans = get_html_translation_table(HTML_ENTITIES);
+		$trans = array_flip($trans);
+		return strtr($str, $trans);
 	}
 
-	function errorPage( $message, $from_popup = false ){
+	function errorPage($message, $from_popup = false) {
 		$targetWindowLocation = "error.php?errormsg=$message";
 
-		if ( !$from_popup ){
-			Header( "Location: $targetWindowLocation" );
+		if (!$from_popup) {
+			Header("Location: $targetWindowLocation");
 		} else{
-			loadMainPageAndCloseWindow( $targetWindowLocation );
+			loadMainPageAndCloseWindow($targetWindowLocation);
 		}
 		exit;
 	}
 
-	function loadMainPageAndCloseWindow( $targetWindowLocation ){
-		// now close this window, and open the target page in the main window
-		// (passing it all the parms it needs)
+	function loadMainPageAndCloseWindow($targetWindowLocation) {
+		//now close this window, and open the target page in the main window
+		//(passing it all the parms it needs)
 		?>
 			<html>
 				<head>
@@ -621,112 +627,112 @@ if ( !defined( "COMMON_INC" ) ){
 		exit;
 	}
 
-	function isValidProjectForClient( $projectId, $clientId ){
-		include( "table_names.inc" );
-		list( $qh, $num ) = dbQuery( "SELECT proj_id from $PROJECT_TABLE " . "WHERE client_id='$clientId' AND proj_id='$projectId'" );
+	function isValidProjectForClient($projectId, $clientId) {
+		include("table_names.inc");
+		list($qh, $num) = dbQuery("SELECT proj_id from $PROJECT_TABLE " . "WHERE client_id='$clientId' AND proj_id='$projectId'");
 
-		return ( $num > 0 );
+		return ($num > 0);
 	}
 
-	function getValidProjectForClient( $clientId ){
-		include( "table_names.inc" );
-		list( $qh, $num ) = dbQuery( "SELECT proj_id from $PROJECT_TABLE " . "WHERE client_id='$clientId'" );
-		if ( $num == 0 ){
+	function getValidProjectForClient($clientId) {
+		include("table_names.inc");
+		list($qh, $num) = dbQuery("SELECT proj_id from $PROJECT_TABLE " . "WHERE client_id='$clientId'");
+		if ($num == 0) {
 			return 0;
 		}
-		// get the first result
-		$data = dbResult( $qh );
+		//get the first result
+		$data = dbResult($qh);
 		return $data["proj_id"];
 	}
 
-	function getFirstClient(){
-		include( "table_names.inc" );
-		list( $qh, $num ) = dbQuery( "SELECT client_id from $CLIENT_TABLE" );
-		if ( $num == 0 ){
+	function getFirstClient() {
+		include("table_names.inc");
+		list($qh, $num) = dbQuery("SELECT client_id from $CLIENT_TABLE");
+		if ($num == 0) {
 			return 0;
 		}
-		// get the first result
-		$data = dbResult( $qh );
+		//get the first result
+		$data = dbResult($qh);
 		return $data["client_id"];
 	}
 
-	function getFirstProject(){
-		include( "table_names.inc" );
-		list( $qh, $num ) = dbQuery( "SELECT proj_id from $PROJECT_TABLE" );
-		if ( $num == 0 ){
+	function getFirstProject() {
+		include("table_names.inc");
+		list($qh, $num) = dbQuery("SELECT proj_id from $PROJECT_TABLE");
+		if ($num == 0) {
 			return 0;
 		}
-		// get the first result
-		$data = dbResult( $qh );
+		//get the first result
+		$data = dbResult($qh);
 		return $data["proj_id"];
 	}
 
-	function getWeekStartDay(){
-		include( "table_names.inc" );
-		list( $qhq, $numq ) = dbQuery( "select weekstartday from $CONFIG_TABLE where config_set_id = '1'" );
-		$configData = dbResult( $qhq );
+	function getWeekStartDay() {
+		include("table_names.inc");
+		list($qhq, $numq) = dbQuery("select weekstartday from $CONFIG_TABLE where config_set_id = '1'");
+		$configData = dbResult($qhq);
 		return $configData["weekstartday"];
 	}
 
-	function getFirstUser(){
-		include( "table_names.inc" );
-		list( $qh, $num ) = dbQuery( "SELECT username from $USER_TABLE " );
-		if ( $num == 0 ){
+	function getFirstUser() {
+		include("table_names.inc");
+		list($qh, $num) = dbQuery("SELECT username from $USER_TABLE ");
+		if ($num == 0) {
 			return 0;
 		}
-		// get the first result
-		$data = dbResult( $qh );
+		//get the first result
+		$data = dbResult($qh);
 		return $data["username"];
 	}
 
-	function getTimeFormat(){
-		include( "table_names.inc" );
-		list( $qhq, $numq ) = dbQuery( "SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'" );
-		$configData = dbResult( $qhq );
+	function getTimeFormat() {
+		include("table_names.inc");
+		list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		$configData = dbResult($qhq);
 		return $configData["timeformat"];
 	}
 
-	function setReportDate( &$year, &$month, &$day, &$next_week, &$prev_week, &$next_month, &$prev_month, &$time, &$time_middle_month ){
+	function setReportDate(&$year, &$month, &$day, &$next_week, &$prev_week, &$next_month, &$prev_month, &$time, &$time_middle_month) {
 		// Current date
-		if ( !$month ){
+		if (!$month) {
 			$month = $todayMonth;
 		}
-		if ( !$year ){
+		if (!$year) {
 			$year = $todayYear;
 		}
-		if ( !$day ){
+		if (!$day) {
 			$day = $todayDay;
 		}
-		$time = mktime( 0, 0, 0, $month, $day, $year );
-		if ( date( 'D', $time ) != "Mon" ) $time = strtotime( "last Monday", $time );
-		$time_middle_month = mktime( 0, 0, 0, $month, 15, $year );
-		$day = date( 'd', $time );
+		$time = mktime(0, 0, 0, $month, $day, $year);
+		if (date('D', $time) != "Mon") $time = strtotime("last Monday", $time);
+		$time_middle_month = mktime(0, 0, 0, $month, 15, $year);
+		$day = date('d', $time);
 		// Calculate the previous and next month and week.
-		$next_week = strtotime( "+1 week", $time );
-		$prev_week = strtotime( "-1 week", $time );
-		$next_month = strtotime( "+1 month", $time_middle_month );
-		$prev_month = strtotime( "-1 month", $time_middle_month );
+		$next_week = strtotime("+1 week", $time);
+		$prev_week = strtotime("-1 week", $time);
+		$next_month = strtotime("+1 month", $time_middle_month);
+		$prev_month = strtotime("-1 month", $time_middle_month);
 	}
 
-	function printPrevNext( $time, $next_week, $prev_week, $next_month, $prev_month, $time_middle_month, $post, $mode = "all" ){
-		if ( $mode == "all" || $mode == "monthly" ){
+	function printPrevNext($time, $next_week, $prev_week, $next_month, $prev_month, $time_middle_month, $post, $mode = "all") {
+		if ($mode == "all" || $mode == "monthly") {
 			print "<a href=\"$_SERVER[PHP_SELF]?";
-			if ( $post ) print "$post";
-			print "&month=" . date( 'n', $prev_month ) . "&year=" . date( 'Y', $prev_month ) . "&day=15" . "&mode=" . $mode . "\" class=\"outer_table_action\">Prev Month</a>&nbsp;/&nbsp;";
+			if ($post) print "$post";
+			print "&month=" . date('n', $prev_month) . "&year=" . date('Y', $prev_month) . "&day=15" . "&mode=" . $mode . "\" class=\"outer_table_action\">Prev Month</a>&nbsp;/&nbsp;";
 			print "<a HREF=\"$_SERVER[PHP_SELF]?";
-			if ( $post ) print "$post";
-			print "&month=" . date( 'n', $next_month ) . "&year=" . date( 'Y', $next_month ) . "&day=15" . "&mode=" . $mode . "\" class=\"outer_table_action\">Next Month</a>";
+			if ($post) print "$post";
+			print "&month=" . date('n', $next_month) . "&year=" . date('Y', $next_month) . "&day=15" . "&mode=" . $mode . "\" class=\"outer_table_action\">Next Month</a>";
 		}
-		if ( $mode == "all" ){
+		if ($mode == "all") {
 			print "<br>";
 		}
-		if ( $mode == "all" || $mode == "weekly" ){
+		if ($mode == "all" || $mode == "weekly") {
 			print "<a href=\"$_SERVER[PHP_SELF]?";
-			if ( $post ) print "$post";
-			print "&month=" . date( 'n', $prev_week ) . "&year=" . date( 'Y', $prev_week ) . "&day=" . date( 'j', $prev_week ) . "&mode=" . $mode . "\" class=\"outer_table_action\">Prev Week</a>&nbsp;/&nbsp;";
+			if ($post) print "$post";
+			print "&month=" . date('n', $prev_week) . "&year=" . date('Y', $prev_week) . "&day=" . date('j', $prev_week) . "&mode=" . $mode . "\" class=\"outer_table_action\">Prev Week</a>&nbsp;/&nbsp;";
 			print "<a HREF=\"$_SERVER[PHP_SELF]?";
-			if ( $post ) print "$post";
-			print "&month=" . date( 'n', $next_week ) . "&year=" . date( 'Y', $next_week ) . "&day=" . date( 'j', $next_week ) . "&mode=" . $mode . "\" class=\"outer_table_action\">Next Week</a>";
+			if ($post) print "$post";
+			print "&month=" . date('n', $next_week) . "&year=" . date('Y', $next_week) . "&day=" . date('j', $next_week) . "&mode=" . $mode . "\" class=\"outer_table_action\">Next Week</a>";
 		}
 	}
 }

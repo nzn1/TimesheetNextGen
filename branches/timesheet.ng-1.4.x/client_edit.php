@@ -1,34 +1,34 @@
 <?php
 // Authenticate
-require( "class.AuthenticationManager.php" );
-require( "class.CommandMenu.php" );
-if ( !$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance( CLEARANCE_ADMINISTRATOR ) ){
-	Header( "Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator" );
+require("class.AuthenticationManager.php");
+require("class.CommandMenu.php");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower( $_SESSION['contextUser'] );
-// load local vars from superglobals
+$contextUser = strtolower($_SESSION['contextUser']);
+//load local vars from superglobals
 $client_id = $_REQUEST['client_id'];
-// define the command menu
-$commandMenu->add( new TextCommand( "Back", true, "javascript:history.back()" ) );
-// build the query
+//define the command menu
+$commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
+//build the query
 $query = "select client_id, organisation, description, address1, address2," . "city, country, postal_code, contact_first_name, contact_last_name," . "username, contact_email, phone_number, fax_number, gsm_number, " . "http_url " . "from $CLIENT_TABLE " . "where $CLIENT_TABLE.client_id=$client_id";
-// run the query
-list( $qh, $num ) = dbQuery( $query );
-$data = dbResult( $qh );
+//run the query
+list($qh, $num) = dbQuery($query);
+$data = dbResult($qh);
 
 ?>
 <html>
 <head>
 <title>Modify client information</title>
-<?php include ( "header.inc" );
+<?php include ("header.inc");
 ?>
 </head>
-<body <?php include ( "body.inc" );
+<body <?php include ("body.inc");
 ?> >
-<?php include ( "banner.inc" );
+<?php include ("banner.inc");
 ?>
 
 <form action="client_action.php" method="post">
@@ -40,7 +40,7 @@ $data = dbResult( $qh );
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_1.inc" );
+<?php include("timesheet_face_part_1.inc");
 ?>
 
 				<table width="100%" border="0">
@@ -53,7 +53,7 @@ $data = dbResult( $qh );
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include( "timesheet_face_part_2.inc" );
+<?php include("timesheet_face_part_2.inc");
 ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
@@ -68,7 +68,7 @@ $data = dbResult( $qh );
 					<tr>
 						<td valign="top" align="right">Description:</td>
 						<td>
-							<textarea name="description" rows="4" cols="58" style="width: 100%;"><?php echo trim( $data["description"] );
+							<textarea name="description" rows="4" cols="58" style="width: 100%;"><?php echo trim($data["description"]);
 ?></textarea>
 						</td>
 					</tr>
@@ -154,7 +154,7 @@ $data = dbResult( $qh );
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include( "timesheet_face_part_3.inc" );
+<?php include("timesheet_face_part_3.inc");
 ?>
 
 		</td>
@@ -163,7 +163,7 @@ $data = dbResult( $qh );
 
 </form>
 
-<?php include( "footer.inc" );
+<?php include("footer.inc");
 ?>
 </BODY>
 </HTML>
