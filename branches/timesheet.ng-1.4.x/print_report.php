@@ -1,5 +1,6 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/print_report.php,v 1.4 2004/07/02 14:15:56 vexil Exp $
+//$Header: /cvsroot/tsheet/timesheet.php/print_report.php,v 1.4 2004/07/02 14:15:56 vexil Exp $
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
@@ -7,9 +8,11 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
+
 // Connect to database.
 $dbh = dbConnect();
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
+
 //change the context user
 if ($_SESSION['contextUser'] == 'admin')
 	$_SESSION['contextUser'] = $name;
@@ -19,19 +22,17 @@ if (!isset($proj_id)) {
 	exit;
 }
 
-$week_tot_h = 0;
-$week_tot_m = 0;
-$week_tot_s = 0;
+$week_tot_h = 0; $week_tot_m = 0; $week_tot_s = 0;
 
 if (isset($first_day)) {
 	$start_date = $first_day;
 	$end_date = $start_date + $TIMEPERIOD_LENGTH-1;
-} else{
-	Header("Location: calendar.php");
-	exit;
+} else {
+	gotoStartPage();
+	//exit;
 }
 
-$qh = mysql_query("select first_name, last_name, ssn from $USER_TABLE where username='$contextUser'") or die("Select failed: " . mysql_error());
+$qh = mysql_query("SELECT first_name, last_name, ssn FROM $USER_TABLE WHERE username='$contextUser'") or die("Select failed: ". mysql_error());
 list($first, $last, $ssn) = mysql_fetch_row($qh);
 mysql_free_result($qh);
 
@@ -45,29 +46,27 @@ list($proj_title, $proj_client, $proj_description, $proj_deadline, $proj_link) =
 <TR>
 <?php
 
-for ($i = $start_date; $i <= $end_date; $i++) {
+for ($i=$start_date; $i <= $end_date; $i++) {
 	$date = jdtogregorian($i);
-	$tot_sec = 0;
-	$tot_min = 0;
-	$tot_hor = 0;
-	list($day, $month, $year) = explode("/", $date);
+	$tot_sec = 0; $tot_min = 0; $tot_hor = 0;
+	list($day,$month,$year) = explode("/",$date);
 
-	list($num, $qh) = get_time_date($i, $id, $proj_id);
+	list($num, $qh) = get_month_times($i, $id, $proj_id);
 	if ($num > 0) {
 		print "<TD WIDTH=\"14%\" VALIGN=TOP><tt>$day/$month</tt><br>";
-		while (list($start_time, $end_time, $diff, $num_end) = mysql_fetch_row($qh)) {
-			list(, $data_s_time) = explode(' ', $start_time);
-			list(, $data_e_time) = explode(' ', $end_time);
-			list($s_hour, $s_min, $s_sec) = explode(':', $data_s_time);
+		while (list($start_time,$end_time,$diff,$num_end) = mysql_fetch_row($qh)) {
+			list(,$data_s_time) = explode(' ',$start_time);
+			list(,$data_e_time) = explode(' ',$end_time);
+			list($s_hour,$s_min,$s_sec) = explode(':',$data_s_time);
 			$s_hour = (int) $s_hour;
 			if ($s_hour > 12)
 				$s_hour -= 12;
-			list($e_hour, $e_min, $e_sec) = explode(':', $data_e_time);
+			list($e_hour,$e_min,$e_sec) = explode(':',$data_e_time);
 			$e_hour = (int) $e_hour;
 			if ($e_hour > 12)
 				$e_hour -= 12;
 			if ($num_end > 0) {
-				list($diffh, $diffm, $diffs) = explode(':', $diff);
+				list($diffh, $diffm, $diffs) = explode(':',$diff);
 				$tot_sec += $diffs;
 				$tot_min += $diffm;
 				$tot_hor += $diffh;
@@ -108,7 +107,6 @@ for ($i = $start_date; $i <= $end_date; $i++) {
 	}
 }
 print "</TR><TR><TD COLSPAN=7 ALIGN=RIGHT><br>Pay Period Total: ${pp_h}h ${pp_m}m ${pp_s}s<br>&nbsp;</TD>";
-
 ?>
 </TR>
 </TABLE>

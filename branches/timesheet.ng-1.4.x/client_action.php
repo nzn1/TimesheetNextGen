@@ -2,13 +2,15 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance((LEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclClients')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclClients'));
 	exit;
 }
+
 // Connect to database.
 $dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
+
 //load local vars from superglobals
 $action = $_REQUEST["action"];
 $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
@@ -29,10 +31,22 @@ $gsm_number = isset($_POST['gsm_number']) ? $_POST['gsm_number']: "";
 $http_url = isset($_POST['http_url']) ? $_POST['http_url']: "";
 
 if ($_REQUEST['action'] == "add") {
-	dbquery("INSERT INTO $CLIENT_TABLE VALUES ('$client_id','$organisation','$description','$address1','$city'," . "'L','$country','$postal_code','$contact_first_name','$contact_last_name','$client_username'," . "'$contact_email','$phone_number','$fax_number','$gsm_number','$http_url','$address2')");
-} elseif ($action == "edit") {
+	dbquery("INSERT INTO $CLIENT_TABLE VALUES ('$client_id','$organisation','$description','$address1','$city'," .
+	"'L','$country','$postal_code','$contact_first_name','$contact_last_name','$client_username'," .
+	"'$contact_email','$phone_number','$fax_number','$gsm_number','$http_url','$address2')");
+}
+elseif ($action == "edit") {
 	//create the query
-	$query = "UPDATE $CLIENT_TABLE SET organisation='$organisation'," . "description='$description',address1='$address1',city='$city'," . "country='$country',postal_code='$postal_code'," . "contact_first_name='$contact_first_name'," . "contact_last_name='$contact_last_name',username='$client_username'," . "contact_email='$contact_email',phone_number='$phone_number'," . "fax_number='$fax_number',gsm_number='$gsm_number'," . "http_url='$http_url',address2='$address2' " . "WHERE client_id=$client_id ";
+	$query = "UPDATE $CLIENT_TABLE SET organisation='$organisation',".
+		"description='$description',address1='$address1',city='$city',".
+		"country='$country',postal_code='$postal_code',".
+		"contact_first_name='$contact_first_name',".
+		"contact_last_name='$contact_last_name',username='$client_username',".
+		"contact_email='$contact_email',phone_number='$phone_number',".
+		"fax_number='$fax_number',gsm_number='$gsm_number',".
+		"http_url='$http_url',address2='$address2' ".
+		"WHERE client_id=$client_id ";
+
 	//run the query
 	list($qh,$num) = dbquery($query);
 }
@@ -46,5 +60,4 @@ elseif ($action == "delete") {
 }
 
 Header("Location: client_maint.php");
-
 ?>

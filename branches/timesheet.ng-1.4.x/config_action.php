@@ -7,9 +7,11 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
 }
+
 // Connect to database.
 $dbh = dbConnect();
 $contextUser = strtolower($_SESSION["contextUser"]);
+
 //load local vars from superglobals
 $action = $_REQUEST["action"];
 $headerhtml = isset($_REQUEST["headerhtml"]) ? $_REQUEST["headerhtml"]: "";
@@ -28,9 +30,12 @@ $errorReset = isset($_REQUEST["errorReset"]) ? $_REQUEST["errorReset"]: false;
 $bannerReset = isset($_REQUEST["bannerReset"]) ? $_REQUEST["bannerReset"]: false;
 $tableReset = isset($_REQUEST["tableReset"]) ? $_REQUEST["tableReset"]: false;
 $localeReset = isset($_REQUEST["localeReset"]) ? $_REQUEST["localeReset"]: false;
+$aclReset = isset($_REQUEST["aclReset"]) ? $_REQUEST["aclReset"]: false;
 $timezoneReset = isset($_REQUEST["timezoneReset"]) ? $_REQUEST["timezoneReset"]: false;
 $timeformatReset = isset($_REQUEST["timeformatReset"]) ? $_REQUEST["timeformatReset"]: false;
 $useLDAP = isset($_REQUEST["useLDAP"]) ? $_REQUEST["useLDAP"]: false;
+$LDAPFallback = isset( $_REQUEST["LDAPFallback"] ) ? $_REQUEST["LDAPFallback"]: false;
+$LDAPReferrals = isset( $_REQUEST["LDAPReferrals"] ) ? $_REQUEST["LDAPReferrals"]: false;
 $LDAPScheme = $_REQUEST["LDAPScheme"];
 $LDAPHost = $_REQUEST["LDAPHost"];
 $LDAPPort = $_REQUEST["LDAPPort"];
@@ -39,16 +44,32 @@ $LDAPUsernameAttribute = $_REQUEST["LDAPUsernameAttribute"];
 $LDAPSearchScope = $_REQUEST["LDAPSearchScope"];
 $LDAPFilter = $_REQUEST["LDAPFilter"];
 $LDAPProtocolVersion = $_REQUEST["LDAPProtocolVersion"];
+$LDAPBindByUser = isset($_REQUEST["LDAPBindByUser"]) ? $_REQUEST["LDAPBindByUser"]: false;
 $LDAPBindUsername = $_REQUEST["LDAPBindUsername"];
 $LDAPBindPassword = $_REQUEST["LDAPBindPassword"];
 $weekstartday = isset($_REQUEST["weekstartday"]) ? $_REQUEST["weekstartday"]: 0;
 $weekStartDayReset = isset($_REQUEST["weekStartDayReset"]) ? $_REQUEST["weekStartDayReset"]: false;
+$aclStopwatch = $_REQUEST["aclStopwatch"];
+$aclDaily = $_REQUEST["aclDaily"];
+$aclWeekly = $_REQUEST["aclWeekly"];
+$aclCalendar = $_REQUEST["aclCalendar"];
+$aclSimple = $_REQUEST["aclSimple"];
+$aclClients = $_REQUEST["aclClients"];
+$aclProjects = $_REQUEST["aclProjects"];
+$aclTasks = $_REQUEST["aclTasks"];
+$aclReports = $_REQUEST["aclReports"];
+$aclRates = $_REQUEST["aclRates"];
+$aclAbsences = $_REQUEST["aclAbsences"];
+$simpleTimesheetLayout = $_REQUEST["simpleTimesheetLayout"];
+$startPage = $_REQUEST["startPage"];
 
 	function resetConfigValue($fieldName) {
 		include("table_names.inc");
+
 		//get the default value
 		list($qh, $num) = dbQuery("SELECT $fieldName FROM $CONFIG_TABLE WHERE config_set_id='0';");
 		$resultset = dbResult($qh);
+
 		//set it
 		dbQuery("UPDATE $CONFIG_TABLE SET $fieldName='" . $resultset[$fieldName] . "' WHERE config_set_id='1';");
 	}
@@ -65,7 +86,45 @@ elseif ($action == "edit") {
 	$tablehtml = addslashes(unhtmlentities(trim($tablehtml)));
 	$locale = addslashes(unhtmlentities(trim($locale)));
 	$timezone = addslashes(unhtmlentities(trim($timezone)));
-	$query = "UPDATE $CONFIG_TABLE SET " . "headerhtml='$headerhtml'," . "bodyhtml='$bodyhtml'," . "footerhtml='$footerhtml'," . "errorhtml='$errorhtml'," . "bannerhtml='$bannerhtml'," . "tablehtml='$tablehtml'," . "locale='$locale'," . "timezone='$timezone'," . "timeformat='$timeformat', " . "useLDAP='$useLDAP', " . "LDAPScheme='$LDAPScheme', " . "LDAPHost='$LDAPHost', " . "LDAPPort='$LDAPPort', " . "LDAPBaseDN='$LDAPBaseDN', " . "LDAPUsernameAttribute='$LDAPUsernameAttribute', " . "LDAPSearchScope='$LDAPSearchScope', " . "LDAPFilter='$LDAPFilter', " . "LDAPProtocolVersion='$LDAPProtocolVersion', " . "LDAPBindUsername='$LDAPBindUsername', " . "LDAPBindPassword='$LDAPBindPassword', " . "weekstartday='$weekstartday' " . "WHERE config_set_id='1';";
+	$query = "UPDATE $CONFIG_TABLE SET ".
+		"headerhtml='$headerhtml',".
+		"bodyhtml='$bodyhtml',".
+		"footerhtml='$footerhtml',".
+		"errorhtml='$errorhtml',".
+		"bannerhtml='$bannerhtml',".
+		"tablehtml='$tablehtml',".
+		"locale='$locale',".
+		"timezone='$timezone',".
+		"timeformat='$timeformat', ".
+		"weekstartday='$weekstartday', " .
+		"useLDAP='$useLDAP', " .
+		"LDAPScheme='$LDAPScheme', " .
+		"LDAPHost='$LDAPHost', " .
+		"LDAPPort='$LDAPPort', " .
+		"LDAPBaseDN='$LDAPBaseDN', " .
+		"LDAPUsernameAttribute='$LDAPUsernameAttribute', " .
+		"LDAPSearchScope='$LDAPSearchScope', " .
+		"LDAPFilter='$LDAPFilter', " .
+		"LDAPProtocolVersion='$LDAPProtocolVersion', " .
+		"LDAPBindUsername='$LDAPBindUsername', ".
+		"LDAPBindPassword='$LDAPBindPassword', ".
+		"LDAPBindByUser='$LDAPBindByUser', " .
+		"LDAPReferrals='$LDAPReferrals', " .
+		"LDAPFallback='$LDAPFallback', " .
+		"aclStopwatch='$aclStopwatch', " .
+		"aclDaily='$aclDaily', " .
+		"aclWeekly='$aclStopwatch', " .
+		"aclCalendar='$aclCalendar', " .
+		"aclSimple='$aclSimple', " .
+		"aclClients='$aclClients', " .
+		"aclProjects='$aclProjects', " .
+		"aclTasks='$aclTasks', " .
+		"aclReports='$aclReports', " .
+		"aclRates='$aclRates', " .
+		"aclAbsences='$aclAbsences', " .
+		"simpleTimesheetLayout= '$simpleTimesheetLayout', " .
+		"startPage='$startPage' " .
+		"WHERE config_set_id='1';";
 	list($qh,$num) = dbquery($query);
 
 	if ($headerReset == true)
@@ -88,7 +147,22 @@ elseif ($action == "edit") {
 		resetConfigValue("timeformat");
 	if ($weekStartDayReset == true)
 		resetConfigValue("weekstartday");
+	if ($aclReset == true)
+	{
+		resetConfigValue("aclStopwatch");
+		resetConfigValue("aclDaily");
+		resetConfigValue("aclWeekly");
+		resetConfigValue("aclCalendar");
+		resetConfigValue("aclSimple");
+		resetConfigValue("aclClients");
+		resetConfigValue("aclProjects");
+		resetConfigValue("aclTasks");
+		resetConfigValue("aclReports");
+		resetConfigValue("aclRates");
+		resetConfigValue("aclAbsences");
+	}
 }
+
 //return to the config.php page
 Header("Location: config.php");
 

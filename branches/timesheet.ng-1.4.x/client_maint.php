@@ -2,17 +2,20 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclClients')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclClients'));
 	exit;
 }
+
 // Connect to database.
 $dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
+
 //make sure "No Client exists with client_id of 1
 //execute the query
 tryDbQuery("INSERT INTO $CLIENT_TABLE VALUES (1,'No Client', 'This is required, do not edit or delete this client record', '', '', '', '', '', '', '', '', '', '', '', '', '', '');");
 tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1'");
+
 //define the command menu
 include("timesheet_menu.inc");
 
@@ -20,10 +23,9 @@ include("timesheet_menu.inc");
 
 <HTML>
 <HEAD>
-<TITLE>Client Management Page</TITLE>
+<title>Client Management Page</title>
 <?php
 include ("header.inc");
-
 ?>
 <script language="Javascript">
 
@@ -34,12 +36,9 @@ include ("header.inc");
 
 </script>
 </HEAD>
-<BODY <?php include ("body.inc");
-
-?> >
+<BODY <?php include ("body.inc"); ?> >
 <?php
 include ("banner.inc");
-
 ?>
 <form action="client_action.php" method="post">
 
@@ -48,9 +47,7 @@ include ("banner.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc");
-
-?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -73,8 +70,10 @@ include ("banner.inc");
 			<td>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 <?php
+
 //execute the query
-list($qh, $num) = dbQuery("select * from $CLIENT_TABLE where client_id > 1 order by organisation");
+list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE WHERE client_id > 1 ORDER BY organisation");
+
 //are there any results?
 if ($num == 0) {
 	print "<tr><td align=\"center\" colspan=\"5\"><br>There are currently no clients.<br><br></td></tr>";
@@ -108,12 +107,11 @@ else {
 		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
 		print "<td class=\"calendar_cell_middle\">$emailField</td>";
 		print "<td class=\"calendar_cell_disabled_right\">\n";
-		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>,&nbsp;\n";
-		print "	<a href=\"client_edit.php?client_id=$data[client_id]\">Edit</a>\n";
+		print "	<a href=\"client_edit.php?client_id=$data[client_id]\">Edit</a>,&nbsp;\n";
+		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>\n";
 		print "</td>\n";
 	}
 }
-
 ?>
 				</TABLE>
 			</td>
@@ -121,9 +119,7 @@ else {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc");
-
-?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -132,7 +128,6 @@ else {
 </form>
 <?php
 include ("footer.inc");
-
 ?>
 </BODY>
 </HTML>

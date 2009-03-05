@@ -3,15 +3,18 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclTasks'));
 	exit;
 }
+
 // Connect to database.
 $dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
+
 //load local vars from superglobals
 $proj_id = $_REQUEST['proj_id'];
+
 //define the command menu
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
@@ -19,16 +22,10 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 <html>
 <head>
 	<title>Add New Task</title>
-<?php include ("header.inc");
-
-?>
+<?php include ("header.inc"); ?>
 </head>
-<body <?php include ("body.inc");
-
-?> >
-<?php include ("banner.inc");
-
-?>
+<body <?php include ("body.inc"); ?> >
+<?php include ("banner.inc"); ?>
 
 <form action="task_action.php" method="post">
 <input type="hidden" name="action" value="add">
@@ -39,9 +36,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc");
-
-?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -52,9 +47,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc");
-
-?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -70,15 +63,11 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 					</tr>
 					<tr>
 						<td align="right">Status:</td>
-						<td><?php proj_status_list("task_status", "Started");
-
-?></td>
+						<td><?php proj_status_list("task_status", "Started"); ?></td>
 					</tr>
 					<tr>
 						<td align="right" valign="top">Assignments:</td>
-						<td><?php multi_user_select_list("assigned[]");
-
-?></td>
+						<td><?php multi_user_select_list("assigned[]"); ?></td>
 					</tr>
 				</table>
 			</td>
@@ -97,9 +86,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc");
-
-?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -107,8 +94,6 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 </form>
 
-<?php include("footer.inc");
-
-?>
+<?php include("footer.inc"); ?>
 </body>
 </html>

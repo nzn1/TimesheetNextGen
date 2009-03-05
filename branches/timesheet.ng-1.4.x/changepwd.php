@@ -6,6 +6,7 @@ if (!$authenticationManager->isLoggedIn()) {
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
 	exit;
 }
+
 // Connect to database.
 $dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
@@ -14,6 +15,7 @@ $loggedInUser = strtolower($_SESSION['loggedInUser']);
 $passwd1 = "";
 $passwd2 = "";
 $old_pass = "";
+
 //load local vars from superglobals
 if (isset($_POST["action"])) {
 	if (!isset($_POST["passwd1"]) || !isset($_POST["passwd2"]) || !isset($_POST["old_pass"]))
@@ -22,16 +24,20 @@ if (isset($_POST["action"])) {
 	$passwd2 = $_POST['passwd2'];
 	$old_pass = $_POST['old_pass'];
 }
+
 //get todays values
 $today = time();
 $today_year = date("Y", $today);
 $today_month = date("n", $today);
 $today_day = date("j", $today);
+
 //define the command menu
 include("timesheet_menu.inc");
+
 //check for guest user
 if ($loggedInUser == 'guest')
 	$errormsg = "Guest may not change password.";
+
 //check that passwords match
 if ($passwd1 != $passwd2)
 	$errormsg = "Passwords do not match, please try again";
@@ -48,6 +54,7 @@ if (empty($errormsg) && !empty($old_pass)) {
 		exit;
 	}
 }
+
 //if errors, redirect to an error page.
 if (!empty($errormsg)) {
 	Header("Location: error.php?errormsg=$errormsg");
@@ -57,15 +64,11 @@ if (!empty($errormsg)) {
 ?>
 <html>
 <head>
-<title>Change Password for user <?php echo $contextUser;
-?></title>
-<?php include ("header.inc");
-?>
+<title>Change Password for user <?php echo $contextUser; ?></title>
+<?php include ("header.inc"); ?>
 </head>
-<body <?php include ("body.inc");
-?> >
-<?php include ("banner.inc");
-?>
+<body <?php include ("body.inc"); ?> >
+<?php include ("banner.inc"); ?>
 
 <form action="changepwd.php" method="post">
 <input type="hidden" name="action" value="changePassword" />
@@ -75,8 +78,7 @@ if (!empty($errormsg)) {
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc");
-?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -87,8 +89,7 @@ if (!empty($errormsg)) {
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc");
-?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -123,8 +124,7 @@ if (!empty($errormsg)) {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc");
-?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -134,7 +134,6 @@ if (!empty($errormsg)) {
 
 <?php
 include ("footer.inc");
-
 ?>
 </BODY>
 </HTML>

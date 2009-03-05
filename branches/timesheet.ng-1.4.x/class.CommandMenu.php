@@ -58,7 +58,7 @@ class IconTextCommand extends TextCommand {
 	}
 
 	function toString() {
-		if (true)
+		if (!file_exists($this->img))
 			return parent::toString();
 		else
 			return "<img src=\"" . $this->img . "\" align=\"absbottom\">" . parent::toString();
@@ -69,6 +69,7 @@ class IconTextCommand extends TextCommand {
 *		It's responsible for printing the menu with a separator
 */
 class CommandMenu {
+
 	//array which holds the commands in the menu
 	var $commands = array();
 
@@ -81,6 +82,7 @@ class CommandMenu {
 	function toString() {
 		$printedFirstCommand = false;
 		$returnString = "";
+
 		//iterate through commands
 		$count = count($this->commands);
 		for ($i=0; $i < $count; $i++) {
@@ -89,6 +91,7 @@ class CommandMenu {
 				$returnString = $returnString . "&nbsp;&nbsp; ";
 			else
 				$printedFirstCommand = true;
+
 			//append this command to the string
 			$returnString = $returnString . $this->commands[$i]->toString();
 		}
@@ -123,6 +126,7 @@ class CommandMenu {
 		}
 	}
 }
+
 //create the command menu object so that those files which include this one dont need to
 $commandMenu = new CommandMenu;
 

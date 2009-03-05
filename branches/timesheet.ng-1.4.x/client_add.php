@@ -1,14 +1,17 @@
 <?php
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclClients')) {
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclClients'));
 	exit;
 }
+
 // Connect to database.
 $dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
+
 //define the command menu
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
@@ -16,13 +19,10 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 <html>
 <head>
 <title>Add a new Client</title>
-<?php include ("header.inc");
-?>
+<?php include ("header.inc"); ?>
 </head>
-<body <?php include ("body.inc");
-?> >
-<?php include ("banner.inc");
-?>
+<body <?php include ("body.inc"); ?> >
+<?php include ("banner.inc"); ?>
 <form action="client_action.php" method="post">
 <input type="hidden" name="action" value="add">
 
@@ -31,8 +31,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc");
-?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -43,8 +42,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc");
-?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -122,12 +120,12 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 						</td>
 					</tr>
 				</table>
-			</td>		</tr>
+			</td>
+		</tr>
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc");
-?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -135,7 +133,6 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 </form>
 
-<?php include ("footer.inc");
-?>
+<?php include ("footer.inc"); ?>
 </BODY>
 </HTML>
