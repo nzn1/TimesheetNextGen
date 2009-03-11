@@ -957,6 +957,20 @@ if (!defined("COMMON_INC")) {
 		$configData = dbResult($qhq);
 		return $configData["weekstartday"];
 	}
+	
+	function getProjectItemsPerPage() {
+		include ("table_names.inc");
+		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		$configData = dbResult($qhq);
+		return $configData["project_items_per_page"];
+	}
+	
+	function getTaskItemsPerPage() {
+		include ("table_names.inc");
+		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		$configData = dbResult($qhq);
+		return $configData["task_items_per_page"];
+	}
 
 	function getFirstUser() {
 		include("table_names.inc");

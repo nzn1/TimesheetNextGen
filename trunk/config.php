@@ -695,6 +695,49 @@ include ("banner.inc");
 				</table>
 				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 
+			<!-- Items per page in Projects-->
+			<tr>
+				<td align="left" valign="top">
+					<b>Items per page in Projects</b>:
+				</td>
+				<td align="left" width="100%">
+					Type the number of elements your want per page, when viewing projects.
+				</td>
+			</tr>
+			<tr>
+				<td align="left" class="label" nowrap width="90">
+					<input type="checkbox" name="projectItemsPerPageReset" value="off" onclick="document.configurationForm.projectItemsPerPage.disabled=(this.checked);">Reset</input>
+				</td>
+				<td align="left" width="100%">
+					<input type="text" name="projectItemsPerPage" size="75" maxlength="254" value="<? echo htmlentities(trim(stripslashes($resultset["project_items_per_page"]))); ?>" style="width: 100%;">
+				</td>
+			</tr>
+
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+				
+			<!-- Items per page in Tasks-->
+			<tr>
+				<td align="left" valign="top">
+					<b>Items per page in Tasks</b>:
+				</td>
+				<td align="left" width="100%">
+					Type the number of elements your want per page, when viewing tasks.
+				</td>
+			</tr>
+			<tr>
+				<td align="left" class="label" nowrap width="90">
+					<input type="checkbox" name="taskItemsPerPageReset" value="off" onclick="document.configurationForm.taskItemsPerPage.disabled=(this.checked);">Reset</input>
+				</td>
+				<td align="left" width="100%">
+					<input type="text" name="taskItemsPerPage" size="75" maxlength="254" value="<? echo htmlentities(trim(stripslashes($resultset["task_items_per_page"]))); ?>" style="width: 100%;">
+				</td>
+			</tr>
+
+				</table>
+				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+			
+
 			<!-- headerhtml -->
 			<tr>
 				<td align="left" valign="top">

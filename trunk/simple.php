@@ -199,20 +199,20 @@ for ($i=0; $i<$num4; $i++) {
 					clientSelect.options[clientSelect.options.length] = new Option(projectTasksHash[key]['clientName'], projectTasksHash[key]['clientId']);
 					clientId = projectTasksHash[key]['clientId'];
 				}
-
+				
 				if (key == projectId && projectTasksHash[key]['clientId'] == clientId)
 				{
 					populateProjectSelect(i, clientId, key);
 					clientSelect.options[clientSelect.options.length-1].selected = true;
 				}
 			}
-
+			
 			if (projectId != -1) {
 				//add the tasks
 				var thisProjectTasks = projectTasksHash[projectId]['tasks'];
 				for (taskKey in thisProjectTasks) {
 					taskSelect.options[taskSelect.options.length] = new Option(thisProjectTasks[taskKey], taskKey);
-
+					
 					if (taskKey == taskId)
 						taskSelect.options[taskSelect.options.length-1].selected = true;
 				}
@@ -249,12 +249,12 @@ for ($i=0; $i<$num4; $i++) {
 			}
 		}
 	}	
-
+	
 	function clearTaskSelect(row) {
 		taskSelect = document.getElementById('taskSelect_row' + row);
 		for (var i=1; i<taskSelect.options.length; i++)
 			taskSelect.options[i] = null;
-
+		
 		//set the length back to 1
 		taskSelect.options.length = 1;
 
@@ -263,7 +263,7 @@ for ($i=0; $i<$num4; $i++) {
 
 		onChangeTaskSelectRow(row);
 	}
-
+	
 	function clearProjectSelect(row) {
 		projectSelect = document.getElementById('projectSelect_row' + row);
 		for (i=1; i<projectSelect.options.length; i++) {
@@ -309,12 +309,12 @@ for ($i=0; $i<$num4; $i++) {
 			
 			setDirty();
 	}
-
+	
 	function onChangeClientSelect(idStr) {
 		row = rowFromIdStr(idStr);
 		clearProjectSelect(row);
 		clearTaskSelect(row);
-
+		
 		var clientSelect = document.getElementById('clientSelect_row' + row);
 		var clientId = clientSelect.options[clientSelect.selectedIndex].value;
 
@@ -1044,7 +1044,7 @@ include ("banner.inc");
 	/////////////////////////////////////////
 
 	printFormRow($count, $layout, -1, -1);
-
+	
 	//store a hidden form field containing the number of existing rows
 	print "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $count . "\" />";
 

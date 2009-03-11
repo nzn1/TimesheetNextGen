@@ -150,6 +150,7 @@ else {
 	$today_total_sec = 0;
 	$total_diff_sec = 0;
 
+	$count = 0;
 	while ($data = dbResult($qh)) {
 		//Due to an inconsistency with mysql and php with converting to unix timestamp from the string,
 		//we are going to use php's strtotime to make the timestamp from the string.
@@ -162,7 +163,10 @@ else {
 		$taskName = stripslashes($data["name"]);
 
 		//start printing details of the task
-		print "<tr>\n";
+		if (($count % 2) == 1)
+			print "<tr class=\"diff\">\n";
+		else
+			print "<tr>\n";
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('proj_info.php?proj_id=$data[proj_id]','Project Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$projectTitle</a></td>\n";
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('task_info.php?task_id=$data[task_id]','Task Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=300,height=150')\">$taskName</a></td>\n";
 
@@ -254,7 +258,8 @@ else {
 		}
 
 		print "</tr>";
-
+		// hellowz
+		$count++;
 	}
 	print "<tr>\n";
 	print "	<td class=\"calendar_totals_line_weekly_right\" colspan=\"5\" align=\"right\">";

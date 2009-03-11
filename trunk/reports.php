@@ -71,7 +71,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 							<a href="report_specific_user.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					<tr>
-					<tr>
+					<tr class="diff">
 						<td class="calendar_cell_middle">Hours worked on specific project</td>
 						<td class="calendar_cell_disabled_right">
 							<a href="report_specific_project.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a> /
@@ -83,6 +83,13 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 						<td class="calendar_cell_disabled_right">
 							<a href="report_specific_client.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a> /
 							<a href="report_specific_client.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=weekly">Generate weekly</a>
+						</td>
+					</tr>
+					<tr class="diff">
+						<td class="calendar_cell_middle">Hours worked for a specific client by a specific user</td>
+						<td class="calendar_cell_disabled_right">
+							<a href="report_specific_client_user.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=monthly">Generate monthly</a> /
+							<a href="report_specific_client_user.php?month=<? print $month; ?>&year=<? print $year; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<tr>
