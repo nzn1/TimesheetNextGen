@@ -79,16 +79,21 @@ include ("banner.inc");
 
 list($qh,$num) = dbQuery("select * from $RATE_TABLE where rate_id != 1 order by rate_id");
 
+$count = 0;
 while ($data = dbResult($qh)) {
 	$billRateIdField = empty($data["rate_id"]) ? "&nbsp;": $data["rate_id"];
 	$billRateField = empty($data["bill_rate"]) ? "&nbsp;": $data["bill_rate"];
-	print "<tr>\n";
+	if (($count % 2) == 1)
+			print "<tr class=\"diff\">\n";
+		else
+			print "<tr>\n";
 	print "<td class=\"calendar_cell_middle\">&nbsp;$billRateIdField</td>";
 	print "<td class=\"calendar_cell_middle\">&nbsp;$billRateField</td>";
 	print "<td class=\"calendar_cell_disabled_right\">";
 	print "	<a href=\"javascript:editRate('$data[rate_id]', '$data[bill_rate]')\">&nbsp;Edit</a>\n";
 	print "</td>\n";
 	print "</tr>\n";
+	$count++;
 }
 ?>
 				</table>

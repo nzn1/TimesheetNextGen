@@ -11,6 +11,7 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
+$contextUser = strtolower($_SESSION['contextUser']);
 
 //define the command menu
 include("timesheet_menu.inc");
@@ -18,6 +19,12 @@ include("timesheet_menu.inc");
 //use 'No Client' if client id is 0
 if ($client_id == 0)
 	$client_id = getFirstClient();
+	
+//load local vars from superglobals
+if (isset($_REQUEST['uid']))
+	$uid = $_REQUEST['uid'];
+else
+	$uid = $contextUser;
 
 // Calculate the previous month.
 setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
@@ -44,6 +51,12 @@ function format_seconds($seconds) {
 	return "$hour:$minutes:$sec";
 }
 
+//get the client name
+	$query = "select organisation from $CLIENT_TABLE where client_id='$client_id'"; 
+	list($qh,$num) = dbQuery($query);
+	$data = dbResult($qh);
+	$client_name = $data['organisation'];
+    
 // Change the date-format for internationalization...
 if ($mode == "all") $mode = "monthly";
 if ($mode == "weekly") {
@@ -61,6 +74,7 @@ if ($mode == "weekly") {
 			"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
 			"WHERE $PROJECT_TABLE.client_id='$client_id' AND " .
 				"$TIMES_TABLE.uid=$USER_TABLE.username AND " .
+				"$TIMES_TABLE.uid='$uid' AND " .
 				"end_time > 0 AND " .
 				"start_time >= '$year-$month-$day' AND ".
 				"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND " .
@@ -82,6 +96,7 @@ if ($mode == "weekly") {
 			"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
 			"WHERE $PROJECT_TABLE.client_id='$client_id' AND " .
 				"$TIMES_TABLE.uid=$USER_TABLE.username AND " .
+				"$TIMES_TABLE.uid='$uid' AND " .
 				"end_time > 0 AND start_time >= '$year-$month-1' AND ".
 				"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND " .
 				"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
@@ -97,71 +112,49 @@ $last_task_id = -1;
 $total_time = 0;
 $grand_total_time = 0;
 
-$print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_specific_client.php".
-						"?month=$month".
-						"&year=$year".
-						"&day=$day".
-						"&mode=$mode".
-						"&client_id=$client_id".
-						"&proj_id=$proj_id".
-						"&destination=$_SERVER[PHP_SELF]".
-						"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=800,height=450\") dummy=\"";
-
 ?>
 <html>
 <head>
 <title>Report: Hours for a specific client</title>
 <?php include ("header.inc"); ?>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php include ("banner.inc"); ?>
+<?php
+echo "<body width=\"100%\" height=\"100%\"";
+include ("body.inc");
 
-<form action="report_specific_client.php" method="get">
+echo "onLoad=window.print();";
+echo ">\n";
+
+?>
+
+<form action="print_report_specific_client.php" method="get">
 <input type="hidden" name="month" value="<? echo $month; ?>">
 <input type="hidden" name="year" value="<? echo $year; ?>">
-<input type="hidden" name="day" value="<? echo $day; ?>">
 <input type="hidden" name="mode" value="<? echo $mode; ?>">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap>
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
-									<td align="right" width="0" class="outer_table_heading">Client:</td>
-									<td align="left" width="100%">
-											<? client_select_droplist($client_id, false); ?>
-									</td>
+									<td align="left" width="100%" class="outer_table_heading">Client: <? echo $client_name ?></td>
+									
 								</tr>
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<? //echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
-						<?	if ($mode == "weekly")
-								echo date('F d, Y',$time);
-							else
-								echo date('F Y',$time);
-						?>
-						</td>
-						<td align="center" nowrap class="outer_table_heading">
-						<? print "<button $print_popup_href class=\"action_link\">Print Report</button></td>\n"; ?>
+						<? echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						</td>
 						<td align="right" nowrap>
-						<?
-							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "client_id=$client_id", $mode);
-						?>
 						</td>
 					</tr>
 				</table>
 
-<!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -256,17 +249,26 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 ?>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
+				<table width="100%" border="1" cellspacing="0" cellpadding="0">
 
+					<tr>
+						<td width="30%"><table><tr><td>Employee Signature:</td></tr></table></td>
+						<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+					</tr>
+					<tr>
+						<td width="30%"><table><tr><td>Manager Signature:</td></tr></table></td>
+						<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+					</tr>
+					<tr>
+						<td width="30%"><table><tr><td>Client Signature:</td></tr></table></td>
+						<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+					</tr>
+				</table>	
 </form>
-<?
-include ("footer.inc");
-?>
 </BODY>
 </HTML>
 

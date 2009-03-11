@@ -62,7 +62,10 @@ $n=0;
 while ($data = dbResult($qh)) {
 	$titleField = empty($data["title"]) ? "&nbsp;": $data["title"];
 	$organisationField = empty($data["organisation"]) ? "&nbsp;": $data["organisation"];
-	print "<tr>\n";
+	if (($n % 2) == 1)
+			print "<tr class=\"diff\">\n";
+		else
+			print "<tr>\n";
 	print "<td class=\"calendar_cell_middle\">&nbsp;$titleField</td>";
 	print "<td class=\"calendar_cell_middle\">&nbsp;$organisationField</td>";
 	print "<td class=\"calendar_cell_disabled_right\">";

@@ -754,7 +754,7 @@ function install_create_table_config($db_prefix) {
 		LDAPBindByUser tinyint(4) NOT NULL default "0",
 		LDAPReferrals bit(1) default 0,
 		LDAPFallback bit(1) default 0,
-		aclStopwatch enum("Admin","Mgr","Basic","None") NOT NULL default "Basic",
+  		aclStopwatch enum("Admin","Mgr","Basic","None") NOT NULL default "Basic",
 		aclDaily enum("Admin","Mgr","Basic","None") NOT NULL default "Basic",
 		aclWeekly enum("Admin","Mgr","Basic","None") NOT NULL default "Basic",
 		aclCalendar enum("Admin","Mgr","Basic","None") NOT NULL default "Basic",
@@ -767,6 +767,8 @@ function install_create_table_config($db_prefix) {
 		aclAbsences ENUM("Admin", "Mgr", "Basic", "None") NOT NULL default "None",
 		simpleTimesheetLayout enum("small work description field","big work description field","no work description field") NOT NULL DEFAULT "small work description field",
 		startPage enum("stopwatch", "daily", "weekly", "calendar", "simple") NOT NULL DEFAULT "calendar",
+		project_items_per_page int(11) default 10,
+  		task_items_per_page int(11) default 10,
 		PRIMARY KEY  (config_set_id)
 		)',
 		$db_prefix, VERSION);

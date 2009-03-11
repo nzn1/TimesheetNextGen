@@ -11,6 +11,7 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
+$contextUser = strtolower($_SESSION['contextUser']);
 
 //define the command menu
 include("timesheet_menu.inc");
@@ -18,6 +19,12 @@ include("timesheet_menu.inc");
 //use 'No Client' if client id is 0
 if ($client_id == 0)
 	$client_id = getFirstClient();
+	
+//load local vars from superglobals
+if (isset($_REQUEST['uid']))
+	$uid = $_REQUEST['uid'];
+else
+	$uid = $contextUser;
 
 // Calculate the previous month.
 setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
@@ -61,6 +68,7 @@ if ($mode == "weekly") {
 			"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
 			"WHERE $PROJECT_TABLE.client_id='$client_id' AND " .
 				"$TIMES_TABLE.uid=$USER_TABLE.username AND " .
+				"$TIMES_TABLE.uid='$uid' AND " .
 				"end_time > 0 AND " .
 				"start_time >= '$year-$month-$day' AND ".
 				"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND " .
@@ -82,6 +90,7 @@ if ($mode == "weekly") {
 			"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
 			"WHERE $PROJECT_TABLE.client_id='$client_id' AND " .
 				"$TIMES_TABLE.uid=$USER_TABLE.username AND " .
+				"$TIMES_TABLE.uid='$uid' AND " .
 				"end_time > 0 AND start_time >= '$year-$month-1' AND ".
 				"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND " .
 				"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
@@ -97,10 +106,11 @@ $last_task_id = -1;
 $total_time = 0;
 $grand_total_time = 0;
 
-$print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_specific_client.php".
+$print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_specific_client_user.php".
 						"?month=$month".
 						"&year=$year".
 						"&day=$day".
+						"&uid=$uid".
 						"&mode=$mode".
 						"&client_id=$client_id".
 						"&proj_id=$proj_id".
@@ -110,17 +120,18 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 ?>
 <html>
 <head>
-<title>Report: Hours for a specific client</title>
+<title>Report: Hours for a specific client by a specific user</title>
 <?php include ("header.inc"); ?>
 </head>
 <body <?php include ("body.inc"); ?> >
 <?php include ("banner.inc"); ?>
 
-<form action="report_specific_client.php" method="get">
+<form action="report_specific_client_user.php" method="get">
 <input type="hidden" name="month" value="<? echo $month; ?>">
 <input type="hidden" name="year" value="<? echo $year; ?>">
 <input type="hidden" name="day" value="<? echo $day; ?>">
 <input type="hidden" name="mode" value="<? echo $mode; ?>">
+<input type="hidden" name="laser" value="<? echo 'laser'; ?>">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -139,22 +150,30 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 											<? client_select_droplist($client_id, false); ?>
 									</td>
 								</tr>
+								<tr>
+									<td align="right" width="0" class="outer_table_heading">User:</td>
+									<td align="left" width="100%">
+											<? user_select_droplist($uid, false); ?>
+									</td>
+								</tr>
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<? //echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						<?	if ($mode == "weekly")
 								echo date('F d, Y',$time);
 							else
 								echo date('F Y',$time);
-						?>
+						?>		
+						</td>
+						<td  align="center" >
+						<a href="#" onclick="javascript:esporta('user')" ><img src="images/export_data.gif" name="esporta_dati" border=0></a>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<? print "<button $print_popup_href class=\"action_link\">Print Report</button></td>\n"; ?>
+						<? print "<button $print_popup_href class=\"action_link\">Print Report</button></td>\n";?>
 						</td>
 						<td align="right" nowrap>
 						<?
-							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "client_id=$client_id", $mode);
+							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "client_id=$client_id&uid=$uid", $mode);
 						?>
 						</td>
 					</tr>
@@ -168,6 +187,7 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 			<td>
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 <?php
+	$dati_total=array();
 	if ($num == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
@@ -177,6 +197,7 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 	}
 	else {
 		while ($data = dbResult($qh)) {
+			array_push($dati_total,$data);
 			// New project, so print out last project total time and start a new table cell.
 			if ($last_proj_id != $data["proj_id"]) {
 				$last_proj_id = $data["proj_id"];
@@ -223,7 +244,16 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 		}
 		$formatted_time = format_seconds($grand_total_time);
 	}
+	$out_js="<SCRIPT language=javascript> function esporta() {";
+		if (!empty($dati_total)) {
+			$_SESSION['excel_data']=$dati_total;
+			$out_js.="window.open('./export_timesheet.php?type=user')";
+		}else {
+			$out_js.="alert('No records to export')";
+		}
+	$out_js.="} </SCRIPT>";
 
+	echo $out_js;
 ?>
 						</tr>
 					</td>

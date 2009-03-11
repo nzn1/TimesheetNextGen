@@ -145,3 +145,5 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 	
 .calendar_delete_cell a:link, .calendar_delete_cell a:visited {
 	color:#e04040; }
+tr.diff td { background:#C4C4C4; }
+	

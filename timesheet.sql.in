@@ -98,6 +98,8 @@ CREATE TABLE __TABLE_PREFIX__config (
   aclRates enum('Admin','Mgr','Basic','None') NOT NULL default 'Basic',
   simpleTimesheetLayout enum('small work description field','big work description field','no work description field') NOT NULL DEFAULT 'small work description field',
   startPage enum('stopwatch', 'daily', 'weekly', 'calendar', 'simple') NOT NULL DEFAULT 'calendar',
+  project_items_per_page int(11) default 10,
+  task_items_per_page int(11) default 10,
   PRIMARY KEY  (config_set_id)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
