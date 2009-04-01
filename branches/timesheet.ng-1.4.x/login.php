@@ -78,7 +78,7 @@ include ("header.inc");
 					<td class="label">Password:<br><input type="password" name="password" size="25" maxlength="25"></td>
 					<td class="label"><br><input type="submit" name="Login" value="submit"></td>
 				</tr>
-				<?	if (isset($loginFailure))
+				<?php	if (isset($loginFailure))
 							printMessage($authenticationManager->getErrorMessage());
 						else if (isset($_REQUEST["clearanceRequired"]))
 							printMessage("$_REQUEST[clearanceRequired] clearance is required for the page you have tried to access.");

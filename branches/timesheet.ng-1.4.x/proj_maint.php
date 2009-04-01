@@ -60,6 +60,8 @@ include ("header.inc");
 include ("banner.inc");
 ?>
 
+<form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
@@ -70,7 +72,6 @@ include ("banner.inc");
 			<table width="100%" border="0">
 				<tr>
 					<td width="40%">
-						<form method="post" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td><table width="50"><tr><td>Client:</td></tr></table></td>
@@ -78,7 +79,6 @@ include ("banner.inc");
 								<td>&nbsp;Status:&nbsp;</td><td><?php proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>
 							</tr>
 						</table>
-						</form>
 					</td>
 					<td align="center" nowrap class="outer_table_heading">
 						Projects
@@ -251,6 +251,7 @@ include ("banner.inc");
 	</tr>
 </table>
 
+</form>
 <?php
 include ("footer.inc");
 ?>

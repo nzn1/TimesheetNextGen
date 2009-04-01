@@ -463,7 +463,7 @@ if (!defined("COMMON_INC")) {
 			}
 			if ($printComma)
 				print ", ";*/
-			print "$result[organisation]</OPTION>\n";
+			print "$result[organisation]</option>\n";
 		}
 		print "</select>";
 	}
@@ -653,7 +653,8 @@ if (!defined("COMMON_INC")) {
 	<option value="Basic" <?php if ($selected== 'Basic') echo 'selected'?>>Basic</option>
 	<option value="None" <?php if ($selected== 'None') echo 'selected'?>>None</option>
 	</select>
-<?	}
+<?php
+	}
 
 	function absence_select_droplist($selected='', $disabled='false', $id) {
 ?>
@@ -667,7 +668,8 @@ if (!defined("COMMON_INC")) {
 	<OPTION VALUE="Other" <?php if ($selected== 'Other') echo 'SELECTED'?>>Other</OPTION>
 	<OPTION VALUE="Public" <?php if ($selected== 'Public') echo 'SELECTED'?>>Public</OPTION>
 	</SELECT>
-<?	}
+<?php
+	}
 
 	function client_select_droplist($client_id=1, $disabled='false') {
 		include("table_names.inc");
@@ -798,7 +800,7 @@ if (!defined("COMMON_INC")) {
 	
 	function proj_status_list_filter($name, $status='', $onChange='submit();') {
 ?>
-	<SELECT NAME=<?php echo $name ?> onChange="<?=$onChange?>" >
+	<SELECT NAME=<?php echo $name ?> onChange="<?php echo $onChange?>" >
 	<OPTION VALUE="All" <?php if ($status == 'All') echo 'SELECTED'?>>All</OPTION>
 	<OPTION VALUE="Pending" <?php if ($status == 'Pending') echo 'SELECTED'?>>Pending</OPTION>
 	<OPTION VALUE="Started" <?php if ($status == 'Started') echo 'SELECTED'?>>Started</OPTION>

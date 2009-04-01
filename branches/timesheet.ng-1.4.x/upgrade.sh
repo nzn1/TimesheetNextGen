@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-TIMESHEET_NEW_VERSION="1.3.1";
+TIMESHEET_NEW_VERSION="1.3.2";
 DATETIME=`date +%Y-%m-%d_%H-%M-%S`
 DB_BACKUP_FILE="timesheet-backup-${DATETIME}.sql";
 
@@ -188,6 +188,29 @@ if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then
 	echo $DBNAME
 	echo $DBPASS
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.3.1.sql
+
+	if [ $? = 1 ]; then
+		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "
+		echo "has ALTER TABLE privileges. Upgrade will not continue."
+		exit 1;
+	fi
+fi
+
+if [ "$TIMESHEET_VERSION" \< "1.3.2" ]; then
+	#now do the latest changes
+	#replace prefix and version timesheet_upgrade....sql.in
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.3.2.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.3.2.sql
+
+	#drop the config table and insert defaults
+	echo ""
+	echo "Timesheet.php upgrade will now import the new configuration (1.3.2)"
+	echo "into the $DBNAME database:"
+	echo ""
+	echo $DBHOST
+	echo $DBUSER
+	echo $DBNAME
+	echo $DBPASS
+	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.3.2.sql
 
 	if [ $? = 1 ]; then
 		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "

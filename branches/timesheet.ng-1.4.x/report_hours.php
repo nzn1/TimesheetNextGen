@@ -64,7 +64,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 						</table>
 					</td>
 					<td align="center" nowrap class="outer_table_heading">
-			  			<?	echo date('Y',$time); ?>
+						<?php echo date('Y',$time); ?>
 					</td>
 					<td align="right" nowrap>
 						<?php

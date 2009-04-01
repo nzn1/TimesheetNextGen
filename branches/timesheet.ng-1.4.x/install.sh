@@ -1,7 +1,7 @@
 #!/bin/sh
 
-TIMESHEET_NEW_VERSION="1.3.1";
-TIMESHEET_LAST_VERSION="1.2.1";
+TIMESHEET_NEW_VERSION="1.3.2";
+TIMESHEET_FIRST_VERSION="1.2.1";
 
 echo "###################################################################"
 echo "# TimesheetNextGen $TIMESHEET_NEW_VERSION "
@@ -24,7 +24,7 @@ echo "if they do not, any efforts to get them to work would be appreciated."
 echo ""
 echo "If you want to upgrade from a previous version of TimesheetNextGen, please "
 echo "use the upgrade script (upgrade.sh). That script can upgrade versions "
-echo "1.1 thru $TIMESHEET_LAST_VERSION to the current version ($TIMESHEET_NEW_VERSION)"
+echo "1.1 thru $TIMESHEET_FIRST_VERSION to the current version ($TIMESHEET_NEW_VERSION)"
 echo ""
 echo -n "Press 'Enter' to continue installation, 'Ctrl-C' to cancel:"
 read NOTHING

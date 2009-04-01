@@ -74,7 +74,7 @@ $public_hol = 'N';
 						</table>
 					</td>
 					<td align="center" nowrap class="outer_table_heading">
-			  			<?	echo date('F Y',$time); ?>
+						<?php echo date('F Y',$time); ?>
 					</td>
 					<td align="right" nowrap>
 						<?php
