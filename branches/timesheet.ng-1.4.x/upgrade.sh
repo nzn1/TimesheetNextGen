@@ -1,13 +1,13 @@
 #!/bin/sh
 
 
-TIMESHEET_NEW_VERSION="1.3.2";
+TIMESHEET_NEW_VERSION="1.4.1";
 DATETIME=`date +%Y-%m-%d_%H-%M-%S`
 DB_BACKUP_FILE="timesheet-backup-${DATETIME}.sql";
 
 echo "###################################################################"
 echo "# TimesheetNextGen $TIMESHEET_NEW_VERSION"
-echo "# (c) 2008 Tsheetx Development Team                               #"
+echo "# (c) 2008-2009 Tsheetx Development Team                          #"
 echo "###################################################################"
 echo "# This program is free software; you can redistribute it and/or   #"
 echo "# modify it under the terms of the GNU General Public License     #"
@@ -19,14 +19,11 @@ echo "# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   #"
 echo "# GNU General Public License for more details.                    #"
 echo "###################################################################"
 
-echo "Welcome to the timesheet.php upgrade tool. This script will attempt to "
-echo "upgrade your existing version of Timesheet.php. Timesheet.php has only been "
-echo "tested under PHP4, MySQL, and Apache. Other configurations may work, and "
-echo "if they do not, any efforts to get them to work would be appreciated."
+echo "Welcome to the TimesheetNextGen upgrade tool. This script will attempt to "
+echo "upgrade your existing version of Timesheet.php or TimesheetNextGen. "
 echo ""
-echo "This script will attempt to detect existing settings and the existing version of "
-echo "timesheet.php, and then upgrade timesheet.php, whilst keeping your existing "
-echo "data."
+echo "This script will attempt to detect existing settings and the existing version, "
+echo "and then upgrade, whilst keeping your existing data."
 echo ""
 echo "Please note that when upgrading you may lose your configuration details and"
 echo "graphical templates. Please save these into a text file before upgrading so that"
@@ -42,7 +39,7 @@ SUCCESS=0
 until [ $SUCCESS = 1 ]
 do
 	echo ""
-	echo -n "Please enter the working directory of the version of timesheet.php "
+	echo -n "Please enter the working directory of the version of Timesheet that "
 	echo -n "you wish to upgrade (full path):"
 	read INSTALL_DIR
 
@@ -119,9 +116,8 @@ if [ "$TIMESHEET_VERSION" \< "1.2.0" ]; then
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.2.0.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.2.0.sql
 
-	#drop the config table and insert defaults
 	echo ""
-	echo "Timesheet.php upgrade will now import the new configuration (1.2.0)"
+	echo "TimesheetNextGen upgrade will now import the V1.2.0 configuration "
 	echo "into the $DBNAME database:"
 	echo ""
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.2.0.sql
@@ -155,15 +151,10 @@ if [ "$TIMESHEET_VERSION" \< "1.2.1" ]; then
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.2.1.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.2.1.sql
 
-	#drop the config table and insert defaults
 	echo ""
-	echo "Timesheet.php upgrade will now import the new configuration (1.2.1)"
+	echo "TimesheetNextGen upgrade will now import the V1.2.1 configuration "
 	echo "into the $DBNAME database:"
 	echo ""
-	echo $DBHOST
-	echo $DBUSER
-	echo $DBNAME
-	echo $DBPASS
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.2.1.sql
 
 	if [ $? = 1 ]; then
@@ -178,15 +169,10 @@ if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.3.1.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.3.1.sql
 
-	#drop the config table and insert defaults
 	echo ""
-	echo "Timesheet.php upgrade will now import the new configuration (1.3.1)"
+	echo "TimesheetNextGen upgrade will now import the V1.3.1 configuration "
 	echo "into the $DBNAME database:"
 	echo ""
-	echo $DBHOST
-	echo $DBUSER
-	echo $DBNAME
-	echo $DBPASS
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.3.1.sql
 
 	if [ $? = 1 ]; then
@@ -196,21 +182,16 @@ if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then
 	fi
 fi
 
-if [ "$TIMESHEET_VERSION" \< "1.3.2" ]; then
+if [ "$TIMESHEET_VERSION" \< "1.4.1" ]; then
 	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.3.2.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.3.2.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.4.1.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.4.1.sql
 
-	#drop the config table and insert defaults
 	echo ""
-	echo "Timesheet.php upgrade will now import the new configuration (1.3.2)"
+	echo "TimesheetNextGen upgrade will now import the V1.4.1 configuration "
 	echo "into the $DBNAME database:"
 	echo ""
-	echo $DBHOST
-	echo $DBUSER
-	echo $DBNAME
-	echo $DBPASS
-	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.3.2.sql
+	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.4.1.sql
 
 	if [ $? = 1 ]; then
 		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "
@@ -227,10 +208,10 @@ sed s/__DBHOST__/$DBHOST/g database_credentials.inc.in | \
 sed s/__DBNAME__/$DBNAME/g | \
 sed s/__DBUSER__/$DBUSER/g | \
 sed s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g | \
-sed s/__DBPASS__/$DBPASS/g > database_credentials.inc
+sed s/__DBPASS__/$DBPASS/g > ../database_credentials.inc
 
 #replace prefix in sample_data.sql.in
-sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sample_data.sql.in > sample_data.sql
+sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sample_data.sql.in > ../sample_data.sql
 
 #create new directories
 if [ ! -d $INSTALL_DIR/css ]; then
@@ -261,7 +242,7 @@ fi
 
 echo ""
 echo "Installing files..."
-cp *.php *.inc *.html .htaccess $INSTALL_DIR
+cp ../*.php ../*.inc ../*.html ../.htaccess $INSTALL_DIR
 if [ $? != 0 ]; then
     echo ""
     echo "There were errors copying the files."
@@ -269,7 +250,7 @@ if [ $? != 0 ]; then
     echo ""
     exit 1
 fi
-cp css/*.css $INSTALL_DIR/css/
+cp ../css/*.css $INSTALL_DIR/css/
 if [ $? != 0 ]; then
     echo ""
     echo "There was an error copying the css files. "
@@ -277,7 +258,7 @@ if [ $? != 0 ]; then
     echo ""
     exit 1
 fi
-cp images/*.gif $INSTALL_DIR/images
+cp ../images/*.gif $INSTALL_DIR/images
 if [ $? != 0 ]; then
     echo ""
     echo "There was an error copying the image files."
@@ -291,9 +272,9 @@ echo "Upgrade complete."
 echo ""
 echo ""
 echo "###################################################################"
-echo "Be sure that your web server is set up to parse PHP 4 (or later)"
-echo "files.  See the PHP documentation at http://www.php.net for more"
-echo "information on how to do this."
+echo "Be sure that your web server is set up to parse PHP files.  See "
+echo "the PHP documentation at http://www.php.net for more information on"
+echo "how to do this."
 echo ""
 echo "If you are wanting to use LDAP for authentication then you will"
 echo "need the php LDAP modules for apache, or LDAP compiled into your"

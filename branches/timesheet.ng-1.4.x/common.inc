@@ -95,7 +95,7 @@ if (!defined("COMMON_INC")) {
 				$data["end_time"] = strtotime($data["end_time_str"]);
 
 				if ($data["start_time"] < mktime(0,0,0,$start_month,$start_day,$start_year))
-					$total_sec += $data["end_time"] - mktime(0,0,0,$start_month,$start_day,$start_year);
+					$worked_sec += $data["end_time"] - mktime(0,0,0,$start_month,$start_day,$start_year);
 				if ($data["end_time"] > mktime(23,59,59,$end_month,$end_day,$end_year))
 					$worked_sec += mktime(23,59,59,$end_month,$end_day,$end_year) - $data["start_time"];
 				else
