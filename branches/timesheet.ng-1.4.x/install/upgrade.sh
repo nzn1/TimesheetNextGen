@@ -107,6 +107,11 @@ TIMESHEET_VERSION=`echo "SELECT version FROM $TIMESHEET_CONFIG_TABLE WHERE confi
  mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS 2> /dev/null | \
  awk 'BEGIN {RS=$_}; {print $2}'`
 
+if [ "$TIMESHEET_VERSION" = "__timesheet_VERSION__" ]; then
+	# This is a bug in the web-installer for V1.3.1
+	$TIMESHEET_VERSION="1.3.1"
+fi
+
 echo "Existing Timesheet version='$TIMESHEET_VERSION'"
 echo "Press Enter..."
 read asdf3

@@ -4,8 +4,8 @@ define('INSTALLER_VERSION', '1.4.1');
 // don't really like using globals, but this is quick and dirty
 $_ERROR = '';
 // other globals 
-$table_inc_file = '../table_names.inc';
-$db_inc_file = '../database_credentials.inc';
+$table_inc_file = 'table_names.inc';
+$db_inc_file = 'database_credentials.inc';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -23,20 +23,16 @@ th { vertical-align: top; text-align: left; }
 <h1>Timesheet Next Gen Installation</h1>
 <?php
 // check that Timesheet NG isn't already installed
-// check_is_installed() returns :
-//  0 if not installed, 
-//  1 if installed but lower version, 
-//  2 if installed and up-to-date
 if(!isset($_REQUEST['step'])) {
 	switch (check_is_installed()) {
 	 	case 3:
-			install_success();
+			display_install_success();
 			break;
 		case 2:
-			upgrade();
+			display_install_step_3();
 			break;
 		case 1:
-			step_three_display();
+			display_upgrade_step_1();
 			break;
 		default:
 			install();
@@ -52,20 +48,31 @@ else { install(); }
  * Checks to see if Timesheet NG is already installed
  * @returns int:
  *   0 if not installed, 
- *   1 if installed but no admin user
- *   2 if installed but lower version, 
+ *   1 if installed but lower version, 
+ *   2 if installed but no admin user
  *   3 if installed and up-to-date
  */
 function check_is_installed() {
-	global $db_inc_file;
-	if(!file_exists($db_inc_file)) { return 0; }
+	global $db_inc_file, $table_inc_file;
+	if(!file_exists('../'.$db_inc_file)) { return 0; }
+	if(!file_exists('../'.$table_inc_file)) { return 0; }
 
-	include_once($db_inc_file);
+	include_once('../'.$db_inc_file);
+	include_once('../'.$table_inc_file);
+	if(!isset($TIMESHEET_INSTALLED)) { 
+		// pre-V1.3.1 installation?
+		if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
+			return 0; 
+		}
+		$ver = get_database_version($CONFIG_TABLE);
+		if ($ver==false) { return 0; }
+		else { return 1; }
+	}
 	if($TIMESHEET_INSTALLED == '__INSTALLED__') { return 0; }
-	if(version_compare($TIMESHEET_VERSION, INSTALLER_VERSION) == -1) { return 2; }
+	if(version_compare($TIMESHEET_VERSION, INSTALLER_VERSION) == -1) { return 1; }
 
-	if(check_admin_user()) { return 3; }
-	else { return 1; }
+	if(!check_admin_user()) { return 2; }
+	else { return 3; }
 }
 /** 
  * install()
@@ -76,38 +83,55 @@ function install() {
 	$step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 'one';
 	switch ($step) {
 		case 'up-one':
-			upgrade_step_two();
+			display_upgrade_step_2();
 			break;
 		case 'up-two':
-			upgrade_step_three();
+			upgrade_installation();
 			break;
 		case 'two':
-			step_three();
+			create_new_installation();
 			break;
 		case 'three':
-			step_final();
+			install_step_final();
 			break;
+		case 'one':
 		default:
 			// check that step one is complete (i.e. the include files are writeable)
-			if(
-				file_exists($table_inc_file) && is_writable($table_inc_file) &&
-				file_exists($db_inc_file) && is_writable($db_inc_file)
-				) {
-				step_two();
+			if(check_include_files()) {
+				display_install_step_2();
 			}
 			else {
-				step_one();
+				display_install_step_1();
 			}
 	}
 }
+
 /**
- * step_one()
+ * check_include_files()
+ * Checks to see if Timesheet NG can find and write the include files
+ * @returns bool
+ */
+function check_include_files() {
+	global $table_inc_file, $db_inc_file;
+	if(
+		file_exists('../'.$table_inc_file) && is_writable('../'.$table_inc_file) &&
+		file_exists('../'.$db_inc_file) && is_writable('../'.$db_inc_file)
+		) {
+		return true;
+	}
+	else { 
+		return false;
+	}
+}
+
+/**
+ * display_install_step_1()
  * Output the first step (default) page
  */
-function step_one() {
+function display_install_step_1() {
 ?>
 <p>Thank you for downloading Timesheet Next Gen. 
-It'll just take a few more minutes to get it installed and working on your system</p>
+It'll just take a few more minutes to get it installed and working on your system.</p>
 <h3>Things you'll need:</h3>
 <ul>
 <li>A MySQL database (we recommend version 4.1 or better)</li>
@@ -119,16 +143,15 @@ It'll just take a few more minutes to get it installed and working on your syste
 <p>Firstly you need to copy the files <code>install/database_credentials.inc.in</code> to <code>database_credentials.inc</code>
 and <code>install/table_names.inc.in</code> to <code>table_names.inc</code>
 and make sure that they are writeable by the webserver</p>
-<p>Once you've done this, please refresh this page and proceed to Step Two</p>
-<p><a href="./">Refresh Page</a></p>
+<p>Once you've done this, please <a href="./">refresh this page and proceed to Step Two</a></p>
 <?php 
 }
 
 /**
- * step_two()
- * Display the second ste - the db configuration
+ * display_install_step_2()
+ * Display the second step - the db configuration
  */
-function step_two() {
+function display_install_step_2() {
 	global $_ERROR;
 ?>
 <h2>Step Two: MySQL Database Configuration</h2>
@@ -185,12 +208,12 @@ version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA1
 }
 
 /**
- * step_three()
+ * create_new_installation()
  * 1. Create database if needed
  * 2. Create tables
  * 3. Display confirmation (delete install directory) page
  */
-function step_three() {
+function create_new_installation() {
 	global $_ERROR;
 
 	// get the passed data
@@ -208,7 +231,7 @@ function step_three() {
 	if(!$db_name) { $_ERROR .= 'You have not specified a database name<br />'; }
 	if(!$db_user) { $_ERROR .= 'You have not specified a database username<br />'; }
 	if($_ERROR != '') {
-		return step_two();
+		return display_install_step_2();
 	}
 
 	// check to see if we need to create database
@@ -216,32 +239,32 @@ function step_three() {
 	if($db_name_exist == 'no') {
 		$_ERROR = '';
 		if(!create_database($db_host, $db_name, $db_user, $db_pass)) { 
-			return step_two(); 
+			return display_install_step_2(); 
 		}
 	}
 	*/
 
 	// connect to the database
 	if(!database_connect($db_host, $db_name, $db_user, $db_pass)) { 
-		return step_two(); 
+		return display_install_step_2(); 
 	}
 
 	// now create the tables
 	if(!create_tables($db_host, $db_name, $db_user, $db_pass, $db_prefix)) { 
-		return step_two(); 
+		return display_install_step_2(); 
 	}
 
 	// finally write the include files
-	if(!write_includes($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func)) {
-		return fatal_error();
+	if(!create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func)) {
+		return display_fatal_error();
 	}
-	return step_three_display();
+	return display_install_step_3();
 }
 /**
- * step_three_display()
+ * display_install_step_3()
  * outputs the actual "Step Three" page
  */
-function step_three_display() {
+function display_install_step_3() {
 	global $_ERROR;
 ?>
 <h2>Step Three: Create Admin User</h2>
@@ -272,11 +295,11 @@ function step_three_display() {
 <?php 
 }
 /**
- * step_final()
+ * install_step_final()
  * Creates the admin user for the installation, displays the "completed" page
  * @return unknown_type
  */
-function step_final() {
+function install_step_final() {
 	global $_ERROR;
 	// get the passed data
 	$username = (isset($_REQUEST['username']) && $_REQUEST['username']) ? $_REQUEST['username'] : false;
@@ -289,20 +312,20 @@ function step_final() {
 	if(!$password) { $_ERROR .= 'You have not specified an admin password<br />'; }
 	if($password != $password2) { $_ERROR .= 'The passwords do not match<br />'; }
 	if($_ERROR != '') {
-		return step_three_display();
+		return display_install_step_3();
 	}
 
 	// add the admin user to the database
-	if(!admin_user_create($username, $password)) {
-		return fatal_error();
+	if(!create_admin_user($username, $password)) {
+		return display_fatal_error();
 	}
-	return install_success();
+	return display_install_success();
 }
 /**
- * install_success()
+ * display_install_success()
  * Displays the "Success" page when install has completed
  */
-function install_success() {
+function display_install_success() {
 ?>
 <h2>Installation Complete</h2>
 <p>Installation was successful</p>
@@ -317,10 +340,10 @@ function install_success() {
 <?php 
 }
 /**
- * fatal_error()
+ * display_fatal_error()
  * Displays page when there was a non-recoverable error
  */
-function fatal_error() {
+function display_fatal_error() {
 	global $_ERROR;
 ?>
 <h2>Installation Error</h2>
@@ -333,25 +356,25 @@ function fatal_error() {
 
 
 /**
- * upgrade()
+ * display_upgrade_step_1()
  * Initial page for the upgrade script
  */
-function upgrade() {
+function display_upgrade_step_1() {
 	global $table_inc_file, $db_inc_file;
 	?>
 <p>Thank you for downloading Timesheet Next Gen. 
-It'll just take a few more minutes to get it installed and working on your system</p>
+It'll just take a few more minutes to get it installed and working on your system.</p>
 <h2>Upgrade</h2>
-<p>This script will help you upgrade from version 1.2.1 to the current version <?php echo INSTALLER_VERSION; ?>.</p>
-<p>If you are trying to upgrade from a verion that isn't 1.2.1, please 
+<p>This script will help you upgrade from version 1.2.0 to the current version <?php echo INSTALLER_VERSION; ?>.</p>
+<p>If you are trying to upgrade from a version before 1.2.0, please 
 <a href="http://wiki.timesheetng.org/user-docs/update">see our wiki</a> for more details.</p>
 <h2>Step One: Configuration Files</h2>
 <p>Please confirm that the configuration files <code>database_credentials.inc</code> and 
-<code>table_names.inc</code> are both writeable by the webserver</p>
+<code>table_names.inc</code> exist and are both writeable by the webserver.</p>
 	<?php 
 	if(
-		file_exists($table_inc_file) && is_writable($table_inc_file) &&
-		file_exists($db_inc_file) && is_writable($db_inc_file)
+		file_exists('../'.$table_inc_file) && is_writable('../'.$table_inc_file) &&
+		file_exists('../'.$db_inc_file) && is_writable('../'.$db_inc_file)
 		) {
 		echo '<p><a href="?step=up-one">Proceed to step 2</a></p>';
 	}
@@ -360,12 +383,12 @@ It'll just take a few more minutes to get it installed and working on your syste
 	}
 }
 /**
- * upgrade_step_two()
+ * display_upgrade_step_2()
  * Step two of the upgrade script
  */
-function upgrade_step_two() {
+function display_upgrade_step_2() {
 	global $_ERROR, $table_inc_file, $db_inc_file;
-	include($db_inc_file);
+	include('../'.$db_inc_file);
 
 	if(isset($_REQUEST['db_host'])) { $DATABASE_HOST = $_REQUEST['db_host']; }
 	if(isset($_REQUEST['db_name'])) { $DATABASE_DB = $_REQUEST['db_name']; }
@@ -378,13 +401,13 @@ function upgrade_step_two() {
 		$prefix = $_REQUEST['db_prefix'];
 	}
 	else {
-		include($table_inc_file);
+		include('../'.$table_inc_file);
 		$pos = strpos(strtolower($CONFIG_TABLE), 'config');
 		$prefix = substr($CONFIG_TABLE, 0, $pos);
 	}
 	?>
-<h2>Step Two: Database Configuration</h2>
-<form action="<?php echo $SCRIPT_NAME; ?>" method="post">
+<h2>Upgrade Step Two: Database Configuration</h2>
+<form method="post">
 <p>Please confirm your database credentials below are correct</p>
 <?php if($_ERROR) {?>
 <h3 class="error">There was an error</h3>
@@ -395,12 +418,8 @@ function upgrade_step_two() {
 <th>Host</th><td><input type="text" name="db_host" value="<?php echo $DATABASE_HOST; ?>" /></td>
 </tr>
 <tr>
-<th rowspan="2">Database Name</th><td><input type="text" name="db_name" value="<?php echo $DATABASE_DB; ?>" /></td>
-</tr>
-<tr><td>Please make sure that this database exist and you have sufficient permissions to create and alter tables</td></tr>
-<tr>
-<th>Table Prefix</th><td><input type="text" name="db_prefix" value="<?php echo $prefix; ?>" /></td>
-</tr>
+<th>Database Name</th><td><input type="text" name="db_name" value="<?php echo $DATABASE_DB; ?>" /></td>
+<td>Please make sure that this database exists and you have sufficient permissions to create and alter tables</td></tr>
 <tr>
 <th>Username</th><td><input type="text" name="db_user" value="<?php echo $DATABASE_USER; ?>"/></td>
 </tr>
@@ -408,18 +427,21 @@ function upgrade_step_two() {
 <th>Password</th><td><input type="password" name="db_pass" value="" /></td>
 </tr>
 <tr>
-<th rowspan="2">Password Function</th>
+<th>Password Function</th>
 <td><select name="db_pass_func">
 <option value="SHA1" <?php if ($DATABASE_PASSWORD_FUNCTION == 'SHA1') { echo 'selected="selected"'; } ?>>SHA1</option>
 <option value="PASSWORD" <?php if ($DATABASE_PASSWORD_FUNCTION == 'PASSWORD') { echo 'selected="selected"'; } ?>>PASSWORD</option>
 <option value="OLD_PASSWORD" <?php if ($DATABASE_PASSWORD_FUNCTION == 'OLD_PASSWORD') { echo 'selected="selected"'; } ?>>OLD PASSWORD</option>
 </select></td>
-</tr>
-<tr><td>This is the function the database uses to encrypt the passwords. If your MySQL version is 4.1 or above
+<td>This is the function the database uses to encrypt the passwords. If your MySQL version is 4.1 or above
 you should use SHA1. PASSWORD should be used on MySQL version 4.0 or below, and OLD PASSWORD for MySQL
 version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA1.</em></td></tr>
+<tr>
+<th>Table Prefix</th><td><input type="text" name="db_prefix" value="<?php echo $prefix; ?>" /></td>
+<td>This prefix is used for all table names</td>
+</tr>
 <tr><td colspan="2">
-<input type="button" value="Test Configuration" onclick="alert('Sorry, this doesn\'t work yet');"/>
+<?php /*<input type="button" value="Test Configuration" onclick="alert('Sorry, this doesn\'t work yet');"/> */ ?>
 <input type="submit" value="Proceed to Step Three" />
 </td></tr>
 </table>
@@ -428,14 +450,13 @@ version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA1
 	<?php 
 }
 /**
- * upgrade_step_three()
- * Step three of the upgrade script,
+ * upgrade_installation()
  * This does the main bulk of the upgrading:
  *  1. Writes the config files
  *  2. upgrades the database
  *  3. reports success or fail
  */
-function upgrade_step_three() {
+function upgrade_installation() {
 	global $_ERROR;
 
 	// get the passed data
@@ -453,24 +474,24 @@ function upgrade_step_three() {
 	if(!$db_name) { $_ERROR .= 'You have not specified a database name<br />'; }
 	if(!$db_user) { $_ERROR .= 'You have not specified a database username<br />'; }
 	if($_ERROR != '') {
-		return upgrade_step_two();
+		return display_upgrade_step_2();
 	}
 
 	// connect to the database
 	if(!database_connect($db_host, $db_name, $db_user, $db_pass)) { 
-		return upgrade_step_two(); 
+		return display_upgrade_step_2(); 
 	}
 
 	// now create the tables
-	if(!upgrade_tables($db_prefix)) { 
-		return upgrade_step_two(); 
+	if(!upgrade_tables($db_prefix, $db_pass_func)) { 
+		return display_upgrade_step_2(); 
 	}
 
 	// finally write the include files
-	if(!write_includes_upgrade($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func)) {
-		return fatal_error();
+	if(!create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func)) {
+		return display_fatal_error();
 	}
-	return install_success();
+	return display_install_success();
 }
 
 
@@ -498,87 +519,50 @@ function create_database($db_host, $db_name, $db_user, $db_pass) {
  * @return bool true on successful creation
  */
 function create_tables($db_host, $db_name, $db_user, $db_pass, $db_prefix) {
-	// for the time being we are just installing a clean MySQL database
-	return install_create_tables($db_prefix);
-}
-/**
- * write_includes()
- * Writes the configuration to the include files 
- * @param $db_host
- * @param $db_name
- * @param $db_user
- * @param $db_pass
- * @param $db_prefix
- * @param $db_pass_func
- * @return bool true if successfully written
- */
-function write_includes($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func) {
-	global $_ERROR, $table_inc_file, $db_inc_file;
-	// make sure the values are safe
-	$db_host = mysql_real_escape_string($db_host);
-	$db_name = mysql_real_escape_string($db_name);
-	$db_user = mysql_real_escape_string($db_user);
-	$db_pass = mysql_real_escape_string($db_pass);
+	global $_ERROR, $db_pass_func;
 	$db_prefix = mysql_real_escape_string($db_prefix);
-	$db_pass_func = mysql_real_escape_string($db_pass_func);
 
-	// first write the database credentials: read in current file
-	$contents = file_get_contents($db_inc_file);
-	// edit the file
-	$contents = str_replace("__INSTALLED__", 1, $contents);
-	$contents = str_replace("__VERSION__", INSTALLER_VERSION, $contents);
-	$contents = str_replace("__DBHOST__", $db_host, $contents);
-	$contents = str_replace("__DBUSER__", $db_user, $contents);
-	$contents = str_replace("__DBPASS__", $db_pass, $contents);
-	$contents = str_replace("__DBNAME__", $db_name, $contents);
-	$contents = str_replace("__DBPASSWORDFUNCTION__", $db_pass_func, $contents);
-	// re-write it
-	if (!$handle = fopen($db_inc_file, 'w')) {
-		$_ERROR .= 'Could not open <code>'.$db_inc_file.'</code> file for writing';
-		return false;
-    }
-    if (fwrite($handle, $contents) === FALSE) {
-		$_ERROR .= 'Could not write to <code>'.$db_inc_file.'</code>';
-		return false;
-    }
-    fclose($handle);
+	$contents = file_get_contents('timesheet.sql.in');
+	// finalise the file
+	$key_words = array("__TIMESHEET_VERSION__", "__TABLE_PREFIX__", "__DBPASSWORDFUNCTION__");
+	$key_values = array(INSTALLER_VERSION, $db_prefix, $db_pass_func);
+	$contents = str_replace($key_words, $key_values, $contents);
 
-	// now the table names
-	$contents = file_get_contents($table_inc_file);
-	$contents = str_replace("__TABLE_PREFIX__", $db_prefix, $contents);
-	if (!$handle = fopen($table_inc_file, 'w')) {
-		$_ERROR .= 'Could not open <code>'.$table_inc_file.'</code> file for writing';
-		return false;
-    }
-    if (fwrite($handle, $contents) === FALSE) {
-		$_ERROR .= 'Could not write to <code>'.$table_inc_file.'</code>';
-		return false;
-    }
-    fclose($handle);
+	$queries = preg_split("/;+(?=([^'|^\\']*['|\\'][^'|^\\']*['|\\'])*[^'|^\\']*[^'|^\\']$)/", $contents);
+	foreach ($queries as $sql) {
+		if (strlen(trim($sql)) > 0) {
+			if(!mysql_query($sql)) {
+				$_ERROR .= 'Could not create <strong>Tables</strong><br />';
+				$_ERROR .= 'Your query said: '.htmlentities($sql).'<br />';
+				$_ERROR .= 'Database said: '.mysql_error().'<br />';
+				return false;
+			}
+		}
+	}
 	return true;
 }
 /**
- * admin_user_create()
+ * create_admin_user()
  * @param $username
  * @param $password
  * @return bool true if admin user was created
  */
-function admin_user_create($username, $password) {
-	global $_ERROR, $db_inc_file, $table_inc_file, $mysql_db_inc;
+function create_admin_user($username, $password) {
+	global $_ERROR, $db_inc_file, $table_inc_file;
 
-	include($db_inc_file);
-	include($table_inc_file);
+	include('../'.$db_inc_file);
+	include('../'.$table_inc_file);
 
 	// connect to the database
 	if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
-		return fatal_error(); 
+		return display_fatal_error(); 
 	}
 	// clean up input
 	$username = mysql_real_escape_string($username);
 	$password = mysql_real_escape_string($password);
 
 	$sql = 'INSERT INTO '.$USER_TABLE.' (username,level,password,first_name,last_name) 
-		VALUES ("'.$username.'",10,'.$DATABASE_PASSWORD_FUNCTION.'("'.$password.'"),"Timesheet","Admin")';
+		VALUES ("'.$username.'",11,'.$DATABASE_PASSWORD_FUNCTION.'("'.$password.'"),"Timesheet","Admin")';
 	if(!mysql_query($sql)) {
 		$_ERROR .= 'Could not create the admin user <br />';
 		$_ERROR .= 'Database said: '.mysql_error().'<br />';
@@ -604,23 +588,46 @@ function admin_user_create($username, $password) {
  * @return bool true if created
  */
 function check_admin_user() {
-	global $_ERROR, $db_inc_file, $table_inc_file, $mysql_db_inc;
+	global $_ERROR, $db_inc_file, $table_inc_file;
 
-	include($db_inc_file);
-	include($table_inc_file);
+	include('../'.$db_inc_file);
+	include('../'.$table_inc_file);
 
 	if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
-		return fatal_error(); 
+		return display_fatal_error(); 
 	}
 
-	$sql = 'SELECT COUNT(*) FROM '.$USER_TABLE.' WHERE level=10';
+	$sql = 'SELECT COUNT(*) FROM '.$USER_TABLE.' WHERE level>10';
 	$result = mysql_query($sql);
 	if(!$result) {
-		$_ERROR .= 'Could not add user to default assignment<br />';
+		$_ERROR .= 'Could not check admin user<br />';
 		$_ERROR .= 'Database said: '.mysql_error().'<br />';
 		return false;
 	}
 	$row = mysql_fetch_row($result);
+	return $row[0];
+}
+/**
+ * get_database_version()
+ * Check the status in the DB 
+ * @return version number
+ */
+function get_database_version($cfg_table) {
+	global $_ERROR;
+
+	$sql = 'SELECT version FROM '.$cfg_table.' WHERE config_set_id=\'1\'';
+	$result = mysql_query($sql);
+	if(!$result) {
+		$_ERROR .= 'Could not check version<br />';
+		$_ERROR .= 'Database said: '.mysql_error().'<br />';
+		return false;
+	}
+	$row = mysql_fetch_row($result);
+
+	// hack for V1.3.1
+	if ($row[0]=='__timesheet_VERSION__')
+		$row[0] = '1.3.1';
+
 	return $row[0];
 }
 function database_connect($db_host, $db_name, $db_user, $db_pass) {
@@ -639,97 +646,8 @@ function database_connect($db_host, $db_name, $db_user, $db_pass) {
 	return true;
 }
 
-
-/** Database Installation **/
-function install_create_tables($db_prefix) {
-	global $_ERROR, $db_pass_func;
-	$db_prefix = mysql_real_escape_string($db_prefix);
-
-	$contents = file_get_contents('timesheet.sql.in');
-	// finalise the file
-	$key_words = array("__TIMESHEET_VERSION__", "__TABLE_PREFIX__", "__DBPASSWORDFUNCTION__");
-	$key_values = array(INSTALLER_VERSION, $db_prefix, $db_pass_func);
-	$contents = str_replace($key_words, $key_values, $contents);
-
-	$queries = preg_split("/;+(?=([^'|^\\']*['|\\'][^'|^\\']*['|\\'])*[^'|^\\']*[^'|^\\']$)/", $contents);
-	foreach ($queries as $sql) {
-		if (strlen(trim($sql)) > 0) {
-			if(!mysql_query($sql)) {
-				$_ERROR .= 'Could not create <strong>Tables</strong><br />';
-				$_ERROR .= 'Your query said: '.htmlentities($sql).'<br />';
-				$_ERROR .= 'Database said: '.mysql_error().'<br />';
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
-/* Database Upgrade */
-function upgrade_tables($db_prefix) {
-	$db_prefix = mysql_real_escape_string($db_prefix);
-	return upgrade_tables_1_3_1($db_prefix);
-}
-function upgrade_tables_1_3_1($db_prefix) {
-	global $_ERROR;
-	// tables to install
-	install_create_table_absences($db_prefix);
-	install_create_table_allowances($db_prefix);
-
-	// alter tables
-	$sql = sprintf(
-		'ALTER TABLE %sconfig 
-		ADD COLUMN LDAPBindByUser tinyint(4) NOT NULL default "0", 
-		ADD aclStopwatch ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
-		ADD aclDaily ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
-		ADD aclWeekly ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
-		ADD aclCalendar ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
-		ADD aclSimple ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
-		ADD aclClients ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
-		ADD aclProjects ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
-		ADD aclTasks ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL, 
-		ADD aclReports ENUM("Admin","Mgr","Basic","None") DEFAULT "Basic" NOT NULL,
-		ADD startPage enum("stopwatch", "daily", "weekly", "calendar", "simple") NOT NULL DEFAULT "calendar",
-		ADD simpleTimesheetLayout enum("small work description field", "big work description field", "no work description field") NOT NULL DEFAULT "small work description field",
-		ADD aclRates ENUM("Admin", "Mgr", "Basic", "None") DEFAULT "None" NOT NULL AFTER aclReports, 
-		ADD aclAbsences ENUM("Admin", "Mgr", "Basic", "None") DEFAULT "None" NOT NULL AFTER aclRates,
-		ADD LDAPReferrals BIT(1) NOT NULL AFTER LDAPBindByUser, 
-		ADD LDAPFallback BIT(1) NOT NULL AFTER LDAPReferrals;',
-		$db_prefix);
-	if(!mysql_query($sql)) {
-		$_ERROR .= 'Could not alter <strong>config</strong> table<br />';
-		$_ERROR .= 'Database said: '.mysql_error().'<br />';
-		return false;
-	}
-	$sql = sprintf(
-		'ALTER TABLE %stimes CHANGE log_message log_message TEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL',
-		$db_prefix);
-	if(!mysql_query($sql)) {
-		$_ERROR .= 'Could not alter <strong>times</strong> table<br />';
-		$_ERROR .= 'Database said: '.mysql_error().'<br />';
-		return false;
-	}
-	$sql = sprintf(
-		'ALTER TABLE %sassignments ADD rate_id INT DEFAULT "0" NOT NULL',
-		$db_prefix);
-	if(!mysql_query($sql)) {
-		$_ERROR .= 'Could not alter <strong>assignments</strong> table<br />';
-		$_ERROR .= 'Database said: '.mysql_error().'<br />';
-		return false;
-	}
-	$sql = sprintf(
-		'ALTER TABLE %suser DROP allowed_realms, DROP bill_rate, DROP phone',
-		$db_prefix);
-	if(!mysql_query($sql)) {
-		$_ERROR .= 'Could not alter <strong>user</strong> table<br />';
-		$_ERROR .= 'Database said: '.mysql_error().'<br />';
-		return false;
-	}
-	return true;
-}
-
 /**
- * write_includes()
+ * create_include_files()
  * Writes the configuration to the include files 
  * @param $db_host
  * @param $db_name
@@ -739,7 +657,7 @@ function upgrade_tables_1_3_1($db_prefix) {
  * @param $db_pass_func
  * @return bool true if successfully written
  */
-function write_includes_upgrade($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func) {
+function create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func) {
 	global $_ERROR, $table_inc_file, $db_inc_file;
 	// make sure the values are safe
 	$db_host = mysql_real_escape_string($db_host);
@@ -760,7 +678,7 @@ function write_includes_upgrade($db_host, $db_name, $db_user, $db_pass, $db_pref
 	$contents = str_replace("__DBNAME__", $db_name, $contents);
 	$contents = str_replace("__DBPASSWORDFUNCTION__", $db_pass_func, $contents);
 	// re-write it
-	if (!$handle = fopen($db_inc_file, 'w')) {
+	if (!$handle = fopen('../'.$db_inc_file, 'w')) {
 		$_ERROR .= 'Could not open <code>'.$db_inc_file.'</code> file for writing';
 		return false;
     }
@@ -773,8 +691,7 @@ function write_includes_upgrade($db_host, $db_name, $db_user, $db_pass, $db_pref
 	// now the table names
 	$contents = file_get_contents($table_inc_file.'.in');
 	$contents = str_replace("__TABLE_PREFIX__", $db_prefix, $contents);
-	$contents = str_replace("__TIMESHEET_VERSION__", INSTALLER_VERSION, $contents);
-	if (!$handle = fopen($table_inc_file, 'w')) {
+	if (!$handle = fopen('../'.$table_inc_file, 'w')) {
 		$_ERROR .= 'Could not open <code>'.$table_inc_file.'</code> file for writing';
 		return false;
     }
@@ -783,5 +700,53 @@ function write_includes_upgrade($db_host, $db_name, $db_user, $db_pass, $db_pref
 		return false;
     }
     fclose($handle);
+	return true;
+}
+
+/* Database Upgrade */
+function upgrade_tables($db_prefix, $db_pass_func) {
+	global $_ERROR;
+	$result = true;
+	$db_version = get_database_version($db_prefix.'config');
+
+	switch ($db_version) {
+	case '1.2.0' :
+		$result &= run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.2.1.sql.in');
+	case '1.2.1' :
+		$result &= run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.3.1.sql.in');
+	case '1.3.1' :
+		$result &= run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.4.1.sql.in');
+	}
+	//Upgrade the DB version
+	$sql = 'UPDATE '.$db_prefix.'config set version=\''.INSTALLER_VERSION.'\';';
+	if(!mysql_query($sql)) {
+		$_ERROR .= '<strong>Could not update DB version</strong><br />';
+		$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
+		$_ERROR .= 'Our database said: '.mysql_error().'<br />';
+		return false;
+	}
+	return $result;
+}
+function run_sql_script($db_prefix, $db_pass_func, $sqlfile) {
+	global $_ERROR;
+	$db_prefix = mysql_real_escape_string($db_prefix);
+
+	$contents = file_get_contents($sqlfile);
+	// finalise the script
+	$key_words = array("__TIMESHEET_VERSION__", "__TABLE_PREFIX__", "__DBPASSWORDFUNCTION__");
+	$key_values = array(INSTALLER_VERSION, $db_prefix, $db_pass_func);
+	$contents = str_replace($key_words, $key_values, $contents);
+
+	$queries = preg_split("/;+(?=([^'|^\\']*['|\\'][^'|^\\']*['|\\'])*[^'|^\\']*[^'|^\\']$)/", $contents);
+	foreach ($queries as $sql) {
+		if (strlen(trim($sql)) > 0) {
+			if(!mysql_query($sql)) {
+				$_ERROR .= '<strong>Could not complete script</strong><br />';
+				$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
+				$_ERROR .= 'Our database said: '.mysql_error().'<br />';
+				return false;
+			}
+		}
+	}
 	return true;
 }
