@@ -109,19 +109,19 @@ include ("header.inc");
 	}
 </script>
 </head>
-<body <? include ("body.inc"); ?> >
-<?
+<body <?php include ("body.inc"); ?> >
+<?php
 include ("banner.inc");
 ?>
 
-<form name="changeForm" action="<? echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
+<form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
 <input type="hidden" name="page">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -132,7 +132,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><? client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
+												<td width="100%"><?php client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -144,7 +144,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><? project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false); ?></td>
+												<td width="100%"><?php project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -162,23 +162,23 @@ include ("banner.inc");
 							<?php writePageLinks($page, $results_per_page, $num_task_page); ?>
 						</td>
 						<td align="right" nowrap>
-							<? if ($proj_id != 0) { ?>
-							<a href="task_add.php?proj_id=<? echo $proj_id; ?>">Add new task</a>
-							<? } else { ?>
+							<?php if ($proj_id != 0) { ?>
+							<a href="task_add.php?proj_id=<?php echo $proj_id; ?>">Add new task</a>
+							<?php } else { ?>
 								<span class="disabledLink">Add new task</span>
-							<? } ?>
+							<?php } ?>
 						</td>
 					</tr>
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 			<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 				<tr>
 					<td>
 						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-<?
+<?php
 	//execute query
 	list($qh_task, $num_task) = dbQuery($query_task);
 
@@ -207,12 +207,12 @@ include ("banner.inc");
 ?>
 		<tr>
 			<td>
-				<table width="100%" border="0"<? if ($j+1<$num_task) print "class=\"section_body\""; ?>>
+				<table width="100%" border="0"<?php if ($j+1<$num_task) print "class=\"section_body\""; ?>>
 					<tr>
 						<td valign="center">
 							<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
 							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br>
-								<? echo stripslashes($data_task["description"]); ?>
+								<?php echo stripslashes($data_task["description"]); ?>
 						</td>
 						<td align="right" valign="top" nowrap>
 							<span class="label">Actions:</span>
@@ -256,14 +256,14 @@ include ("banner.inc");
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?
+<?php
 include ("footer.inc");
 ?>
 </BODY>

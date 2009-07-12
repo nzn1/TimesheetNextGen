@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 	session_start();
 	require_once("excelwriter.inc.php");
@@ -46,7 +46,7 @@ function format_seconds($seconds) {
 
 		$excel->writeRow();
 
-		foreach($dati as $data){
+		foreach($dati as $data) {
 			if ($last_uid != $data['uid']) {
 				$excel->writeCol(stripslashes("$data[first_name] $data[last_name]"));
 				$last_uid = $data['uid'];
@@ -67,7 +67,7 @@ function format_seconds($seconds) {
 			$excel->writeRow();
 		}
 		$excel->close();
-	}else if ($_GET['type'] == "user"){
+	}else if ($_GET['type'] == "user") {
 		$intestazione=array("Project ","Task","Date","Time");
 
 		$excel->writeLine_orange($intestazione);
@@ -75,7 +75,7 @@ function format_seconds($seconds) {
 
 		$excel->writeRow();
 
-		foreach($dati as $data){
+		foreach($dati as $data) {
 			if ($last_proj_id != $data['proj_id']) {
 				$last_proj_id = $data['proj_id'];
 				if ($grand_total_time) {
@@ -98,7 +98,7 @@ function format_seconds($seconds) {
 			$excel->writeRow();
 		}
 		$excel->close();
-	} else if ($_GET['type'] == "all"){
+	} else if ($_GET['type'] == "all") {
 		$intestazione=array("User Name ","Time","Project - Task");
 
 		$excel->writeLine_orange($intestazione);
@@ -108,7 +108,7 @@ function format_seconds($seconds) {
 
 		$dati_time_data=$_SESSION['excel_data_time_data'];
 
-		foreach($dati as $key=>$data){
+		foreach($dati as $key=>$data) {
 			if ($last_username != $data["username"]) {
 				$last_username = $data["username"];
 				$excel->writeCol("$data[first_name] $data[last_name]");

@@ -1,4 +1,4 @@
-<?
+<?php
 // $Header: /cvsroot/tsheet/timesheet.php/simple_action.php,v 1.2 2005/03/09 01:40:46 vexil Exp $
 
 // Authenticate
@@ -21,10 +21,6 @@ $day = $_POST["day"];
 $startYear = $_POST["startYear"];
 $startMonth = $_POST["startMonth"];
 $startDay = $_POST["startDay"];
-
-//a useful constant
-//already defined in common.inc
-//define("A_DAY", 24 * 60 * 60);
 
 //convert the start date to a timestamp
 $startDate = mktime(0, 0, 0,$startMonth, $startDay, $startYear);

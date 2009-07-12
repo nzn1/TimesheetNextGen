@@ -64,10 +64,10 @@ if (!empty($errormsg)) {
 ?>
 <html>
 <head>
-<title>Change Password for user <? echo $contextUser; ?></title>
+<title>Change Password for user <?php echo $contextUser; ?></title>
 <?php include ("header.inc"); ?>
 </head>
-<body <? include ("body.inc"); ?> >
+<body <?php include ("body.inc"); ?> >
 <?php include ("banner.inc"); ?>
 
 <form action="changepwd.php" method="post">
@@ -78,7 +78,7 @@ if (!empty($errormsg)) {
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -89,7 +89,7 @@ if (!empty($errormsg)) {
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -124,7 +124,7 @@ if (!empty($errormsg)) {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -132,7 +132,7 @@ if (!empty($errormsg)) {
 
 </form>
 
-<?
+<?php
 include ("footer.inc");
 ?>
 </BODY>

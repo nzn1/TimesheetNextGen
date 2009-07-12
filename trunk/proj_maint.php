@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Simple function to replicate PHP 5 behaviour
  */
@@ -95,11 +95,10 @@ function writePageLinks($page, $results_per_page, $num2)
 	}
 }
 ?>
-
 <html>
 <head>
 <title>Projects</title>
-<?
+<?php
 include ("header.inc");
 ?>
 <script language="Javascript" type="text/javascript">
@@ -119,8 +118,8 @@ include ("header.inc");
 	}
 </script>
 </head>
-<body <? include ("body.inc"); ?> >
-<?
+<body <?php include ("body.inc"); ?> >
+<?php
 include ("banner.inc");
 ?>
 
@@ -129,21 +128,19 @@ include ("banner.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
-		<form method="post" name="projectFilter" action="<? echo $_SERVER["PHP_SELF"]; ?>">
+<?php include("timesheet_face_part_1.inc"); ?>
+		<form method="post" name="projectFilter" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
 			<input type="hidden" name="page" value="English">
 			<table width="100%" border="0">
 				<tr>
 					<td width="40%">
-						
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td><table width="50"><tr><td>Client:</td></tr></table></td>
-								<td width="100%"><? client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
-								<td>&nbsp;Status:&nbsp;</td><td><? proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>
+								<td width="100%"><?php client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
+								<td>&nbsp;Status:&nbsp;</td><td><?php proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>
 							</tr>
 						</table>
-						
 					</td>
 					<td align="center" nowrap class="outer_table_heading">
 						Projects
@@ -152,13 +149,13 @@ include ("banner.inc");
 						<?php writePageLinks($page, $results_per_page, $num2);?>
 					</td>
 					<td align="right" nowrap>
-						<a href="proj_add.php?client_id=<? echo $client_id; ?>">Add new project</a>
+						<a href="proj_add.php?client_id=<?php echo $client_id; ?>">Add new project</a>
 					</td>
 				</tr>
 			</table>
 		</form>
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 			<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 				<tr>
@@ -166,6 +163,9 @@ include ("banner.inc");
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 
 <?php
+	//execute the query
+	list($qh, $num) = dbQuery($query);
+
 	//are there any results?
 	if ($num == 0) {
 		if ($client_id != 0)
@@ -175,7 +175,6 @@ include ("banner.inc");
 	}
 	else {
 		//iterate through results
-		//for($j=$start_from; $j<$start_from + 10; $j++) {
 		for($j=0; $j<$num; $j++) {
 			//get the current record
 			$data = dbResult($qh);
@@ -199,7 +198,7 @@ include ("banner.inc");
 ?>
 								<tr>
 									<td>
-										<table width="100%" border="0"<? if ($j+1<$num) print "class=\"section_body\""; ?>>
+										<table width="100%" border="0"<?php if ($j+1<$num) print "class=\"section_body\""; ?>>
 											<tr>
 												<td valign="center">
 <?php
@@ -221,9 +220,9 @@ include ("banner.inc");
 												</td>
 												<td align="right" valign="top" nowrap>
 													<span class="label">Actions:</span>
-													<a href="proj_edit.php?client_id=<? echo $client_id; ?>&proj_id=<?php echo $data["proj_id"]; ?>">Edit</a>,
+													<a href="proj_edit.php?client_id=<?php echo $client_id; ?>&proj_id=<?php echo $data["proj_id"]; ?>">Edit</a>,
 													<a href="project_user_rates_action.php?proj_id=<?php echo $data["proj_id"]; ?>&action=show_users">Bill Rates</a>,
-													<a href="javascript:delete_project(<? echo $client_id; ?>,<?php echo $data["proj_id"]; ?>);">Delete</a>
+													<a href="javascript:delete_project(<?php echo $client_id; ?>,<?php echo $data["proj_id"]; ?>);">Delete</a>
 												</td>
 											</tr>
 											<tr>
@@ -319,12 +318,12 @@ include ("banner.inc");
 			</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 </table>
 
-<?
+<?php
 include ("footer.inc");
 ?>
 </BODY>

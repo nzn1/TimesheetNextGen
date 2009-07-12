@@ -1,4 +1,4 @@
-<?
+<?php
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
@@ -18,12 +18,12 @@ $contextUser = strtolower($_SESSION['contextUser']);
 <HTML>
 <HEAD>
 <title>Client Info</title>
-<?
+<?php
 include ("header.inc");
 ?>
 </HEAD>
-<BODY <? include ("body.inc"); ?> >
-<?
+<BODY <?php include ("body.inc"); ?> >
+<?php
 	$query = "SELECT organisation, description, address1, address2,".
 				"city, country, postal_code, contact_first_name, contact_last_name,".
 				"username, contact_email, phone_number, fax_number, gsm_number, ".

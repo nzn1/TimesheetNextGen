@@ -24,7 +24,7 @@ include("timesheet_menu.inc");
 <HTML>
 <HEAD>
 <title>Client Management Page</title>
-<?
+<?php
 include ("header.inc");
 ?>
 <script language="Javascript">
@@ -36,8 +36,8 @@ include ("header.inc");
 
 </script>
 </HEAD>
-<BODY <? include ("body.inc"); ?> >
-<?
+<BODY <?php include ("body.inc"); ?> >
+<?php
 include ("banner.inc");
 ?>
 <form action="client_action.php" method="post">
@@ -47,7 +47,7 @@ include ("banner.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -61,7 +61,9 @@ include ("banner.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc");
+
+?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -74,7 +76,7 @@ list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE WHERE client_id > 1 ORDER 
 
 //are there any results?
 if ($num == 0) {
-		print "<tr><td align=\"center\" colspan=\"5\"><br>There are currently no clients.<br><br></td></tr>";
+	print "<tr><td align=\"center\" colspan=\"5\"><br>There are currently no clients.<br><br></td></tr>";
 }
 else {
 
@@ -121,14 +123,14 @@ $count = 0;
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?
+<?php
 include ("footer.inc");
 ?>
 </BODY>

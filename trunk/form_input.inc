@@ -1,4 +1,4 @@
-<?{
+<?php
 
 //Include file for date related functions
 
@@ -152,4 +152,4 @@
 		}
 	}
 
-}?>
+?>

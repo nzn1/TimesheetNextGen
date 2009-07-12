@@ -1,4 +1,4 @@
-<?
+<?php
 // Authenticate
 require("class.AuthenticationManager.php");
 if (!$authenticationManager->isLoggedIn()) {

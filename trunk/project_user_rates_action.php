@@ -95,7 +95,7 @@ if ($action == "show_users") {
 
 ?>
 <head><title>Project-User-Rates Management Page</title>
-<?
+<?php
 include ("header.inc");
 ?>
 <script>
@@ -109,32 +109,32 @@ include ("header.inc");
 	}
 </script>
 </head>
-<body <? include ("body.inc"); ?> >
-<?
+<body <?php include ("body.inc"); ?> >
+<?php
 include ("banner.inc");
 ?>
 <form action="project_user_rates_action.php" name="userRateForm" method="post">
 
 	<input type="hidden" name="action" value="">
-	<input type="hidden" name="proj_id" value="<? print $proj_id; ?>">
+	<input type="hidden" name="proj_id" value="<?php print $proj_id; ?>">
 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 		<table width="100%" border="0">
 			<tr>
 			<td align="left" nowrap class="outer_table_heading">
-				Users assigned on <? print "$proj_title ($client_name)"; ?>
+				Users assigned on <?php print "$proj_title ($client_name)"; ?>
 			</td>
 			</tr>
 		</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 		<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 			<tr>
@@ -145,7 +145,7 @@ include ("banner.inc");
 					<td class="inner_table_column_heading">&nbsp;User</td>
 					<td class="inner_table_column_heading">Billing Rate (per hour)</td>
 				</tr>
-<?
+<?php
 
 list($qh,$num) = dbQuery("SELECT rate_id, bill_rate FROM $RATE_TABLE ORDER BY bill_rate");
 
@@ -200,15 +200,15 @@ while ($idx < $len) {
 		</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 
 	</tr>
 	</table>
-	<input type="hidden" name="usercount" value="<? print $len; ?>">
+	<input type="hidden" name="usercount" value="<?php print $len; ?>">
 </form>
-<?
+<?php
 include ("footer.inc");
 ?>
 </body>

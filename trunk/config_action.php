@@ -1,4 +1,4 @@
-<?
+<?php
 // $Header: /cvsroot/tsheet/timesheet.php/config_action.php,v 1.6 2005/02/03 08:06:10 vexil Exp $
 // Authenticate
 require("class.AuthenticationManager.php");

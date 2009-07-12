@@ -1,4 +1,4 @@
-<?
+<?php
 // $Header: /cvsroot/tsheet/timesheet.php/task_info.php,v 1.5 2004/07/02 14:15:56 vexil Exp $
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -43,13 +43,13 @@ $query_project = "SELECT DISTINCT title, description,".
 <html>
 <head>
 <title>Task Info</title>
-<?
+<?php
 include ("header.inc");
 ?>
 </head>
-<body width="100%" height="100%" style="margin: 0px;" <? include ("body.inc"); ?> >
+<body width="100%" height="100%" style="margin: 0px;" <?php include ("body.inc"); ?> >
 <table border="0" width="100%" height="100%" align="center" valign="center">
-<?
+<?php
 
 		list($qh, $num) = dbQuery($query_task);
 		if ($num > 0) {
@@ -63,13 +63,13 @@ include ("header.inc");
 						<td valign="center">
 							<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
 							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br>
-								<? echo stripslashes($data_task["description"]); ?>
+								<?php echo stripslashes($data_task["description"]); ?>
 						</td>
 					</tr>
 					<tr>
 						<td align="left" colspan="2" align="top">
 							<span class="label">Assigned persons:</span><br>
-<?
+<?php
 			//get assigned users
 			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id=$data_task[task_id]");
 			if ($num_3 > 0) {

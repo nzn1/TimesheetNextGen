@@ -1,4 +1,4 @@
-<?
+<?php
 // $Header: /cvsroot/tsheet/timesheet.php/edit.php,v 1.9 2005/02/03 08:06:10 vexil Exp $
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -76,13 +76,13 @@ include("form_input.inc");
 ?>
 <html>
 <head>
-<title>Edit Work Log Record for <? echo $contextUser; ?></title>
+<title>Edit Work Log Record for <?php echo $contextUser; ?></title>
 <?php
 include("header.inc");
 include("client_proj_task_javascript.inc");
 ?>
 </HEAD>
-<BODY <? include ("body.inc"); ?> onload="doOnLoad();">
+<BODY <?php include ("body.inc"); ?> onload="doOnLoad();">
 <?php include ("banner.inc"); ?>
 
 <table width="500" align="center" border="0" cellspacing="0" cellpadding="0">
@@ -90,7 +90,7 @@ include("client_proj_task_javascript.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0" class="table_head">
 					<tr>
@@ -101,18 +101,18 @@ include("client_proj_task_javascript.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
-		<form name="editForm" action="<? echo $_SERVER["PHP_SELF"]; ?>" method="post" id="theForm">
+		<form name="editForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" id="theForm">
 		<input type="hidden" name="year" value="<?echo $year; ?>">
 		<input type="hidden" name="month" value="<?echo $month; ?>">
 		<input type="hidden" name="day" value="<?echo $day; ?>">
 		<input type="hidden" id="client_id" name="client_id" value="<?echo $client_id; ?>">
 		<input type="hidden" id="proj_id" name="proj_id" value="<?echo $proj_id; ?>">
 		<input type="hidden" id="task_id" name="task_id" value="<?echo $task_id; ?>">
-		<input type="hidden" name="trans_num" value="<? echo $trans_num; ?>">
+		<input type="hidden" name="trans_num" value="<?php echo $trans_num; ?>">
 		<input type="hidden" name="action" value="saveChanges" />
 
 		<tr>
@@ -171,19 +171,19 @@ include("client_proj_task_javascript.inc");
 													Start time:
 												</td>
 												<td align="left" nowrap>
-													<? $hourInput = new HourInput("clock_on_time_hour");
+													<?php $hourInput = new HourInput("clock_on_time_hour");
 														$hourInput->create(date("G", $trans_info["start_time"])); ?>
 													:
-													<? $minuteInput = new MinuteInput("clock_on_time_min");
+													<?php $minuteInput = new MinuteInput("clock_on_time_min");
 														$minuteInput->create(date("i", $trans_info["start_time"])); ?>
 													&nbsp;on&nbsp;
-													<? $monthInput = new MonthInput("clock_on_date_month");
+													<?php $monthInput = new MonthInput("clock_on_date_month");
 														$monthInput->create(date("n", $trans_info["start_time"])); ?>
 													,
-													<? $dayInput= new DayInput("clock_on_date_day");
+													<?php $dayInput= new DayInput("clock_on_date_day");
 														$dayInput->create(date("d", $trans_info["start_time"])); ?>
 													&nbsp;
-													<input type="text" name="clock_on_date_year" size="4" value="<? echo date("Y", $trans_info["start_time"]); ?>">
+													<input type="text" name="clock_on_date_year" size="4" value="<?php echo date("Y", $trans_info["start_time"]); ?>">
 												</td>
 												<td align="left">
 													<img src="images/clock-green-sml.gif">
@@ -194,19 +194,19 @@ include("client_proj_task_javascript.inc");
 													End time:
 												</td>
 												<td align="left" nowrap>
-													<? $hourInput = new HourInput("clock_off_time_hour");
+													<?php $hourInput = new HourInput("clock_off_time_hour");
 														$hourInput->create(date("G", $trans_info["end_time"])); ?>
 															:
-													<? $minuteInput = new MinuteInput("clock_off_time_min");
+													<?php $minuteInput = new MinuteInput("clock_off_time_min");
 														$minuteInput->create(date("i", $trans_info["end_time"])); ?>
 													&nbsp;on&nbsp;
-													<? $monthInput = new MonthInput("clock_off_date_month");
+													<?php $monthInput = new MonthInput("clock_off_date_month");
 														$monthInput->create(date("n", $trans_info["end_time"])); ?>
 													,
-													<? $dayInput= new DayInput("clock_off_date_day");
+													<?php $dayInput= new DayInput("clock_off_date_day");
 														$dayInput->create(date("d", $trans_info["end_time"])); ?>
 													&nbsp;
-													<input type="text" name="clock_off_date_year" size="4" value="<? echo date("Y", $trans_info["end_time"]); ?>">
+													<input type="text" name="clock_off_date_year" size="4" value="<?php echo date("Y", $trans_info["end_time"]); ?>">
 												</td>
 												<td align="left">
 													<img src="images/clock-red-sml.gif">
@@ -222,7 +222,7 @@ include("client_proj_task_javascript.inc");
 								</tr>
 								<tr>
 									<td colspan="3" align="center">
-										<textarea name="log_message" cols="60" rows="5" style="width: 100%;"><? echo trim(stripslashes($trans_info["log_message"])); ?></textarea>
+										<textarea name="log_message" cols="60" rows="5" style="width: 100%;"><?php echo trim(stripslashes($trans_info["log_message"])); ?></textarea>
 									</td>
 								</tr>
 								<tr>
@@ -246,7 +246,7 @@ include("client_proj_task_javascript.inc");
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>

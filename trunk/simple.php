@@ -119,8 +119,8 @@ $query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
 ?>
 <html>
 <head>
-<title>Simple Weekly Timesheet for <? echo "$contextUser" ?></title>
-<?
+<title>Simple Weekly Timesheet for <?php echo "$contextUser" ?></title>
+<?php
 include ("header.inc");
 ?>
 <script language="Javascript">
@@ -199,20 +199,20 @@ for ($i=0; $i<$num4; $i++) {
 					clientSelect.options[clientSelect.options.length] = new Option(projectTasksHash[key]['clientName'], projectTasksHash[key]['clientId']);
 					clientId = projectTasksHash[key]['clientId'];
 				}
-				
+
 				if (key == projectId && projectTasksHash[key]['clientId'] == clientId)
 				{
 					populateProjectSelect(i, clientId, key);
 					clientSelect.options[clientSelect.options.length-1].selected = true;
 				}
 			}
-			
+
 			if (projectId != -1) {
 				//add the tasks
 				var thisProjectTasks = projectTasksHash[projectId]['tasks'];
 				for (taskKey in thisProjectTasks) {
 					taskSelect.options[taskSelect.options.length] = new Option(thisProjectTasks[taskKey], taskKey);
-					
+
 					if (taskKey == taskId)
 						taskSelect.options[taskSelect.options.length-1].selected = true;
 				}
@@ -249,12 +249,12 @@ for ($i=0; $i<$num4; $i++) {
 			}
 		}
 	}	
-	
+
 	function clearTaskSelect(row) {
 		taskSelect = document.getElementById('taskSelect_row' + row);
 		for (var i=1; i<taskSelect.options.length; i++)
 			taskSelect.options[i] = null;
-		
+
 		//set the length back to 1
 		taskSelect.options.length = 1;
 
@@ -263,7 +263,7 @@ for ($i=0; $i<$num4; $i++) {
 
 		onChangeTaskSelectRow(row);
 	}
-	
+
 	function clearProjectSelect(row) {
 		projectSelect = document.getElementById('projectSelect_row' + row);
 		for (i=1; i<projectSelect.options.length; i++) {
@@ -309,12 +309,12 @@ for ($i=0; $i<$num4; $i++) {
 			
 			setDirty();
 	}
-	
+
 	function onChangeClientSelect(idStr) {
 		row = rowFromIdStr(idStr);
 		clearProjectSelect(row);
 		clearTaskSelect(row);
-		
+
 		var clientSelect = document.getElementById('clientSelect_row' + row);
 		var clientId = clientSelect.options[clientSelect.selectedIndex].value;
 
@@ -576,28 +576,28 @@ echo ">\n";
 include ("banner.inc");
 ?>
 <form name="theForm" action="simple_action.php" method="post">
-<input type="hidden" name="year" value=<? echo $year; ?>>
-<input type="hidden" name="month" value=<? echo $month; ?>>
-<input type="hidden" name="day" value=<? echo $day; ?>>
-<input type="hidden" name="startYear" value=<? echo $startYear; ?>>
-<input type="hidden" name="startMonth" value=<? echo $startMonth; ?>>
-<input type="hidden" name="startDay" value=<? echo $startDay; ?>>
+<input type="hidden" name="year" value=<?php echo $year; ?>>
+<input type="hidden" name="month" value=<?php echo $month; ?>>
+<input type="hidden" name="day" value=<?php echo $day; ?>>
+<input type="hidden" name="startYear" value=<?php echo $startYear; ?>>
+<input type="hidden" name="startMonth" value=<?php echo $startMonth; ?>>
+<input type="hidden" name="startDay" value=<?php echo $startDay; ?>>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
-							Week Start: <? echo date('D F j, Y',mktime(0,0,0,$startMonth, $startDay, $startYear)); ?>
+							Week Start: <?php echo date('D F j, Y',mktime(0,0,0,$startMonth, $startDay, $startYear)); ?>
 						</td>
 						<td align="right" nowrap>
-							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?proj_id=<?echo $proj_id; ?>&task_id=<? echo $task_id; ?>&year=<?echo $previousWeekYear ?>&month=<? echo $previousWeekMonth ?>&day=<? echo $previousWeekDay ?>" class="outer_table_action">Prev</a>
-							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?proj_id=<? echo $proj_id; ?>&task_id=<? echo $task_id; ?>&year=<? echo $nextWeekYear ?>&month=<? echo $nextWeekMonth ?>&day=<? echo $nextWeekDay ?>" class="outer_table_action">Next</a>
+							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?proj_id=<?echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?echo $previousWeekYear ?>&month=<?php echo $previousWeekMonth ?>&day=<?php echo $previousWeekDay ?>" class="outer_table_action">Prev</a>
+							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?php echo $nextWeekYear ?>&month=<?php echo $nextWeekMonth ?>&day=<?php echo $nextWeekDay ?>" class="outer_table_action">Next</a>
 						</td>
 						<td align="right" nowrap>
 							<input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="true" onClick="validate();" />
@@ -606,7 +606,7 @@ include ("banner.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -680,16 +680,16 @@ include ("banner.inc");
 						case "no work description field":
 							?>
 							<td align="left" style="width:33%;">
-								<input type="hidden" id="client_row<? echo $rowIndex; ?>" name="client_row<? echo $rowIndex; ?>" value="<? echo $clientId; ?>" />
-								<select id="clientSelect_row<? echo $rowIndex; ?>" name="clientSelect_row<? echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
+								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
 							</td>
 							<td align="left" style="width:33%;">
-								<input type="hidden" id="project_row<? echo $rowIndex; ?>" name="project_row<? echo $rowIndex; ?>" value="<? echo $projectId; ?>" />
-								<select id="projectSelect_row<? echo $rowIndex; ?>" name="projectSelect_row<? echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+								<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
+								<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
 							</td>
 							<td align="left" style="width:33%;">
-								<input type="hidden" id="task_row<? echo $rowIndex; ?>" name="task_row<? echo $rowIndex; ?>" value="<? echo $taskId; ?>" />
-								<select id="taskSelect_row<? echo $rowIndex; ?>" name="taskSelect_row<? echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+								<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
+								<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
 							</td>
 							<?php
 							break;
@@ -698,18 +698,18 @@ include ("banner.inc");
 							// big work description field
 							?>
 							<td align="left" style="width:100px;">
-								<input type="hidden" id="client_row<? echo $rowIndex; ?>" name="client_row<? echo $rowIndex; ?>" value="<? echo $clientId; ?>" />
-								<select id="clientSelect_row<? echo $rowIndex; ?>" name="clientSelect_row<? echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
+								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
 							</td>
 							<td align="left" style="width:160px;">
-								<input type="hidden" id="project_row<? echo $rowIndex; ?>" name="project_row<? echo $rowIndex; ?>" value="<? echo $projectId; ?>" />
-								<select id="projectSelect_row<? echo $rowIndex; ?>" name="projectSelect_row<? echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+								<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
+								<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
 								<br/>
-								<input type="hidden" id="task_row<? echo $rowIndex; ?>" name="task_row<? echo $rowIndex; ?>" value="<? echo $taskId; ?>" />
-								<select id="taskSelect_row<? echo $rowIndex; ?>" name="taskSelect_row<? echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+								<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
+								<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
 							</td>
 							<td align="left" style="width:auto;">
-								<textarea rows="2" style="width:100%;" id="description_row<? echo $rowIndex; ?>" name="description_row<? echo $rowIndex; ?>" onKeyUp="onChangeWorkDescription(this.id);"><? echo $workDescription; ?></textarea>
+								<textarea rows="2" style="width:100%;" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onKeyUp="onChangeWorkDescription(this.id);"><?php echo $workDescription; ?></textarea>
 							</td>
 							<?php
 							break;
@@ -719,19 +719,19 @@ include ("banner.inc");
 							// small work description field = default layout
 							?>
 							<td align="left" style="width:100px;">
-								<input type="hidden" id="client_row<? echo $rowIndex; ?>" name="client_row<? echo $rowIndex; ?>" value="<? echo $clientId; ?>" />
-								<select id="clientSelect_row<? echo $rowIndex; ?>" name="clientSelect_row<? echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
+								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
 							</td>
 							<td align="left" style="width:100px;">
-								<input type="hidden" id="project_row<? echo $rowIndex; ?>" name="project_row<? echo $rowIndex; ?>" value="<? echo $projectId; ?>" />
-								<select id="projectSelect_row<? echo $rowIndex; ?>" name="projectSelect_row<? echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+								<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
+								<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
 							</td>
 							<td align="left" style="width:140px;">
-								<input type="hidden" id="task_row<? echo $rowIndex; ?>" name="task_row<? echo $rowIndex; ?>" value="<? echo $taskId; ?>" />
-								<select id="taskSelect_row<? echo $rowIndex; ?>" name="taskSelect_row<? echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+								<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
+								<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
 							</td>
 							<td align="left" style="width:auto;">
-								<input type="text" id="description_row<? echo $rowIndex; ?>" name="description_row<? echo $rowIndex; ?>" onChange="onChangeWorkDescription(this.id);" value="<? echo $workDescription; ?>" style="width: 100%;" />
+								<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onChange="onChangeWorkDescription(this.id);" value="<?php echo $workDescription; ?>" style="width: 100%;" />
 							</td>
 							<?php
 							break;
@@ -1044,7 +1044,7 @@ include ("banner.inc");
 	/////////////////////////////////////////
 
 	printFormRow($count, $layout, -1, -1);
-	
+
 	//store a hidden form field containing the number of existing rows
 	print "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $count . "\" />";
 
@@ -1089,14 +1089,14 @@ include ("banner.inc");
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?
+<?php
 include ("footer.inc");
 ?>
 </body>

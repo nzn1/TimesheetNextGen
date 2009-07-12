@@ -43,7 +43,7 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 <head><title>Report: All hours this month</title>
 <?php include ("header.inc"); ?>
 </head>
-<body <? include ("body.inc"); ?> >
+<body <?php include ("body.inc"); ?> >
 <?php include ("banner.inc"); ?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -51,18 +51,18 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
-						<? echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
+						<?php echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						</td>
 						<td  align="center" >
 						<a href="#" onclick="javascript:esporta('project')" ><img src="images/export_data.gif" name="esporta_dati" border=0></a>
 						</td>
 						<td align="right" nowrap>
-						<?
+						<?php
 							print "<a href=\"$_SERVER[PHP_SELF]?uid=$uid&month=$prev_month&year=$prev_year\" class=\"outer_table_action\">Prev</a>&nbsp;";
 							print "<a HREF=\"$_SERVER[PHP_SELF]?uid=$uid&month=$next_month&year=$next_year\" class=\"outer_table_action\">Next</a>";
 						?>
@@ -71,7 +71,7 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -79,14 +79,14 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 					<tr class="inner_table_head">
 						<td class="inner_table_column_heading">Name</td>
-						<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=username&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Username</a></td>
+						<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"]; ?>?orderby=username&month=<?php echo $month; ?>&year=<?php echo $year; ?>" class="inner_table_column_heading">Username</a></td>
 						<td class="inner_table_column_heading">Hours</td>
 						<td class="inner_table_column_heading">
-							<b><a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=proj_id&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Project</a>&nbsp;/&nbsp;
-							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?orderby=task_id&month=<? echo $month; ?>&year=<? echo $year; ?>" class="inner_table_column_heading">Task</a></b>
+							<b><a href="<?php echo $_SERVER["PHP_SELF"]; ?>?orderby=proj_id&month=<?php echo $month; ?>&year=<?php echo $year; ?>" class="inner_table_column_heading">Project</a>&nbsp;/&nbsp;
+							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?orderby=task_id&month=<?php echo $month; ?>&year=<?php echo $year; ?>" class="inner_table_column_heading">Task</a></b>
 						</td>
 					</tr>
-<?
+<?php
 
 	$query = "SELECT DISTINCT first_name, last_name, $USER_TABLE.username, $PROJECT_TABLE.title, ".
 			"$PROJECT_TABLE.proj_id, $TASK_TABLE.name, $TASK_TABLE.task_id ".
@@ -171,13 +171,13 @@ if (!checkdate($prev_month, 1, $prev_year)) {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
-<?
+<?php
 include ("footer.inc");
 ?>
 </BODY>

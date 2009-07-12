@@ -119,9 +119,9 @@ echo ">\n";
 ?>
 
 <form action="print_report_specific_client.php" method="get">
-<input type="hidden" name="month" value="<? echo $month; ?>">
-<input type="hidden" name="year" value="<? echo $year; ?>">
-<input type="hidden" name="mode" value="<? echo $mode; ?>">
+<input type="hidden" name="month" value="<?php echo $month; ?>">
+<input type="hidden" name="year" value="<?php echo $year; ?>">
+<input type="hidden" name="mode" value="<?php echo $mode; ?>">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -133,13 +133,13 @@ echo ">\n";
 						<td align="left" nowrap>
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
-									<td align="left" width="100%" class="outer_table_heading">Client: <? echo $client_name ?></td>
+									<td align="left" width="100%" class="outer_table_heading">Client: <?php echo $client_name ?></td>
 									
 								</tr>
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<? echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
+						<?php echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						</td>
 						<td align="right" nowrap>
 						</td>
@@ -214,7 +214,7 @@ echo ">\n";
 				</table>
 			</td>
 		</tr>
-<?
+<?php
 	if ($num > 0) {
 ?>
 		<tr>
@@ -229,7 +229,7 @@ echo ">\n";
 		print "Monthly";
 ?>
 							total:
-							<span class="calendar_total_value_monthly"><? echo $formatted_time; ?></span>
+							<span class="calendar_total_value_monthly"><?php echo $formatted_time; ?></span>
 						</td>
 					</tr>
 				</table>
