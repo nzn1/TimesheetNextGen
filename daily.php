@@ -77,8 +77,8 @@ list($num, $qh) = getDailyTimes($month, $day, $year, $contextUser, $proj_id);
 ?>
 <html>
 <head>
-<title>Update timesheet for <? echo $contextUser; ?></title>
-<?
+<title>Update timesheet for <?php echo $contextUser; ?></title>
+<?php
 include("header.inc");
 include("client_proj_task_javascript.inc");
 ?>
@@ -91,8 +91,8 @@ include("client_proj_task_javascript.inc");
 
 </script>
 </HEAD>
-<BODY <? include ("body.inc"); ?> onload="doOnLoad();">
-<?
+<BODY <?php include ("body.inc"); ?> onload="doOnLoad();">
+<?php
 include ("banner.inc");
 ?>
 
@@ -101,7 +101,7 @@ include ("banner.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -109,17 +109,17 @@ include ("banner.inc");
 							Daily Timesheet
 						</td>
 						<td align="left" nowrap class="outer_table_heading">
-							<? echo strftime("%A %B %d, %Y", mktime(0,0,0,$month, $day, $year)); ?>
+							<?php echo strftime("%A %B %d, %Y", mktime(0,0,0,$month, $day, $year)); ?>
 						</td>
 						<td align="right" nowrap>
-							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?month=<? echo date("m",$yesterday); ?>&year=<? echo date("Y",$yesterday); ?>&day=<? echo date("d",$yesterday); ?>&proj_id=<? echo $proj_id; ?>" class="outer_table_action">Prev</a>
-							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?month=<? echo date("m",$tomorrow); ?>&year=<? echo date("Y",$tomorrow); ?>&day=<? echo date("d",$tomorrow); ?>&proj_id=<? echo $proj_id; ?>" class="outer_table_action">Next</a>
+							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?month=<?php echo date("m",$yesterday); ?>&year=<?php echo date("Y",$yesterday); ?>&day=<?php echo date("d",$yesterday); ?>&proj_id=<?php echo $proj_id; ?>" class="outer_table_action">Prev</a>
+							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?month=<?php echo date("m",$tomorrow); ?>&year=<?php echo date("Y",$tomorrow); ?>&day=<?php echo date("d",$tomorrow); ?>&proj_id=<?php echo $proj_id; ?>" class="outer_table_action">Next</a>
 						</td>
 					</tr>
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -133,7 +133,7 @@ include ("banner.inc");
 						<td class="inner_table_column_heading" align="center">Total</td>
 						<td class="inner_table_column_heading" align="center"><i>Actions</i></td>
 					</tr>
-<?
+<?php
 if ($num == 0) {
 	print "	<tr>\n";
 	print "		<td class=\"calendar_cell_middle\"><i>No hours recorded.</i></td>\n";
@@ -258,7 +258,6 @@ else {
 		}
 
 		print "</tr>";
-		// hellowz
 		$count++;
 	}
 	print "<tr>\n";
@@ -276,7 +275,7 @@ else {
 
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -287,7 +286,7 @@ else {
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -298,7 +297,7 @@ else {
 				</table>
 
 <!-- include the timesheet face up until the next start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
@@ -310,8 +309,8 @@ else {
 		<input type="hidden" id="client_id" name="client_id" value="<?echo $client_id; ?>">
 		<input type="hidden" id="proj_id" name="proj_id" value="<?echo $proj_id; ?>">
 		<input type="hidden" id="task_id" name="task_id" value="<?echo $task_id; ?>">
-		<input type="hidden" name="origin" value="<? echo $_SERVER["PHP_SELF"]; ?>">
-		<input type="hidden" name="destination" value="<? echo $_SERVER["PHP_SELF"]; ?>">
+		<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>">
+		<input type="hidden" name="destination" value="<?php echo $_SERVER["PHP_SELF"]; ?>">
 
 		<tr>
 			<td>
@@ -366,21 +365,21 @@ else {
 																<input type="checkbox" name="clock_on_check" id="clock_on_check" onclick="enableClockOn();">Clock on at:
 															</td>
 															<td valign="middle">
-																<? // If the current day is today:
+																<?php // If the current day is today:
 																if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 																	<input type="radio" name="clock_on_radio" value="date" id="clock_on_radio_date" onclick="enableClockOn();" checked>
-																<? endif; ?>
-																<? $hourInput = new HourInput("clock_on_time_hour");
+																<?php endif; ?>
+																<?php $hourInput = new HourInput("clock_on_time_hour");
 																	$hourInput->create(10); ?>
 																:
-																<? $minuteInput = new MinuteInput("clock_on_time_min");
+																<?php $minuteInput = new MinuteInput("clock_on_time_min");
 																	$minuteInput->create(); ?>
 															</td>
 															<td>
 																<img src="images/clock-green-sml.gif" border="0">
 															</td>
 														</tr>
-														<? // If the current day is today:
+														<?php // If the current day is today:
 														if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 														<tr>
 															<td>&nbsp;</td>
@@ -389,7 +388,7 @@ else {
 															</td>
 															<td>&nbsp;</td>
 														</tr>
-														<? endif; ?>
+														<?php endif; ?>
 													</table>
 												</td>
 											</tr>
@@ -401,21 +400,21 @@ else {
 																<input type="checkbox" name="clock_off_check" id="clock_off_check" onclick="enableClockOff();">Clock off at:
 															</td>
 															<td valign="middle">
-																<? // If the current day is today:
+																<?php // If the current day is today:
 																if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 																	<input type="radio" name="clock_off_radio" id="clock_off_radio_date" value="date" onclick="enableClockOff();">
-																<? endif; ?>
-																<? $hourInput = new HourInput("clock_off_time_hour");
+																<?php endif; ?>
+																<?php $hourInput = new HourInput("clock_off_time_hour");
 																	$hourInput->create(17); ?>
 																:
-																<? $minuteInput = new MinuteInput("clock_off_time_min");
+																<?php $minuteInput = new MinuteInput("clock_off_time_min");
 																	$minuteInput->create(); ?>
 															</td>
 															<td>
 																<img src="images/clock-red-sml.gif" border="0">
 															</td>
 														</tr>
-														<? // If the current day is today:
+														<?php // If the current day is today:
 														if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 														<tr>
 															<td>&nbsp;</td>
@@ -424,7 +423,7 @@ else {
 															</td>
 															<td>&nbsp;</td>
 														</tr>
-														<? endif; ?>
+														<?php endif; ?>
 													</table>
 												</td>
 											</tr>
@@ -446,13 +445,13 @@ else {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 			</td>
 		</tr>
 	</table>
 
-<?
+<?php
 include ("footer.inc");
 ?>
 </BODY>

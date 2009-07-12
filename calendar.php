@@ -156,12 +156,12 @@ function print_totals($seconds, $type="", $year, $month, $day) {
 ?>
 <html>
 <head>
-<title>Timesheet for <? echo "$contextUser" ?></title>
-<?
+<title>Timesheet for <?php echo "$contextUser" ?></title>
+<?php
 include ("header.inc");
 ?>
 </head>
-<?
+<?php
 echo "<body width=\"100%\" height=\"100%\"";
 include ("body.inc");
 if (isset($popup))
@@ -169,18 +169,19 @@ if (isset($popup))
 echo ">\n";
 
 include ("banner.inc");
+
 ?>
-<form action="<? echo $_SERVER['PHP_SELF']; ?>" metho="get">
-<input type="hidden" name="month" value=<? echo $month; ?>>
-<input type="hidden" name="year" value=<? echo $year; ?>>
-<input type="hidden" name="task_id" value=<? echo $task_id; ?>>
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" metho="get">
+<input type="hidden" name="month" value=<?php echo $month; ?>>
+<input type="hidden" name="year" value=<?php echo $year; ?>>
+<input type="hidden" name="task_id" value=<?php echo $task_id; ?>>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -191,7 +192,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><? client_select_list($client_id, $contextUser, false, false, true, false, "submit();"); ?></td>
+												<td width="100%"><?php client_select_list($client_id, $contextUser, false, false, true, false, "submit();"); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -203,7 +204,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><? project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); ?></td>
+												<td width="100%"><?php project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -215,24 +216,24 @@ include ("banner.inc");
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-							<? echo date('F Y',mktime(0,0,0,$month, 1, $year)); ?>
+							<?php echo date('F Y', mktime(0,0,0,$month, 1, $year)); ?>
 						</td>
 						<td align="right" nowrap>
-							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?client_id=<? echo $client_id; ?>&proj_id=<? echo $proj_id; ?>&task_id=<? echo $task_id; ?>&year=<? echo $last_year ?>&month=<? echo $last_month ?>&day=<? echo $todayDay; ?>" class="outer_table_action">Prev</a>
-							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?client_id=<? echo $client_id; ?>&proj_id=<? echo $proj_id; ?>&task_id=<? echo $task_id; ?>&year=<? echo $next_year ?>&month=<? echo $next_month ?>&day=<? echo $todayDay; ?>" class="outer_table_action">Next</a>
+							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?client_id=<?php echo $client_id; ?>&proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?php echo $last_year ?>&month=<?php echo $last_month ?>&day=<?php echo $todayDay; ?>" class="outer_table_action">Prev</a>
+							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?client_id=<?php echo $client_id; ?>&proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?php echo $next_year ?>&month=<?php echo $next_month ?>&day=<?php echo $todayDay; ?>" class="outer_table_action">Next</a>
 						</td>
 					</tr>
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 					<tr class="inner_table_head">
-						<?
+						<?php
 						//print the days of the week
 						$currentDayDate = $firstPrintedDate;
 						for ($i=0; $i<7; $i++) {
@@ -243,7 +244,7 @@ include ("banner.inc");
 						?>
 					</tr>
 					<tr>
-<?php {
+<?php
 
 	//define the variable dayCol
 	$dayCol = 0;
@@ -458,7 +459,8 @@ include ("banner.inc");
 	$week_tot_sec = 0;
 	print "</tr>\n<tr>\n";
 	print_totals($tot_sec, "monthly", $year, $month, $day);
-}?>
+
+?>
 					</tr>
 				</table>
 			</td>
@@ -466,14 +468,14 @@ include ("banner.inc");
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?
+<?php
 include ("footer.inc");
 ?>
 </body>

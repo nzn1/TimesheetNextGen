@@ -1,4 +1,4 @@
-<?
+<?php
 // $Header: /cvsroot/tsheet/timesheet.php/trans_info.php,v 1.6 2004/07/04 09:51:07 vexil Exp $
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -43,13 +43,13 @@ $query = "SELECT DATE_FORMAT(start_time, '$dateFormatString') as formattedStartT
 <html>
 <head>
 <title>Task Info</title>
-<?
+<?php
 include ("header.inc");
 ?>
 </head>
-<body width="100%" height="100%" style="margin: 0px;" <? include ("body.inc"); ?> >
+<body width="100%" height="100%" style="margin: 0px;" <?php include ("body.inc"); ?> >
 <table border="0" width="100%" height="100%" align="center" valign="center">
-<?
+<?php
 
 	list($qh, $num) = dbQuery($query);
 	if ($num > 0) {
@@ -81,21 +81,21 @@ include ("header.inc");
 					<tr>
 						<td>
 							<span class="label">Clocked On:</span>
-							<? echo $data["formattedStartTime"]; ?>&nbsp;
+							<?php echo $data["formattedStartTime"]; ?>&nbsp;
 							<span class="label">Clocked Off:</span>
-							<? echo $data["formattedEndTime"]; ?>
+							<?php echo $data["formattedEndTime"]; ?>
 						</td>
 					</tr>
 					<tr>
 						<td>
 							<span class="label">Duration:</span>
-							<? echo formatSeconds($data["time"]); ?>
+							<?php echo formatSeconds($data["time"]); ?>
 						</td>
 					</tr>
 					<tr>
 						<td valign="top" align="left">
 							<span class="label">Log Message:</span>
-								<? echo $data["log_message"]; ?>
+								<?php echo $data["log_message"]; ?>
 						</td>
 					<tr>
 				</table>

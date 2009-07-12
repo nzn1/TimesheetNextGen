@@ -1,4 +1,4 @@
-<?
+<?php
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
@@ -15,13 +15,13 @@ include("timesheet_menu.inc");
 
 ?>
 <head><title>Rates Management Page</title>
-<?
+<?php
 include ("header.inc");
 ?>
 </HEAD>
-<BODY <? include ("body.inc"); ?> >
+<BODY <?php include ("body.inc"); ?> >
 
-<?
+<?php
 include ("banner.inc");
 ?>
 
@@ -30,7 +30,7 @@ include ("banner.inc");
 	<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 		<table width="100%" border="0">
 		<tr>
 			<td align="left" nowrap class="outer_table_heading">
@@ -40,7 +40,7 @@ include ("banner.inc");
 		</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 		<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
@@ -50,7 +50,7 @@ include ("banner.inc");
 				<td class="inner_table_column_heading">&nbsp;Client</td>
 				<td class="inner_table_column_heading">&nbsp;<i>Actions</i></td>
 				</tr>
-<?
+<?php
 
 list($qh,$num) = dbQuery(
 					"SELECT p.proj_id, p.title, c.organisation ".
@@ -81,13 +81,13 @@ while ($data = dbResult($qh)) {
 		</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 	</td>
 	</tr>
 </table>
 
-<?
+<?php
 include ("footer.inc");
 ?>
 </BODY>

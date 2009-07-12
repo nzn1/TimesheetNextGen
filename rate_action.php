@@ -39,7 +39,7 @@ if ($action == "addupdate") {
 		}
 	} else {
 		// a new rate
-		dbquery("insert into $RATE_TABLE (rate_id, bill_rate) values ('', '$bill_rate')");
+		dbquery("insert into $RATE_TABLE (bill_rate) values ('$bill_rate')");
 	}
 } 
 

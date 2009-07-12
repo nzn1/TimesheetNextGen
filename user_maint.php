@@ -1,4 +1,4 @@
-<?
+<?php
 // $Header: /cvsroot/tsheet/timesheet.php/user_maint.php,v 1.7 2005/02/03 09:15:44 vexil Exp $
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -16,7 +16,7 @@ include("timesheet_menu.inc");
 
 ?>
 <head><title>User Management Page</title>
-<?
+<?php
 include ("header.inc");
 ?>
 <script language="javascript">
@@ -65,8 +65,8 @@ include ("header.inc");
 
 </script>
 </HEAD>
-<BODY <? include ("body.inc"); ?> >
-<?
+<BODY <?php include ("body.inc"); ?> >
+<?php
 include ("banner.inc");
 ?>
 <form action="user_action.php" name="userForm" method="post">
@@ -78,7 +78,7 @@ include ("banner.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -89,7 +89,7 @@ include ("banner.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -103,7 +103,7 @@ include ("banner.inc");
 						<td class="inner_table_column_heading">Email Address</td>
 						<td class="inner_table_column_heading"><i>Actions</i></td>
 					</tr>
-<?
+<?php
 
 list($qh,$num) = dbQuery("SELECT * FROM $USER_TABLE WHERE username!='guest' ORDER BY last_name, first_name");
 
@@ -139,7 +139,7 @@ while ($data = dbResult($qh)) {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -150,7 +150,7 @@ while ($data = dbResult($qh)) {
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -161,7 +161,7 @@ while ($data = dbResult($qh)) {
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -201,14 +201,14 @@ while ($data = dbResult($qh)) {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?
+<?php
 include ("footer.inc");
 ?>
 </BODY>

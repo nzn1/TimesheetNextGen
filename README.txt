@@ -1,3 +1,8 @@
+TimesheetNextGen is derived from Timesheet.php.
+Here is the original Readme.txt.
+Not really relevant now.
+
+	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
 PHP Timesheet Program
 (c) 1998,1999 Peter D. Kovacs
 (c) 2002 Dominic J. Gamble, Stratlink.

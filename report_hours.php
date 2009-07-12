@@ -41,15 +41,15 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 <?php include ("banner.inc"); ?>
 
 <form action="report_hours.php" method="get">
-<input type="hidden" name="month" value="<? echo $month; ?>">
-<input type="hidden" name="year" value="<? echo $year; ?>">
+<input type="hidden" name="month" value="<?php echo $month; ?>">
+<input type="hidden" name="year" value="<?php echo $year; ?>">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1.inc"); ?>
 
 			<table width="100%" border="0">
 				<tr>
@@ -58,16 +58,16 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 							<tr>
 								<td align="right" width="0" class="outer_table_heading">User:</td>
 								<td align="left" width="100%">
-									<? user_select_droplist($uid, false); ?>
+									<?php user_select_droplist($uid, false); ?>
 								</td>
 							</tr>
 						</table>
 					</td>
 					<td align="center" nowrap class="outer_table_heading">
-			  			<?	echo date('Y',$time); ?>
+						<?php echo date('Y',$time); ?>
 					</td>
 					<td align="right" nowrap>
-						<?
+						<?php
 						printPrevNext($next_week, $prev_week, $next_month, $prev_month, "uid=$uid", 'yearly');
 						?>
 					</td>
@@ -75,7 +75,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 			</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<? include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -83,7 +83,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 				<tr>
 					<td class="calendar_cell_disabled_right">&nbsp</td>
-<?
+<?php
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$currentMonDate = mktime(0,0,0,$currentMonth,1,$year);
 		$currentMonStr = strftime("%b", $currentMonDate);
@@ -93,8 +93,8 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 					<td class="calendar_cell_disabled_right">&nbsp</td>
 				</tr>
 				<tr><td class="calendar_cell_middle"><b>Hours in month</b></td>
-<?
-	$hours = array( "total" => array("working_hours" => 0));
+<?php
+	$hours = array("total" => array("working_hours" => 0));
 	// Working hours
 	$total = 0;
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
@@ -316,14 +316,14 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<? include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?
+<?php
 include ("footer.inc");
 ?>
 </BODY>
