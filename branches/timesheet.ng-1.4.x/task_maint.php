@@ -24,6 +24,10 @@ if ($client_id != 0) {
 		$proj_id = getValidProjectForClient($client_id);
 }
 
+if (isset($_REQUEST['page']) && $_REQUEST['page'] != 0) { $page  = $_REQUEST['page']; } else { $page=1; }; 
+$results_per_page = getTaskItemsPerPage();
+$start_from = ($page-1) * $results_per_page; 
+
 //set up the required queries
 $query_task = "SELECT DISTINCT task_id, name, description,status, ".
 			"DATE_FORMAT(assigned, '%M %d, %Y') as assigned,".
@@ -32,7 +36,8 @@ $query_task = "SELECT DISTINCT task_id, name, description,status, ".
 			"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
 		"FROM $TASK_TABLE ".
 		"WHERE $TASK_TABLE.proj_id=$proj_id ".
-		"ORDER BY $TASK_TABLE.task_id";
+		"ORDER BY $TASK_TABLE.task_id ".
+		"LIMIT $start_from, $results_per_page";
 
 $query_project = "SELECT DISTINCT title, description,".
 			"DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
@@ -40,6 +45,46 @@ $query_project = "SELECT DISTINCT title, description,".
 			"proj_status, proj_leader ".
 		"FROM $PROJECT_TABLE ".
 		"WHERE $PROJECT_TABLE.proj_id=$proj_id";
+
+function writePageLinks($page, $results_per_page, $num_task_page)
+{
+	//echo "num_task_page: ".$num_task_page.", results_per_page: ".$results_per_page.", page: ".$page;
+	if (($num_task_page/$results_per_page) == (int)($num_task_page/$results_per_page))
+		$numberOfPages = ($num_task_page/$results_per_page);
+	else 
+		$numberOfPages = 1+(int)($num_task_page/$results_per_page);
+	//echo $numberOfPages." =< 1 or ".$num_task_page." equals 0";
+	if($numberOfPages > 1 && $num_task_page != 0)
+	{
+		//echo '<td width="16em" align="right">';
+		if($page > 1)
+			echo '<a href="javascript:change_page(\''.($page-1).'\')">Previous Page</a>';
+		else 
+			echo 'Previous Page';
+		echo ' / ';
+		//echo '</td><td width="19em>"';
+		if ($numberOfPages > $page)
+		 	echo '<a href="javascript:change_page('.($page+1).')">Next Page</a>';
+		else 
+			echo 'Next Page';
+		echo ' ( <b>';
+		echo $page." of ";
+		echo $numberOfPages;
+		echo '</b> )';
+		//echo '</td>';
+	}
+}
+
+$query_task_page = "SELECT DISTINCT task_id, name, description,status, ".
+			"DATE_FORMAT(assigned, '%M %d, %Y') as assigned,".
+			"DATE_FORMAT(started, '%M %d, %Y') as started,".
+			"DATE_FORMAT(suspended, '%M %d, %Y') as suspended,".
+			"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
+		"FROM $TASK_TABLE ".
+		"WHERE $TASK_TABLE.proj_id=$proj_id ".
+		"ORDER BY $TASK_TABLE.task_id ";
+
+list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 ?>
 
 <html>
@@ -57,6 +102,11 @@ include ("header.inc");
 			location.href = 'task_action.php?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
 	}
 
+	function change_page(newPageValue) 
+	{
+		document.changeForm.page.value = newPageValue;
+		document.changeForm.submit(); 
+	}
 </script>
 </head>
 <body <?php include ("body.inc"); ?> >
@@ -65,7 +115,7 @@ include ("banner.inc");
 ?>
 
 <form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
-
+<input type="hidden" name="page">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
@@ -106,7 +156,10 @@ include ("banner.inc");
 							</table>
 						</td>
 						<td align="center" class="outer_table_heading" nowrap>
-							Tasks</td>
+							Tasks
+						</td>
+						<td>
+							<?php writePageLinks($page, $results_per_page, $num_task_page); ?>
 						</td>
 						<td align="right" nowrap>
 							<?php if ($proj_id != 0) { ?>
@@ -193,6 +246,11 @@ include ("banner.inc");
 	}
 ?>
 				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<center><?php writePageLinks($page, $results_per_page, $num_task_page); ?></center>
 			</td>
 		</tr>
 	</table>

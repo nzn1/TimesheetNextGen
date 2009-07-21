@@ -89,7 +89,7 @@ else {
 						<td class="inner_table_column_heading"><i>Actions</i></td>
 					</tr>
 <?php
-
+$count = 0;
 	while ($data = dbResult($qh)) {
 		$organisationField = stripslashes($data["organisation"]);
 		if (empty($organisationField))
@@ -101,7 +101,10 @@ else {
 		$emailField = $data["contact_email"];
 		if (empty($emailField))
 			$emailField = "&nbsp;";
-		print "<tr>";
+		if (($count % 2) == 1)
+			print "<tr class=\"diff\">";
+		else
+			print "<tr>";
 		print "<td class=\"calendar_cell_middle\"><A HREF=\"javascript:void(0)\" ONCLICK=window.open(\"client_info.php?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=240\")>$organisationField</A></TD>";
 		print "<td class=\"calendar_cell_middle\">$contactNameField</td>";
 		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
@@ -110,6 +113,7 @@ else {
 		print "	<a href=\"client_edit.php?client_id=$data[client_id]\">Edit</a>,&nbsp;\n";
 		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>\n";
 		print "</td>\n";
+		$count++;
 	}
 }
 ?>

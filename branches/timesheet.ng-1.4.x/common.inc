@@ -752,7 +752,7 @@ if (!defined("COMMON_INC")) {
 <BODY BGCOLOR="#FFFFFF" >
 <FORM ACTION="clock_action.php" METHOD=POST>
 <TABLE BORDER=1 ALIGN=CENTER>
-	<?{
+	<?php {
 	if ($destination)
 		print "<INPUT TYPE=HIDDEN NAME=destination VALUE=$destination>\n";
 		print "<INPUT TYPE=HIDDEN NAME=check_in_time_hour VALUE=\"$check_in_time_hour\">\n";
@@ -958,6 +958,20 @@ if (!defined("COMMON_INC")) {
 		list($qhq, $numq) = dbQuery("SELECT weekstartday FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["weekstartday"];
+	}
+	
+	function getProjectItemsPerPage() {
+		include ("table_names.inc");
+		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		$configData = dbResult($qhq);
+		return $configData["project_items_per_page"];
+	}
+	
+	function getTaskItemsPerPage() {
+		include ("table_names.inc");
+		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		$configData = dbResult($qhq);
+		return $configData["task_items_per_page"];
 	}
 
 	function getFirstUser() {

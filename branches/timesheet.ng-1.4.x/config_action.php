@@ -23,6 +23,8 @@ $tablehtml = isset($_REQUEST["tablehtml"]) ? $_REQUEST["tablehtml"]: "";
 $locale = isset($_REQUEST["locale"]) ? $_REQUEST["locale"]: "";
 $timezone = isset($_REQUEST["timezone"]) ? $_REQUEST["timezone"]: "";
 $timeformat= isset($_REQUEST["timeformat"]) ? $_REQUEST["timeformat"]: "";
+$projectItemsPerPage = isset($_REQUEST["projectItemsPerPage"]) ? $_REQUEST["projectItemsPerPage"]: "";
+$taskItemsPerPage = isset($_REQUEST["taskItemsPerPage"]) ? $_REQUEST["taskItemsPerPage"]: "";
 $headerReset = isset($_REQUEST["headerReset"]) ? $_REQUEST["headerReset"]: false;
 $bodyReset = isset($_REQUEST["bodyReset"]) ? $_REQUEST["bodyReset"]: false;
 $footerReset = isset($_REQUEST["footerReset"]) ? $_REQUEST["footerReset"]: false;
@@ -33,6 +35,8 @@ $localeReset = isset($_REQUEST["localeReset"]) ? $_REQUEST["localeReset"]: false
 $aclReset = isset($_REQUEST["aclReset"]) ? $_REQUEST["aclReset"]: false;
 $timezoneReset = isset($_REQUEST["timezoneReset"]) ? $_REQUEST["timezoneReset"]: false;
 $timeformatReset = isset($_REQUEST["timeformatReset"]) ? $_REQUEST["timeformatReset"]: false;
+$projectItemsPerPageReset = isset($_REQUEST["projectItemsPerPageReset"]) ? $_REQUEST["projectItemsPerPageReset"]: false;
+$taskItemsPerPageReset = isset($_REQUEST["taskItemsPerPageReset"]) ? $_REQUEST["taskItemsPerPageReset"]: false;
 $useLDAP = isset($_REQUEST["useLDAP"]) ? $_REQUEST["useLDAP"]: false;
 $LDAPFallback = isset( $_REQUEST["LDAPFallback"] ) ? $_REQUEST["LDAPFallback"]: false;
 $LDAPReferrals = isset( $_REQUEST["LDAPReferrals"] ) ? $_REQUEST["LDAPReferrals"]: false;
@@ -86,6 +90,8 @@ elseif ($action == "edit") {
 	$tablehtml = addslashes(unhtmlentities(trim($tablehtml)));
 	$locale = addslashes(unhtmlentities(trim($locale)));
 	$timezone = addslashes(unhtmlentities(trim($timezone)));
+	$projectItemsPerPage = addslashes(unhtmlentities(trim($projectItemsPerPage)));
+	$taskItemsPerPage = addslashes(unhtmlentities(trim($taskItemsPerPage)));
 	$query = "UPDATE $CONFIG_TABLE SET ".
 		"headerhtml='$headerhtml',".
 		"bodyhtml='$bodyhtml',".
@@ -97,6 +103,8 @@ elseif ($action == "edit") {
 		"timezone='$timezone',".
 		"timeformat='$timeformat', ".
 		"weekstartday='$weekstartday', " .
+		"project_items_per_page='$projectItemsPerPage', " .
+		"task_items_per_page='$taskItemsPerPage', " .
 		"useLDAP='$useLDAP', " .
 		"LDAPScheme='$LDAPScheme', " .
 		"LDAPHost='$LDAPHost', " .
@@ -147,6 +155,10 @@ elseif ($action == "edit") {
 		resetConfigValue("timeformat");
 	if ($weekStartDayReset == true)
 		resetConfigValue("weekstartday");
+	if ($projectItemsPerPageReset == true)
+		resetConfigValue("project_items_per_page");
+	if ($taskItemsPerPageReset == true)
+		resetConfigValue("task_items_per_page");
 	if ($aclReset == true)
 	{
 		resetConfigValue("aclStopwatch");

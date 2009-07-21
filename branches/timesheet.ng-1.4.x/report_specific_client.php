@@ -101,6 +101,7 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 						"?month=$month".
 						"&year=$year".
 						"&day=$day".
+						"&mode=$mode".
 						"&client_id=$client_id".
 						"&proj_id=$proj_id".
 						"&destination=$_SERVER[PHP_SELF]".
@@ -118,6 +119,7 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 <form action="report_specific_client.php" method="get">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
+<input type="hidden" name="day" value="<?php echo $day; ?>">
 <input type="hidden" name="mode" value="<?php echo $mode; ?>">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -140,7 +142,12 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<?php echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
+						<?php //echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
+						<?php if ($mode == "weekly")
+								echo date('F d, Y',$time);
+							else
+								echo date('F Y',$time);
+						?>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
 						<?php print "<button $print_popup_href class=\"action_link\">Print Report</button></td>\n"; ?>
