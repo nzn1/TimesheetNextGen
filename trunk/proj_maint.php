@@ -123,6 +123,8 @@ include ("header.inc");
 include ("banner.inc");
 ?>
 
+<form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
@@ -323,6 +325,7 @@ include ("banner.inc");
 		</td>
 </table>
 
+</form>
 <?php
 include ("footer.inc");
 ?>

@@ -303,12 +303,12 @@ else {
 
 		<form action="clock_action.php" method="post" name="addForm" id="theForm">
 		<input type="hidden" name="destination" value="daily">
-		<input type="hidden" name="year" value="<?echo $year; ?>">
-		<input type="hidden" name="month" value="<?echo $month; ?>">
-		<input type="hidden" name="day" value="<?echo $day; ?>">
-		<input type="hidden" id="client_id" name="client_id" value="<?echo $client_id; ?>">
-		<input type="hidden" id="proj_id" name="proj_id" value="<?echo $proj_id; ?>">
-		<input type="hidden" id="task_id" name="task_id" value="<?echo $task_id; ?>">
+		<input type="hidden" name="year" value="<?php echo $year; ?>">
+		<input type="hidden" name="month" value="<?php echo $month; ?>">
+		<input type="hidden" name="day" value="<?php echo $day; ?>">
+		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>">
+		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>">
+		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>">
 		<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>">
 		<input type="hidden" name="destination" value="<?php echo $_SERVER["PHP_SELF"]; ?>">
 

@@ -1,11 +1,11 @@
 #!/bin/sh
 
-TIMESHEET_NEW_VERSION="1.3.1";
-TIMESHEET_LAST_VERSION="1.2.1";
+TIMESHEET_NEW_VERSION="1.4.1";
+TIMESHEET_FIRST_VERSION="1.2.1";
 
 echo "###################################################################"
 echo "# TimesheetNextGen $TIMESHEET_NEW_VERSION "
-echo "# (c) 2008 Tsheetx Development Team                               #"
+echo "# (c) 2008-2009 Tsheetx Development Team                          #"
 echo "###################################################################"
 echo "# This program is free software; you can redistribute it and/or   #"
 echo "# modify it under the terms of the GNU General Public License     #"
@@ -18,13 +18,11 @@ echo "# GNU General Public License for more details.                    #"
 echo "###################################################################"
 
 echo "Welcome to the TimesheetNextGen Installation. This script will attempt to "
-echo "install TimesheetNextGen onto your webserver. This has only been "
-echo "tested under PHP4, MySQL, and Apache. Other configurations may work, and "
-echo "if they do not, any efforts to get them to work would be appreciated."
+echo "install on your webserver."
 echo ""
 echo "If you want to upgrade from a previous version of TimesheetNextGen, please "
 echo "use the upgrade script (upgrade.sh). That script can upgrade versions "
-echo "1.1 thru $TIMESHEET_LAST_VERSION to the current version ($TIMESHEET_NEW_VERSION)"
+echo "$TIMESHEET_FIRST_VERSION to the current version ($TIMESHEET_NEW_VERSION)"
 echo ""
 echo -n "Press 'Enter' to continue installation, 'Ctrl-C' to cancel:"
 read NOTHING
@@ -171,10 +169,10 @@ fi
 sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet.sql
 
 #replace prefix in table_names.inc.in
-sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > table_names.inc
+sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > ../table_names.inc
 
 #replace prefix in sample_data.sql.in
-sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sample_data.sql.in > sample_data.sql
+sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sample_data.sql.in > ../sample_data.sql
 
 echo ""
 echo "TimesheetNextGen installation will now create the necessary tables "
@@ -193,7 +191,7 @@ sed s/__DBHOST__/$DBHOST/g database_credentials.inc.in | \
 sed s/__DBNAME__/$DBNAME/g | \
 sed s/__DBUSER__/$DBUSER/g | \
 sed s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g | \
-sed s/__DBPASS__/$DBPASS/g > database_credentials.inc
+sed s/__DBPASS__/$DBPASS/g > ../database_credentials.inc
 
 echo ""
 echo -n "Where would you like timesheet installed (full path): "
@@ -239,7 +237,7 @@ fi
 
 echo ""
 echo "Installing files..."
-cp *.php *.inc *.html .htaccess $INSTALL_DIR
+cp ../*.php ../*.inc ../*.html ../.htaccess $INSTALL_DIR
 if [ $? != 0 ]; then
 	echo ""
 	echo "There were errors copying the files."
@@ -247,7 +245,7 @@ if [ $? != 0 ]; then
 	echo ""
 	exit 1
 fi
-cp css/*.css $INSTALL_DIR/css/
+cp ../css/*.css $INSTALL_DIR/css/
 if [ $? != 0 ]; then
 	echo ""
 	echo "There was an error copying the css files. "
@@ -255,7 +253,7 @@ if [ $? != 0 ]; then
 	echo ""
 	exit 1
 fi
-cp images/*.gif $INSTALL_DIR/images
+cp ../images/*.gif $INSTALL_DIR/images
 if [ $? != 0 ]; then
 	echo ""
 	echo "There was an error copying the image files."
