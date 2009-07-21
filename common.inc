@@ -752,7 +752,7 @@ if (!defined("COMMON_INC")) {
 <BODY BGCOLOR="#FFFFFF" >
 <FORM ACTION="clock_action.php" METHOD=POST>
 <TABLE BORDER=1 ALIGN=CENTER>
-	<?{
+	<?php {
 	if ($destination)
 		print "<INPUT TYPE=HIDDEN NAME=destination VALUE=$destination>\n";
 		print "<INPUT TYPE=HIDDEN NAME=check_in_time_hour VALUE=\"$check_in_time_hour\">\n";

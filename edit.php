@@ -106,12 +106,12 @@ include("client_proj_task_javascript.inc");
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
 		<form name="editForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" id="theForm">
-		<input type="hidden" name="year" value="<?echo $year; ?>">
-		<input type="hidden" name="month" value="<?echo $month; ?>">
-		<input type="hidden" name="day" value="<?echo $day; ?>">
-		<input type="hidden" id="client_id" name="client_id" value="<?echo $client_id; ?>">
-		<input type="hidden" id="proj_id" name="proj_id" value="<?echo $proj_id; ?>">
-		<input type="hidden" id="task_id" name="task_id" value="<?echo $task_id; ?>">
+		<input type="hidden" name="year" value="<?php echo $year; ?>">
+		<input type="hidden" name="month" value="<?php echo $month; ?>">
+		<input type="hidden" name="day" value="<?php echo $day; ?>">
+		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>">
+		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>">
+		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>">
 		<input type="hidden" name="trans_num" value="<?php echo $trans_num; ?>">
 		<input type="hidden" name="action" value="saveChanges" />
 
