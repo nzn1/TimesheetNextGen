@@ -98,7 +98,14 @@ $grand_total_time = 0;
 <title>Report: Hours for a specific project</title>
 <?php include ("header.inc"); ?>
 </head>
-<body <?php include ("body.inc"); ?> >
+<?php
+echo "<body width=\"100%\" height=\"100%\"";
+include ("body.inc");
+
+echo "onLoad=window.print();";
+echo ">\n";
+
+?>
 
 <form action="report_specific_project.php" method="get">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
