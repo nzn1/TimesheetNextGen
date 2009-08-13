@@ -93,6 +93,12 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 						</td>
 					</tr>
 					<tr>
+						<td class="calendar_cell_middle">Summary of hours worked for a client by a specific user</td>
+						<td class="calendar_cell_disabled_right">
+							<a href="report_summary_client_user.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=monthly">Generate monthly</a> /
+						</td>
+					</tr>
+					<tr class="diff">
 						<td class="calendar_cell_middle">Hours worked by all users on all projects</td>
 						<td class="calendar_cell_disabled_right">
 							<a href="report_all.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=monthly">Generate monthly</a>
@@ -103,7 +109,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 						<td class="inner_table_column_heading">Attendance Reports</td>
 						<td class="inner_table_column_heading">Actions</td>
 					</tr>
-					<tr>
+					<tr class="diff">
 						<td class="calendar_cell_middle">Absence Report</td>
 						<td class="calendar_cell_disabled_right">
 							<a href="report_absences.php?month=<?php print $month; ?>&year=<?php print $year; ?>">Generate monthly</a>
