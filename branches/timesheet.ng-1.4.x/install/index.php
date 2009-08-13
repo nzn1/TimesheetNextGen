@@ -524,11 +524,12 @@ function create_tables($db_host, $db_name, $db_user, $db_pass, $db_prefix) {
 
 	$contents = file_get_contents('timesheet.sql.in');
 	// finalise the file
-	$key_words = array("__TIMESHEET_VERSION__", "__TABLE_PREFIX__", "__DBPASSWORDFUNCTION__");
+	$key_words = array('__TIMESHEET_VERSION__', '__TABLE_PREFIX__', '__DBPASSWORDFUNCTION__');
 	$key_values = array(INSTALLER_VERSION, $db_prefix, $db_pass_func);
 	$contents = str_replace($key_words, $key_values, $contents);
 
-	$queries = preg_split("/;+(?=([^'|^\\']*['|\\'][^'|^\\']*['|\\'])*[^'|^\\']*[^'|^\\']$)/", $contents);
+	//regex is a mess: $queries = preg_split("/;+(?=([^'|^\\']*['|\\'][^'|^\\']*['|\\'])*[^'|^\\']*[^'|^\\']$)/", $contents);
+	$queries = preg_split("#(;\s*\n)|(;\s*\r\n)#", $contents);
 	foreach ($queries as $sql) {
 		if (strlen(trim($sql)) > 0) {
 			if(!mysql_query($sql)) {

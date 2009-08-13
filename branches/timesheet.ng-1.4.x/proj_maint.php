@@ -123,8 +123,6 @@ include ("header.inc");
 include ("banner.inc");
 ?>
 
-<form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
-
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
@@ -165,9 +163,6 @@ include ("banner.inc");
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 
 <?php
-	//execute the query
-	list($qh, $num) = dbQuery($query);
-
 	//are there any results?
 	if ($num == 0) {
 		if ($client_id != 0)
@@ -325,7 +320,6 @@ include ("banner.inc");
 		</td>
 </table>
 
-</form>
 <?php
 include ("footer.inc");
 ?>
