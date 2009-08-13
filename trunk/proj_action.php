@@ -38,7 +38,7 @@ if (!isset($action)) {
 elseif ($action == "add") {
 	// Do add type things in here, then send back to proj_maint.php.
 	// No error checking for now.
-	if (!checkdate($end_month, $end_day, $end_year) || ! checkdate($start_month, $start_day, $start_year)) {
+	if ((!checkdate($end_month, $end_day, $end_year)) || (!checkdate($start_month, $start_day, $start_year))) {
 		if (($start_day != 0 && $start_month != 0 && $start_year != 0) || ($end_day != 0 && $end_month != 0 && $end_year != 0))
 				errorPage("ERROR: Invalid date.  Please fix.\n");
 	}
@@ -82,8 +82,10 @@ elseif ($action == "add") {
 elseif ($action == "edit") {
 	// Do add type things in here, then send back to proj_maint.php.
 	// No error checking for now.
-	if ((! checkdate($end_month, $end_day, $end_year)) || (! checkdate($start_month, $start_day, $start_year)))
-		errorPage("ERROR: Invalid date.  Please fix.\n");
+	if ((!checkdate($end_month, $end_day, $end_year)) || (!checkdate($start_month, $start_day, $start_year))) {
+		if (($start_day != 0 && $start_month != 0 && $start_year != 0) || ($end_day != 0 && $end_month != 0 && $end_year != 0))
+			errorPage("ERROR: Invalid date.  Please fix.\n");
+	}
 
 /*	$title = addslashes($title);
 	$description = addslashes($description);
