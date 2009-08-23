@@ -123,8 +123,11 @@ setReportDate($start_year, $start_month, $start_day_tmp, $next_week, $prev_week,
 // if exporting data to excel, print appropriate headers. Ensure the numbers written in the spreadsheet
 // are in H.F format rather than HH:MI
 if($export_excel){
+	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+	header("Cache-Control: public");
 	header("Content-type: application/vnd.ms-excel");
-	header("Content-disposition: attachment; filename=Timesheet_" . date("Y-m").".xls");
+	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+	header("Pragma: no-cache"); 
 	$time_format_mode = 'integer';
 }
 else
@@ -133,7 +136,7 @@ else
 ?>
 <html>
 <head>
-<title>Report: Timesheet Summary, <?php date('F Y')?></title>
+<title>Report: Timesheet Summary, <?php echo date('F Y');?></title>
 <?php if(!$export_excel){include ("header.inc");} ?>
 	<style type="text/css">
 		/*
@@ -308,8 +311,8 @@ $query = "  SELECT DATE_FORMAT(t.start_time, '%Y/%m/%d') AS starting_date,
 			WHERE p.client_id='$client_id'
 			AND   t.uid='$uid'
 			AND   t.end_time   >  0
-			AND   t.start_time >= '$start_year-$start_month-1'
-			AND   t.start_time <  '".date('Y-m-1 00:00:00',$next_month)."'
+			AND   t.start_time >= '$start_year-$start_month-$start_day'
+			AND   t.start_time <=  '$end_year-$end_month-$end_day'
 			GROUP BY starting_date, t.proj_id, p.title, s.task_id, s.name
 			ORDER BY starting_date, p.title";
 
