@@ -17,7 +17,7 @@ form { margin: 0px; }
 
 .heading { font-size: 14; font-family: Arial, sans-serif; font-weight: bold; color:#001061; text-transform: uppercase; }
 .heading_left { padding-left:7; padding-right:7; width:270; 
-/*	FILTER: DropShadow(Color=#000000, OffX=2, OffY=2, Positive=1);*/
+	FILTER: DropShadow(Color=#000000, OffX=2, OffY=2, Positive=1);
 	font-size: 14; font-family: Arial, sans-serif; font-weight: bold; color:#E2ECFF; text-transform: uppercase; }
 
 
@@ -145,5 +145,3 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 	
 .calendar_delete_cell a:link, .calendar_delete_cell a:visited {
 	color:#e04040; }
-tr.diff td { background:#C4C4C4; }
-	

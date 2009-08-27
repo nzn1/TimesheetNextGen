@@ -84,7 +84,7 @@ list($num, $qh) = getDailyTimes($month, $day, $year, $contextUser, $proj_id);
 ?>
 <html>
 <head>
-<title>Update timesheet for <?php echo $contextUser; ?></title>
+<title>Update timesheet for <? echo $contextUser; ?></title>
 <?php
 include("header.inc");
 include("client_proj_task_javascript.inc");
@@ -114,13 +114,13 @@ function resizePopupWindow() {
 
 </script>
 </HEAD>
-<body style="margin: 0; padding: 0;" class="face_padding_cell" <?php include ("body.inc"); ?> onload="doOnLoad();">
+<body style="margin: 0; padding: 0;" class="face_padding_cell" <? include ("body.inc"); ?> onload="doOnLoad();">
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
 		<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -128,25 +128,25 @@ function resizePopupWindow() {
 							Clock On / Off
 						</td>
 						<td align="right" nowrap class="outer_table_heading">
-							<?php echo strftime("%A %B %d, %Y", mktime(0,0,0,$month, $day, $year)); ?>
+							<? echo strftime("%A %B %d, %Y", mktime(0,0,0,$month, $day, $year)); ?>
 						</td>
 					</tr>
 				</table>
 
 <!-- include the timesheet face up until the next start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<form action="clock_action.php" method="post" name="addForm" id="theForm">
-		<input type="hidden" name="year" value="<?php echo $year; ?>">
-		<input type="hidden" name="month" value="<?php echo $month; ?>">
-		<input type="hidden" name="day" value="<?php echo $day; ?>">
-		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>">
-		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>">
-		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>">
+		<input type="hidden" name="year" value="<?echo $year; ?>">
+		<input type="hidden" name="month" value="<?echo $month; ?>">
+		<input type="hidden" name="day" value="<?echo $day; ?>">
+		<input type="hidden" id="client_id" name="client_id" value="<?echo $client_id; ?>">
+		<input type="hidden" id="proj_id" name="proj_id" value="<?echo $proj_id; ?>">
+		<input type="hidden" id="task_id" name="task_id" value="<?echo $task_id; ?>">
 		<input type="hidden" name="fromPopupWindow" value="true">
-		<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>">
-		<input type="hidden" name="destination" value="<?php echo $destination; ?>">
+		<input type="hidden" name="origin" value="<? echo $_SERVER["PHP_SELF"]; ?>">
+		<input type="hidden" name="destination" value="<? echo $destination; ?>">
 		<tr>
 			<td>
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
@@ -200,21 +200,21 @@ function resizePopupWindow() {
 																<input type="checkbox" name="clock_on_check" id="clock_on_check" onclick="enableClockOn();">Clock on at:
 															</td>
 															<td valign="middle">
-																<?php // If the current day is today:
+																<? // If the current day is today:
 																if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 																	<input type="radio" name="clock_on_radio" id="clock_on_radio_date" value="date" onclick="enableClockOn();" checked>
-																<?php endif; ?>
-																<?php $hourInput = new HourInput("clock_on_time_hour");
+																<? endif; ?>
+																<? $hourInput = new HourInput("clock_on_time_hour");
 																	$hourInput->create(10); ?>
 																:
-																<?php $minuteInput = new MinuteInput("clock_on_time_min");
+																<? $minuteInput = new MinuteInput("clock_on_time_min");
 																	$minuteInput->create(); ?>
 															</td>
 															<td>
 																<img src="images/clock-green-sml.gif" border="0">
 															</td>
 														</tr>
-														<?php // If the current day is today:
+														<? // If the current day is today:
 														if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 														<tr>
 															<td>&nbsp;</td>
@@ -223,7 +223,7 @@ function resizePopupWindow() {
 															</td>
 															<td>&nbsp;</td>
 														</tr>
-														<?php endif; ?>
+														<? endif; ?>
 													</table>
 												</td>
 											</tr>
@@ -235,21 +235,21 @@ function resizePopupWindow() {
 																<input type="checkbox" name="clock_off_check" id="clock_off_check" onclick="enableClockOff();">Clock off at:
 															</td>
 															<td valign="middle">
-																<?php // If the current day is today:
+																<? // If the current day is today:
 																if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 																	<input type="radio" name="clock_off_radio" id="clock_off_radio_date" value="date" onclick="enableClockOff();">
-																<?php endif; ?>
-																<?php $hourInput = new HourInput("clock_off_time_hour");
+																<? endif; ?>
+																<? $hourInput = new HourInput("clock_off_time_hour");
 																	$hourInput->create(17); ?>
 																:
-																<?php $minuteInput = new MinuteInput("clock_off_time_min");
+																<? $minuteInput = new MinuteInput("clock_off_time_min");
 																	$minuteInput->create(); ?>
 															</td>
 															<td>
 																<img src="images/clock-red-sml.gif" border="0">
 															</td>
 														</tr>
-														<?php // If the current day is today:
+														<? // If the current day is today:
 														if (($year == date('Y')) && ($month == date('m')) && ($day == date('j'))): ?>
 														<tr>
 															<td>&nbsp;</td>
@@ -258,7 +258,7 @@ function resizePopupWindow() {
 															</td>
 															<td>&nbsp;</td>
 														</tr>
-														<?php endif; ?>
+														<? endif; ?>
 													</table>
 												</td>
 											</tr>
@@ -280,7 +280,7 @@ function resizePopupWindow() {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 			</td>
 		</tr>

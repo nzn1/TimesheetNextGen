@@ -30,7 +30,7 @@ if ($proj_id == 0)
 ?>
 <html>
 <head>
-	<title><?php echo $contextUser; ?> Stopwatch</title>
+	<title><? echo $contextUser; ?> Stopwatch</title>
 <?php
 include ("header.inc");
 include("client_proj_task_javascript.inc");
@@ -66,14 +66,14 @@ function resizePopupWindow() {
 
 </script>
 </head>
-<body style="margin: 0;"  class="face_padding_cell" <?php include ("body.inc"); ?> onload="doOnLoad();">
+<body style="margin: 0;"  class="face_padding_cell" <? include ("body.inc"); ?> onload="doOnLoad();">
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
 		<tr>
 			<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -84,21 +84,21 @@ function resizePopupWindow() {
 				</table>
 
 <!-- include the timesheet face up until the next start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
 		<form action="clock_action.php" method="post" name="mainForm" id="theForm">
-		<input type="hidden" name="year" value="<?php echo date('Y'); ?>">
-		<input type="hidden" name="month" value="<?php echo date('m'); ?>">
-		<input type="hidden" name="day" value="<?php echo date('j'); ?>">
-		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>">
-		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>">
-		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>">
+		<input type="hidden" name="year" value="<? echo date('Y'); ?>">
+		<input type="hidden" name="month" value="<? echo date('m'); ?>">
+		<input type="hidden" name="day" value="<? echo date('j'); ?>">
+		<input type="hidden" id="client_id" name="client_id" value="<? echo $client_id; ?>">
+		<input type="hidden" id="proj_id" name="proj_id" value="<? echo $proj_id; ?>">
+		<input type="hidden" id="task_id" name="task_id" value="<? echo $task_id; ?>">
 		<input type="hidden" name="clockonoff" value="">
 		<input type="hidden" name="fromPopupWindow" value="true">
-		<input type="hidden" name="destination" value="<?php echo $destination; ?>">
-		<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>">
+		<input type="hidden" name="destination" value="<? echo $destination; ?>">
+		<input type="hidden" name="origin" value="<? echo $_SERVER["PHP_SELF"]; ?>">
 
 		<tr>
 			<td>
@@ -172,7 +172,7 @@ function resizePopupWindow() {
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 			</td>
 		</tr>

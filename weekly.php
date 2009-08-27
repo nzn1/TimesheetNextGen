@@ -125,7 +125,7 @@ $query .=
 ?>
 <html>
 <head>
-<title>Weekly Timesheet for <?php echo "$contextUser" ?></title>
+<title>Weekly Timesheet for <? echo "$contextUser" ?></title>
 <?php
 include ("header.inc");
 ?>
@@ -139,18 +139,18 @@ echo ">\n";
 
 include ("banner.inc");
 ?>
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-<input type="hidden" name="month" value=<?php echo $month; ?>>
-<input type="hidden" name="year" value=<?php echo $year; ?>>
-<input type="hidden" name="day" value=<?php echo $day; ?>>
-<input type="hidden" name="task_id" value=<?php echo $task_id; ?>>
+<form action="<? echo $_SERVER['PHP_SELF']; ?>" method="get">
+<input type="hidden" name="month" value=<? echo $month; ?>>
+<input type="hidden" name="year" value=<? echo $year; ?>>
+<input type="hidden" name="day" value=<? echo $day; ?>>
+<input type="hidden" name="task_id" value=<? echo $task_id; ?>>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -161,7 +161,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><?php client_select_list($client_id, $contextUser, false, false, true, false, "submit();"); ?></td>
+												<td width="100%"><? client_select_list($client_id, $contextUser, false, false, true, false, "submit();"); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -173,7 +173,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><?php project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); ?></td>
+												<td width="100%"><? project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -185,17 +185,17 @@ include ("banner.inc");
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-							Week Start: <?php echo date('D F j, Y',mktime(0,0,0,$startMonth, $startDay, $startYear)); ?>
+							Week Start: <? echo date('D F j, Y',mktime(0,0,0,$startMonth, $startDay, $startYear)); ?>
 						</td>
 						<td align="right" nowrap>
-							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?php echo $previousWeekYear ?>&month=<?php echo $previousWeekMonth ?>&day=<?php echo $previousWeekDay ?>" class="outer_table_action">Prev</a>
-							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?php echo $nextWeekYear ?>&month=<?php echo $nextWeekMonth ?>&day=<?php echo $nextWeekDay ?>" class="outer_table_action">Next</a>
+							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?proj_id=<?echo $proj_id; ?>&task_id=<? echo $task_id; ?>&year=<?echo $previousWeekYear ?>&month=<? echo $previousWeekMonth ?>&day=<? echo $previousWeekDay ?>" class="outer_table_action">Prev</a>
+							<a href="<? echo $_SERVER["PHP_SELF"]; ?>?proj_id=<? echo $proj_id; ?>&task_id=<? echo $task_id; ?>&year=<? echo $nextWeekYear ?>&month=<? echo $nextWeekMonth ?>&day=<? echo $nextWeekDay ?>" class="outer_table_action">Next</a>
 						</td>
 					</tr>
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -215,7 +215,7 @@ include ("banner.inc");
 ?>
 						</td>
 						<td align="center">&nbsp;</td>
-						<?php
+						<?
 						//print the days of the week
 						$currentDayDate = $startDate;
 						for ($i=0; $i<7; $i++) {
@@ -607,14 +607,14 @@ include ("banner.inc");
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
+<?
 include ("footer.inc");
 ?>
 </body>

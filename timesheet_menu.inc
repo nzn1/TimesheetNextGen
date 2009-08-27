@@ -1,4 +1,4 @@
-<?php
+<?
 
 //load local vars from superglobals
 $year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: (int)date("Y");

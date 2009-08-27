@@ -95,7 +95,7 @@ if (!defined("COMMON_INC")) {
 				$data["end_time"] = strtotime($data["end_time_str"]);
 
 				if ($data["start_time"] < mktime(0,0,0,$start_month,$start_day,$start_year))
-					$worked_sec += $data["end_time"] - mktime(0,0,0,$start_month,$start_day,$start_year);
+					$total_sec += $data["end_time"] - mktime(0,0,0,$start_month,$start_day,$start_year);
 				if ($data["end_time"] > mktime(23,59,59,$end_month,$end_day,$end_year))
 					$worked_sec += mktime(23,59,59,$end_month,$end_day,$end_year) - $data["start_time"];
 				else
@@ -463,7 +463,7 @@ if (!defined("COMMON_INC")) {
 			}
 			if ($printComma)
 				print ", ";*/
-			print "$result[organisation]</option>\n";
+			print "$result[organisation]</OPTION>\n";
 		}
 		print "</select>";
 	}
@@ -647,29 +647,27 @@ if (!defined("COMMON_INC")) {
 
 	function acl_select_droplist($id, $selected='', $disabled='false') {
 ?>
-	<select name="<?php echo $id; ?>" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
-	<option value="Admin" <?php if ($selected== 'Admin') echo 'selected'?>>Admin</option>
-	<option value="Mgr" <?php if ($selected== 'Mgr') echo 'selected'?>>Mgr</option>
-	<option value="Basic" <?php if ($selected== 'Basic') echo 'selected'?>>Basic</option>
-	<option value="None" <?php if ($selected== 'None') echo 'selected'?>>None</option>
+	<select name="<? echo $id; ?>" id="<? echo $id; ?>" <? if ($disabled=='true') echo 'readonly'?>>
+	<option value="Admin" <? if ($selected== 'Admin') echo 'selected'?>>Admin</option>
+	<option value="Mgr" <? if ($selected== 'Mgr') echo 'selected'?>>Mgr</option>
+	<option value="Basic" <? if ($selected== 'Basic') echo 'selected'?>>Basic</option>
+	<option value="None" <? if ($selected== 'None') echo 'selected'?>>None</option>
 	</select>
-<?php
-	}
+<?	}
 
 	function absence_select_droplist($selected='', $disabled='false', $id) {
 ?>
-	<SELECT NAME="<?php echo $id; ?>" onChange="OnChange()" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
-	<OPTION VALUE="" <?php if ($selected == '') echo 'SELECTED'?>></OPTION>
-	<OPTION VALUE="Holiday" <?php if ($selected== 'Holiday') echo 'SELECTED'?>>Holiday</OPTION>
-	<OPTION VALUE="Sick" <?php if ($selected== 'Sick') echo 'SELECTED'?>>Sick</OPTION>
-	<OPTION VALUE="Military" <?php if ($selected== 'Military') echo 'SELECTED'?>>Mil/Civ</OPTION>
-	<OPTION VALUE="Training" <?php if ($selected== 'Training') echo 'SELECTED'?>>Training</OPTION>
-	<OPTION VALUE="Compensation" <?php if ($selected== 'Compensation') echo 'SELECTED'?>>Compensation</OPTION>
-	<OPTION VALUE="Other" <?php if ($selected== 'Other') echo 'SELECTED'?>>Other</OPTION>
-	<OPTION VALUE="Public" <?php if ($selected== 'Public') echo 'SELECTED'?>>Public</OPTION>
+	<SELECT NAME="<? echo $id; ?>" onChange="OnChange()" id="<? echo $id; ?>" <? if ($disabled=='true') echo 'readonly'?>>
+	<OPTION VALUE="" <? if ($selected == '') echo 'SELECTED'?>></OPTION>
+	<OPTION VALUE="Holiday" <? if ($selected== 'Holiday') echo 'SELECTED'?>>Holiday</OPTION>
+	<OPTION VALUE="Sick" <? if ($selected== 'Sick') echo 'SELECTED'?>>Sick</OPTION>
+	<OPTION VALUE="Military" <? if ($selected== 'Military') echo 'SELECTED'?>>Mil/Civ</OPTION>
+	<OPTION VALUE="Training" <? if ($selected== 'Training') echo 'SELECTED'?>>Training</OPTION>
+	<OPTION VALUE="Compensation" <? if ($selected== 'Compensation') echo 'SELECTED'?>>Compensation</OPTION>
+	<OPTION VALUE="Other" <? if ($selected== 'Other') echo 'SELECTED'?>>Other</OPTION>
+	<OPTION VALUE="Public" <? if ($selected== 'Public') echo 'SELECTED'?>>Public</OPTION>
 	</SELECT>
-<?php
-	}
+<?	}
 
 	function client_select_droplist($client_id=1, $disabled='false') {
 		include("table_names.inc");
@@ -752,7 +750,7 @@ if (!defined("COMMON_INC")) {
 <BODY BGCOLOR="#FFFFFF" >
 <FORM ACTION="clock_action.php" METHOD=POST>
 <TABLE BORDER=1 ALIGN=CENTER>
-	<?php {
+	<?{
 	if ($destination)
 		print "<INPUT TYPE=HIDDEN NAME=destination VALUE=$destination>\n";
 		print "<INPUT TYPE=HIDDEN NAME=check_in_time_hour VALUE=\"$check_in_time_hour\">\n";
@@ -784,30 +782,18 @@ if (!defined("COMMON_INC")) {
 </FORM>
 </BODY>
 </HTML>
-<?php
+<?
 	}
 
 	function proj_status_list($name, $status='') {
 ?>
-	<SELECT NAME=<?php echo $name ?>>
-	<OPTION VALUE="Pending" <?php if ($status == 'Pending') echo 'SELECTED'?>>Pending</OPTION>
-	<OPTION VALUE="Started" <?php if ($status == 'Started') echo 'SELECTED'?>>Started</OPTION>
-	<OPTION VALUE="Suspended" <?php if ($status == 'Suspended') echo 'SELECTED'?>>Suspended</OPTION>
-	<OPTION VALUE="Complete" <?php if ($status == 'Complete') echo 'SELECTED'?>>Complete</OPTION>
+	<SELECT NAME=<? echo $name ?>>
+	<OPTION VALUE="Pending" <? if ($status == 'Pending') echo 'SELECTED'?>>Pending</OPTION>
+	<OPTION VALUE="Started" <? if ($status == 'Started') echo 'SELECTED'?>>Started</OPTION>
+	<OPTION VALUE="Suspended" <? if ($status == 'Suspended') echo 'SELECTED'?>>Suspended</OPTION>
+	<OPTION VALUE="Complete" <? if ($status == 'Complete') echo 'SELECTED'?>>Complete</OPTION>
 	</SELECT>
-<?php
-	}	
-	
-	function proj_status_list_filter($name, $status='', $onChange='submit();') {
-?>
-	<SELECT NAME=<?php echo $name ?> onChange="<?php echo $onChange?>" >
-	<OPTION VALUE="All" <?php if ($status == 'All') echo 'SELECTED'?>>All</OPTION>
-	<OPTION VALUE="Pending" <?php if ($status == 'Pending') echo 'SELECTED'?>>Pending</OPTION>
-	<OPTION VALUE="Started" <?php if ($status == 'Started') echo 'SELECTED'?>>Started</OPTION>
-	<OPTION VALUE="Suspended" <?php if ($status == 'Suspended') echo 'SELECTED'?>>Suspended</OPTION>
-	<OPTION VALUE="Complete" <?php if ($status == 'Complete') echo 'SELECTED'?>>Complete</OPTION>
-	</SELECT>
-<?php
+<?
 	}
 
 
@@ -871,11 +857,11 @@ if (!defined("COMMON_INC")) {
 						function loadAndClose() {
 							if (window.opener.closed) {
 								//create a new window
-								window.open("<?php echo $targetWindowLocation; ?>", "newMainWindow");
+								window.open("<? echo $targetWindowLocation; ?>", "newMainWindow");
 							}
 							else {
 								//get the main window's location and store it as the destination
-								var targetWindowLocation = "<?php echo $targetWindowLocation; ?>";
+								var targetWindowLocation = "<? echo $targetWindowLocation; ?>";
 								var mainWindowLocation = window.opener.location.href;
 								var questionPos = mainWindowLocation.indexOf('?');
 								if (questionPos != -1)
@@ -907,7 +893,7 @@ if (!defined("COMMON_INC")) {
 					You do not have javascript enabled. Javascript is required for TimesheetNextGen
 				</body>
 			</html>
-		<?php
+		<?
 		exit;
 	}
 
@@ -958,20 +944,6 @@ if (!defined("COMMON_INC")) {
 		list($qhq, $numq) = dbQuery("SELECT weekstartday FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["weekstartday"];
-	}
-	
-	function getProjectItemsPerPage() {
-		include ("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		return $configData["project_items_per_page"];
-	}
-	
-	function getTaskItemsPerPage() {
-		include ("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		return $configData["task_items_per_page"];
 	}
 
 	function getFirstUser() {

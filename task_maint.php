@@ -24,10 +24,6 @@ if ($client_id != 0) {
 		$proj_id = getValidProjectForClient($client_id);
 }
 
-if (isset($_REQUEST['page']) && $_REQUEST['page'] != 0) { $page  = $_REQUEST['page']; } else { $page=1; }; 
-$results_per_page = getTaskItemsPerPage();
-$start_from = ($page-1) * $results_per_page; 
-
 //set up the required queries
 $query_task = "SELECT DISTINCT task_id, name, description,status, ".
 			"DATE_FORMAT(assigned, '%M %d, %Y') as assigned,".
@@ -36,8 +32,7 @@ $query_task = "SELECT DISTINCT task_id, name, description,status, ".
 			"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
 		"FROM $TASK_TABLE ".
 		"WHERE $TASK_TABLE.proj_id=$proj_id ".
-		"ORDER BY $TASK_TABLE.task_id ".
-		"LIMIT $start_from, $results_per_page";
+		"ORDER BY $TASK_TABLE.task_id";
 
 $query_project = "SELECT DISTINCT title, description,".
 			"DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
@@ -45,46 +40,6 @@ $query_project = "SELECT DISTINCT title, description,".
 			"proj_status, proj_leader ".
 		"FROM $PROJECT_TABLE ".
 		"WHERE $PROJECT_TABLE.proj_id=$proj_id";
-
-function writePageLinks($page, $results_per_page, $num_task_page)
-{
-	//echo "num_task_page: ".$num_task_page.", results_per_page: ".$results_per_page.", page: ".$page;
-	if (($num_task_page/$results_per_page) == (int)($num_task_page/$results_per_page))
-		$numberOfPages = ($num_task_page/$results_per_page);
-	else 
-		$numberOfPages = 1+(int)($num_task_page/$results_per_page);
-	//echo $numberOfPages." =< 1 or ".$num_task_page." equals 0";
-	if($numberOfPages > 1 && $num_task_page != 0)
-	{
-		//echo '<td width="16em" align="right">';
-		if($page > 1)
-			echo '<a href="javascript:change_page(\''.($page-1).'\')">Previous Page</a>';
-		else 
-			echo 'Previous Page';
-		echo ' / ';
-		//echo '</td><td width="19em>"';
-		if ($numberOfPages > $page)
-		 	echo '<a href="javascript:change_page('.($page+1).')">Next Page</a>';
-		else 
-			echo 'Next Page';
-		echo ' ( <b>';
-		echo $page." of ";
-		echo $numberOfPages;
-		echo '</b> )';
-		//echo '</td>';
-	}
-}
-
-$query_task_page = "SELECT DISTINCT task_id, name, description,status, ".
-			"DATE_FORMAT(assigned, '%M %d, %Y') as assigned,".
-			"DATE_FORMAT(started, '%M %d, %Y') as started,".
-			"DATE_FORMAT(suspended, '%M %d, %Y') as suspended,".
-			"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
-		"FROM $TASK_TABLE ".
-		"WHERE $TASK_TABLE.proj_id=$proj_id ".
-		"ORDER BY $TASK_TABLE.task_id ";
-
-list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 ?>
 
 <html>
@@ -102,26 +57,21 @@ include ("header.inc");
 			location.href = 'task_action.php?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
 	}
 
-	function change_page(newPageValue) 
-	{
-		document.changeForm.page.value = newPageValue;
-		document.changeForm.submit(); 
-	}
 </script>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php
+<body <? include ("body.inc"); ?> >
+<?
 include ("banner.inc");
 ?>
 
-<form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
-<input type="hidden" name="page">
+<form name="changeForm" action="<? echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -132,7 +82,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><?php client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
+												<td width="100%"><? client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -144,7 +94,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><?php project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false); ?></td>
+												<td width="100%"><? project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -156,29 +106,26 @@ include ("banner.inc");
 							</table>
 						</td>
 						<td align="center" class="outer_table_heading" nowrap>
-							Tasks
-						</td>
-						<td>
-							<?php writePageLinks($page, $results_per_page, $num_task_page); ?>
+							Tasks</td>
 						</td>
 						<td align="right" nowrap>
-							<?php if ($proj_id != 0) { ?>
-							<a href="task_add.php?proj_id=<?php echo $proj_id; ?>">Add new task</a>
-							<?php } else { ?>
+							<? if ($proj_id != 0) { ?>
+							<a href="task_add.php?proj_id=<? echo $proj_id; ?>">Add new task</a>
+							<? } else { ?>
 								<span class="disabledLink">Add new task</span>
-							<?php } ?>
+							<? } ?>
 						</td>
 					</tr>
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 			<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 				<tr>
 					<td>
 						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-<?php
+<?
 	//execute query
 	list($qh_task, $num_task) = dbQuery($query_task);
 
@@ -207,12 +154,12 @@ include ("banner.inc");
 ?>
 		<tr>
 			<td>
-				<table width="100%" border="0"<?php if ($j+1<$num_task) print "class=\"section_body\""; ?>>
+				<table width="100%" border="0"<? if ($j+1<$num_task) print "class=\"section_body\""; ?>>
 					<tr>
 						<td valign="center">
 							<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
 							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br>
-								<?php echo stripslashes($data_task["description"]); ?>
+								<? echo stripslashes($data_task["description"]); ?>
 						</td>
 						<td align="right" valign="top" nowrap>
 							<span class="label">Actions:</span>
@@ -248,22 +195,17 @@ include ("banner.inc");
 				</table>
 			</td>
 		</tr>
-		<tr>
-			<td>
-				<center><?php writePageLinks($page, $results_per_page, $num_task_page); ?></center>
-			</td>
-		</tr>
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
+<?
 include ("footer.inc");
 ?>
 </BODY>

@@ -101,7 +101,6 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 						"?month=$month".
 						"&year=$year".
 						"&day=$day".
-						"&mode=$mode".
 						"&client_id=$client_id".
 						"&proj_id=$proj_id".
 						"&destination=$_SERVER[PHP_SELF]".
@@ -117,17 +116,16 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 <?php include ("banner.inc"); ?>
 
 <form action="report_specific_client.php" method="get">
-<input type="hidden" name="month" value="<?php echo $month; ?>">
-<input type="hidden" name="year" value="<?php echo $year; ?>">
-<input type="hidden" name="day" value="<?php echo $day; ?>">
-<input type="hidden" name="mode" value="<?php echo $mode; ?>">
+<input type="hidden" name="month" value="<? echo $month; ?>">
+<input type="hidden" name="year" value="<? echo $year; ?>">
+<input type="hidden" name="mode" value="<? echo $mode; ?>">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -136,24 +134,19 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">Client:</td>
 									<td align="left" width="100%">
-											<?php client_select_droplist($client_id, false); ?>
+											<? client_select_droplist($client_id, false); ?>
 									</td>
 								</tr>
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<?php //echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
-						<?php if ($mode == "weekly")
-								echo date('F d, Y',$time);
-							else
-								echo date('F Y',$time);
-						?>
+						<? echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<?php print "<button $print_popup_href class=\"action_link\">Print Report</button></td>\n"; ?>
+						<? print "<button $print_popup_href class=\"action_link\">Print Report</button></td>\n"; ?>
 						</td>
 						<td align="right" nowrap>
-						<?php
+						<?
 							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "client_id=$client_id", $mode);
 						?>
 						</td>
@@ -161,7 +154,7 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -230,7 +223,7 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 				</table>
 			</td>
 		</tr>
-<?php
+<?
 	if ($num > 0) {
 ?>
 		<tr>
@@ -245,7 +238,7 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 		print "Monthly";
 ?>
 							total:
-							<span class="calendar_total_value_monthly"><?php echo $formatted_time; ?></span>
+							<span class="calendar_total_value_monthly"><? echo $formatted_time; ?></span>
 						</td>
 					</tr>
 				</table>
@@ -257,14 +250,14 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
+<?
 include ("footer.inc");
 ?>
 </BODY>

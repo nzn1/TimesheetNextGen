@@ -25,7 +25,7 @@
 		var $state="CLOSED";
 		var $newRow=false;
 		var $nome;
-		function ExcelWriter($file="") {
+		function ExcelWriter($file=""){
 			$this->nome=$file;
 			return $this->open($file);
 		}
@@ -33,7 +33,7 @@
 // 		* 			if you are using file name with directory i.e. test/myFile.xls then the directory must be existed on the system and have permissioned properly to write the file.
 
 		function open($file) {
-			if($this->state!="CLOSED") {
+			if($this->state!="CLOSED"){
 				$this->error="Error : Another file is opend .Close it to save the file";
 				return false;
 			}
@@ -44,7 +44,7 @@
 				$this->error="Usage : New ExcelWriter('fileName')";
 				return false;
 			}
-			if($this->fp==false) {
+			if($this->fp==false){
 				$this->error="Error: Unable to open/create File.You may not have permmsion to write the file.";
 				return false;
 			}
@@ -53,12 +53,12 @@
 			return $this->fp;
 		}
 
-		function close() {
-			if($this->state!="OPENED") {
+		function close(){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
-			if($this->newRow) {
+			if($this->newRow){
 				fwrite($this->fp,"</tr>");
 				$this->newRow=false;
 			}
@@ -242,16 +242,16 @@ EOH;
 			return $header;
 		}
 
-		function GetFooter() {
+		function GetFooter(){
 			return "</table></body></html>";
 		}
 
-		function writeLine($line_arr) {
-			if($this->state!="OPENED") {
+		function writeLine($line_arr){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
-			if(!is_array($line_arr)) {
+			if(!is_array($line_arr)){
 				$this->error="Error : Argument is not valid. Supply an valid Array.";
 				return false;
 			}
@@ -261,12 +261,12 @@ EOH;
 			fwrite($this->fp,"</tr>");
 		}
 
-		function writeLine_titolo($line_arr) {
-			if($this->state!="OPENED") {
+		function writeLine_titolo($line_arr){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
-			if(!is_array($line_arr)) {
+			if(!is_array($line_arr)){
 				$this->error="Error : Argument is not valid. Supply an valid Array.";
 				return false;
 			}
@@ -276,12 +276,12 @@ EOH;
 			fwrite($this->fp,"</tr>");
 		}
 
-		function writeLine_orange($line_arr) {
-			if($this->state!="OPENED") {
+		function writeLine_orange($line_arr){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
-			if(!is_array($line_arr)) {
+			if(!is_array($line_arr)){
 				$this->error="Error : Argument is not valid. Supply an valid Array.";
 				return false;
 			}
@@ -291,8 +291,8 @@ EOH;
 			fwrite($this->fp,"</tr>");
 		}
 
-		function writeRow() {
-			if($this->state!="OPENED") {
+		function writeRow(){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
@@ -303,8 +303,8 @@ EOH;
 			$this->newRow=true;
 		}
 
-		function writeRow_orange() {
-			if($this->state!="OPENED") {
+		function writeRow_orange(){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
@@ -315,22 +315,22 @@ EOH;
 			$this->newRow=true;
 		}
 
-		function writeCol($value) {
-			if($this->state!="OPENED") {
+		function writeCol($value){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
 			fwrite($this->fp,"<td class=xl24 width=64 >$value</td>");
 		}
-		function writeCol_p0($value) {
-			if($this->state!="OPENED") {
+		function writeCol_p0($value){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
 			fwrite($this->fp,"<td class=xl24 width=58>$value</td>");
 		}
-		function writeTableSis() {
-			if($this->state!="OPENED") {
+		function writeTableSis(){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
@@ -340,22 +340,22 @@ EOH;
 // 				fwrite($this->fp,"</tr><tr>");
 // 			$this->newRow=true;
 		}
-		function closeTableSis() {
-			if($this->state!="OPENED") {
+		function closeTableSis(){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
-// 			if($this->newRow) {
+// 			if($this->newRow){
 				fwrite($this->fp,"</tr></table></td>");
 // 				$this->newRow=false;
 // 			}
 		}
-		function writeTitolo0_av($line_arr) {
-			if($this->state!="OPENED") {
+		function writeTitolo0_av($line_arr){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
-			if(!is_array($line_arr)) {
+			if(!is_array($line_arr)){
 				$this->error="Error : Argument is not valid. Supply an valid Array.";
 				return false;
 			}
@@ -364,12 +364,12 @@ EOH;
 // 			fwrite($this->fp,"</tr>");
 		}
 
-		function writeTitolo1_av($line_arr) {
-			if($this->state!="OPENED") {
+		function writeTitolo1_av($line_arr){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
-			if(!is_array($line_arr)) {
+			if(!is_array($line_arr)){
 				$this->error="Error : Argument is not valid. Supply an valid Array.";
 				return false;
 			}
@@ -378,12 +378,12 @@ EOH;
 				fwrite($this->fp,"<td class=xl27>$col</td>");
 // 			fwrite($this->fp,"</tr>");
 		}
-		function writeTitolo2_av($line_arr) {
-			if($this->state!="OPENED") {
+		function writeTitolo2_av($line_arr){
+			if($this->state!="OPENED"){
 				$this->error="Error : Please open the file.";
 				return false;
 			}
-			if(!is_array($line_arr)) {
+			if(!is_array($line_arr)){
 				$this->error="Error : Argument is not valid. Supply an valid Array.";
 				return false;
 			}

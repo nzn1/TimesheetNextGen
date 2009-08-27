@@ -1,4 +1,4 @@
-<?php
+<?
 
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -31,7 +31,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -42,7 +42,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -125,7 +125,7 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>

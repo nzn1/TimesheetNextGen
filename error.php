@@ -1,4 +1,4 @@
-<?php
+<?
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 
@@ -17,13 +17,13 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:back()"));
 ?>
 <HTML>
 	<HEAD>
-	<title>Error, <?php echo $loggedInUser; ?></title>
-<?php
+	<title>Error, <? echo $loggedInUser; ?></title>
+<?
 include ("header.inc");
 ?>
 </HEAD>
-<BODY <?php include ("body.inc"); ?> >
-<?php
+<BODY <? include ("body.inc"); ?> >
+<?
 include ("banner.inc");
 include ("error.inc");
 include ("footer.inc");

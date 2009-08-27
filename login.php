@@ -1,4 +1,4 @@
-<?php
+<?
 // Authenticate
 require("class.AuthenticationManager.php");
 
@@ -44,21 +44,21 @@ $redirect = isset($_REQUEST["redirect"]) ? $_REQUEST["redirect"] : "";
 <html>
 <head>
 <title>Timesheet Login</title>
-<?php
+<?
 include ("header.inc");
 ?>
 </head>
 <body onLoad="document.loginForm.username.focus();">
 
 <form action="login.php" method="POST" name="loginForm" style="margin: 0px;">
-<input type="hidden" name="redirect" value="<?php echo $redirect; ?>"></input>
+<input type="hidden" name="redirect" value="<? echo $redirect; ?>"></input>
 
 <table border="0" cellspacing="0" cellpadding="0" align="center">
 	<tr>
 		<td style="padding-top: 100;">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table border="0">
 					<tr>
@@ -69,7 +69,7 @@ include ("header.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 			<table width="300" cellspacing="0" cellpadding="5" class="box">
 				<tr>
@@ -78,7 +78,7 @@ include ("header.inc");
 					<td class="label">Password:<br><input type="password" name="password" size="25" maxlength="25"></td>
 					<td class="label"><br><input type="submit" name="Login" value="submit"></td>
 				</tr>
-				<?php	if (isset($loginFailure))
+				<?	if (isset($loginFailure))
 							printMessage($authenticationManager->getErrorMessage());
 						else if (isset($_REQUEST["clearanceRequired"]))
 							printMessage("$_REQUEST[clearanceRequired] clearance is required for the page you have tried to access.");
@@ -86,7 +86,7 @@ include ("header.inc");
 			</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>

@@ -1,4 +1,4 @@
-<?php
+<?
 // $Header: /cvsroot/tsheet/timesheet.php/config.php,v 1.8 2005/02/03 08:06:10 vexil Exp $
 // Authenticate
 require("class.AuthenticationManager.php");
@@ -22,8 +22,8 @@ $resultset = dbResult($qh);
 ?>
 <html>
 <head>
-<title>Timesheet.php Configuration Parameters</title>
-<?php
+<title>Timesheet Configuration Parameters</title>
+<?
 include ("header.inc");
 ?>
 </head>
@@ -72,13 +72,13 @@ function enableLDAP(value) {
 
 function buildLDAPUrlFromDb() {
 	//get values from database
-	var scheme = '<?php echo $resultset['LDAPScheme']; ?>';
-	var host = '<?php echo $resultset['LDAPHost']; ?>';
-	var port = '<?php echo $resultset['LDAPPort']; ?>';
-	var baseDN = '<?php echo $resultset['LDAPBaseDN']; ?>';
-	var usernameAttribute = '<?php echo $resultset['LDAPUsernameAttribute']; ?>';
-	var searchScope = '<?php echo $resultset['LDAPSearchScope']; ?>';
-	var filter = '<?php echo $resultset['LDAPFilter']; ?>';
+	var scheme = '<? echo $resultset['LDAPScheme']; ?>';
+	var host = '<? echo $resultset['LDAPHost']; ?>';
+	var port = '<? echo $resultset['LDAPPort']; ?>';
+	var baseDN = '<? echo $resultset['LDAPBaseDN']; ?>';
+	var usernameAttribute = '<? echo $resultset['LDAPUsernameAttribute']; ?>';
+	var searchScope = '<? echo $resultset['LDAPSearchScope']; ?>';
+	var filter = '<? echo $resultset['LDAPFilter']; ?>';
 
 	buildLDAPUrl(scheme, host, port, baseDN, usernameAttribute, searchScope, filter);
 }
@@ -212,8 +212,8 @@ function onSubmit() {
 }
 
 </script>
-<body <?php include ("body.inc"); ?> onload="enableLDAP(<?php echo $resultset["useLDAP"]?>);">
-<?php
+<body <? include ("body.inc"); ?> onload="enableLDAP(<? echo $resultset["useLDAP"]?>);">
+<?
 include ("banner.inc");
 ?>
 <form action="config_action.php" name="configurationForm" method="post">
@@ -224,7 +224,7 @@ include ("banner.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -246,7 +246,7 @@ include ("banner.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -264,7 +264,7 @@ include ("banner.inc");
 					<b>LDAP</b>:
 				</td>
 				<td align="left" width="100%">
-					<input type="checkbox" name="useLDAPCheck" id="useLDAPCheck" onclick="enableLDAP(this.checked);" <?php if ($resultset['useLDAP'] == 1) echo "checked"; ?>>Use LDAP for authentication</input>
+					<input type="checkbox" name="useLDAPCheck" id="useLDAPCheck" onclick="enableLDAP(this.checked);" <? if ($resultset['useLDAP'] == 1) echo "checked"; ?>>Use LDAP for authentication</input>
 					<input type="hidden" name="useLDAP" id="useLDAP"></input>
 				</td>
 			</tr>
@@ -291,8 +291,8 @@ include ("banner.inc");
 												<td colspan="3">
 													<span class="label">Scheme:</span>
 													<select id="LDAPScheme" name="LDAPScheme">
-														<option value="ldap" <?php if ($resultset["LDAPScheme"] == "ldap") print "selected";?>>LDAP</option>
-														<option value="ldaps" <?php if ($resultset["LDAPScheme"] == "ldaps") print "selected";?>>LDAPS</option>
+														<option value="ldap" <? if ($resultset["LDAPScheme"] == "ldap") print "selected";?>>LDAP</option>
+														<option value="ldaps" <? if ($resultset["LDAPScheme"] == "ldaps") print "selected";?>>LDAPS</option>
 													</select>
 													(LDAP=Non SSL, LDAPS=Use SSL)
 												</td>
@@ -300,12 +300,12 @@ include ("banner.inc");
 											<tr>
 												<td width="50%">
 													<span class="label">Host:</span>
-													<input id="LDAPHost" name="LDAPHost" type="text" value="<?php echo $resultset['LDAPHost']; ?>" style="width:100%;"></input>
+													<input id="LDAPHost" name="LDAPHost" type="text" value="<? echo $resultset['LDAPHost']; ?>" style="width:100%;"></input>
 												</td>
 												<td width="20">&nbsp;</td>
 												<td width="50%">
 													<span class="label">Port:</span>
-													<input id="LDAPPort" name="LDAPPort" type="text" size="10" maxlength="10" value="<?php echo $resultset['LDAPPort']; ?>"></input>
+													<input id="LDAPPort" name="LDAPPort" type="text" size="10" maxlength="10" value="<? echo $resultset['LDAPPort']; ?>"></input>
 												</td>
 											</tr>
 											<tr>
@@ -317,7 +317,7 @@ include ("banner.inc");
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
-																<input id="LDAPBaseDN" type="text" name="LDAPBaseDN" value="<?php echo $resultset["LDAPBaseDN"]; ?>" style="width:100%;"></input>
+																<input id="LDAPBaseDN" type="text" name="LDAPBaseDN" value="<? echo $resultset["LDAPBaseDN"]; ?>" style="width:100%;"></input>
 															</td>
 														</tr>
 													</table>
@@ -332,7 +332,7 @@ include ("banner.inc");
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
-																<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<?php echo $resultset["LDAPUsernameAttribute"]; ?>" size="30"></input>
+																<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<? echo $resultset["LDAPUsernameAttribute"]; ?>" size="30"></input>
 															</td>
 														</tr>
 													</table>
@@ -348,9 +348,9 @@ include ("banner.inc");
 															<td>&nbsp;</td>
 															<td width="100%">
 																<select id="LDAPSearchScope" name="LDAPSearchScope">
-																	<option value="base" <?php if ($resultset["LDAPSearchScope"] == "base") print "selected"; ?>>Base DN search only (LDAPRead)</option>
-																	<option value="one" <?php if ($resultset["LDAPSearchScope"] == "one") print "selected"; ?>>One level search (LDAPList)</option>
-																	<option value="sub" <?php if ($resultset["LDAPSearchScope"] == "sub") print "selected"; ?>>Full sub-tree search (LDAPSearch)</option>
+																	<option value="base" <? if ($resultset["LDAPSearchScope"] == "base") print "selected"; ?>>Base DN search only (LDAPRead)</option>
+																	<option value="one" <? if ($resultset["LDAPSearchScope"] == "one") print "selected"; ?>>One level search (LDAPList)</option>
+																	<option value="sub" <? if ($resultset["LDAPSearchScope"] == "sub") print "selected"; ?>>Full sub-tree search (LDAPSearch)</option>
 																</select>
 															</td>
 														</tr>
@@ -366,7 +366,7 @@ include ("banner.inc");
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
-																<input id="LDAPFilter" type="text" name="LDAPFilter" value="<?php echo $resultset["LDAPFilter"]; ?>" style="width:100%;"></input>
+																<input id="LDAPFilter" type="text" name="LDAPFilter" value="<? echo $resultset["LDAPFilter"]; ?>" style="width:100%;"></input>
 															</td>
 														</tr>
 													</table>
@@ -382,9 +382,9 @@ include ("banner.inc");
 															<td>&nbsp;</td>
 															<td width="100%">
 																<select id="LDAPProtocolVersion" name="LDAPProtocolVersion">
-																	<option value="3" <?php if ($resultset["LDAPProtocolVersion"] == "3") print "selected"; ?>>3</option>
-																	<option value="2" <?php if ($resultset["LDAPProtocolVersion"] == "2") print "selected"; ?>>2</option>
-																	<option value="1" <?php if ($resultset["LDAPProtocolVersion"] == "1") print "selected"; ?>>1</option>
+																	<option value="3" <? if ($resultset["LDAPProtocolVersion"] == "3") print "selected"; ?>>3</option>
+																	<option value="2" <? if ($resultset["LDAPProtocolVersion"] == "2") print "selected"; ?>>2</option>
+																	<option value="1" <? if ($resultset["LDAPProtocolVersion"] == "1") print "selected"; ?>>1</option>
 																</select>
 															</td>
 															<td nowrap>
@@ -431,7 +431,7 @@ include ("banner.inc");
 																		</td>
 																		<td width="5">&nbsp;</td>
 																		<td width="100%">
-																			<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <?php if ($resultset['LDAPBindByUser'] == 1) echo "checked"; ?>></input>
+																			<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <? if ($resultset['LDAPBindByUser'] == 1) echo "checked"; ?>></input>
 																			<input type="hidden" name="LDAPBindByUser" id="LDAPBindByUser"></input>
 																		</td>
 																	</tr>
@@ -443,7 +443,7 @@ include ("banner.inc");
 																		</td>
 																		<td width="5">&nbsp;</td>
 																		<td width="100%">
-																			<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<?php echo $resultset["LDAPBindUsername"]; ?>" style="width:100%;"></input>
+																			<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<? echo $resultset["LDAPBindUsername"]; ?>" style="width:100%;"></input>
 																		</td>
 																	</tr>
 																</table>
@@ -457,7 +457,7 @@ include ("banner.inc");
 																		</td>
 																		<td width="5">&nbsp;</td>
 																		<td width="100%">
-																			<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<?php echo $resultset["LDAPBindPassword"]; ?>" style="width:100%;"></input>
+																			<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<? echo $resultset["LDAPBindPassword"]; ?>" style="width:100%;"></input>
 																		</td>
 																	</tr>
 																</table>
@@ -512,17 +512,17 @@ include ("banner.inc");
 					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" >Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<span class="label" nowrap>Stopwatch:</span><?php acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>
-					<span class="label" nowrap>Daily:</span><?php acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>
-					<span class="label" nowrap>Weekly:</span><?php acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>
-					<span class="label" nowrap>Calendar:</span><?php acl_select_droplist("aclCalendar", $resultset["aclCalendar"]); ?>
-					<span class="label" nowrap>Simple:</span><?php acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>
-					<span class="label" nowrap>Clients:</span><?php acl_select_droplist("aclClients", $resultset["aclClients"]); ?>
-					<span class="label" nowrap>Projects:</span><?php acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>
-					<span class="label" nowrap>Tasks:</span><?php acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>
-					<span class="label" nowrap>Reports:</span><?php acl_select_droplist("aclReports", $resultset["aclReports"]); ?>
-					<span class="label" nowrap>Rates:</span><?php acl_select_droplist("aclRates", $resultset["aclRates"]); ?>
-					<span class="label" nowrap>Absences:</span><?php acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>
+					<span class="label" nowrap>Stopwatch:</span><? acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>
+					<span class="label" nowrap>Daily:</span><? acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>
+					<span class="label" nowrap>Weekly:</span><? acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>
+					<span class="label" nowrap>Calendar:</span><? acl_select_droplist("aclCalendar", $resultset["aclCalendar"]); ?>
+					<span class="label" nowrap>Simple:</span><? acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>
+					<span class="label" nowrap>Clients:</span><? acl_select_droplist("aclClients", $resultset["aclClients"]); ?>
+					<span class="label" nowrap>Projects:</span><? acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>
+					<span class="label" nowrap>Tasks:</span><? acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>
+					<span class="label" nowrap>Reports:</span><? acl_select_droplist("aclReports", $resultset["aclReports"]); ?>
+					<span class="label" nowrap>Rates:</span><? acl_select_droplist("aclRates", $resultset["aclRates"]); ?>
+					<span class="label" nowrap>Absences:</span><? acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>
 				</td>
 			</tr>
 
@@ -544,9 +544,9 @@ include ("banner.inc");
 				</td>
 				<td align="left" width="100%">
 					<select name="simpleTimesheetLayout" id="simpleTimesheetLayout">
-						<option value="small work description field" <?php if ($resultset["simpleTimesheetLayout"] == 'small work description field') echo 'selected'?>>small work description field</option>
-						<option value="big work description field" <?php if ($resultset["simpleTimesheetLayout"] == 'big work description field') echo 'selected'?>>big work description field</option>
-						<option value="no work description field" <?php if ($resultset["simpleTimesheetLayout"] == 'no work description field') echo 'selected'?>>no work description field</option>
+						<option value="small work description field" <? if ($resultset["simpleTimesheetLayout"] == 'small work description field') echo 'selected'?>>small work description field</option>
+						<option value="big work description field" <? if ($resultset["simpleTimesheetLayout"] == 'big work description field') echo 'selected'?>>big work description field</option>
+						<option value="no work description field" <? if ($resultset["simpleTimesheetLayout"] == 'no work description field') echo 'selected'?>>no work description field</option>
 					</select>
 				</td>
 			</tr>
@@ -569,11 +569,11 @@ include ("banner.inc");
 				</td>
 				<td align="left" width="100%">
 					<select name="startPage" id="startPage">
-						<option value="stopwatch" <?php if ($resultset["startPage"] == 'stopwatch') echo 'selected'?>>Stopwatch</option>
-						<option value="daily" <?php     if ($resultset["startPage"] == 'daily')     echo 'selected'?>>Daily Timesheet</option>
-						<option value="weekly" <?php    if ($resultset["startPage"] == 'weekly')    echo 'selected'?>>Weekly Timesheet</option>
-						<option value="calendar" <?php  if ($resultset["startPage"] == 'calendar')  echo 'selected'?>>Calendar</option>
-						<option value="simple" <?php    if ($resultset["startPage"] == 'simple')    echo 'selected'?>>Simple Timesheet</option>
+						<option value="stopwatch" <? if ($resultset["startPage"] == 'stopwatch') echo 'selected'?>>Stopwatch</option>
+						<option value="daily" <?     if ($resultset["startPage"] == 'daily')     echo 'selected'?>>Daily Timesheet</option>
+						<option value="weekly" <?    if ($resultset["startPage"] == 'weekly')    echo 'selected'?>>Weekly Timesheet</option>
+						<option value="calendar" <?  if ($resultset["startPage"] == 'calendar')  echo 'selected'?>>Calendar</option>
+						<option value="simple" <?    if ($resultset["startPage"] == 'simple')    echo 'selected'?>>Simple Timesheet</option>
 					</select>
 				</td>
 			</tr>
@@ -595,7 +595,7 @@ include ("banner.inc");
 					<input type="checkbox" name="localeReset" value="off" valign="absmiddle" onclick="document.configurationForm.locale.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<input type="text" name="locale" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["locale"]))); ?>" style="width: 100%;">
+					<input type="text" name="locale" size="75" maxlength="254" value="<? echo htmlentities(trim(stripslashes($resultset["locale"]))); ?>" style="width: 100%;">
 				</td>
 			</tr>
 
@@ -616,7 +616,7 @@ include ("banner.inc");
 					<input type="checkbox" name="timezoneReset" value="off" onclick="document.configurationForm.timezone.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<input type="text" name="timezone" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["timezone"]))); ?>" style="width: 100%;">
+					<input type="text" name="timezone" size="75" maxlength="254" value="<? echo htmlentities(trim(stripslashes($resultset["timezone"]))); ?>" style="width: 100%;">
 				</td>
 			</tr>
 
@@ -640,13 +640,13 @@ include ("banner.inc");
 				</td>
 				<td align="left" width="100%">
 					<select name="timeformat" style="width: 100%;">
-						<?php if ($resultset["timeformat"] == "12") { ?>
+						<? if ($resultset["timeformat"] == "12") { ?>
 							<option value="12" selected>12 hour format</option>
 							<option value="24">24 hour format</option>
-						<?php } else { ?>
+						<? } else { ?>
 							<option value="12">12 hour format</option>
 							<option value="24" selected>24 hour format</option>
-						<?php } ?>
+						<? } ?>
 					</select>
 				</td>
 			</tr>
@@ -670,7 +670,7 @@ include ("banner.inc");
 				</td>
 				<td align="left" width="100%">
 					<select name="weekstartday" style="width: 100%;">
-						<?php
+						<?
 								//get the current time
 								$dowDate = time();
 
@@ -695,49 +695,6 @@ include ("banner.inc");
 				</table>
 				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 
-			<!-- Items per page in Projects-->
-			<tr>
-				<td align="left" valign="top">
-					<b>Items per page in Projects</b>:
-				</td>
-				<td align="left" width="100%">
-					Type the number of elements your want per page, when viewing projects.
-				</td>
-			</tr>
-			<tr>
-				<td align="left" class="label" nowrap width="90">
-					<input type="checkbox" name="projectItemsPerPageReset" value="off" onclick="document.configurationForm.projectItemsPerPage.disabled=(this.checked);">Reset</input>
-				</td>
-				<td align="left" width="100%">
-					<input type="text" name="projectItemsPerPage" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["project_items_per_page"]))); ?>" style="width: 100%;">
-				</td>
-			</tr>
-
-				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
-				
-			<!-- Items per page in Tasks-->
-			<tr>
-				<td align="left" valign="top">
-					<b>Items per page in Tasks</b>:
-				</td>
-				<td align="left" width="100%">
-					Type the number of elements your want per page, when viewing tasks.
-				</td>
-			</tr>
-			<tr>
-				<td align="left" class="label" nowrap width="90">
-					<input type="checkbox" name="taskItemsPerPageReset" value="off" onclick="document.configurationForm.taskItemsPerPage.disabled=(this.checked);">Reset</input>
-				</td>
-				<td align="left" width="100%">
-					<input type="text" name="taskItemsPerPage" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["task_items_per_page"]))); ?>" style="width: 100%;">
-				</td>
-			</tr>
-
-				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
-			
-
 			<!-- headerhtml -->
 			<tr>
 				<td align="left" valign="top">
@@ -752,7 +709,7 @@ include ("banner.inc");
 					<input type="checkbox" name="headerReset" value="off" onclick="document.configurationForm.headerhtml.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="headerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["headerhtml"]))); ?>	</textarea>
+					<textarea rows="5" cols="73" name="headerhtml" style="width: 100%;"><? echo htmlentities(trim(stripslashes($resultset["headerhtml"]))); ?>	</textarea>
 				</td>
 			</tr>
 
@@ -773,7 +730,7 @@ include ("banner.inc");
 					<input type="checkbox" name="bodyReset" value="off" onclick="document.configurationForm.bodyhtml.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="bodyhtml"  style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["bodyhtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="bodyhtml"  style="width: 100%;"><? echo htmlentities(trim(stripslashes($resultset["bodyhtml"]))); ?></textarea>
 				</td>
 			</tr>
 
@@ -794,7 +751,7 @@ include ("banner.inc");
 					<input type="checkbox" name="bannerReset" value="off" onclick="document.configurationForm.bannerhtml.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="bannerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["bannerhtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="bannerhtml" style="width: 100%;"><? echo htmlentities(trim(stripslashes($resultset["bannerhtml"]))); ?></textarea>
 				</td>
 			</tr>
 
@@ -815,7 +772,7 @@ include ("banner.inc");
 					<input type="checkbox" name="footerReset" value="off" onclick="document.configurationForm.footerhtml.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="footerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["footerhtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="footerhtml" style="width: 100%;"><? echo htmlentities(trim(stripslashes($resultset["footerhtml"]))); ?></textarea>
 				</td>
 			</tr>
 
@@ -836,7 +793,7 @@ include ("banner.inc");
 					<input type="checkbox" name="errorReset" value="off" onclick="document.configurationForm.errorhtml.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="errorhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["errorhtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="errorhtml" style="width: 100%;"><? echo htmlentities(trim(stripslashes($resultset["errorhtml"]))); ?></textarea>
 				</td>
 			</tr>
 
@@ -858,7 +815,7 @@ include ("banner.inc");
 					<input type="checkbox" name="tableReset" value="off" onclick="document.configurationForm.tablehtml.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="tablehtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["tablehtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="tablehtml" style="width: 100%;"><? echo htmlentities(trim(stripslashes($resultset["tablehtml"]))); ?></textarea>
 				</td>
 			</tr>
 
@@ -876,7 +833,7 @@ include ("banner.inc");
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -884,7 +841,7 @@ include ("banner.inc");
 
 </form>
 
-<?php
+<?
 include ("footer.inc");
 ?>
 </BODY>

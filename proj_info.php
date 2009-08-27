@@ -1,4 +1,4 @@
-<?php
+<?
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
@@ -41,13 +41,13 @@ $query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT
 <html>
 <head>
 <title>Project Info</title>
-<?php
+<?
 include ("header.inc");
 ?>
 </head>
-<body width="100%" height="100%" style="margin: 0px;" <?php include ("body.inc"); ?> >
+<body width="100%" height="100%" style="margin: 0px;" <? include ("body.inc"); ?> >
 <table border="0" width="100%" height="100%" align="center" valign="center">
-<?php
+<?
 		list($qh, $num) = dbQuery($query);
 		if ($num > 0) {
 
@@ -107,9 +107,9 @@ include ("header.inc");
 																	<tr>
 																		<td>
 																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? formatSeconds($bill_data["total_time"]): "0h 0m"); ?>
-																			<?php if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
+																			<? if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
 																			<br><span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? $bill_data["billed"]: "0.00"); ?></b>
-																			<?php } ?>
+																			<? } ?>
 																		</td>
 																	</tr>
 																	<tr><td>&nbsp;</td></tr>

@@ -1,4 +1,4 @@
-<?php
+<?
 require("table_names.inc");
 
 //Get the result set for the config set 1

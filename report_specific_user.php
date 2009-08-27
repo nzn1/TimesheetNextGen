@@ -101,14 +101,6 @@ $last_task_id = -1;
 $total_time = 0;
 $grand_total_time = 0;
 
-$print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_specific_user.php".
-						"?month=$month".
-						"&year=$year".
-						"&day=$day".
-						"&uid=$uid".
-						"&destination=$_SERVER[PHP_SELF]".
-						"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=800,height=450\") dummy=\"";
-
 ?>
 <html>
 <head>
@@ -119,17 +111,17 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 <?php include ("banner.inc"); ?>
 
 <form action="report_specific_user.php" method="get">
-<input type="hidden" name="month" value="<?php echo $month; ?>">
-<input type="hidden" name="year" value="<?php echo $year; ?>">
-<input type="hidden" name="day" value="<?php echo $day; ?>">
-<input type="hidden" name="mode" value="<?php echo $mode; ?>">
+<input type="hidden" name="month" value="<? echo $month; ?>">
+<input type="hidden" name="year" value="<? echo $year; ?>">
+<input type="hidden" name="day" value="<? echo $day; ?>">
+<input type="hidden" name="mode" value="<? echo $mode; ?>">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -138,13 +130,13 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">User:</td>
 									<td align="left" width="100%">
-											<?php user_select_droplist($uid, false); ?>
+											<? user_select_droplist($uid, false); ?>
 									</td>
 								</tr>
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<?php if ($mode == "weekly")
+						<?	if ($mode == "weekly")
 								echo date('F d, Y',$time);
 							else
 								echo date('F Y',$time);
@@ -153,11 +145,8 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 						<td  align="center" >
 						<a href="#" onclick="javascript:esporta('user')" ><img src="images/export_data.gif" name="esporta_dati" border=0></a>
 						</td>
-						<td  align="center" >
-						<?php print "<button $print_popup_href class=\"action_link\">Print Report</button></td>\n"; ?>
-						</td>
 						<td align="right" nowrap>
-						<?php
+						<?
 							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "uid=$uid", $mode);
 						?>
 						</td>
@@ -165,13 +154,13 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-<?php
+<?
 	$dati_total=array();
 	if ($num == 0) {
 		print "	<tr>\n";
@@ -251,7 +240,7 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 				</table>
 			</td>
 		</tr>
-<?php
+<?
 	if ($num > 0) {
 ?>
 		<tr>
@@ -266,7 +255,7 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 		print "Monthly";
 ?>
 							total:
-							<span class="calendar_total_value_monthly"><?php echo $formatted_time; ?></span>
+							<span class="calendar_total_value_monthly"><? echo $formatted_time; ?></span>
 						</td>
 					</tr>
 				</table>
@@ -278,14 +267,14 @@ $print_popup_href = "javascript:void(0)\" onclick=window.open(\"print_report_spe
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
+<?
 include ("footer.inc");
 ?>
 </BODY>

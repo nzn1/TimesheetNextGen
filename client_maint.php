@@ -24,7 +24,7 @@ include("timesheet_menu.inc");
 <HTML>
 <HEAD>
 <title>Client Management Page</title>
-<?php
+<?
 include ("header.inc");
 ?>
 <script language="Javascript">
@@ -36,8 +36,8 @@ include ("header.inc");
 
 </script>
 </HEAD>
-<BODY <?php include ("body.inc"); ?> >
-<?php
+<BODY <? include ("body.inc"); ?> >
+<?
 include ("banner.inc");
 ?>
 <form action="client_action.php" method="post">
@@ -47,7 +47,7 @@ include ("banner.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -61,9 +61,7 @@ include ("banner.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc");
-
-?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -76,7 +74,7 @@ list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE WHERE client_id > 1 ORDER 
 
 //are there any results?
 if ($num == 0) {
-	print "<tr><td align=\"center\" colspan=\"5\"><br>There are currently no clients.<br><br></td></tr>";
+		print "<tr><td align=\"center\" colspan=\"5\"><br>There are currently no clients.<br><br></td></tr>";
 }
 else {
 
@@ -89,7 +87,7 @@ else {
 						<td class="inner_table_column_heading"><i>Actions</i></td>
 					</tr>
 <?php
-$count = 0;
+
 	while ($data = dbResult($qh)) {
 		$organisationField = stripslashes($data["organisation"]);
 		if (empty($organisationField))
@@ -101,10 +99,7 @@ $count = 0;
 		$emailField = $data["contact_email"];
 		if (empty($emailField))
 			$emailField = "&nbsp;";
-		if (($count % 2) == 1)
-			print "<tr class=\"diff\">";
-		else
-			print "<tr>";
+		print "<tr>";
 		print "<td class=\"calendar_cell_middle\"><A HREF=\"javascript:void(0)\" ONCLICK=window.open(\"client_info.php?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=240\")>$organisationField</A></TD>";
 		print "<td class=\"calendar_cell_middle\">$contactNameField</td>";
 		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
@@ -113,7 +108,6 @@ $count = 0;
 		print "	<a href=\"client_edit.php?client_id=$data[client_id]\">Edit</a>,&nbsp;\n";
 		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>\n";
 		print "</td>\n";
-		$count++;
 	}
 }
 ?>
@@ -123,14 +117,14 @@ $count = 0;
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
+<?
 include ("footer.inc");
 ?>
 </BODY>

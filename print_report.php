@@ -1,4 +1,4 @@
-<?php
+<?
 //$Header: /cvsroot/tsheet/timesheet.php/print_report.php,v 1.4 2004/07/02 14:15:56 vexil Exp $
 
 // Authenticate
@@ -41,10 +41,10 @@ list($proj_title, $proj_client, $proj_description, $proj_deadline, $proj_link) =
 ?>
 <HTML>
 <BODY BGCOLOR="#FFFFFF">
-<B><?php echo "$first $last </b><br>$ssn<br><br>$proj_title: $proj_client<br>$proj_description" ?>
+<B><? echo "$first $last </b><br>$ssn<br><br>$proj_title: $proj_client<br>$proj_description" ?>
 <TABLE ALIGN=CENTER BORDER=1 WIDTH="100%">
 <TR>
-<?php
+<?
 
 for ($i=$start_date; $i <= $end_date; $i++) {
 	$date = jdtogregorian($i);

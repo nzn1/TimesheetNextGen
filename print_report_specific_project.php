@@ -98,20 +98,13 @@ $grand_total_time = 0;
 <title>Report: Hours for a specific project</title>
 <?php include ("header.inc"); ?>
 </head>
-<?php
-echo "<body width=\"100%\" height=\"100%\"";
-include ("body.inc");
-
-echo "onLoad=window.print();";
-echo ">\n";
-
-?>
+<body <?php include ("body.inc"); ?> >
 
 <form action="report_specific_project.php" method="get">
-<input type="hidden" name="month" value="<?php echo $month; ?>">
-<input type="hidden" name="year" value="<?php echo $year; ?>">
-<input type="hidden" name="day" value="<?php echo $day; ?>">
-<input type="hidden" name="mode" value="<?php echo $mode; ?>">
+<input type="hidden" name="month" value="<? echo $month; ?>">
+<input type="hidden" name="year" value="<? echo $year; ?>">
+<input type="hidden" name="day" value="<? echo $day; ?>">
+<input type="hidden" name="mode" value="<? echo $mode; ?>">
 
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -124,13 +117,13 @@ echo ">\n";
 						<td align="left" nowrap>
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>											
-									<td align="left" width="100%" class="outer_table_heading">Project:<?php echo $project_title ?></td>
+									<td align="left" width="100%" class="outer_table_heading">Project:<? echo $project_title ?></td>
 									
 								</tr>
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
-						<?php
+						<?
 							if ($mode == "weekly")
 								echo date('F d, Y',$time);
 							else
@@ -147,7 +140,7 @@ echo ">\n";
 		<tr>
 			<td>
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-<?php
+<?
 	$dati_total=array();
 	if ($num == 0) {
 		print "	<tr>\n";
@@ -221,7 +214,7 @@ echo ">\n";
 				</table>
 			</td>
 		</tr>
-<?php
+<?
 	if ($num > 0) {
 ?>
 		<tr>
@@ -236,7 +229,7 @@ echo ">\n";
 		print "Monthly";
 ?>
 							total:
-							<span class="calendar_total_value_monthly"><?php echo $formatted_time; ?></span>
+							<span class="calendar_total_value_monthly"><? echo $formatted_time; ?></span>
 						</td>
 					</tr>
 				</table>

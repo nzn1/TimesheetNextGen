@@ -51,15 +51,15 @@ $public_hol = 'N';
 <?php include ("banner.inc"); ?>
 
 <form action="report_absences.php" method="get">
-<input type="hidden" name="month" value="<?php echo $month; ?>">
-<input type="hidden" name="year" value="<?php echo $year; ?>">
+<input type="hidden" name="month" value="<? echo $month; ?>">
+<input type="hidden" name="year" value="<? echo $year; ?>">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<? include("timesheet_face_part_1.inc"); ?>
 
 			<table width="100%" border="0">
 				<tr>
@@ -68,16 +68,16 @@ $public_hol = 'N';
 							<tr>
 								<td align="right" width="0" class="outer_table_heading">User:</td>
 								<td align="left" width="100%">
-									<?php user_select_droplist($uid, false); ?>
+									<? user_select_droplist($uid, false); ?>
 								</td>
 							</tr>
 						</table>
 					</td>
 					<td align="center" nowrap class="outer_table_heading">
-						<?php echo date('F Y',$time); ?>
+			  			<?	echo date('F Y',$time); ?>
 					</td>
 					<td align="right" nowrap>
-						<?php
+						<?
 						printPrevNext($next_week, $prev_week, $next_month, $prev_month, "uid=$uid", 'monthly');
 						?>
 					</td>
@@ -85,7 +85,7 @@ $public_hol = 'N';
 			</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<? include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -97,7 +97,7 @@ $public_hol = 'N';
 					<td align="center" class="calendar_cell_disabled_right"><b>Morning</b></td>
 					<td align="center" class="calendar_cell_disabled_right"><b>Afternoon</b></td>
 				</tr>
-<?php
+<?
 	for ($i=1;$i<=$last_day;$i++) {
 		$day = mktime(0,0,0,$month,$i,$year);
 		$dow = strftime("%a", $day);
@@ -158,12 +158,12 @@ $public_hol = 'N';
 			$daystyle = "calendar_cell_holiday_middle";
 		}
 ?>
-			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $dow; ?></td>
-			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $i; ?></td>
-			<td align="left" class="<?php echo $AMstyle; ?>"><?php echo $AM_text; ?></td>
-			<td align="left" class="<?php echo $PMstyle; ?>"><?php echo $PM_text; ?></td>
+			<td align="center" class="<? echo $daystyle; ?>"><? echo $dow; ?></td>
+			<td align="center" class="<? echo $daystyle; ?>"><? echo $i; ?></td>
+			<td align="left" class="<? echo $AMstyle; ?>"><? echo $AM_text; ?></td>
+			<td align="left" class="<? echo $PMstyle; ?>"><? echo $PM_text; ?></td>
 		</tr>
-<?php
+<?
 	}
 
 // Calculate the previous month.
@@ -190,20 +190,20 @@ $glidetime_remaining = $glidetime_allowance + $worked_time/SECONDS_PER_HOUR -$wo
 				</tr>
 				<tr>
 					<td colspan=3>
-						Holiday Allowance: <?php echo $holiday_allowance; ?><br>
-						Holiday in Month: <?php echo $holidays_taken; ?><br>
-						Holiday Remaining: <?php echo $holiday_remaining; ?><br><br>
+						Holiday Allowance: <? echo $holiday_allowance; ?><br>
+						Holiday in Month: <? echo $holidays_taken; ?><br>
+						Holiday Remaining: <? echo $holiday_remaining; ?><br><br>
 					</td>
 					<td><b>Manager:</b><br>Signature/Date<br><br></td>
 				</tr>
 				<tr>
 					<td colspan=3>
-						Glidetime Allowance: <?php echo format_hours_minutes($glidetime_allowance*SECONDS_PER_HOUR); ?><br>
-						Worked in Month: <?php echo format_hours_minutes($worked_time); ?><br>
-						Paid-out in Month: <?php echo format_hours_minutes($glidetime_paid*SECONDS_PER_HOUR); ?><br>
-						Compensation Taken: <?php echo format_hours_minutes($compensation_taken*SECONDS_PER_HOUR); ?><br>
-						Working-Time in Month: <?php echo format_hours_minutes($working_time*SECONDS_PER_HOUR); ?><br>
-						Glidetime Remaining: <?php echo format_hours_minutes($glidetime_remaining*SECONDS_PER_HOUR); ?><br>
+						Glidetime Allowance: <? echo format_hours_minutes($glidetime_allowance*SECONDS_PER_HOUR); ?><br>
+						Worked in Month: <? echo format_hours_minutes($worked_time); ?><br>
+						Paid-out in Month: <? echo format_hours_minutes($glidetime_paid*SECONDS_PER_HOUR); ?><br>
+						Compensation Taken: <? echo format_hours_minutes($compensation_taken*SECONDS_PER_HOUR); ?><br>
+						Working-Time in Month: <? echo format_hours_minutes($working_time*SECONDS_PER_HOUR); ?><br>
+						Glidetime Remaining: <? echo format_hours_minutes($glidetime_remaining*SECONDS_PER_HOUR); ?><br>
 					</td>
 					<td><b>Bookkeeping:</b><br>Signature/Date<br><br></td>
 				</tr>
@@ -215,14 +215,14 @@ $glidetime_remaining = $glidetime_allowance + $worked_time/SECONDS_PER_HOUR -$wo
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<? include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
+<?
 include ("footer.inc");
 ?>
 </BODY>

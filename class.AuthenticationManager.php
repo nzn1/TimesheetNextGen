@@ -461,7 +461,7 @@ class AuthenticationManager {
 		}
 		else {
 			//get the existing user details
-			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address " .
+			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address, " .
 																"FROM $USER_TABLE WHERE username='$username'");
 			$existingUserDetails = dbResult($qh);
 
