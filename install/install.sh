@@ -166,7 +166,7 @@ if [ "$TABLE_PREFIX" = "" ]; then
 fi
 
 #replace prefix and version timesheet.sql.in
-sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet.sql
+sed "s/__TABLE_PREFIX__/$TABLE_PREFIX/g;s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g;s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g;" timesheet.sql.in> timesheet.sql
 
 #replace prefix in table_names.inc.in
 sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > ../table_names.inc
