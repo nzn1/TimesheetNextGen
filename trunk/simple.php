@@ -23,98 +23,42 @@ if (empty($loggedInUser))
 if (empty($contextUser))
 	errorPage("Could not determine the context user");
 
-//define the command menu
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
 
 //bug fix - we must display all projects
 $proj_id = 0;
 
-// Check project assignment.
+/*/ Check project assignment.
 if ($proj_id != 0) { // id 0 means 'All Projects'
 	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE WHERE proj_id='$proj_id' AND username='$contextUser'");
 	if ($num < 1)
 		errorPage("You cannot access this project, because you are not assigned to it.");
 }
 else
+*/
 	$task_id = 0;
 
 //get the passed date (context date)
-$todayDate = mktime(0, 0, 0,$month, $day, $year);
-$todayYear = date("Y", $todayDate);
-$todayMonth = date("n", $todayDate);
-$todayDay = date("j", $todayDate);
-$dateValues = getdate($todayDate);
-$todayDayOfWeek = $dateValues["wday"];
+$todayStamp = mktime(0, 0, 0,$month, $day, $year);
+$todayValues = getdate($todayStamp);
+$curDayOfWeek = $todayValues["wday"];
 
 //the day the week should start on: 0=Sunday, 1=Monday
 $startDayOfWeek = getWeekStartDay();
 
-$daysToMinus = $todayDayOfWeek - $startDayOfWeek;
+$daysToMinus = $curDayOfWeek - $startDayOfWeek;
 if ($daysToMinus < 0)
 	$daysToMinus += 7;
 
-//work out the start date by minusing enough seconds to make it the start day of week
-$startDate = $todayDate - $daysToMinus * A_DAY;
-$startYear = date("Y", $startDate);
-$startMonth = date("n", $startDate);
-$startDay = date("j", $startDate);
-
-//work out the end date by adding 7 days
-$endDate = $startDate + 7 * A_DAY;
-$endYear = date("Y", $endDate);
-$endMonth = date("n", $endDate);
-$endDay = date("j", $endDate);
-
-// Calculate the previous week
-$previousWeekDate = $todayDate - A_DAY * 7;
-$previousWeekYear = date("Y", $previousWeekDate);
-$previousWeekMonth = date("n", $previousWeekDate);
-$previousWeekDay = date("j", $previousWeekDate);
-
-//calculate next week
-$nextWeekDate = $todayDate + A_DAY * 7;
-$nextWeekYear = date("Y", $nextWeekDate);
-$nextWeekMonth = date("n", $nextWeekDate);
-$nextWeekDay = date("j", $nextWeekDate);
+$startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
+$endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 
 //get the configuration of timeformat and layout
-list($qh2, $numq) = dbQuery("SELECT timeformat, simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qh2);
 $layout = $configData['simpleTimesheetLayout'];
-
-//build the database query
-$query = "SELECT date_format(start_time,'%d') AS day_of_month, ";
-
-if ($configData["timeformat"] == "12")
-	$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
-else
-	$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') AS start, ";
-
-$query .= "unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
-						"end_time AS end_time_str, ".
-						"start_time AS start_time_str, ".
-						"unix_timestamp(start_time) AS start_time, ".
-						"unix_timestamp(end_time) AS end_time, ".
-						"$PROJECT_TABLE.title AS projectTitle, " .
-						"$TASK_TABLE.name AS taskName, " .
-						"$TIMES_TABLE.proj_id, " .
-						"$TIMES_TABLE.task_id, " .
-						"$TIMES_TABLE.log_message " .
-
-						"FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE WHERE " .
-						"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND " .
-						"uid='$contextUser' AND ";
-
-if ($proj_id > 0) //otherwise want all records no matter what project
-	$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
-
-$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
-			"((start_time >= '$startYear-$startMonth-$startDay 00:00:00' AND " .
-			"start_time < '$endYear-$endMonth-$endDay 00:00:00') ".
-			"OR (end_time >= '$startYear-$startMonth-$startDay 00:00:00' AND " .
-			"end_time < '$endYear-$endMonth-$endDay 00:00:00') ".
-			"OR (start_time < '$startYear-$startMonth-$startDay 00:00:00' AND end_time >= '$endYear-$endMonth-$endDay 00:00:00')) ".
-			"ORDER BY proj_id, start_time";
 
 ?>
 <html>
@@ -128,13 +72,17 @@ include ("header.inc");
 	var projectTasksHash = {};
 <?php
 //get all of the projects and put them into the hashtable
-$getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.title, $PROJECT_TABLE.client_id, ".
-													"$CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation FROM ".
-													"$PROJECT_TABLE, $ASSIGNMENTS_TABLE, $CLIENT_TABLE WHERE ".
-													"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
-													"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
-													"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
-													"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
+$getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
+							"$PROJECT_TABLE.title, " .
+							"$PROJECT_TABLE.client_id, " .
+							"$CLIENT_TABLE.client_id, " .
+							"$CLIENT_TABLE.organisation " .
+						"FROM $PROJECT_TABLE, $ASSIGNMENTS_TABLE, $CLIENT_TABLE " .
+						"WHERE $PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
+							"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
+							"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
+						"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
+
 list($qh3, $num3) = dbQuery($getProjectsQuery);
 
 //iterate through results
@@ -149,11 +97,13 @@ for ($i=0; $i<$num3; $i++) {
 }
 
 //get all of the tasks and put them into the hashtable
-$getTasksQuery = "SELECT $TASK_TABLE.proj_id, $TASK_TABLE.task_id, $TASK_TABLE.name FROM ".
-											"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE WHERE ".
-											"$TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
-											"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
-											"ORDER BY $TASK_TABLE.name";
+$getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
+						"$TASK_TABLE.task_id, " .
+						"$TASK_TABLE.name " .
+					"FROM $TASK_TABLE, $TASK_ASSIGNMENTS_TABLE " .
+					"WHERE $TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
+						"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
+					"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);
 //iterate through results
@@ -180,7 +130,7 @@ for ($i=0; $i<$num4; $i++) {
 			var clientId = document.getElementById('client_row' + i).value;
 			var projectId = document.getElementById('project_row' + i).value;
 			var taskId = document.getElementById('task_row' + i).value;
-			
+
 			//get the selects
 			var clientSelect = document.getElementById('clientSelect_row' + i);
 			var projectSelect = document.getElementById('projectSelect_row' + i);
@@ -189,7 +139,7 @@ for ($i=0; $i<$num4; $i++) {
 			//add None to the selects
 			clientSelect.options[clientSelect.options.length] = new Option('None', '-1');
 			projectSelect.options[projectSelect.options.length] = new Option('None', '-1');
-			taskSelect.options[taskSelect.options.length] = new Option('None', '-1');			
+			taskSelect.options[taskSelect.options.length] = new Option('None', '-1');
 
 			//add the clients
 			//var clientId = -1;
@@ -248,7 +198,7 @@ for ($i=0; $i<$num4; $i++) {
 				}
 			}
 		}
-	}	
+	}
 
 	function clearTaskSelect(row) {
 		taskSelect = document.getElementById('taskSelect_row' + row);
@@ -306,8 +256,8 @@ for ($i=0; $i<$num4; $i++) {
 		if (projectId != -1)
 			//populate the select with tasks for this project
 			populateTaskSelect(row, projectId);
-			
-			setDirty();
+
+		setDirty();
 	}
 
 	function onChangeClientSelect(idStr) {
@@ -320,22 +270,25 @@ for ($i=0; $i<$num4; $i++) {
 
 		if (clientId != -1) {
 			populateProjectSelect(row, clientId);
-		} 
+		}
 	}
 
 	function onChangeTaskSelect(idStr) {
-		onChangeTaskSelectRow(rowFromIdStr(idStr));
+		var rowNum = rowFromIdStr(idStr);
+		//alert('octs called for row ' + rowNum);
+		onChangeTaskSelectRow(rowNum);
 	}
 
 	function onChangeTaskSelectRow(row) {
 		taskSelect = document.getElementById('taskSelect_row' + row);
+		//alert('octsr called for row ' + row);
 		if (taskSelect.options[0].selected == true) {
 			//disable fields
 			for (var i=1; i<=7; i++) {
 				document.getElementById('hours_row' + row + '_col' + i).disabled = true;
 				document.getElementById('mins_row' + row + '_col' + i).disabled = true;
 			}
-		}
+		} 
 		else {
 			//get the total number of rows
 			var totalRows = parseInt(document.getElementById('totalRows').value);
@@ -365,6 +318,12 @@ for ($i=0; $i<$num4; $i++) {
 				//insert the new node before the totals node
 				totalsNode.parentNode.insertBefore(newNode, totalsNode);
 
+				//enable fields
+				for (var i=1; i<=7; i++) {
+					document.getElementById('hours_row' + row + '_col' + i).disabled = false;
+					document.getElementById('mins_row' + row + '_col' + i).disabled = false;
+				}
+
 				//clear the task select
 				clearTaskSelect(totalRows);
 
@@ -372,6 +331,7 @@ for ($i=0; $i<$num4; $i++) {
 				clearWorkDescriptionField(totalRows);
 
 				clearProjectSelect(totalRows);
+
 				/* //select default project
 				var oldProjectSelect = document.getElementById('projectSelect_row' + row);
 				var newProjectSelect = document.getElementById('projectSelect_row' + (row+1));
@@ -383,11 +343,6 @@ for ($i=0; $i<$num4; $i++) {
 
 			}
 
-			//enable fields
-			for (var i=1; i<=7; i++) {
-				document.getElementById('hours_row' + row + '_col' + i).disabled = false;
-				document.getElementById('mins_row' + row + '_col' + i).disabled = false;
-			}
 		}
 		setDirty();
 	}
@@ -411,7 +366,7 @@ for ($i=0; $i<$num4; $i++) {
 		for (var i=1; i<=7; i++) {
 			document.getElementById("hours_row" + row + "_col" + i).value = "";
 			document.getElementById("mins_row" + row + "_col" + i).value = "";
-			recalculateCol(i);
+			recalculateCol(i,idStr);
 		}
 
 		tr.style.display = "none";
@@ -424,7 +379,7 @@ for ($i=0; $i<$num4; $i++) {
 			if (node.getAttribute != null && node.getAttribute("name") != null)
 				node.setAttribute("name", node.getAttribute("name").replace(rowRegex, "row" + rowNumber));
 
-			//call this function recursively for children
+			// call this function recursively for children
 			// did not to work recursely with if statement like it was:
 			// if (node.firstChild != null && node.firstChild.tagName != null)
 			if (node.firstChild != null)
@@ -444,26 +399,29 @@ for ($i=0; $i<$num4; $i++) {
 	function recalculateRow(row) {
 		var totalMins = 0;
 		for (i=1; i<=7; i++) {
-			if (((hours=parseInt(document.getElementById("hours_row" + row + "_col" + i).value)) > 23) ) {
-				alert("Too many hours...");
-				document.getElementById("hours_row" + row + "_col" + i).value="";  //=true;
-				document.getElementById("mins_row" + row + "_col" + i).select();  //=true;
-				document.getElementById("hours_row" + row + "_col" + i).select();  //=true;
-				return false;
-			}
+			minsinday = parseInt(document.getElementById("minsinday_" + i).value);
+			//var hrsinday = minsinday/60;
 			hours = parseInt(document.getElementById("hours_row" + row + "_col" + i).value);
-			if (!isNaN(hours))
-				totalMins += hours * 60;
-			if ((mins = parseInt(document.getElementById("mins_row" + row + "_col" + i).value)) > 59) {
-				alert("Too many minutes...");
+			mins = parseInt(document.getElementById("mins_row" + row + "_col" + i).value);
+			if (isNaN(hours)) {
+				hours = 0;
+			}
+			if (isNaN(mins)) {
+				mins = 0;
+			}
+
+			var minutes = hours * 60 + mins;
+
+			if (minutes > minsinday) {
+				alert("Too much time, date only has " + minsinday/60 + " hours in the day");
+				document.getElementById("hours_row" + row + "_col" + i).value="";  //=true;
 				document.getElementById("mins_row" + row + "_col" + i).value="";  //=true;
 				document.getElementById("hours_row" + row + "_col" + i).select();  //=true;
 				document.getElementById("mins_row" + row + "_col" + i).select();  //=true;
+				document.getElementById("hours_row" + row + "_col" + i).select();  //=true;
 				return false;
 			}
-			mins = parseInt(document.getElementById("mins_row" + row + "_col" + i).value);
-			if (!isNaN(mins))
-				totalMins += mins;
+			totalMins += minutes;
 		}
 
 		hours = Math.floor(totalMins / 60);
@@ -477,29 +435,38 @@ for ($i=0; $i<$num4; $i++) {
 	function recalculateCol(col,idStr) {
 		//get the total number of rows
 		var totalRows = parseInt(document.getElementById('totalRows').value);
+		var minsinday = parseInt(document.getElementById("minsinday_" + col).value);
 
 		var totalMins = 0;
 		var row="";
 		for (var i=0; i<totalRows; i++) {
 			hours = parseInt(document.getElementById("hours_row" + i + "_col" + col).value);
-			if (!isNaN(hours))
-				totalMins += hours * 60;
 			mins = parseInt(document.getElementById("mins_row" + i + "_col" + col).value);
-			if (!isNaN(mins))
-				totalMins += mins;
+			if (isNaN(hours)) {
+				hours = 0;
+			}
+			if (isNaN(mins)) {
+				mins = 0;
+			}
+
+			var minutes = hours * 60 + mins;
+
+			totalMins += minutes;
+		}
+
+		if (totalMins > minsinday) {
+			alert("Too much time, only " + minsinday/60 + " hours in the day, check your column");
+			row=rowFromIdStr(idStr);
+			document.getElementById("hours_row" + row + "_col" + col).value="";  //=true;
+			document.getElementById("mins_row" + row + "_col" + col).value="";  //=true;
+			document.getElementById("hours_row" + row + "_col" + col).select();  //=true;
+			document.getElementById("mins_row" + row + "_col" + col).select();  //=true;
+			document.getElementById("hours_row" + row + "_col" + col).select();  //=true;
+			return false;
 		}
 
 		hours = Math.floor(totalMins / 60);
 		mins = totalMins - (hours * 60);
-		if (hours >24) {
-			alert("Too many hours... Check your column");
-			row=rowFromIdStr(idStr);
-			document.getElementById("hours_row" + row + "_col" + col).value="";  //=true;
-			document.getElementById("mins_row" + row + "_col" + col).select();  //=true;
-			document.getElementById("hours_row" + row + "_col" + col).select();  //=true;
-			recalculateRow(rowFromIdStr(idStr));
-		return false;
-		}
 
 		//get the total cell
 		var totalCell = document.getElementById("subtotal_col" + col);
@@ -546,17 +513,26 @@ for ($i=0; $i<$num4; $i++) {
 			//iterate through cols
 			for (var j=1; j<=7; j++) {
 				hours = parseInt(document.getElementById("hours_row" + i + "_col" + j).value);
-				if (document.getElementById("hours_row" + i + "_col" + j).value != "" && isNaN(hours) || hours > 23) {
-					alert('The hours field in row ' + i + ' column ' + j + ' must be a number between 0 and 23.');
-					document.getElementById("hours_row" + i + "_col" + j).focus();
-					return;
+				mins = parseInt(document.getElementById("mins_row" + i + "_col" + j).value);
+				if (isNaN(hours)) {
+					hours = 0;
+				}
+				if (isNaN(mins)) {
+					mins = 0;
 				}
 
-				mins = parseInt(document.getElementById("mins_row" + i + "_col" + j).value);
-				if (document.getElementById("mins_row" + i + "_col" + j).value != "" && isNaN(mins) || mins > 59) {
-					alert('The minutes field in row ' + i + ' column ' + j + ' must be a number between 0 and 59.');
-					document.getElementById("mins_row" + i + "_col" + j).focus();
-					return;
+				var minsinday = parseInt(document.getElementById("minsinday_" + j).value);
+
+				var minutes = hours * 60 + mins;
+
+				if (minutes > minsinday) {
+					alert("Too much time, date only has " + minsinday/60 + " hours in the day");
+					document.getElementById("hours_row" + i + "_col" + j).value="";  //=true;
+					document.getElementById("mins_row" + i + "_col" + j).value="";  //=true;
+					document.getElementById("hours_row" + i + "_col" + j).select();  //=true;
+					document.getElementById("mins_row" + i + "_col" + j).select();  //=true;
+					document.getElementById("hours_row" + i + "_col" + j).select();  //=true;
+					return false;
 				}
 			}
 		}
@@ -574,14 +550,14 @@ if (isset($popup))
 echo ">\n";
 
 include ("banner.inc");
+include("navcal/navcalendars.inc");
 ?>
+
 <form name="theForm" action="simple_action.php" method="post">
 <input type="hidden" name="year" value=<?php echo $year; ?>>
 <input type="hidden" name="month" value=<?php echo $month; ?>>
 <input type="hidden" name="day" value=<?php echo $day; ?>>
-<input type="hidden" name="startYear" value=<?php echo $startYear; ?>>
-<input type="hidden" name="startMonth" value=<?php echo $startMonth; ?>>
-<input type="hidden" name="startDay" value=<?php echo $startDay; ?>>
+<input type="hidden" name="startStamp" value=<?php echo $startDate; ?>>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -593,11 +569,19 @@ include ("banner.inc");
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
-							Week Start: <?php echo date('D F j, Y',mktime(0,0,0,$startMonth, $startDay, $startYear)); ?>
+							Timesheet
+						</td>
+						<td align="middle" nowrap class="outer_table_heading">
+							<?
+								$sdStr = date("M d, Y",$startDate);
+								//just need to go back 1 second most of the time, but DST 
+								//could mess things up, so go back 6 hours...
+								$edStr = date("M d, Y",$endDate - 6*60*60); 
+								echo "Week: $sdStr - $edStr"; 
+							?>
 						</td>
 						<td align="right" nowrap>
-							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?php echo $previousWeekYear ?>&month=<?php echo $previousWeekMonth ?>&day=<?php echo $previousWeekDay ?>" class="outer_table_action">Prev</a>
-							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?php echo $nextWeekYear ?>&month=<?php echo $nextWeekMonth ?>&day=<?php echo $nextWeekDay ?>" class="outer_table_action">Next</a>
+							<!--prev / next buttons used to be here -->
 						</td>
 						<td align="right" nowrap>
 							<input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="true" onClick="validate();" />
@@ -620,15 +604,22 @@ include ("banner.inc");
 						<?php
 						//print the days of the week
 						$currentDayDate = $startDate;
+						$dstadj=array();
 						for ($i=0; $i<7; $i++) {
 							$currentDayStr = strftime("%a", $currentDayDate);
-							$currentDayDate += A_DAY;
+							$dst_adjustment = get_dst_adjustment($currentDayDate);
+							$dstadj[]=$dst_adjustment;
+							$minsinday = ((24*60*60) - $dst_adjustment)/60;
+							print "<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\">";
 							print
 								"<td align=\"center\" width=\"65\">" .
 								"<table width=\"65\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr>" .
 								"<td class=\"inner_table_column_heading\" align=\"center\">" .
-								"$currentDayStr" .
+								"$currentDayStr<br>" .
+								//Output the numerical date in the form of day of the month
+								date("d", $currentDayDate) .
 								"</td></tr></table></td>\n";
+							$currentDayDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
 						}
 						?>
 						<td align="center" width="2">&nbsp;</td>
@@ -646,6 +637,7 @@ include ("banner.inc");
 
 
 	class TaskInfo extends Pair {
+		var $clientId;
 		var $projectId;
 		var $projectTitle;
 		var $taskName;
@@ -663,6 +655,10 @@ include ("banner.inc");
 	function printSpaceColumn() {
 		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
 	}
+
+	/*=======================================================================
+	 ==================== Function PrintFormRow =============================
+	 =======================================================================*/
 
 	// taskId = $matchedPair->value1, daysArray = $matchedPair->value2
 	// $allTasksDayTotals = int[7] and sums up the minutes for all tasks at one day
@@ -748,7 +744,9 @@ include ("banner.inc");
 		$weeklyTotal = 0;
 		$isEmptyRow = ($daysArray == null);
 
-		// print hours and minutes input field for each day
+		//print_r($daysArray); print "<br>";
+
+		//print hours and minutes input field for each day
 
 		for ($currentDay = 0; $currentDay < 7; $currentDay++) {
 			//open the column
@@ -757,66 +755,21 @@ include ("banner.inc");
 			//while we are printing times set the style
 			print "<span class=\"task_time_small\">";
 
-			//create a flag for empty cell
-			$emptyCell = true;
+			//declare current days vars
+			$curDaysTotal = 0;
+			$curDaysHours = "";
+			$curDaysMinutes = "";
 
-			//declare todays vars
-//			$currentDay++;
-			$todaysTotal = 0;
-			$todaysHours = "";
-			$todaysMinutes = "";
-
-			// if there is an $daysArray calculate todays minutes and hours
+			// if there is an $daysArray calculate current day's minutes and hours
 
 			if (!$isEmptyRow) {
 				$currentDayArray = $daysArray[$currentDay];
-				$todaysStartTime = $startDate + $currentDay * A_DAY;
-				$todaysEndTime = $startDate + ($currentDay + 1) * A_DAY;
 
-				for ($j=0; $j<4; $j++) {
-					$currentTaskEntriesArray = $currentDayArray[$j];
-
-					//print "C" . count($currentTaskEntriesArray) . " ";
-
-					//iterate through the task entries
-					foreach ($currentTaskEntriesArray as $currentTaskEntry) {
-						//is the cell empty?
-						if ($emptyCell)
-							//the cell is not empty since we found a task entry
-							$emptyCell = false;
-						//else
-							//print a break for the next entry
-							//print "<br>";
-
-						//format printable times
-						$formattedStartTime = $currentTaskEntry["start"];
-						$formattedEndTime = $currentTaskEntry["endd"];
-
-						switch($j) {
-						case 0: //tasks which started on a previous day and finish on a following day
-							//print "...-...";
-							$todaysTotal += A_DAY;
-							break;
-						case 1: //tasks which started on a previous day and finish today
-							//print "...-" . $formattedEndTime;
-							$todaysTotal += $currentTaskEntry["end_time"] - $todaysStartTime;
-							break;
-						case 2: //tasks which started and finished today
-							//print $formattedStartTime . "-" . $formattedEndTime;
-							$todaysTotal += $currentTaskEntry["end_time"] - $currentTaskEntry["start_time"];
-							break;
-						case 3: //tasks which started today and finish on a following day
-							//print $formattedStartTime . "-...";
-							$todaysTotal += $todaysEndTime - $currentTaskEntry["start_time"];
-							break;
-						default:
-							print "error";
-						}
-					}
+				foreach ($currentDayArray as $taskDuration) {
+					$curDaysTotal += $taskDuration;
 				}
-
-				$todaysHours = floor($todaysTotal / 60 / 60);
-				$todaysMinutes = ($todaysTotal - ($todaysHours * 60 * 60)) / 60;
+				$curDaysHours = floor($curDaysTotal / 60 );
+				$curDaysMinutes = $curDaysTotal - ($curDaysHours * 60);
 			}
 
 			// write summary and totals of this row
@@ -825,35 +778,29 @@ include ("banner.inc");
 			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay+1);
 			$disabled = $isEmptyRow?'disabled="true" ':'';
 
-			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$todaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>h</span>";
-			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$todaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>m</span>";
+			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>h</span>";
+			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>m</span>";
 
 			//close the times class
 			print "</span>";
-
-			/*if (!$emptyCell) {
-				//print todays total
-				$todaysTotalStr = formatSeconds($todaysTotal);
-				print "<br><span class=\"task_time_total_small\">$todaysTotalStr</span>";
-			}*/
 
 			//end the column
 			print "</td>";
 
 			//add this days total to the weekly total
-			$weeklyTotal += $todaysTotal;
+			$weeklyTotal += $curDaysTotal;
 
 			// add this days total to the all tasks total for this day
 			// if an array is provided by the caller
 			if ($allTasksDayTotals != null) {
-				$allTasksDayTotals[$currentDay] += $todaysTotal;
+				$allTasksDayTotals[$currentDay] += $curDaysTotal;
 			}
 		}
 
 		printSpaceColumn();
 
 		//format the weekly total
-		$weeklyTotalStr = formatSeconds($weeklyTotal);
+		$weeklyTotalStr = formatMinutes($weeklyTotal);
 
 		//print the total column
 		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\">";
@@ -869,21 +816,20 @@ include ("banner.inc");
 		print "</tr>";
 	}
 
-	// Get the Weekly data.
-	list($qh5, $num5) = dbQuery($query);
+	/*=======================================================================
+	 ================ end Function PrintFormRow =============================
+	 =======================================================================*/
 
-	//print "<p>Query: $query </p>";
-	//print "<p>there were $num3 results</p>";
-
+	// Get the Weekly user data.
+	$startStr = date("Y-m-d H:i:s",$startDate);
+	$endStr = date("Y-m-d H:i:s",$endDate);
+	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
+	list($num5, $qh5) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id, $order_by_str);
 
 	//we're going to put the data into an array of
 	//different (unique) TASKS
 	//which has an array of DAYS (7) which has
-	//and array of size 4:
-	// -index 0 is task entries array for tasks which started on a previous day and finish on a following day
-	// -index 1 is task entries array for tasks which started on a previous day and finish today
-	// -index 2 is task entreis array for tasks which started and finished today
-	// -index 3 is task entries array for tasks which started today and finish on a following day
+	//an array of task durations for that day
 
 	$structuredArray = array();
 	$previousTaskId = -1;
@@ -894,16 +840,16 @@ include ("banner.inc");
 		//get the record for this task entry
 		$data = dbResult($qh5,$i);
 
-		//Due to a bug in mysql with converting to unix timestamp from the string,
-		//we are going to use php's strtotime to make the timestamp from the string.
-		//the problem has something to do with timezones.
-		$data["start_time"] = strtotime($data["start_time_str"]);
-		$data["end_time"] = strtotime($data["end_time_str"]);
+		//There are several potential problems with the date/time data comming from the database
+		//because this application hasn't taken care to cast the time data into a consistent TZ.
+		//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
+		//So, we handle it as best we can for now...
+		fixStartEndDuration($data);
 
 		//get the current task properties
 		$currentTaskId = $data["task_id"];
-		$currentTaskStartDate = $data["start_time"];
-		$currentTaskEndDate = $data["end_time"];
+		$currentTaskStartDate = $data["start_stamp"];
+		$currentTaskEndDate = $data["end_stamp"];
 		$currentTaskName = stripslashes($data["taskName"]);
 		$currentProjectTitle = stripslashes($data["projectTitle"]);
 		$currentProjectId = $data["proj_id"];
@@ -912,8 +858,8 @@ include ("banner.inc");
 		//debug
 		//print "<p>taskId:$currentTaskId '$data[taskName]', start time:$data[start_time_str], end time:$data[end_time_str]</p>";
 
-
-		//find the current task id in the array
+		// Combine multiple entries for a given project/task & description into a single line
+		// look for the current task id in the array
 		$taskCount = count($structuredArray);
 		unset($matchedPair);
 		for ($j=0; $j<$taskCount; $j++) {
@@ -939,14 +885,9 @@ include ("banner.inc");
 			//create a new days array
 			$daysArray = array();
 
-			//put an array in each day (this internal array will be of size 4)
 			for ($j=0; $j<7; $j++) {
 				//create a task event types array
 				$taskEventTypes = array();
-
-				//add 4 arrays to it
-				for ($k=0; $k<4; $k++)
-					$taskEventTypes[] = array();
 
 				//add the task event types array to the days array for this day
 				$daysArray[] = $taskEventTypes;
@@ -955,7 +896,8 @@ include ("banner.inc");
 			//create a new pair
 			$matchedPair = new TaskInfo($currentTaskId, $daysArray,
 										$currentProjectId, $currentProjectTitle,
-										$currentTaskName, $currentWorkDescription);
+										$currentTaskName, $currentWorkDescription
+										);
 
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
@@ -966,44 +908,32 @@ include ("banner.inc");
 			//print "<p> added matched pair with task '$matchedPair->taskName'</p>";
 		}
 
-		//iterate through the days array
+		//iterate through the days array  
+		$currentDayDate = $startDate;
 		for ($k=0; $k<7; $k++) {
+			$tomorrowDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
 
-			//$dayStart = strftime("%D %T", $startDate + $k * A_DAY);
-			//$dayEnd = strftime("%D %T", $startDate + ($k + 1) * A_DAY);
-			//print "<p>DAY start: $dayStart, DAY end: $dayEnd</p>";
+			$duration = 0;
+			if(isset($data["duration"]) && ($data["duration"] > 0) ) {
+				$duration = $data["duration"];
+			}
 
-			//work out some booleans
-			$startsOnPreviousDay = ($currentTaskStartDate < ($startDate + $k * A_DAY));
-			$endsOnFollowingDay = ($currentTaskEndDate >= ($startDate + ($k + 1) * A_DAY));
-			$startsToday = ($currentTaskStartDate >= ($startDate + $k * A_DAY) &&
-													$currentTaskStartDate < ($startDate + ($k + 1) * A_DAY));
-			$endsToday = ($currentTaskEndDate >= ($startDate + $k * A_DAY) &&
-													$currentTaskEndDate < ($startDate + ($k + 1) * A_DAY));
+			$startsToday = (($currentTaskStartDate >= $currentDayDate ) && ( $currentTaskStartDate < $tomorrowDate ));
+			$endsToday =   (($currentTaskEndDate > $currentDayDate) && ($currentTaskEndDate <= $tomorrowDate));
+			$startsBeforeToday = ($currentTaskStartDate < $currentDayDate);
+			$endsAfterToday = ($currentTaskEndDate > $tomorrowDate);
 
-			//$currentTaskStartDateStr = strftime("%D %T", $currentTaskStartDate);
-			//$currentTaskEndDateStr = strftime("%D %T", $currentTaskEndDate);
-			//print "<p>task start: $currentTaskStartDateStr task end: $currentTaskEndDateStr</p>";
+			if($startsToday && $endsToday ) {
+				$matchedPair->value2[$k][] = $duration;
+			} else if($startsToday && $endsAfterToday) {
+				$matchedPair->value2[$k][] = get_duration($currentTaskStartDate, $tomorrowDate);
+			} else if( $startsBeforeToday && $endsToday ) {
+				$matchedPair->value2[$k][] = get_duration($currentDayDate, $currentTaskEndDate);
+			} else if( $startsBeforeToday && $endsAfterToday ) {
+				$matchedPair->value2[$k][] = get_duration($currentDayDate, $tomorrowDate);
+			}
 
-			//print "<p>startsOnPreviousDay=$startsOnPreviousDay, endsOnFollowingDay=$endsOnFollowingDay" .
-			//	", startsToday=$startsToday, endsToday=$endsToday</p>";
-
-			//does it start before this day and end after this day?
-			if ($startsOnPreviousDay && $endsOnFollowingDay)
-				//add this task entry to the array for index 0
-				$matchedPair->value2[$k][0][] = $data;
-			//does it start before this day and end on this day?
-			else if ($startsOnPreviousDay && $endsToday)
-				//add this task entry to the arry for index 1
-				$matchedPair->value2[$k][1][] = $data;
-			//does it start and end on this day?
-			else if ($startsToday && $endsToday)
-				//add this task entry to the array for index 2
-				$matchedPair->value2[$k][2][] = $data;
-			//does it start on this day and end on a following day
-			else if ($startsToday && $endsOnFollowingDay)
-				//add this task entry to the array for index 3
-				$matchedPair->value2[$k][3][] = $data;
+			$currentDayDate = $tomorrowDate;
 		}
 	}
 
@@ -1069,13 +999,13 @@ include ("banner.inc");
 	foreach ($allTasksDayTotals as $currentAllTasksDayTotal) {
 		$col++;
 		$grandTotal += $currentAllTasksDayTotal;
-		$formattedTotal = formatSeconds($currentAllTasksDayTotal);
+		$formattedTotal = formatMinutes($currentAllTasksDayTotal);
 		print "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
 		print "<span class=\"calendar_total_value_weekly\" id=\"subtotal_col" . $col . "\">$formattedTotal</span></td>";
 	}
 
 	//print grand total
-	$formattedGrandTotal = formatSeconds($grandTotal);
+	$formattedGrandTotal = formatMinutes($grandTotal);
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	print "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
 	print "<span class=\"calendar_total_value_monthly\" id=\"grand_total\">$formattedGrandTotal</span></td>";
@@ -1101,4 +1031,6 @@ include ("footer.inc");
 ?>
 </body>
 </html>
-
+<?php
+// vim:ai:ts=4:sw=4
+?>

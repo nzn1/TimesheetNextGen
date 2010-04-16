@@ -8,23 +8,22 @@ function format_seconds($seconds) {
 	$hour = (int) ($temp / (60*60));
 
 	if ($hour < 10)
-		$hour = '0'. $hour;
+		$hour = '0' . $hour;
 
 	$temp -= (60*60)*$hour;
 	$minutes = (int) ($temp / 60);
 
 	if ($minutes < 10)
-		$minutes = '0'. $minutes;
+		$minutes = '0' . $minutes;
 
 	$temp -= (60*$minutes);
 	$sec = $temp;
 
 	if ($sec < 10)
-		$sec = '0'. $sec;		// Totally wierd PHP behavior.  There needs to
-								// be a space after the . operator for this to work.
+		$sec = '0' . $sec;
+				
 	return "$hour:$minutes:$sec";
 }
-
 
 
 //	require_once("../devtools/connection.php");

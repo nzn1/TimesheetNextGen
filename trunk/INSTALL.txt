@@ -1,5 +1,34 @@
 TimesheetNextGen installation.
 
+There are two different easy methods available to install or upgrade the 
+TimesheetNextGen system: 
+	1. Using a web browser
+	2. From the command line
+
+I suggest using the web browser because there are more safety checks and a 
+couple extra options that aren't available via the command line.
+
+The hard method: manually, instructions are below.
+
+
+   <<<<<<<<<<<<<<<<<<<<<x>>>>>>>>>>>>>>>>>>>>>
+
+
+Web Installation
+
+	1. Copy the distribution files to an active web location, such as 
+	   htdocs/www, or an new active virtual website (my favorite option). 
+
+	2. If you are performing an upgrade, then copy the files 
+	   "database_credentials.inc" and "table_names.inc" from your previous 
+	   installation to this new instance.
+
+	3. Point a browser to this address and follow the instructions there.
+
+
+   <<<<<<<<<<<<<<<<<<<<<x>>>>>>>>>>>>>>>>>>>>>
+
+
 UNIX SYSTEMS WITH SHELL ACCESS
 
 To install, run the script:
@@ -11,13 +40,10 @@ To upgrade from an earlier version, run the script:
 	install/upgrade.sh
 
 
-SERVERS WITHOUT SHELL ACCESS AND WINDOWS SYSTEMS
+   <<<<<<<<<<<<<<<<<<<<<x>>>>>>>>>>>>>>>>>>>>>
 
-Web Installation
 
-	Copy the distribution files to your htdocs/www location, point a browser to this address and follow the instructions there.
-	If you are performing an upgrade, then copy the files "database_credentials.inc" and "table_names.inc" from your
-	previous installation to the new version and then follow the instructions on the browser.
+SERVERS WITHOUT SHELL ACCESS OR WINDOWS SYSTEMS
 
 Manual Installation
 
@@ -41,7 +67,9 @@ Manual Installation
 	If you don't use this script, be sure to set the privileges on the new database.
 
 
-2b. (Alternatively) Use an existing database.
+2b. (Alternatively) Use an existing database, edit the upgrade sql scripts to replace the table prefixes, and apply them one at a time.
+	Edit the table_names.inc file to list all the appropriate table names.
+	Skip to step 6.
 
 
 3. Create the tables
@@ -65,7 +93,12 @@ Manual Installation
 	$DATABASE_DB - (The name of the database you created - usually 'timesheet')
 	$DATABASE_PASSWORD_FUNCTION (either "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. [See footnote])
 
-	Now rename this fine to "database_credentials.inc"
+
+	These values are not required, but may help an upgrade process in the future
+	$TIMESHEET_VERSION   - (The current version of the Timesheet system)
+	$TIMESHEET_INSTALLED - (If the Timesheet system is installed, should be the numeral one).
+
+	Now rename this file to "database_credentials.inc"
  
 5. Set the admin password for TimesheetNextGen, by running the following SQL command:
 
@@ -79,6 +112,10 @@ Manual Installation
 6. Upload the files to your web server.
 
 7. Test the installation by logging in to 'login.php' with the username 'admin', and the <password> entered above.
+
+
+   <<<<<<<<<<<<<<<<<<<<<x>>>>>>>>>>>>>>>>>>>>>
+
 
 FOOTNOTE
 --------
@@ -96,4 +133,3 @@ You will need to choose one of the folling password functions:
 SHA1 (Use this for version 4.1 and later)
 PASSWORD (Use this for versions below 4.1)
 OLD_PASSWORD (For versions above 4.1 when SHA1 fails)
-

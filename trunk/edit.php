@@ -39,8 +39,11 @@ if ($action == "saveChanges") {
 	$clock_on_time_string = "$clock_on_date_year-$clock_on_date_month-$clock_on_date_day $clock_on_time_hour:$clock_on_time_min:00";
 	$clock_off_time_string = "$clock_off_date_year-$clock_off_date_month-$clock_off_date_day $clock_off_time_hour:$clock_off_time_min:00";
 
+	$duration = get_duration(strtotime($clock_on_time_string),strtotime($clock_off_time_string));
+
 	$queryString = "UPDATE $TIMES_TABLE SET start_time='$clock_on_time_string', ".
 								"end_time='$clock_off_time_string', ".
+								"duration=$duration, " .
 								"log_message='$log_message', ".
 								"task_id='$task_id', " .
 								"proj_id='$proj_id' " .
@@ -59,11 +62,11 @@ include("timesheet_menu.inc");
 //get trans info
 $trans_info = get_trans_info($trans_num);
 
-		//Due to a bug in mysql with converting to unix timestamp from the string,
-		//we are going to use php's strtotime to make the timestamp from the string.
-		//the problem has something to do with timezones.
-		$trans_info["start_time"] = strtotime($trans_info["start_time_str"]);
-		$trans_info["end_time"] = strtotime($trans_info["end_time_str"]);
+//There are several potential problems with the date/time data comming from the database
+//because this application hasn't taken care to cast the time data into a consistent TZ.
+//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
+//So, we handle it as best we can for now...
+fixStartEndDuration($trans_info);
 
 if ($action != "saveChanges") {
 	$proj_id = $trans_info["proj_id"];
@@ -172,18 +175,18 @@ include("client_proj_task_javascript.inc");
 												</td>
 												<td align="left" nowrap>
 													<?php $hourInput = new HourInput("clock_on_time_hour");
-														$hourInput->create(date("G", $trans_info["start_time"])); ?>
+														$hourInput->create(date("G", $trans_info["start_stamp"])); ?>
 													:
 													<?php $minuteInput = new MinuteInput("clock_on_time_min");
-														$minuteInput->create(date("i", $trans_info["start_time"])); ?>
+														$minuteInput->create(date("i", $trans_info["start_stamp"])); ?>
 													&nbsp;on&nbsp;
 													<?php $monthInput = new MonthInput("clock_on_date_month");
-														$monthInput->create(date("n", $trans_info["start_time"])); ?>
+														$monthInput->create(date("n", $trans_info["start_stamp"])); ?>
 													,
 													<?php $dayInput= new DayInput("clock_on_date_day");
-														$dayInput->create(date("d", $trans_info["start_time"])); ?>
+														$dayInput->create(date("d", $trans_info["start_stamp"])); ?>
 													&nbsp;
-													<input type="text" name="clock_on_date_year" size="4" value="<?php echo date("Y", $trans_info["start_time"]); ?>">
+													<input type="text" name="clock_on_date_year" size="4" value="<?php echo date("Y", $trans_info["start_stamp"]); ?>">
 												</td>
 												<td align="left">
 													<img src="images/clock-green-sml.gif">
@@ -195,18 +198,18 @@ include("client_proj_task_javascript.inc");
 												</td>
 												<td align="left" nowrap>
 													<?php $hourInput = new HourInput("clock_off_time_hour");
-														$hourInput->create(date("G", $trans_info["end_time"])); ?>
+														$hourInput->create(date("G", $trans_info["end_stamp"])); ?>
 															:
 													<?php $minuteInput = new MinuteInput("clock_off_time_min");
-														$minuteInput->create(date("i", $trans_info["end_time"])); ?>
+														$minuteInput->create(date("i", $trans_info["end_stamp"])); ?>
 													&nbsp;on&nbsp;
 													<?php $monthInput = new MonthInput("clock_off_date_month");
-														$monthInput->create(date("n", $trans_info["end_time"])); ?>
+														$monthInput->create(date("n", $trans_info["end_stamp"])); ?>
 													,
 													<?php $dayInput= new DayInput("clock_off_date_day");
-														$dayInput->create(date("d", $trans_info["end_time"])); ?>
+														$dayInput->create(date("d", $trans_info["end_stamp"])); ?>
 													&nbsp;
-													<input type="text" name="clock_off_date_year" size="4" value="<?php echo date("Y", $trans_info["end_time"]); ?>">
+													<input type="text" name="clock_off_date_year" size="4" value="<?php echo date("Y", $trans_info["end_stamp"]); ?>">
 												</td>
 												<td align="left">
 													<img src="images/clock-red-sml.gif">
@@ -256,3 +259,6 @@ include("client_proj_task_javascript.inc");
 <?php include ("footer.inc"); ?>
 </body>
 </html>
+<?php
+// vim:ai:ts=4:sw=4
+?>

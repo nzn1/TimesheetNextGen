@@ -515,7 +515,7 @@ include ("banner.inc");
 					<span class="label" nowrap>Stopwatch:</span><?php acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>
 					<span class="label" nowrap>Daily:</span><?php acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>
 					<span class="label" nowrap>Weekly:</span><?php acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>
-					<span class="label" nowrap>Calendar:</span><?php acl_select_droplist("aclCalendar", $resultset["aclCalendar"]); ?>
+					<span class="label" nowrap>Monthly:</span><?php acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>
 					<span class="label" nowrap>Simple:</span><?php acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>
 					<span class="label" nowrap>Clients:</span><?php acl_select_droplist("aclClients", $resultset["aclClients"]); ?>
 					<span class="label" nowrap>Projects:</span><?php acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>
@@ -560,7 +560,7 @@ include ("banner.inc");
 					<b>start page</b>:
 				</td>
 				<td align="left" width="100%">
-					Select a default page to go to after login. 
+					Select a default page to go to after login.
 				</td>
 			</tr>
 			<tr>
@@ -572,7 +572,7 @@ include ("banner.inc");
 						<option value="stopwatch" <?php if ($resultset["startPage"] == 'stopwatch') echo 'selected'?>>Stopwatch</option>
 						<option value="daily" <?php     if ($resultset["startPage"] == 'daily')     echo 'selected'?>>Daily Timesheet</option>
 						<option value="weekly" <?php    if ($resultset["startPage"] == 'weekly')    echo 'selected'?>>Weekly Timesheet</option>
-						<option value="calendar" <?php  if ($resultset["startPage"] == 'calendar')  echo 'selected'?>>Calendar</option>
+						<option value="monthly" <?php   if ($resultset["startPage"] == 'monthly')   echo 'selected'?>>Monthly View</option>
 						<option value="simple" <?php    if ($resultset["startPage"] == 'simple')    echo 'selected'?>>Simple Timesheet</option>
 					</select>
 				</td>
@@ -608,7 +608,7 @@ include ("banner.inc");
 					<b>Time Zone</b>:
 				</td>
 				<td align="left" width="100%">
-					The timezone to use when generating dates. Leave it blank to use the system timezone. An example timezone is <code>Australia/Melbourne</code>.
+					The timezone to use when generating dates. Leave it blank to use the system timezone. Example timezones: <code>Australia/Melbourne</code> &nbsp;<code>US/Central</code> &nbsp;<code>America/Chicago</code> &nbsp;<code>Europe/Zurich</code> &nbsp;<code>GMT+2</code>.
 				</td>
 			</tr>
 			<tr>
@@ -671,22 +671,22 @@ include ("banner.inc");
 				<td align="left" width="100%">
 					<select name="weekstartday" style="width: 100%;">
 						<?php
-								//get the current time
-								$dowDate = time();
+							//get the current time
+							$dowDate = time();
 
-								//make it sunday
-								$dowDate -= (24*60*60) * date("w", $dowDate);
+							//make it sunday
+							$dowDate = strtotime(date("d M Y H:i:s",$dowDate) . " -" . date("w",$dowDate) . " days");
 
-								//for each day of the week
-								for ($i=0; $i<7; $i++) {
-									$dowString = strftime("%A", $dowDate);
-									print "<option value=\"$i\"";
-									if ($resultset["weekstartday"] == $i)
-										print " selected";
-									print ">$dowString</option>";
-									//increment the day
-									$dowDate += (24*60*60);
-								}
+							//for each day of the week
+							for ($i=0; $i<7; $i++) {
+								$dowString = strftime("%A", $dowDate);
+								print "<option value=\"$i\"";
+								if ($resultset["weekstartday"] == $i)
+									print " selected";
+								print ">$dowString</option>";
+								//increment the day
+								$dowDate = strtotime(date("d M Y H:i:s",$dowDate) . " +1 days");
+							}
 						?>
 					</select>
 				</td>
@@ -715,7 +715,7 @@ include ("banner.inc");
 
 				</table>
 				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
-				
+
 			<!-- Items per page in Tasks-->
 			<tr>
 				<td align="left" valign="top">
@@ -736,7 +736,7 @@ include ("banner.inc");
 
 				</table>
 				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
-			
+
 
 			<!-- headerhtml -->
 			<tr>
@@ -889,3 +889,6 @@ include ("footer.inc");
 ?>
 </BODY>
 </HTML>
+<?php
+// vim:ai:ts=4:sw=4
+?>

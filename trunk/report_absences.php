@@ -1,5 +1,4 @@
 <?php
-
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
@@ -25,11 +24,18 @@ if (isset($_REQUEST['uid']))
 else
 	$uid = $contextUser;
 
+if (isset($_REQUEST['print']))
+	$print = true;
+else
+	$print = false;
+
 //define the command menu
 include("timesheet_menu.inc");
 
-// Set default months
-setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
+//get the context date
+$todayDate = mktime(0, 0, 0,$month, $day, $year);
+$dateValues = getdate($todayDate);
+$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
 
 //run the query
 list($qh,$num) = get_absences($month, $year, $uid);
@@ -41,25 +47,66 @@ $AM_text = "&nbsp";
 $PM_text = "&nbsp";
 $public_hol = 'N';
 
+function make_index($data,$order) {
+	if($order == "date") {
+		$index=$data["start_stamp"] . sprintf("-%03d",$data["proj_id"]) . 
+			sprintf("-%03d",$data["task_id"]);
+	} else {
+		$index=sprintf("%03d",$data["proj_id"]) .  sprintf("-%03d-",$data["task_id"]) .
+			$data["start_stamp"];
+	}
+	return $index;
+}
+
+$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr";
+$post="uid=$uid";
+
 ?>
+
+<script type="text/javascript">
+<!--
+function popupPrintWindow() {
+	window.open("<?php echo "$Location&print=yes"; ?>", "Popup Window", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
+}
+//-->
+</script>
+
 <html>
 <head>
-<title>Timesheet Report: Monthly Absences</title>
+<title>Report: Monthly Absences</title>
 <?php include ("header.inc"); ?>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php include ("banner.inc"); ?>
+<?php
+	if($print) {
+		echo "<body width=\"100%\" height=\"100%\"";
+		include ("body.inc");
+
+		echo "onLoad=window.print();";
+		echo ">\n";
+	} else {
+		echo "<body ";
+		include ("body.inc");
+		echo ">\n";
+		include ("banner.inc");
+		$MOTD = 0;  //don't want the MOTD printed
+		include("navcal/navcal_monthly.inc");
+	}
+
+
+?>
 
 <form action="report_absences.php" method="get">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
+<input type="hidden" name="day" value="<?php echo $day; ?>">
+
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<?php if(!$print) include("timesheet_face_part_1.inc"); ?>
 
 			<table width="100%" border="0">
 				<tr>
@@ -74,18 +121,26 @@ $public_hol = 'N';
 						</table>
 					</td>
 					<td align="center" nowrap class="outer_table_heading">
-						<?php echo date('F Y',$time); ?>
+						<?php echo date('F Y',$todayDate); ?>
 					</td>
-					<td align="right" nowrap>
-						<?php
-						printPrevNext($next_week, $prev_week, $next_month, $prev_month, "uid=$uid", 'monthly');
+					<?php if (!$print): 
+						//<td  align="center" >
+						//<a href="#" onclick="javascript:esporta('user')" ><img src="images/export_data.gif" name="esporta_dati" border=0></a>
+						//</td>
 						?>
+						<td  align="center" >
+						<?php 
+							print "<button onClick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
+						?>
+						</td>
+					<?php endif; ?>
+					<td align="right" nowrap>
 					</td>
 				</tr>
 			</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<?php if(!$print) include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -215,16 +270,16 @@ $glidetime_remaining = $glidetime_allowance + $worked_time/SECONDS_PER_HOUR -$wo
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<?php if (!$print) include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
-include ("footer.inc");
-?>
+<?php if (!$print) include ("footer.inc"); ?>
 </BODY>
 </HTML>
-
+<?php
+// vim:ai:ts=4:sw=4
+?>

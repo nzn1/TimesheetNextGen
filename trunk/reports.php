@@ -16,11 +16,12 @@ $contextUser = strtolower($_SESSION['contextUser']);
 //load local vars from superglobals
 $uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']: $contextUser;
 
-//define the command menu
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
 
-// Set default months
-setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_month, $time);
+$todayDate = mktime(0, 0, 0, $month, $day, $year);
+$ymdStr = "&year=$year&month=$month&day=$day";
 
 ?>
 <html>
@@ -28,7 +29,11 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 <?php include ("header.inc"); ?>
 </head>
 <body <?php include ("body.inc"); ?> >
-<?php include ("banner.inc"); ?>
+<?php 
+include ("banner.inc"); 
+$MOTD=0;
+include ("navcal/navcalendars.inc");
+?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -43,12 +48,7 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 							Reports
 						</td>
 						<td align="left" nowrap class="outer_table_heading">
-							<?php echo date('F d, Y',$time) ?>
-						</td>
-						<td align="right" nowrap>
-						<?php
-							printPrevNext($next_week, $prev_week, $next_month, $prev_month, "uid=$uid");
-						?>
+							<?php echo date('F d, Y',$todayDate) ?>
 						</td>
 					</tr>
 				</table>
@@ -65,43 +65,42 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 						<td class="inner_table_column_heading">Actions</td>
 					</tr>
 					<tr>
-						<td class="calendar_cell_middle">Hours worked by a specific user</td>
-						<td class="calendar_cell_disabled_right">
-							<a href="report_specific_user.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=monthly">Generate monthly</a> /
-							<a href="report_specific_user.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=weekly">Generate weekly</a>
-						</td>
-					<tr>
-					<tr class="diff">
-						<td class="calendar_cell_middle">Hours worked on specific project</td>
-						<td class="calendar_cell_disabled_right">
-							<a href="report_specific_project.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=monthly">Generate monthly</a> /
-							<a href="report_specific_project.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=weekly">Generate weekly</a>
-						</td>
-					</tr>
-					<tr>
-						<td class="calendar_cell_middle">Hours worked for a specific client</td>
-						<td class="calendar_cell_disabled_right">
-							<a href="report_specific_client.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=monthly">Generate monthly</a> /
-							<a href="report_specific_client.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=weekly">Generate weekly</a>
+						<td class="calendar_cell_middle">User report</td>
+						<td class="calendar_cell_right">
+							<a href="report_user.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a> /
+							<a href="report_user.php?<?php print $ymdStr; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<tr class="diff">
-						<td class="calendar_cell_middle">Hours worked for a specific client by a specific user</td>
-						<td class="calendar_cell_disabled_right">
-							<a href="report_specific_client_user.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=monthly">Generate monthly</a> /
-							<a href="report_specific_client_user.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=weekly">Generate weekly</a>
+						<td class="calendar_cell_middle">User summary</td>
+						<td class="calendar_cell_right">
+							<a href="report_user_summ.php?<?php print $ymdStr; ?>">Bi-monthly</a>
 						</td>
 					</tr>
 					<tr>
-						<td class="calendar_cell_middle">Summary of hours worked for a client by a specific user</td>
-						<td class="calendar_cell_disabled_right">
-							<a href="report_summary_client_user.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=monthly">Generate monthly</a> /
+						<td class="calendar_cell_middle">Project report</td>
+						<td class="calendar_cell_right">
+							<a href="report_project.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a> /
+							<a href="report_project.php?<?php print $ymdStr; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<tr class="diff">
-						<td class="calendar_cell_middle">Hours worked by all users on all projects</td>
-						<td class="calendar_cell_disabled_right">
-							<a href="report_all.php?month=<?php print $month; ?>&year=<?php print $year; ?>&mode=monthly">Generate monthly</a>
+						<td class="calendar_cell_middle">Client report</td>
+						<td class="calendar_cell_right">
+							<a href="report_client.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a> /
+							<a href="report_client.php?<?php print $ymdStr; ?>&mode=weekly">Generate weekly</a>
+						</td>
+					</tr>
+					<tr>
+						<td class="calendar_cell_middle">Client / User - grid report</td>
+						<td class="calendar_cell_right">
+							<a href="report_grid_client_user.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a>
+						</td>
+					</tr>
+					<tr class="diff">
+						<td class="calendar_cell_middle">All users & All projects report</td>
+						<td class="calendar_cell_right">
+							<a href="report_all.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
 <?php if ($authenticationManager->hasAccess('aclAbsences')) { ?>
@@ -109,16 +108,16 @@ setReportDate($year, $month, $day, $next_week, $prev_week, $next_month, $prev_mo
 						<td class="inner_table_column_heading">Attendance Reports</td>
 						<td class="inner_table_column_heading">Actions</td>
 					</tr>
-					<tr class="diff">
+					<tr>
 						<td class="calendar_cell_middle">Absence Report</td>
-						<td class="calendar_cell_disabled_right">
-							<a href="report_absences.php?month=<?php print $month; ?>&year=<?php print $year; ?>">Generate monthly</a>
+						<td class="calendar_cell_right">
+							<a href="report_absences.php?<?php print $ymdStr; ?>">Generate monthly</a>
 						</td>
 					</tr>
-					<tr>
-						<td class="calendar_cell_middle">User Hours</td>
-						<td class="calendar_cell_disabled_right">
-							<a href="report_hours.php?month=<?php print $month; ?>&year=<?php print $year; ?>">Generate yearly</a>
+					<tr class="diff">
+						<td class="calendar_cell_middle">Yearly User Report</td>
+						<td class="calendar_cell_right">
+							<a href="report_hours.php?<?php print $ymdStr; ?>">Generate yearly</a>
 						</td>
 					</tr>
 <?php } ?>

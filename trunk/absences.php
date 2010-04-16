@@ -24,10 +24,9 @@ if (!$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR))
 else
 	$disableChangeUser = 'false';
 
-//load local vars from superglobals
-$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: (int)date("Y");
-$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: (int)date("m");
-$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: (int)date("d");
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
 
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
@@ -38,20 +37,8 @@ $action = 0;
 
 //get the passed date (context date)
 $todayDate = mktime(0, 0, 0, $month, $day, $year);
-$todayYear = date("Y", $todayDate);
-$todayMonth = date("n", $todayDate);
-$todayDay = date("j", $todayDate);
 $dateValues = getdate($todayDate);
-$todayDayOfWeek = $dateValues["wday"];
-
-//the day the week should start on: 0=Sunday, 1=Monday
-$startDayOfWeek = getWeekStartDay();
-
-//work out the start date by minusing enough seconds to make it the start day of week
-$startDate = mktime(0,0,0, $month, 1, $year);
-$startYear = date("Y", $startDate);
-$startMonth = date("n", $startDate);
-$startDay = date("j", $startDate);
+$todayDay = $dateValues["mday"];
 
 // Calculate the previous month.
 $last_month = $month - 1;
@@ -68,9 +55,6 @@ if (!checkdate($next_month, 1, $next_year)) {
 	$next_year++;
 	$next_month -= 12;
 }
-
-//define the command menu
-include("timesheet_menu.inc");
 
 //run the query
 list($qh,$num) = get_absences($month, $year, $uid);

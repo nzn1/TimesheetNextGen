@@ -25,12 +25,6 @@ if (isset($_POST["action"])) {
 	$old_pass = $_POST['old_pass'];
 }
 
-//get todays values
-$today = time();
-$today_year = date("Y", $today);
-$today_month = date("n", $today);
-$today_day = date("j", $today);
-
 //define the command menu
 include("timesheet_menu.inc");
 

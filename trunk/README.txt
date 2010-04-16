@@ -1,6 +1,43 @@
-TimesheetNextGen is derived from Timesheet.php.
-Here is the original Readme.txt.
-Not really relevant now.
+TimesheetNextGen
+
+Timesheet NG is a free Open Source online time tracking application. Focusing
+on ease of use, Timesheet NG allows multiple employees and contractors to
+track and log their time spent on multiple projects.
+
+Please see INSTALL.txt for installation instructions.
+
+	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
+Version 1.5.0 notes:
+
+Semi major database changes have been made with regards to how time data is stored and should be retrieved.  Essentially, if you have added any reports, someone will need to at least look at rewritting those reports.  The original reports will probably appear to work just fine, but they have the potential to report incorrect amounts of time during Daylight Savings Time changes.
+
+The original 'calendar' view has been renamed to 'monthly'.
+
+Previous and Next links have nearly all been removed in favor of the new calendar type navigation.
+
+Context dates should follow the user between user input forms and reports.  Context will be lost when navigating to administrative forms.
+
+Mixed usage of the daily forms and the simple form has the potential to both add time and delete time from a user's entries when time that was originally entered with a daily form is then edited with the simple form when the daily entries span the end of a week.  For instance if a user works from 10pm on Sunday until 6am on Monday, and that single entry is made with the daily form, then the simple form is used to edit the week ending Sunday, the time from Midnight Monday to 6am will be deleted from the user's entries.  If, instead, the week beginning Monday is edited, the 6 hours on Monday will be added to Monday's time EVERY TIME the simple form is saved.  It is a bug, but not one that is easily fixed.
+
+Export to Excel is working, for me, in exactly two reports: report_grid_client_user.php and report_user_summ.php.  It's not hard to replicate that functionality if you want to use it in other forms. If you fix it for the other reports, please submit your work/patches to the project.
+
+The installation and upgrade scripts have been enhanced a little bit, and the web based installation script has been greatly enhanced.
+
+	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
+Version 1.4.1 notes:
+
+This readme was not kept up-to-date during this iteration.
+
+	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
+Version 1.3.1 notes:
+
+This readme was not kept up-to-date during this iteration.
+
+	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
+
+TimesheetNextGen was derived from Timesheet.php at this point.
+
+Here is the original Readme.txt from the original project:
 
 	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
 PHP Timesheet Program

@@ -1,109 +1,116 @@
 <?php {
 //$Header: /cvsroot/tsheet/timesheet.php/common.inc,v 1.24 2005/09/12 23:58:09 vexil Exp $
 if (!defined("COMMON_INC")) {
-		define("COMMON_INC", 1);
+	define("COMMON_INC", 1);
 
-		include("database_credentials.inc");
-		include("mysql.db.inc");
+	include("database_credentials.inc");
+	include("mysql.db.inc");
 
-		//Useful constants
-		define("A_DAY", 24 * 60 * 60);  //seconds per day
-		define("WORK_DAY", 8); //hours per day
-		define("SECONDS_PER_HOUR", 60 * 60);
-		$BREAK_RATIO = (0);     // For an hour break every 8 hours this would be: (1/8)
+	//get realToday's values
+	$realToday = getdate(time());
+	$realTodayDate = mktime(0, 0, 0, $realToday['mon'], $realToday['mday'], $realToday['year']);
 
-		function get_month_times($month, $year, $id, $proj_id=0, $client_id=0) {
-			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-			$configData = dbResult($qhq);
+	$MOTD = 1;
+	//Useful constants
+	define("A_DAY", 24 * 60 * 60);  //seconds per day
+	define("WORK_DAY", 8); //hours per day
+	define("SECONDS_PER_HOUR", 60 * 60);
+	$BREAK_RATIO = (0);     // For an hour break every 8 hours this would be: (1/8)
 
-			$last_day = get_last_day($month, $year);
-			$query = "SELECT date_format(start_time,'%d') AS day_of_month, ";
+	function get_time_records($startStr, $endStr, $uid='', $proj_id=0, $client_id=0, 
+							$order_by = "start_time, proj_id, task_id") {
+		include("table_names.inc");
+	//build the database query
+		$query = "SELECT start_time AS start_time_str, ".
+					"end_time AS end_time_str, ".
+					"unix_timestamp(start_time) AS start_stamp, ".
+					"unix_timestamp(end_time) AS end_stamp, ".
+					"duration, ".		//duration is stored in minutes
+					"trans_num, ".
+					"$TIMES_TABLE.uid, " .
+					"$USER_TABLE.first_name, " .
+					"$USER_TABLE.last_name, " .
+					"$PROJECT_TABLE.title AS projectTitle, " .
+					"$TASK_TABLE.name AS taskName, " .
+					"$TIMES_TABLE.proj_id, " .
+					"$TIMES_TABLE.task_id, " .
+					"$TIMES_TABLE.log_message, " .
+					"$CLIENT_TABLE.organisation AS clientName, " .
+					"$PROJECT_TABLE.client_id " .
+				"FROM $TIMES_TABLE, $USER_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE " .
+				"WHERE ";
 
-			if ($configData["timeformat"] == "12")
-				$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
+		if ($uid != '') //otherwise we want all users
+			$query .= "$TIMES_TABLE.uid='$uid' AND ";
+		if ($proj_id > 0) //otherwise we want all projects
+			$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
+		if ($client_id > 0) //otherwise we want all clients
+			$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
+
+		$query .=	"$TIMES_TABLE.uid    = $USER_TABLE.username AND ".
+					"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
+					"$TASK_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
+					"$PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id AND ".
+					"((start_time    >= '$startStr' AND " . 
+					"  start_time    <  '$endStr') " .
+					" OR (end_time   >  '$startStr' AND " .
+					"     end_time   <= '$endStr') " .
+					" OR (start_time <  '$startStr' AND " .
+					"     end_time   >  '$endStr')) " .
+				"ORDER BY $order_by";
+
+		list($my_qh, $num) = dbQuery($query);
+		return array($num, $my_qh);
+	}
+
+	function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
+		include("table_names.inc");
+		list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		$configData = dbResult($qhq);
+
+		$query = "SELECT date_format(start_time,'%d') AS day_of_month, trans_num, ";
+
+		if ($configData["timeformat"] == "12")
+			$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
+		else
+			$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') as start, ";
+
+		$query .= 
+			"unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
+			"unix_timestamp(start_time) AS start_time, ".
+			"unix_timestamp(end_time) As end_time, ".
+			"end_time As end_time_str, ".
+			"start_time AS start_time_str, ".
+			"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id ".
+			"FROM $TIMES_TABLE, $TASK_TABLE WHERE uid='$id' AND ";
+
+		$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
+			"((start_time >= '$start_year-$start_month-$start_day 00:00:00' AND start_time <= '$end_year-$end_month-$end_day 23:59:59') ".
+			" OR (end_time >= '$start_year-$start_month-$start_day 00:00:00' AND end_time <= '$end_year-$end_month-$end_day 23:59:59') ".
+			" OR (start_time < '$start_year-$start_month-$start_day 00:00:00' AND end_time > '$end_year-$end_month-$end_day 23:59:59')) ".
+			" ORDER BY day_of_month, proj_id, task_id, start_time";
+
+		list($my_qh, $num) = dbQuery($query);
+
+		$worked_sec = 0;
+		for ($currentEntry=0;$currentEntry<$num;$currentEntry++) {
+			$data = DbResult($my_qh, $currentEntry);
+			//Due to a bug in mysql with converting to unix timestamp from the string,
+			//we are going to use php's strtotime to make the timestamp from the string.
+			//the problem has something to do with timezones.
+			$data["start_time"] = strtotime($data["start_time_str"]);
+			$data["end_time"] = strtotime($data["end_time_str"]);
+
+			if ($data["start_time"] < mktime(0,0,0,$start_month,$start_day,$start_year))
+				$worked_sec += $data["end_time"] - mktime(0,0,0,$start_month,$start_day,$start_year);
+			if ($data["end_time"] > mktime(23,59,59,$end_month,$end_day,$end_year))
+				$worked_sec += mktime(23,59,59,$end_month,$end_day,$end_year) - $data["start_time"];
 			else
-				$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') AS start, ";
-
-			$query .= 
-				"unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
-				"end_time AS end_time_str, ".
-				"start_time AS start_time_str, ".
-				"unix_timestamp(start_time) AS start_time, ".
-				"unix_timestamp(end_time) AS end_time, ".
-				"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id, ".
-				"$PROJECT_TABLE.title, $CLIENT_TABLE.organisation, $PROJECT_TABLE.client_id ".
-				"FROM $TIMES_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE ".
-				"WHERE uid='$id' AND ";
-
-			if ($proj_id > 0) //otherwise want all records no matter what project
-				$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
-			else if ($client_id > 0) //only records for projects of the given client
-				$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
-
-			$query .=
-				"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
-				"$TASK_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
-				"$PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id AND ".
-				"((start_time >= '$year-$month-1 00:00:00' AND start_time <= '$year-$month-$last_day 23:59:59') ".
-				" OR (end_time >= '$year-$month-1 00:00:00' AND end_time <= '$year-$month-$last_day 23:59:59') ".
-				" OR (start_time < '$year-$month-1 00:00:00' AND end_time > '$year-$month-$last_day 23:59:59')) ".
-				"ORDER BY day_of_month, proj_id, task_id, start_time";
-
-			//print "<p>Query: $query</p>";
-
-			list($my_qh, $num) = dbQuery($query);
-			return array($num, $my_qh);
+				$worked_sec += $data["end_time"] - $data["start_time"];
 		}
 
-		function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
-			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-			$configData = dbResult($qhq);
-
-			$query = "SELECT date_format(start_time,'%d') AS day_of_month, trans_num, ";
-
-			if ($configData["timeformat"] == "12")
-				$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
-			else
-				$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') as start, ";
-
-			$query .= 
-				"unix_timestamp(end_time) - unix_timestamp(start_time) AS diff_sec, ".
-				"unix_timestamp(start_time) AS start_time, ".
-				"unix_timestamp(end_time) As end_time, ".
-				"end_time As end_time_str, ".
-				"start_time AS start_time_str, ".
-				"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id ".
-				"FROM $TIMES_TABLE, $TASK_TABLE WHERE uid='$id' AND ";
-
-			$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
-				"((start_time >= '$start_year-$start_month-$start_day 00:00:00' AND start_time <= '$end_year-$end_month-$end_day 23:59:59') ".
-				" OR (end_time >= '$start_year-$start_month-$start_day 00:00:00' AND end_time <= '$end_year-$end_month-$end_day 23:59:59') ".
-				" OR (start_time < '$start_year-$start_month-$start_day 00:00:00' AND end_time > '$end_year-$end_month-$end_day 23:59:59')) ".
-				" ORDER BY day_of_month, proj_id, task_id, start_time";
-
-			list($my_qh, $num) = dbQuery($query);
-
-			$worked_sec = 0;
-			for ($currentEntry=0;$currentEntry<$num;$currentEntry++) {
-				$data = DbResult($my_qh, $currentEntry);
-				//Due to a bug in mysql with converting to unix timestamp from the string,
-				//we are going to use php's strtotime to make the timestamp from the string.
-				//the problem has something to do with timezones.
-				$data["start_time"] = strtotime($data["start_time_str"]);
-				$data["end_time"] = strtotime($data["end_time_str"]);
-
-				if ($data["start_time"] < mktime(0,0,0,$start_month,$start_day,$start_year))
-					$worked_sec += $data["end_time"] - mktime(0,0,0,$start_month,$start_day,$start_year);
-				if ($data["end_time"] > mktime(23,59,59,$end_month,$end_day,$end_year))
-					$worked_sec += mktime(23,59,59,$end_month,$end_day,$end_year) - $data["start_time"];
-				else
-					$worked_sec += $data["end_time"] - $data["start_time"];
-			}
-
-			return $worked_sec;
-		}
+		return $worked_sec;
+	}
 
 	function format_hours_minutes($seconds) {
 		$temp = $seconds;
@@ -132,6 +139,87 @@ if (!defined("COMMON_INC")) {
 			$minutes += 1;
 
 		return "$sign$hour:$minutes";
+	}
+
+	function format_seconds($seconds) {
+		$temp = $seconds;
+		$hour = (int) ($temp / (60*60));
+
+		if ($hour < 10)
+			$hour = '0' . $hour;
+
+		$temp -= (60*60)*$hour;
+		$minutes = (int) ($temp / 60);
+
+		if ($minutes < 10)
+			$minutes = '0' . $minutes;
+
+		$temp -= (60*$minutes);
+		$sec = $temp;
+
+		if ($sec < 10)
+			$sec = '0' . $sec;
+					
+		return "$hour:$minutes:$sec";
+	}
+
+	function formatSeconds($seconds) {
+		$hours = (int)($seconds/3600);
+		$seconds -= $hours * 3600;
+		$minutes = (int)($seconds/60);
+		$seconds -= $minutes * 60;
+
+		return "${hours}h ${minutes}m";
+	}
+
+	function formatMinutes($minutes) {
+		$hours = (int)($minutes/60);
+		$minutes -= $hours * 60;
+
+		return "${hours}h ${minutes}m";
+	}
+
+	function format_minutes($minutes) {
+		$temp = $minutes;
+		$hour = (int) ($temp / (60));
+
+		if ($hour < 10)
+			$hour = '0' . $hour;
+
+		$minutes = $temp - $hour*60;
+
+		if ($minutes < 10)
+			$minutes = '0' . $minutes;
+
+		return "$hour:$minutes";
+	}
+
+	function minutes_to_hours($minutes) {
+		$temp = $minutes/60;
+		$hours = number_format(round($temp,2),2);
+
+		return "$hours";
+	}
+
+	function get_holidays($month, $year, $day=0) {
+		include("table_names.inc");
+		$last_day = get_last_day($month, $year);
+		$query = "SELECT date_format(date,'%d') AS day_of_month, ".
+			"unix_timestamp(date) AS date, ".
+			"date AS date_str, ".
+			"user, type, ".
+			"AM_PM, subject FROM $ABSENCE_TABLE WHERE ";
+			$query .= "(type='Public') AND ";
+
+		if ($day==0) //want the whole month's entries
+			$query .= "(date >= '$year-$month-1 00:00:00' AND date <= '$year-$month-$last_day 23:59:59') ";
+		else
+			$query .= "(date >= '$year-$month-$day 00:00:00' AND date <= '$year-$month-$day 23:59:59') ";
+
+		$query .= " ORDER BY day_of_month, AM_PM";
+
+		list($my_qh, $num) = dbQuery($query);
+		return array($my_qh, $num);
 	}
 
 	function get_absences($month, $year, $user='', $day=0) {
@@ -257,122 +345,199 @@ if (!defined("COMMON_INC")) {
 		return count_absences(1, $month, $year, $day, $month, $year, $user, $type);
 	}
 
-		function get_last_day($month, $year) {
-			$last_day = 28;
-			while (checkdate($month, $last_day, $year)) { $last_day++; }
-			return $last_day-1;
+	function get_last_day($month, $year) {
+		$days = date('t', strtotime("$year-$month-1"));
+		return $days;
+	}
+
+	function get_dst_adjustment($start_stamp) {
+		static $adjustment_array = array();
+
+		//calculate the adjustment made by subtracting the total number of seconds during the DST adjusted day
+		//from the number of seconds in a normal day.  I believe this will work for every possible DST scenario.
+		$stdt = getdate($start_stamp);
+		$stamp_a = mktime(0,0,0,$stdt["mon"],$stdt["mday"],$stdt["year"]);
+
+		if(isset($adjustment_array[$stamp_a])) {
+			return $adjustment_array[$stamp_a];
 		}
 
-		function formatSeconds($seconds) {
-			$hours = (int)($seconds/3600);
-			$seconds -= $hours * 3600;
-			$minutes = (int)($seconds/60);
-			$seconds -= $minutes * 60;
+		$stamp_b = strtotime(date("d M Y H:i:s",$stamp_a) . " +1 days");
+		$dst_adjustment = 24*60*60 - ($stamp_b - $stamp_a);
 
-			return "${hours}h ${minutes}m";
-		}
+		$adjustment_array[$start_stamp]=$dst_adjustment;
+		return $dst_adjustment;
+	}
 
-		function get_project_info($proj_id) {
-			include("table_names.inc");
+	//Expects start and end to be in "Unix Timestamp" format, returns answer in minutes
+	function get_duration($start, $end, $wdst=0) {
+		$diff_in_seconds = $end - $start;
+		//print "  get_duration: $end - $start = $diff_in_seconds<br>\n";
 
-			// Retreives title, $CLIENT_TABLE, description, deadline and link from database for a given proj_id
-			$result = array();
-			if ($proj_id > 0) {
-				$sql = "SELECT * FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
-				list($my_qh, $num) = dbQuery($sql);
-				$result = dbResult($my_qh);
-			}
-			return $result;
-		}
+		//If we're called from simple.php, and we want to check for DST adjustments, and if the end time and 
+		//start time are not both in the same Daylight Savings Time state, and the start time is midnight, 
+		//we then assume the time entry was made via simple.php, and a DST adjustment needs to be made.
 
-		function get_trans_info($trans_num) {
-			include("table_names.inc");
+		//This is needed because the old simple_action.php stored time data in the database in a way that 
+		//DST states were not noticed nor accounted for, but, when getting the times out of the database
+		//and converting them into unix timestamps, the duration is automatically adjusted to take DST into 
+		//account.  Therefore we need to remove that adjustment.
 
-			$result = array();
-			if ($trans_num > 0) {
-				$query = "SELECT $PROJECT_TABLE.client_id, $TIMES_TABLE.proj_id, task_id, log_message, ".
-								"end_time as end_time_str, ".
-								"start_time as start_time_str, ".
-								"unix_timestamp(start_time) as start_time, ".
-								"unix_timestamp(end_time) as end_time ".
-								"FROM $TIMES_TABLE, $PROJECT_TABLE WHERE ".
-								"trans_num='$trans_num' AND ".
-								"$TIMES_TABLE.proj_id = $PROJECT_TABLE.proj_id";
+		//print "  get_duration: $wdst  $end_dst  $start_dst<br>\n";
+		if( $wdst==1 ) {
+			$start_dst = date('I', $start);
+			$end_dst = date('I', $end);
 
-				list($my_qh, $num) = dbQuery($query);
-				$result = dbResult($my_qh);
-			}
-			return $result;
-		}
+			if( $end_dst != $start_dst ) {
+				$stdt = getdate($start);
 
-		function get_acl_level($page) {
-			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclCalendar,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-			$configData = dbResult($qhq);
-			return $configData[$page];
-		}
-
-		function day_button($name, $today=0) {
-			if (!$today)
-				$today = date("d");
-
-			$i = 0;
-			echo "<select name=\"$name\">\n";
-			print "<option value=0>None</A>";
-
-			while ($i < 31) {
-				$i++;
-				switch($i) {
-				case $today:
-					echo "<option value=\"$i\" selected>$i\n";
-					break;
-				default:
-					echo "<option value=\"$i\">$i\n";
+				//does the time start at midnight?  if so, we assume the time entry was made with simple.php
+				//and we "undo" the adjustment that was made automatically
+				if($stdt["hours"] == 0 && $stdt["minutes"] == 0 && $stdt["seconds"] == 0) {
+					$dst_adjustment = get_dst_adjustment($start);
+					$diff_in_seconds += $dst_adjustment;
+					//print "  get_duration: adjustment $dst_adjustment<br>\n";
 				}
 			}
-			echo "</select>";
 		}
+		//print "  get_duration: returning ".($diff_in_seconds/60)."<br>\n";
+		return ($diff_in_seconds/60);
+	}
 
-		function month_button ($name, $month=0) {
-			if(!$month)
-				$month = date("m");
+	//Expects start to be in "Unix Timestamp" format, duration in minutes
+	//Returns answer in "Unix Timestamp" format
+	function get_end_date_time($start, $duration) {
+		$end_date_time = strtotime(date("d M Y H:i:s T",$start) . " + $duration minutes");
+		return ($end_date_time);
+	}
 
-			$i = 1;
-			echo "<select name=\"$name\">\n";
-			print "<option value=0>None</A>";
-			while ($i <= 12) {
-				switch($i) {
-				case $month:
-					echo "<option value=\"$i\" selected>" . date("M",mktime(0,0,0,$i,1,1999)) . "\n";
+	function fix_entry_duration($entry) {
+		//print "  fix_entry_duration<br>\n";
+		include("table_names.inc");
+		$duration = $entry["duration"];
+		$trans_num = $entry["trans_num"];
+		tryDbQuery("UPDATE $TIMES_TABLE set duration=$duration WHERE trans_num=$trans_num");
+	}
+
+	function fix_entry_endstamp($entry) {
+		//print "  fix_entry_endstamp ". $entry["trans_num"].") ".strftime("%Y-%m-%d %T", $entry["start_stamp"])." - ".strftime("%Y-%m-%d %T", $entry["end_stamp"])."<br>\n";
+		include("table_names.inc");
+		$etsStr = strftime("%Y-%m-%d %T", $entry["end_stamp"]);
+		$trans_num = $entry["trans_num"];
+		tryDbQuery("UPDATE $TIMES_TABLE set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
+	}
+
+	function get_project_info($proj_id) {
+		include("table_names.inc");
+
+		// Retreives title, $CLIENT_TABLE, description, deadline and link from database for a given proj_id
+		$result = array();
+		if ($proj_id > 0) {
+			$sql = "SELECT * FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
+			list($my_qh, $num) = dbQuery($sql);
+			$result = dbResult($my_qh);
+		}
+		return $result;
+	}
+
+	function get_trans_info($trans_num) {
+		include("table_names.inc");
+
+		$result = array();
+		if ($trans_num > 0) {
+			$query = "SELECT $PROJECT_TABLE.client_id, $TIMES_TABLE.proj_id, task_id, log_message, ".
+							"end_time as end_time_str, ".
+							"start_time as start_time_str, ".
+							"unix_timestamp(start_time) as start_stamp, ".
+							"unix_timestamp(end_time) as end_stamp, ".
+							"duration, " .
+							"trans_num " .
+						"FROM $TIMES_TABLE, $PROJECT_TABLE " .
+						"WHERE trans_num='$trans_num' AND ".
+							"$TIMES_TABLE.proj_id = $PROJECT_TABLE.proj_id";
+
+			list($my_qh, $num) = dbQuery($query);
+			$result = dbResult($my_qh);
+		}
+		return $result;
+	}
+
+	function get_acl_level($page) {
+		include("table_names.inc");
+		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		$configData = dbResult($qhq);
+		return $configData[$page];
+	}
+
+	function day_button($name, $timeStamp=0) {
+		global $realToday, $month, $year;
+		if (!$timeStamp)
+			$timeStamp = $realToday[0];
+
+		$dti=getdate($timeStamp);
+		$last_day = get_last_day($dti["mon"], $dti["year"]);
+
+		$i = 0;
+		echo "<select name=\"$name\">\n";
+		//I'm failing to understand why we would offer a "none" value for dates. -SLM
+		//print "<option value=0>None</A>";
+
+		for($i=1; $i <= $last_day; $i++) {
+			switch($i) {
+			case $dti["mday"]:
+				echo "<option value=\"$i\" selected>$i\n";
 				break;
-				default:
-					echo "<option value=\"$i\">". date("M",mktime(0,0,0,$i,1,1999)) . "\n";
-				}
-				$i++;
+			default:
+				echo "<option value=\"$i\">$i\n";
 			}
-			echo "</select>";
 		}
+		echo "</select>";
+	}
 
-		function year_button ($name, $year=0) {
-			if(!$year)
-				$year = date("Y");
+	function month_button ($name, $month=0) {
+		global $realToday;
+		if(!$month)
+			$month = $realToday["mon"]; //date("m");
 
-			$i = $year;
-			echo "<select name=\"$name\">\n";
-			print "<option value=0>None</A>";
-			while ($i <= $year+10) {
-				switch($i) {
-				case $year:
-					echo "<option value=\"$i\" selected>$i\n";
-					break;
-				default:
-					echo "<option value=\"$i\">$i\n";
-				}
-				$i++;
+		$i = 1;
+		echo "<select name=\"$name\">\n";
+		//I'm failing to understand why we would offer a "none" value for dates. -SLM
+		//print "<option value=0>None</A>";
+		while ($i <= 12) {
+			switch($i) {
+			case $month:
+				echo "<option value=\"$i\" selected>" . date("M",mktime(0,0,0,$i,1,1999)) . "\n";
+			break;
+			default:
+				echo "<option value=\"$i\">". date("M",mktime(0,0,0,$i,1,1999)) . "\n";
 			}
-			echo "</select>";
+			$i++;
 		}
+		echo "</select>";
+	}
 
+	function year_button ($name, $year=0) {
+		global $realToday;
+		if(!$year)
+			$year = $realToday["year"]; //date("Y");
+
+		//whatever year we're working with, we want to offer a range before and in after...
+		$i = $year-5;
+		echo "<select name=\"$name\">\n";
+		//I'm failing to understand why we would offer a "none" value for dates. -SLM
+		//print "<option value=0>None</A>";
+		while ($i <= $year+5) {
+			switch($i) {
+			case $year:
+				echo "<option value=\"$i\" selected>$i\n";
+				break;
+			default:
+				echo "<option value=\"$i\">$i\n";
+			}
+			$i++;
+		}
+		echo "</select>";
+	}
 
 	function single_user_select_list($name, $default='') {
 		include("table_names.inc");
@@ -942,6 +1107,23 @@ if (!defined("COMMON_INC")) {
 		return $data["client_id"];
 	}
 
+	function getClientNameFromProject($proj_id) {
+		include("table_names.inc");
+		list($qh, $num) = dbQuery("SELECT client_id FROM $PROJECT_TABLE WHERE proj_id = $proj_id");
+		if ($num == 0)
+			return 0;
+
+		//get the first result
+		$data = dbResult($qh);
+		$client_id = $data["client_id"];
+
+		list($qh, $num) = dbQuery("SELECT organisation FROM $CLIENT_TABLE WHERE client_id = $client_id");
+		if ($num == 0)
+			return 0;
+		$data = dbResult($qh);
+		return $data["organisation"];
+	}
+
 	function getFirstProject() {
 		include("table_names.inc");
 		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE");
@@ -992,77 +1174,153 @@ if (!defined("COMMON_INC")) {
 			return $configData["timeformat"];
 	}
 
-	function setReportDate(&$year, &$month, &$day, &$next_week, &$prev_week, &$next_month, &$prev_month, &$time) {
-		// Current date
-		if (!$month) $month = $todayMonth;
-		if (!$year) $year = $todayYear;
-		if (!$day) $day = $todayDay;
-		$time = mktime( 0, 0, 0, $month, $day, $year);
-		if (date('D',$time) != "Mon") $time = strtotime("last Monday", $time);
-		$time_middle_month = mktime( 0, 0, 0, $month, 15, $year);
-		$day = date('d', $time);
+	function getVersion() {
+		include("table_names.inc");
+		list($qh, $num) = dbQuery("SELECT version FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		if ($num == 0)
+			return 0;
 
-		// Calculate the previous and next month and week.
-		$next_week =  strtotime("+1 week",$time);
-		$prev_week = strtotime("-1 week",$time);
-		$next_month =  strtotime("+1 month",$time_middle_month);
-		$prev_month = strtotime("-1 month",$time_middle_month);
+		//get the first result
+		$data = dbResult($qh);
+		return $data["version"];
 	}
 
-	function printPrevNext($next_week, $prev_week, $next_month, $prev_month, $post, $mode = "all") {
-		if ($mode == "all" || $mode == "yearly") {	
-			$roughly_now =  strtotime("-1 month",$next_month);
-			$next_year =  strtotime("+1 year",$roughly_now);
-			$prev_year =  strtotime("-1 year",$roughly_now);
-			print "<a href=\"$_SERVER[PHP_SELF]?";
-			if ($post) print "$post";
-			print "&month=".date('n',$prev_year).
-				  "&year=".date('Y',$prev_year).
-				  "&day=15".
-				  "&mode=".$mode."\" class=\"outer_table_action\">Prev Year</a>&nbsp;/&nbsp;";
-			print "<a HREF=\"$_SERVER[PHP_SELF]?";
-			if ($post) print "$post";
-			print "&month=".date('n',$next_year).
-				  "&year=".date('Y',$next_year).
-				  "&day=15".
-				  "&mode=".$mode."\" class=\"outer_table_action\">Next Year</a>";
+	function getWeeklyStartEndDates($time) {
+		$wsd = getWeekStartDay();
+		$daysToMinus = date('w',$time) - $wsd;
+		if ($daysToMinus < 0)
+		    $daysToMinus += 7;
+
+		//make sure we're calculating from midnight
+		$dti = getdate($time);
+		$day = $dti["mday"];
+		$month = $dti["mon"]; 
+		$year = $dti["year"];
+		$time = mktime(0,0,0, $month, $day, $year);
+
+		//work out the start date by subtracting days to get to beginning of week
+		$startDate = strtotime(date("d M Y H:i:s",$time) . " -$daysToMinus days");
+		$endDate = strtotime("+1 week", $startDate);
+
+		return array($startDate,$endDate);
+	}
+
+	function getMonthlyEndDate($dti) {
+		$next_month = $dti["mon"] + 1;
+		$next_year = $dti["year"];
+		if($next_month == 13) {
+			$next_month = 1;
+			$next_year++;
 		}
-		if ($mode == "all") {
-			print "<br>";
+
+		return mktime(0,0,0,$next_month,1,$next_year);
+	}
+
+	function __put_data_in_array(&$newarray, $index, $data, $curStamp, $duration, $check_log) {
+
+		//if we already have time in the indexed box, and the log messages match
+		//add the duration to the existing duration
+		$found_matching=0;
+		if(array_key_exists($index,$newarray)) {
+			if($check_log) {
+				foreach($newarray[$index] as &$ary) {
+					if($ary["log_message"] == $data["log_message"]) {
+						$ary["duration"]+=$duration;
+						$found_matching = 1;
+					}
+				}
+			} else {
+				$newarray[$index][0]["duration"]+=$duration;
+				$found_matching = 1;
+			}
 		}
-		if ($mode == "all" || $mode == "monthly") {
-			print "<a href=\"$_SERVER[PHP_SELF]?";
-			if ($post) print "$post";
-			print "&month=".date('n',$prev_month).
-					"&year=".date('Y',$prev_month).
-					"&day=15".
-					"&mode=".$mode."\" class=\"outer_table_action\">Prev Month</a>&nbsp;/&nbsp;";
-			print "<a HREF=\"$_SERVER[PHP_SELF]?";
-			if ($post) print "$post";
-			print "&month=".date('n',$next_month).
-					"&year=".date('Y',$next_month).
-					"&day=15".
-					"&mode=".$mode."\" class=\"outer_table_action\">Next Month</a>";
+
+		if(!$found_matching) {
+			$info=array();
+			$info["start_stamp"]=$curStamp;
+			$info["duration"]=$duration;
+			$info["clientName"]=$data["clientName"];
+			$info["projectTitle"]=$data["projectTitle"];
+			$info["taskName"]=$data["taskName"];
+			$info["log_message"]=$data["log_message"];
+			$info["client_id"]=$data["client_id"];
+			$info["proj_id"]=$data["proj_id"];
+			$info["task_id"]=$data["task_id"];
+			$info["trans_num"]=$data["trans_num"];
+			$info["uid"]=$data["uid"];
+			$info["first_name"]=$data["first_name"];
+			$info["last_name"]=$data["last_name"];
+
+			$newarray[$index][]=$info;
 		}
-		if ($mode == "all") {
-			print "<br>";
-		}
-		if ($mode == "all" || $mode == "weekly") {
-			print "<a href=\"$_SERVER[PHP_SELF]?";
-			if ($post) print "$post";
-			print "&month=".date('n',$prev_week).
-					"&year=".date('Y',$prev_week).
-					"&day=".date('j',$prev_week).
-					"&mode=".$mode."\" class=\"outer_table_action\">Prev Week</a>&nbsp;/&nbsp;";
-			print "<a HREF=\"$_SERVER[PHP_SELF]?";
-			if ($post) print "$post";
-			print "&month=".date('n',$next_week).
-					"&year=".date('Y',$next_week).
-					"&day=".date('j',$next_week).
-					"&mode=".$mode."\" class=\"outer_table_action\">Next Week</a>";
+	}
+
+	function split_data_into_discrete_days($data,$orderby,&$darray,$check_log=0) {
+		//The job of this function is to split those entries that span date boundaries 
+		//into multiple entries that stop & re-start on date boundaries, and to put the
+		//new entries into the array $darray
+		$dval = getdate($data["start_stamp"]);
+		$curStamp = mktime(0,0,0,$dval["mon"],$dval["mday"],$dval["year"]);
+		while($curStamp < $data["end_stamp"]){
+			$tomorrowStamp = strtotime(date("d M Y H:i:s",$curStamp) . " +1 day");
+
+			$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
+			$endsToday =   (($data["end_stamp"] > $curStamp ) && ($data["end_stamp"] <= $tomorrowStamp));
+			$startsBeforeToday = ($data["start_stamp"] < $curStamp);
+			$endsAfterToday = ($data["end_stamp"] > $tomorrowStamp);
+
+			if ($startsBeforeToday && $endsAfterToday) {
+				$duration = get_duration($curStamp, $tomorrowStamp);
+			} else if ($startsBeforeToday && $endsToday) {
+				$duration = get_duration($curStamp, $data["end_stamp"]);
+			} else if ($startsToday && $endsToday) {
+				$duration = $data["duration"];
+			} else if ($startsToday && $endsAfterToday) {
+				$duration = get_duration($data["start_stamp"],$tomorrowStamp);
+			} else {
+				print "Error: time booleans are in a confused state<br>\n";
+				continue;
+			}
+
+			$data["start_stamp"]=$curStamp;
+			$dndx=make_index($data,$orderby);
+			__put_data_in_array($darray,$dndx,$data,$curStamp,$duration,$check_log);
+
+			$curStamp = $tomorrowStamp;
 		}
 	}
 	
+	function fixStartEndDuration(&$data) {
+		//Due to a bug in mysql with converting to unix timestamp from the string,
+		//we are going to use php's strtotime to make the timestamp from the string.
+		//the problem has something to do with timezones.
+		$data["start_time"] = strtotime($data["start_time_str"]);
+
+		//If we've got a duration, use that to determine/override the end_stamp
+		//If not, figure out the duration
+		if(isset($data["duration"]) && ($data["duration"] > 0) ) {
+			$new_end_stamp=get_end_date_time($data["start_stamp"], $data["duration"]);
+			if($data["end_stamp"] != $new_end_stamp) {
+				$data["end_stamp"] = $new_end_stamp;
+				//even if stamps are different, it may result in same string being stored in db
+				//see: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php
+				//and read the comments by Miles Nordin and Joakim Nygard
+				if(strftime("%Y-%m-%d %T", $data["end_stamp"]) != strftime("%Y-%m-%d %T", $new_end_stamp))
+					fix_entry_endstamp($data);
+			}
+		} else {
+			if($data["end_time_str"] != '0000-00-00 00:00:00') {
+				$data["end_stamp"] = strtotime($data["end_time_str"]);
+				$data["duration"]=get_duration($data["start_stamp"], $data["end_stamp"], 1);
+				fix_entry_duration($data);
+			} else {
+				//have start time, but no end time or duration, return 0 (false)
+				return 0;
+			}
+		}
+		return 1;
+	}
+
 	function gotoStartPage() {
 		include('table_names.inc');
 		list($result, $count) = dbQuery("SELECT startPage FROM $CONFIG_TABLE WHERE config_set_id = '1';");
@@ -1072,3 +1330,6 @@ if (!defined("COMMON_INC")) {
 		exit();
 	}
 }?>
+<?php
+// vim:ai:ts=4:sw=4
+?>

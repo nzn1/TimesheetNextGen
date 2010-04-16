@@ -4,6 +4,7 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
+//require("debuglog.php");
 if (!$authenticationManager->isLoggedIn()) {
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
 	exit;
@@ -40,6 +41,13 @@ $clock_off_check = isset($_REQUEST['clock_off_check']) ? $_REQUEST['clock_off_ch
 $clock_on_radio = isset($_REQUEST['clock_on_radio']) ? $_REQUEST['clock_on_radio']: "";
 $clock_off_radio = isset($_REQUEST['clock_off_radio']) ? $_REQUEST['clock_off_radio']: "";
 
+if($fromPopupWindow == 'false')
+	$fromPopupWindow = false;
+
+//$debug = new logfile();
+//$debug->write("destination = \"$destination\"\n");
+//$debug->write("fromPopupWindow = \"$fromPopupWindow\"\n");
+
 //set the return location
 $Location = "$destination?month=$month&year=$year&day=$day&destination=$destination";
 if ($destination == "stopwatch.php" || $destination == "daily.php")
@@ -54,217 +62,231 @@ if (empty($clockonoff)) {
 			$clockonoff = "clockonnow";
 		else
 			$clockonoff = "clockonat";
-	}
-	else if (!empty($clock_off_check)) {
+	} else if (!empty($clock_off_check)) {
 		if ($clock_off_radio == "now")
 			$clockonoff = "clockoffnow";
 		else
 			$clockonoff = "clockoffat";
-	}
-	else
+	} else
 		errorPage("You must select at least one checkbox to indicate your action: clock on, clock off, or both.", $fromPopupWindow);
 }
+
+if ($clock_on_radio == "now" && $clock_off_radio == "now")
+	errorPage("You cannot clock on and off at with the same clock-on and clock-off time.", $fromPopupWindow);
+
+//get the clock on/off "now" dates and times
+//We're forced to recalculate the date as well as the time because the dialog
+//box that says "now" could have been opened during the previous day
+//(ie. clock on at 11:30pm, clock off at 2:15am)
+if ($clock_on_radio == "now" || $clockonoff == "clockonnow") {
+	$realToday = getdate(time());
+	$month = $realToday['mon']; 
+	$day = $realToday['mday'];
+	$year = $realToday['year'];
+	$clock_on_time_hour = $realToday["hours"];
+	$clock_on_time_min = $realToday["minutes"];
+}
+
+if ($clock_off_radio == "now" || $clockonoff == "clockoffnow") {
+	$realToday = getdate(time());
+	$month = $realToday['mon']; 
+	$day = $realToday['mday'];
+	$year = $realToday['year'];
+	$clock_off_time_hour = $realToday["hours"];
+	$clock_off_time_min = $realToday["minutes"];
+}
+
+$onStamp = mktime($clock_on_time_hour, $clock_on_time_min, 0, $month, $day, $year);
+$offStamp = mktime($clock_off_time_hour, $clock_off_time_min, 0, $month, $day, $year);
 
 //call appropriate functions
 if ($clockonoff == "clockonandoff")
 	clockonandoff();
 else if ($clockonoff == "clockonat") {
-	$timeString = "$year-$month-$day $clock_on_time_hour:$clock_on_time_min:00";
-	clockon($timeString);
-}
-else if ($clockonoff == "clockoffat") {
-	$timeString = "$year-$month-$day $clock_off_time_hour:$clock_off_time_min:00";
-	clockoff($timeString);
-}
-else if ($clockonoff == "clockonnow") {
-
+	clockon();
+} else if ($clockonoff == "clockoffat") {
+	clockoff();
+} else if ($clockonoff == "clockonnow") {
 	//if we're coming from the popup window then set the return location to the origin
-	if ($fromPopupWindow)
+	if ($fromPopupWindow == "true")
 		//set the return location
 		$Location = "$origin?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day&destination=$destination";
 
-	$timeString = date("Y-m-d H:i:00");
-	clockon($timeString);
-}
-else if ($clockonoff == "clockoffnow") {
-	$timeString = date("Y-m-d H:i:00");
-	clockoff($timeString);
-}
-else
+	clockon();
+} else if ($clockonoff == "clockoffnow") {
+	clockoff();
+} else	 //redirects to a page where the user can enter the log message. Then returns here.
 	errorPage("Could not determine the clock on/off action. Please report this as a bug", $fromPopupWindow);
 
-	//redirects to a page where the user can enter the log message. Then returns here.
-	function getLogMessage() {
-		//import global vars
-		global $contextUser, $year, $month, $day, $task_id, $proj_id, $client_id, $Location;
-		global $origin, $destination, $clock_on_time_hour, $clock_off_time_hour,
-							$clock_on_time_min, $clock_off_time_min, $clockonoff;
-		global $log_message, $log_message_presented, $fromPopupWindow;
+//This is functionally the end of this file...
 
-		if ($log_message_presented == false) {
-			$targetWindowLocation = "log_message.php".
-						"?origin=$origin&destination=$destination".
-						"&clock_on_time_hour=$clock_on_time_hour".
-						"&clock_off_time_hour=$clock_off_time_hour".
-						"&clock_on_time_min=$clock_on_time_min".
-						"&clock_off_time_min=$clock_off_time_min".
-						"&year=$year".
-						"&month=$month".
-						"&day=$day".
-						"&client_id=$client_id".
-						"&proj_id=$proj_id".
-						"&task_id=$task_id".
-						"&clockonoff=$clockonoff";
+function getLogMessage() {
+	//import global vars
+	global $contextUser, $year, $month, $day, $task_id, $proj_id, $client_id, $Location;
+	global $origin, $destination, $clock_on_time_hour, $clock_off_time_hour,
+						$clock_on_time_min, $clock_off_time_min, $clockonoff;
+	global $log_message, $log_message_presented, $fromPopupWindow;
 
-			if ($fromPopupWindow) {
-				//close this popup window and load the log message page in the main window.
-				loadMainPageAndCloseWindow($targetWindowLocation);
-			}
-			else {
-				Header("Location: $targetWindowLocation");
-				exit;
-			}
+	if ($log_message_presented == false) {
+		$targetWindowLocation = "log_message.php".
+					"?origin=$origin&destination=$destination".
+					"&clock_on_time_hour=$clock_on_time_hour".
+					"&clock_off_time_hour=$clock_off_time_hour".
+					"&clock_on_time_min=$clock_on_time_min".
+					"&clock_off_time_min=$clock_off_time_min".
+					"&year=$year".
+					"&month=$month".
+					"&day=$day".
+					"&client_id=$client_id".
+					"&proj_id=$proj_id".
+					"&task_id=$task_id".
+					"&clockonoff=$clockonoff";
+
+		if ($fromPopupWindow == "true") {
+			//close this popup window and load the log message page in the main window.
+			loadMainPageAndCloseWindow($targetWindowLocation);
+		}
+		else {
+			Header("Location: $targetWindowLocation");
+			exit;
 		}
 	}
+}
 
-	function clockon($timeString) {
-		include("table_names.inc");
+function clockon() {
+	include("table_names.inc");
 
-		//import global vars
-		global $contextUser, $task_id, $proj_id, $Location, $fromPopupWindow;
+	//import global vars
+	global $contextUser, $onStamp, $task_id, $proj_id, $Location, $fromPopupWindow;
 
-		if (empty($Location))
-			errorPage("failed sanity check, location empty");
+	if (empty($Location))
+		errorPage("failed sanity check, location empty");
 
-		//check that we are not already clocked on
-		$querystring = "SELECT $TIMES_TABLE.start_time, $TASK_TABLE.name FROM ".
-				"$TIMES_TABLE, $TASK_TABLE WHERE ".
-				"uid='$contextUser' AND ".
-				"end_time='0' AND ".
-				//"start_time>='$year-$month-$day' AND ".
-				//"start_time<='$year-$month-$day 23:59:59' AND ".
-				"$TIMES_TABLE.task_id=$task_id AND ".
-				"$TIMES_TABLE.proj_id=$proj_id AND ".
-				"$TASK_TABLE.task_id=$task_id AND ".
-				"$TASK_TABLE.proj_id=$proj_id";
+	//check that we are not already clocked on
+	$querystring = "SELECT $TIMES_TABLE.start_time, $TASK_TABLE.name FROM ".
+			"$TIMES_TABLE, $TASK_TABLE WHERE ".
+			"uid='$contextUser' AND ".
+			"end_time='0' AND ".
+			//"start_time>='$year-$month-$day' AND ".
+			//"start_time<='$year-$month-$day 23:59:59' AND ".
+			"$TIMES_TABLE.task_id=$task_id AND ".
+			"$TIMES_TABLE.proj_id=$proj_id AND ".
+			"$TASK_TABLE.task_id=$task_id AND ".
+			"$TASK_TABLE.proj_id=$proj_id";
 
-		list($qh,$num) = dbQuery($querystring);
-		$resultset = dbResult($qh);
+	list($qh,$num) = dbQuery($querystring);
+	$resultset = dbResult($qh);
 
-		if ($num > 0)
-			errorPage("You have already clocked on for task '$resultset[name]' at $resultset[start_time].  Please clock off first.", $fromPopupWindow);
+	if ($num > 0)
+		errorPage("You have already clocked on for task '$resultset[name]' at $resultset[start_time].  Please clock off first.", $fromPopupWindow);
 
-		//now insert the record for this clock on
-		$querystring = "INSERT INTO $TIMES_TABLE (uid, start_time, proj_id,task_id) ".
-				"VALUES ('$contextUser','$timeString', $proj_id, $task_id)";
-		list($qh,$num) = dbQuery($querystring);
+	$onStr = strftime("%Y-%m-%d %T", $onStamp);
 
-		//now output an ok page, the redirect back
-		print "<html>\n";
-		print "	<head>\n";
-		print " 	<script language=\"javascript\">\n";
-		print "				function alertAndLoad()\n";
-		print "				{\n";
-		print "					alert('Clocked on successfully');\n";
-		if ($fromPopupWindow)
-			print "					window.opener.location.reload();\n";
-		print "					window.location=\"$Location\";\n";
-		print "				}\n";
-		print "			</script>\n";
-		print "		</head>\n";
-		print "		<body onLoad=\"javascript:alertAndLoad();\">\n";
-		print "		</body>\n";
-		print "	</html>\n";
-		exit;
-	}
+	//now insert the record for this clock on
+	$querystring = "INSERT INTO $TIMES_TABLE (uid, start_time, proj_id,task_id) ".
+			"VALUES ('$contextUser','$onStr', $proj_id, $task_id)";
+	list($qh,$num) = dbQuery($querystring);
 
-	function clockoff($timeString) {
-		include("table_names.inc");
+	//now output an ok page, the redirect back
+	print "<html>\n";
+	print "	<head>\n";
+	print " 	<script language=\"javascript\">\n";
+	print "				function alertAndLoad()\n";
+	print "				{\n";
+	print "					alert('Clocked on successfully');\n";
+	if ($fromPopupWindow)
+		print "					window.opener.location.reload();\n";
+	print "					window.location=\"$Location\";\n";
+	print "				}\n";
+	print "			</script>\n";
+	print "		</head>\n";
+	print "		<body onLoad=\"javascript:alertAndLoad();\">\n";
+	print "		</body>\n";
+	print "	</html>\n";
+	exit;
+}
 
-		//import global vars
-		global $contextUser, $year, $month, $day, $task_id, $proj_id, $Location;
-		global $destination, $clock_on_time_hour, $clock_off_time_hour,
-					$clock_on_time_min, $clock_off_time_min, $clockonoff;
-		global $log_message, $log_message_presented, $fromPopupWindow;
+function clockoff() {
+	include("table_names.inc");
 
-		//check that we are actually clocked on
-		$querystring = "SELECT start_time, start_time < '$timeString' AS valid FROM $TIMES_TABLE WHERE ".
-				"uid='$contextUser' AND ".
-				"end_time=0 AND ".
-				//"start_time >= '$year-$month-$day' AND ".
-				//"start_time <= '$year-$month-$day 23:59:59' AND ".
-				"proj_id=$proj_id AND ".
-				"task_id=$task_id";
+	//import global vars
+	global $contextUser, $year, $month, $day, $offStamp, $task_id, $proj_id, $Location;
+	global $log_message, $log_message_presented, $fromPopupWindow;
 
-		list($qh,$num) = dbQuery($querystring);
-		$data = dbResult($qh);
-		if ($num == 0)
-			errorPage("You are not currently clocked on. You must clock on before you can clock off. If you have just clocked on please wait at least one minute before clocking off", $fromPopupWindow);	
-		//also check that the clockoff time is after the clockon time
-		else if ($data["valid"] == 0)
-			errorPage("You must clock off <i>after</i> you clock on.", $fromPopupWindow);
+	$offStr = strftime("%Y-%m-%d %T", $offStamp);
 
-		//do we need to present the user with a log message screen?
-		if ($log_message_presented == false)
-			getLogMessage();
+	//check that we are actually clocked on
+	$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM $TIMES_TABLE WHERE ".
+			"uid='$contextUser' AND ".
+			"end_time=0 AND ".
+			//"start_time >= '$year-$month-$day' AND ".
+			//"start_time <= '$year-$month-$day 23:59:59' AND ".
+			"proj_id=$proj_id AND ".
+			"task_id=$task_id";
 
-		//now insert the record for this clock off
-		$log_message = addslashes($log_message);
-		$querystring = "UPDATE $TIMES_TABLE SET log_message='$log_message', end_time='$timeString' WHERE ".
-				"uid='$contextUser' AND ".
-				"proj_id=$proj_id AND ".
-				"end_time=0 AND ".
-				//"start_time >= '$year-$month-$day' AND ".
-				//"start_time < '$year-$month-$day 23:59:59' AND ".
-				"task_id=$task_id";
-		list($qh,$num) = dbQuery($querystring);
-		Header("Location: $Location");
-	}
+	list($qh,$num) = dbQuery($querystring);
+	$data = dbResult($qh);
 
-	function clockonandoff() {
-		include("table_names.inc");
+	if ($num == 0)
+		errorPage("You are not currently clocked on. You must clock on before you can clock off. If you have just clocked on please wait at least one minute before clocking off", $fromPopupWindow);	
+	//also check that the clockoff time is after the clockon time
+	else if ($data["valid"] == 0)
+		errorPage("You must clock off <i>after</i> you clock on.", $fromPopupWindow);
 
-		//import global vars
-		global $contextUser, $year, $month, $day, $task_id, $proj_id, $Location;
-		global $destination, $clock_on_time_hour, $clock_off_time_hour,
-					$clock_on_time_min, $clock_off_time_min, $clockonoff;
-		global $log_message, $log_message_presented;
-		global $clock_on_radio, $clock_off_radio, $fromPopupWindow;
+	$onStamp = strtotime($data["start_time"]);
+	$duration = ($offStamp-$onStamp)/60;
 
-		if ($clock_on_radio == "now" && $clock_off_radio == "now")
-			errorPage("You cannot clock on and off at with the same clock-on and clock-off time.", $fromPopupWindow);
+	//do we need to present the user with a log message screen?
+	if ($log_message_presented == false)
+		getLogMessage();
 
-		//get the dates
-		if ($clock_on_radio == "now") {
-			$clock_on_time_hour = date("H");
-			$clock_on_time_min = date("i");
-		}
-		if ($clock_off_radio == "now") {
-			$clock_off_time_hour = date("H");
-			$clock_off_time_min = date("i");
-		}
+	//now insert the record for this clock off
+	$log_message = addslashes($log_message);
+	$querystring = "UPDATE $TIMES_TABLE SET log_message='$log_message', end_time='$offStr', duration='$duration' WHERE ".
+			"uid='$contextUser' AND ".
+			"proj_id=$proj_id AND ".
+			"end_time=0 AND ".
+			//"start_time >= '$year-$month-$day' AND ".
+			//"start_time < '$year-$month-$day 23:59:59' AND ".
+			"task_id=$task_id";
+	list($qh,$num) = dbQuery($querystring);
+	Header("Location: $Location");
+}
 
-		//make sure we're not clocking on after clocking off
-		if (($clock_on_time_hour == $clock_off_time_hour) && ($clock_on_time_min > $clock_off_time_min))
-			errorPage("You cannot have your clock on time ($clock_on_time_hour:$clock_on_time_min) ".
-									"later than your clock off time ($clock_off_time_hour:$clock_off_time_min)", $fromPopupWindow);
-		else if ($clock_on_time_hour > $clock_off_time_hour)
-			errorPage("You cannot have your clock on time ($clock_on_time_hour:$clock_on_time_min) ".
-									"later than your clock off time ($clock_off_time_hour:$clock_off_time_min)", $fromPopupWindow);
-		else if (($clock_on_time_hour == $clock_off_time_hour) && ($clock_on_time_min == $clock_off_time_min))
-			errorPage("You cannot clock on and off with the same clock on and clock off time. on_hour=$clock_on_time_hour on_min=$clock_on_time_min off_hour=$clock_off_time_hour off_min=$clock_off_time_min", $fromPopupWindow);
+function clockonandoff() {
+	include("table_names.inc");
 
-		if ($log_message_presented == false)
-			getLogMessage();
+	//import global vars
+	global $contextUser, $year, $month, $day, $task_id, $proj_id, $Location;
+	global $destination, $clock_on_time_hour, $clock_off_time_hour, $clock_on_time_min, $clock_off_time_min;
+	global $log_message, $log_message_presented, $onStamp, $offStamp;
+	global $clock_on_radio, $clock_off_radio, $fromPopupWindow;
 
-		$log_message = addslashes($log_message);
-		$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, proj_id, task_id, log_message) ".
-				"VALUES ('$contextUser','$year-$month-$day $clock_on_time_hour:$clock_on_time_min:00', ".
-				"'$year-$month-$day $clock_off_time_hour:$clock_off_time_min:00', ".
-				"$proj_id, $task_id, '$log_message')";
-		list($qh,$num) = dbQuery($queryString);
+	//make sure we're not clocking on after clocking off
+	if ($offStamp < $onStamp)
+		errorPage("You cannot have your clock on time ($clock_on_time_hour:$clock_on_time_min) ".
+			"later than your clock off time ($clock_off_time_hour:$clock_off_time_min)", $fromPopupWindow);
+	else if ($onStamp == $offStamp)
+		//errorPage("You cannot clock on and off with the same time. ($clock_on_time_hour:$clock_on_time_min = $clock_off_time_hour:$clock_off_time_min)", $fromPopupWindow);
+		errorPage("You cannot clock on and off with the same time. ($onStamp == $offStamp)", $fromPopupWindow);
 
-		Header("Location: $Location");
-		exit;
-	}
+	if ($log_message_presented == false)
+		getLogMessage();
+
+	$duration=($offStamp - $onStamp)/60; //get duration in minutes
+	$onStr = strftime("%Y-%m-%d %T", $onStamp);
+	$offStr = strftime("%Y-%m-%d %T", $offStamp);
+	
+	$log_message = addslashes($log_message);
+	$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
+			"VALUES ('$contextUser','$onStr', '$offStr', '$duration', " .
+			"$proj_id, $task_id, '$log_message')";
+	list($qh,$num) = dbQuery($queryString);
+
+	Header("Location: $Location");
+	exit;
+}
+?>
+<?php
+// vim:ai:ts=4:sw=4
 ?>

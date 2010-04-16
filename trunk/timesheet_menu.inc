@@ -1,26 +1,16 @@
 <?php
 
+//get todays values
+if(!isset($realToday))
+	$realToday = getdate(time());
+
 //load local vars from superglobals
-$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: (int)date("Y");
-$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: (int)date("m");
-$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: (int)date("j");
+$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: $realToday["year"];
+$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: $realToday["mon"];
+$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: $realToday["mday"];
 $proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 $task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
-
-//get todays values
-$today = time();
-$todayYear = date("Y", $today);
-$todayMonth = date("n", $today);
-$todayDay = date("j", $today);
-
-//default values to today if not set
-if (empty($_REQUEST['year']))
-	$year = $todayYear;
-if (empty($_REQUEST['month']))
-	$month = $todayMonth;
-if (empty($_REQUEST['day']))
-	$day = $todayDay;
 
 // View mode (monthly, weekly, all)
 if (isset($_REQUEST['mode']))
@@ -35,13 +25,13 @@ $popup_href = "javascript:void(0)\" onclick=window.open(\"stopwatch.php?client_i
 if ($authenticationManager->hasAccess('aclStopwatch'))
 	$commandMenu->add(new IconTextCommand("Stopwatch", true, $popup_href, "images/icon_stopwatch.gif"));
 if ($authenticationManager->hasAccess('aclDaily'))
-	$commandMenu->add(new IconTextCommand("Daily Timesheet", true, "daily.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$todayMonth&year=$todayYear&day=$todayDay", "images/icon_daily.gif"));
+	$commandMenu->add(new IconTextCommand("Daily Timesheet", true, "daily.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day", "images/icon_daily.gif"));
 if ($authenticationManager->hasAccess('aclWeekly'))
-	$commandMenu->add(new IconTextCommand("Weekly Timesheet", true, "weekly.php?month=$todayMonth&year=$todayYear&day=$todayDay", "images/icon_daily.gif"));
+	$commandMenu->add(new IconTextCommand("Weekly Timesheet", true, "weekly.php?month=$month&year=$year&day=$day", "images/icon_daily.gif"));
 if ($authenticationManager->hasAccess('aclSimple'))
-	$commandMenu->add(new IconTextCommand("Simple Timesheet", true, "simple.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$todayMonth&year=$todayYear&day=$todayDay", "images/icon_daily.gif"));
-if ($authenticationManager->hasAccess('aclCalendar'))
-	$commandMenu->add(new IconTextCommand("Calendar", true, "calendar.php?month=$month&year=$year&day=$day", "images/icon_calendar.gif"));
+	$commandMenu->add(new IconTextCommand("Simple Timesheet", true, "simple.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day", "images/icon_daily.gif"));
+if ($authenticationManager->hasAccess('aclMonthly'))
+	$commandMenu->add(new IconTextCommand("View Month", true, "monthly.php?month=$month&year=$year&day=$day", "images/icon_calendar.gif"));
 if ($authenticationManager->hasAccess('aclAbsences'))
 	$commandMenu->add(new IconTextCommand("Absences", true, "absences.php?month=$month&year=$year&day=$day", "images/icon_calendar.gif"));
 if ($authenticationManager->hasAccess('aclClients'))
@@ -53,10 +43,11 @@ if ($authenticationManager->hasAccess('aclRates'))
 if ($authenticationManager->hasAccess('aclTasks'))
 	$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint.php", "images/icon_tasks.gif"));
 if ($authenticationManager->hasAccess('aclReports'))
-	$commandMenu->add(new IconTextCommand("Reports", true, "reports.php", "images/icon_reports.gif"));
+	$commandMenu->add(new IconTextCommand("Reports", true, "reports.php?&month=$month&year=$year&day=$day", "images/icon_reports.gif"));
 if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	$commandMenu->add(new IconTextCommand("Users", true, "user_maint.php", "images/icon_users.gif"));
-	$commandMenu->add(new IconTextCommand("User-Rates", true, "rate_maint.php", "images/icon_rates.gif"));
+	if ($authenticationManager->hasAccess('aclRates'))
+		$commandMenu->add(new IconTextCommand("User-Rates", true, "rate_maint.php", "images/icon_rates.gif"));
 	$commandMenu->add(new IconTextCommand("Configuration", true, "config.php", "images/icon_configuration.gif"));
 }
 if (!$authenticationManager->usingLDAP())
