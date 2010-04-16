@@ -1,13 +1,12 @@
 #!/bin/sh
 
-
-TIMESHEET_NEW_VERSION="1.4.1";
+TIMESHEET_NEW_VERSION="1.5.0";
 DATETIME=`date +%Y-%m-%d_%H-%M-%S`
 DB_BACKUP_FILE="timesheet-backup-${DATETIME}.sql";
 
 echo "###################################################################"
 echo "# TimesheetNextGen $TIMESHEET_NEW_VERSION"
-echo "# (c) 2008-2009 Tsheetx Development Team                          #"
+echo "# (c) 2008-2010 Tsheetx Development Team                          #"
 echo "###################################################################"
 echo "# This program is free software; you can redistribute it and/or   #"
 echo "# modify it under the terms of the GNU General Public License     #"
@@ -122,8 +121,8 @@ if [ "$TIMESHEET_VERSION" \< "1.2.0" ]; then
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.2.0.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.2.0.sql
 
 	echo ""
-	echo "TimesheetNextGen upgrade will now import the V1.2.0 configuration "
-	echo "into the $DBNAME database:"
+	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
+	echo "$DBNAME, to version 1.2.0:"
 	echo ""
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.2.0.sql
 fi
@@ -154,11 +153,11 @@ fi
 if [ "$TIMESHEET_VERSION" \< "1.2.1" ]; then
 	#now do the latest (1.2.1) changes
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.2.1.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.2.1.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.2.1.sql.in > timesheet_upgrade_to_1.2.1.sql
 
 	echo ""
-	echo "TimesheetNextGen upgrade will now import the V1.2.1 configuration "
-	echo "into the $DBNAME database:"
+	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
+	echo "$DBNAME, to version 1.2.1:"
 	echo ""
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.2.1.sql
 
@@ -172,11 +171,11 @@ fi
 if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then
 	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.3.1.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.3.1.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.3.1.sql.in > timesheet_upgrade_to_1.3.1.sql
 
 	echo ""
-	echo "TimesheetNextGen upgrade will now import the V1.3.1 configuration "
-	echo "into the $DBNAME database:"
+	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
+	echo "$DBNAME, to version 1.3.1:"
 	echo ""
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.3.1.sql
 
@@ -190,13 +189,31 @@ fi
 if [ "$TIMESHEET_VERSION" \< "1.4.1" ]; then
 	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.4.1.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.4.1.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.4.1.sql.in > timesheet_upgrade_to_1.4.1.sql
 
 	echo ""
-	echo "TimesheetNextGen upgrade will now import the V1.4.1 configuration "
-	echo "into the $DBNAME database:"
+	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
+	echo "$DBNAME, to version 1.4.1:"
 	echo ""
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.4.1.sql
+
+	if [ $? = 1 ]; then
+		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "
+		echo "has ALTER TABLE privileges. Upgrade will not continue."
+		exit 1;
+	fi
+fi
+
+if [ "$TIMESHEET_VERSION" \< "1.5.0" ]; then
+	#now do the latest changes
+	#replace prefix and version timesheet_upgrade....sql.in
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.5.0.sql.in > timesheet_upgrade_to_1.5.0.sql
+
+	echo ""
+	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
+	echo "$DBNAME, to version 1.5.0:"
+	echo ""
+	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.5.0.sql
 
 	if [ $? = 1 ]; then
 		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "
@@ -210,10 +227,15 @@ echo "UPDATE ${TABLE_PREFIX}config set version='$TIMESHEET_NEW_VERSION';" | mysq
 
 #replace the DBNAME, DBUSER, and DBPASS in the database_credentials.inc.in file
 sed s/__DBHOST__/$DBHOST/g database_credentials.inc.in | \
+sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g | \
+sed s/__INSTALLED__/1/g | \
 sed s/__DBNAME__/$DBNAME/g | \
 sed s/__DBUSER__/$DBUSER/g | \
 sed s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g | \
 sed s/__DBPASS__/$DBPASS/g > ../database_credentials.inc
+
+#replace table_names with new version
+sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > ../table_names.inc
 
 #replace prefix in sample_data.sql.in
 sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sample_data.sql.in > ../sample_data.sql
@@ -245,9 +267,30 @@ if [ ! -d $INSTALL_DIR/images ]; then
     fi
 fi
 
+if [ ! -d $INSTALL_DIR/navcal ]; then
+    echo "Creating $INSTALL_DIR/navcal ..."
+    echo ""
+    mkdir $INSTALL_DIR/navcal
+    if [ $? != 0 ]; then
+        echo ""
+        echo "There was an error creating the $INSTALL_DIR/navcal directory."
+        echo "Do you have the correct permissions?"
+        echo ""
+        exit 1
+    fi
+fi
+
 echo ""
 echo "Installing files..."
 cp ../*.php ../*.inc ../*.html ../.htaccess $INSTALL_DIR
+if [ $? != 0 ]; then
+    echo ""
+    echo "There were errors copying the files."
+    echo "Do you have the correct permissions?"
+    echo ""
+    exit 1
+fi
+cp ../navcal/*.inc ../navcal/.htaccess $INSTALL_DIR/navcal/
 if [ $? != 0 ]; then
     echo ""
     echo "There were errors copying the files."

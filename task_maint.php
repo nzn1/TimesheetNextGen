@@ -24,9 +24,9 @@ if ($client_id != 0) {
 		$proj_id = getValidProjectForClient($client_id);
 }
 
-if (isset($_REQUEST['page']) && $_REQUEST['page'] != 0) { $page  = $_REQUEST['page']; } else { $page=1; }; 
+if (isset($_REQUEST['page']) && $_REQUEST['page'] != 0) { $page  = $_REQUEST['page']; } else { $page=1; };
 $results_per_page = getTaskItemsPerPage();
-$start_from = ($page-1) * $results_per_page; 
+$start_from = ($page-1) * $results_per_page;
 
 //set up the required queries
 $query_task = "SELECT DISTINCT task_id, name, description,status, ".
@@ -51,7 +51,7 @@ function writePageLinks($page, $results_per_page, $num_task_page)
 	//echo "num_task_page: ".$num_task_page.", results_per_page: ".$results_per_page.", page: ".$page;
 	if (($num_task_page/$results_per_page) == (int)($num_task_page/$results_per_page))
 		$numberOfPages = ($num_task_page/$results_per_page);
-	else 
+	else
 		$numberOfPages = 1+(int)($num_task_page/$results_per_page);
 	//echo $numberOfPages." =< 1 or ".$num_task_page." equals 0";
 	if($numberOfPages > 1 && $num_task_page != 0)
@@ -59,13 +59,13 @@ function writePageLinks($page, $results_per_page, $num_task_page)
 		//echo '<td width="16em" align="right">';
 		if($page > 1)
 			echo '<a href="javascript:change_page(\''.($page-1).'\')">Previous Page</a>';
-		else 
+		else
 			echo 'Previous Page';
 		echo ' / ';
 		//echo '</td><td width="19em>"';
 		if ($numberOfPages > $page)
 		 	echo '<a href="javascript:change_page('.($page+1).')">Next Page</a>';
-		else 
+		else
 			echo 'Next Page';
 		echo ' ( <b>';
 		echo $page." of ";
@@ -102,10 +102,10 @@ include ("header.inc");
 			location.href = 'task_action.php?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
 	}
 
-	function change_page(newPageValue) 
+	function change_page(newPageValue)
 	{
 		document.changeForm.page.value = newPageValue;
-		document.changeForm.submit(); 
+		document.changeForm.submit();
 	}
 </script>
 </head>

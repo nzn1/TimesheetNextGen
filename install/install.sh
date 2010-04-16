@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TIMESHEET_NEW_VERSION="1.4.1";
+TIMESHEET_NEW_VERSION="1.5.0";
 TIMESHEET_FIRST_VERSION="1.2.1";
 
 echo "###################################################################"
@@ -66,6 +66,10 @@ echo "are installing TimesheetNextGen onto a shared server, then it is likely "
 echo "that you do not have permission to create a new database, but you have "
 echo "an existing database which was set up for you by the system administrator."
 echo ""
+echo "CAUTION: creating a new database with the same name as an existing database"
+echo "will drop, i.e. delete, the existing database before creating a new database"
+echo "by that name for TimesheetNextGen use."
+echo ""
 
 until [ "$NEWEXIST" = "n" -o "$NEWEXIST" = "N" -o "$NEWEXIST" = "e" -o "$NEWEXIST" = "E" ]
 do
@@ -129,6 +133,10 @@ else
 		echo "timesheet database. The username and password will be stored in "
 		echo "the TimesheetNextGen's configuration file 'database_credentials.inc'."
 		echo ""
+		echo "CAUTION: entering a username that already exists in MySQL will delete"
+		echo "that existing user and all the permissions for that user before"
+		echo "creating that username for TimesheetNextGen use."
+		echo ""
 		echo -n "Please choose a password for the MySQL timesheet account:"
 		read DBPASS
 
@@ -188,6 +196,8 @@ fi
 
 #replace the DBNAME, DBUSER, and DBPASS in the database_credentials.inc.in file
 sed s/__DBHOST__/$DBHOST/g database_credentials.inc.in | \
+sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g | \
+sed s/__INSTALLED__/1/g | \
 sed s/__DBNAME__/$DBNAME/g | \
 sed s/__DBUSER__/$DBUSER/g | \
 sed s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g | \
@@ -235,6 +245,19 @@ if [ ! -d $INSTALL_DIR/images ]; then
 	fi
 fi
 
+if [ ! -d $INSTALL_DIR/navcal ]; then
+	echo "Creating $INSTALL_DIR/navcal ..."
+	echo ""
+	mkdir $INSTALL_DIR/navcal
+	if [ $? != 0 ]; then
+		echo ""
+		echo "There was an error creating the $INSTALL_DIR/navcal directory."
+		echo "Do you have the correct permissions?"
+		echo ""
+		exit 1
+	fi
+fi
+
 echo ""
 echo "Installing files..."
 cp ../*.php ../*.inc ../*.html ../.htaccess $INSTALL_DIR
@@ -257,6 +280,14 @@ cp ../images/*.gif $INSTALL_DIR/images
 if [ $? != 0 ]; then
 	echo ""
 	echo "There was an error copying the image files."
+	echo "Do you have the correct permissions?"
+	echo ""
+	exit 1
+fi
+cp ../navcal/*.inc ../navcal/.htaccess $INSTALL_DIR/navcal
+if [ $? != 0 ]; then
+	echo ""
+	echo "There was an error copying the navcal files."
 	echo "Do you have the correct permissions?"
 	echo ""
 	exit 1

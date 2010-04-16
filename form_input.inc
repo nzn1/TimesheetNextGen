@@ -122,7 +122,7 @@
 
 		function create($selected="") 	{
 			$this->printSelect();
-			
+
 			echo "<option value=\"1\"";
 			if ("" == $selected)
 				echo " selected";

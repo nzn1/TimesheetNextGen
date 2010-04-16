@@ -15,8 +15,7 @@ if(
 	// this app has not been installed yet, redirect to the installation pages
 	header("Location: ./install/");
 	exit;
-}
-elseif(file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'install')) {
+} else if(file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'install')) {
 	// the install directory has not been deleted, redirect to "delete install dir" pages
 	// NOTE: this may also mean that the user has upgraded. The "delete install dir"
 	// pages also check the version number to see if the user is running the latest
@@ -289,15 +288,21 @@ class AuthenticationManager {
 	function ldapLogin($username, $password) {
 		require("table_names.inc");
 		require("database_credentials.inc");
+
+		//require("debuglog.php");
+		//$debug = new logfile();
+
 		//get the connection settings from the database
 		list($qh, $num) = dbQuery("SELECT LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, " .
-															"LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, " .
-															"LDAPBindByUser, LDAPBindUsername, LDAPBindPassword, LDAPReferrals " .
-															"FROM $CONFIG_TABLE WHERE config_set_id='1'");
+						"LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, " .
+						"LDAPBindByUser, LDAPBindUsername, LDAPBindPassword, LDAPReferrals " .
+						"FROM $CONFIG_TABLE WHERE config_set_id='1'");
 		$data = dbResult($qh);
 
 		//build up connection string
 		$connectionString = $data['LDAPScheme'] . "://" . $data['LDAPHost'] . ":" . $data['LDAPPort'];
+
+		//$debug->write("connectionString = $connectionString\n");
 
 		//connect to server
 		//echo "connecting to server: $connectionString <p>";
@@ -310,11 +315,10 @@ class AuthenticationManager {
 		//attempt to set the protocol version to use
 		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $data["LDAPProtocolVersion"]);
 
-		//do we need to bind anonymously?
-		if (empty($data["LDAPBindUsername"])) {
-			// bind to server by user
-			if ($data['LDAPBindByUser'] == 1) {
-
+		// bind to server by user
+		if ($data['LDAPBindByUser'] == 1) {
+			if (empty($data["LDAPBindUsername"])) {
+				//bind using user supplied info, if there is no BindUsername in the config
 				$credentials=$data['LDAPUsernameAttribute'] . "=" . $username . "," . $data['LDAPBaseDN'];
 
 				if (!($bind = @ldap_bind($connection, $credentials, $password))) {
@@ -323,20 +327,18 @@ class AuthenticationManager {
 					$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
 					return false;
 				}
-			}
-			else {
-				//bind to server (anonymously)
-				if (!($bind = @ldap_bind($connection))) {
+			} else {
+				//bind to server with config provided username and password
+				if (!($bind = @ldap_bind($connection, $data["LDAPBindUsername"], $data["LDAPBindPassword"]))) {
 					$this->ldapErrorCode = LDAP_SERVER_ERROR;
 					$this->ldapServerErrorCode = ldap_errno($connection);
 					$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
 					return false;
 				}
 			}
-		}
-		else {
-			//bind to server (with username and password)
-			if (!($bind = @ldap_bind($connection, $data["LDAPBindUsername"], $data["LDAPBindPassword"]))) {
+		} else {
+			//bind to server (anonymously)
+			if (!($bind = @ldap_bind($connection))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
 				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
@@ -367,26 +369,27 @@ class AuthenticationManager {
 		if ($data["LDAPSearchScope"] == "base") {
 			//search the directory returning records in the base dn
 			//echo "<p>searching base dn: $data[LDAPBaseDN]        with filter: $filter <p>";
+			//$debug->write("searching base ".$data['LDAPBaseDN']." for $filter\n");
 			if (!($search = @ldap_read($connection, $data['LDAPBaseDN'], $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
 				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
 				return false;
 			}
-		}
-		else if ($data["LDAPSearchScope"] == "one") {
+		} else if ($data["LDAPSearchScope"] == "one") {
 			//search the directory returning records in the base dn
 			//echo "<p>searching base dn: $data[LDAPBaseDN]        with filter: $filter <p>";
+			//$debug->write("searching one ".$data['LDAPBaseDN']." for $filter\n");
 			if (!($search = @ldap_list($connection, $data['LDAPBaseDN'], $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
 				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
 				return false;
 			}
-		}
-		else { //full subtree search
+		} else { //full subtree search
 			//search the directory returning records in the base dn
 			//echo "<p>searching base dn: $data[LDAPBaseDN]        with filter: $filter <p>";
+			//$debug->write("searching sub ".$data['LDAPBaseDN']." for $filter\n");
 			if (!($search = @ldap_search($connection, $data['LDAPBaseDN'], $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
@@ -438,11 +441,9 @@ class AuthenticationManager {
 					$firstName = substr($attributes['cn'][0], 0, $spacePos);
 				else
 					$firstName = $attributes['cn'][0];
-			}
-			else
+			} else
 				$firstName = $lastName;
-		}
-		else
+		} else
 			$firstName = $attributes['givenName'][0];
 
 		$emailAddress = isset($attributes['mail']) ? $attributes['mail'][0]: "";
@@ -458,11 +459,10 @@ class AuthenticationManager {
 						"'$lastName','$emailAddress',0,'OUT')");
 			dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
 			dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
-		}
-		else {
+		} else {
 			//get the existing user details
 			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address " .
-																"FROM $USER_TABLE WHERE username='$username'");
+							"FROM $USER_TABLE WHERE username='$username'");
 			$existingUserDetails = dbResult($qh);
 
 			//use existing ones if needs be
@@ -513,4 +513,5 @@ class AuthenticationManager {
 //create the instance so its availiable by just including this file
 $authenticationManager = new AuthenticationManager;
 
+// vim:ai:ts=4:sw=4
 ?>

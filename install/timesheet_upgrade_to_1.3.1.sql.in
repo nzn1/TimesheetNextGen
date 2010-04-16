@@ -11,6 +11,14 @@ ALTER TABLE __TABLE_PREFIX__user DROP `allowed_realms` ;
 ALTER TABLE __TABLE_PREFIX__user DROP `bill_rate` ;
 ALTER TABLE __TABLE_PREFIX__user DROP `phone` ;
 
+CREATE TABLE __TABLE_PREFIX__billrate (
+  rate_id int(8) NOT NULL auto_increment,
+  bill_rate decimal(8,2) DEFAULT '0.00' NOT NULL,
+  PRIMARY KEY (rate_id)
+);
+
+INSERT INTO __TABLE_PREFIX__billrate VALUES ( 1, 0.00);
+
 CREATE TABLE __TABLE_PREFIX__absences (
   `entry_id` int(6) NOT NULL auto_increment,
   `date` datetime NOT NULL default '0000-00-00 00:00:00',

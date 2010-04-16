@@ -3,6 +3,7 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
+//require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
@@ -11,6 +12,8 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 // Connect to database.
 $dbh = dbConnect();
 $contextUser = strtolower($_SESSION["contextUser"]);
+
+//$debug = new logfile();
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
@@ -56,7 +59,7 @@ $weekStartDayReset = isset($_REQUEST["weekStartDayReset"]) ? $_REQUEST["weekStar
 $aclStopwatch = $_REQUEST["aclStopwatch"];
 $aclDaily = $_REQUEST["aclDaily"];
 $aclWeekly = $_REQUEST["aclWeekly"];
-$aclCalendar = $_REQUEST["aclCalendar"];
+$aclMonthly = $_REQUEST["aclMonthly"];
 $aclSimple = $_REQUEST["aclSimple"];
 $aclClients = $_REQUEST["aclClients"];
 $aclProjects = $_REQUEST["aclProjects"];
@@ -66,6 +69,8 @@ $aclRates = $_REQUEST["aclRates"];
 $aclAbsences = $_REQUEST["aclAbsences"];
 $simpleTimesheetLayout = $_REQUEST["simpleTimesheetLayout"];
 $startPage = $_REQUEST["startPage"];
+
+//$debug->write("startPage is $startPage\n");
 
 	function resetConfigValue($fieldName) {
 		include("table_names.inc");
@@ -122,7 +127,7 @@ elseif ($action == "edit") {
 		"aclStopwatch='$aclStopwatch', " .
 		"aclDaily='$aclDaily', " .
 		"aclWeekly='$aclStopwatch', " .
-		"aclCalendar='$aclCalendar', " .
+		"aclMonthly='$aclMonthly', " .
 		"aclSimple='$aclSimple', " .
 		"aclClients='$aclClients', " .
 		"aclProjects='$aclProjects', " .
@@ -133,6 +138,7 @@ elseif ($action == "edit") {
 		"simpleTimesheetLayout= '$simpleTimesheetLayout', " .
 		"startPage='$startPage' " .
 		"WHERE config_set_id='1';";
+	//$debug->write("$query\n");
 	list($qh,$num) = dbquery($query);
 
 	if ($headerReset == true)
@@ -164,7 +170,7 @@ elseif ($action == "edit") {
 		resetConfigValue("aclStopwatch");
 		resetConfigValue("aclDaily");
 		resetConfigValue("aclWeekly");
-		resetConfigValue("aclCalendar");
+		resetConfigValue("aclMonthly");
 		resetConfigValue("aclSimple");
 		resetConfigValue("aclClients");
 		resetConfigValue("aclProjects");
