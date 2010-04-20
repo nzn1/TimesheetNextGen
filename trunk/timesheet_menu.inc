@@ -39,7 +39,7 @@ if ($authenticationManager->hasAccess('aclClients'))
 if ($authenticationManager->hasAccess('aclProjects'))
 	$commandMenu->add(new IconTextCommand("Projects", true, "proj_maint.php", "images/icon_projects.gif"));
 if ($authenticationManager->hasAccess('aclRates'))
-	$commandMenu->add(new IconTextCommand("Projects-Rates", true, "project_user_rates.php", "images/icon_projects_user_rates.gif"));
+	$commandMenu->add(new IconTextCommand("Project Rates", true, "project_user_rates.php", "images/icon_projects_user_rates.gif"));
 if ($authenticationManager->hasAccess('aclTasks'))
 	$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint.php", "images/icon_tasks.gif"));
 if ($authenticationManager->hasAccess('aclReports'))
@@ -47,7 +47,7 @@ if ($authenticationManager->hasAccess('aclReports'))
 if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	$commandMenu->add(new IconTextCommand("Users", true, "user_maint.php", "images/icon_users.gif"));
 	if ($authenticationManager->hasAccess('aclRates'))
-		$commandMenu->add(new IconTextCommand("User-Rates", true, "rate_maint.php", "images/icon_rates.gif"));
+		$commandMenu->add(new IconTextCommand("User Rates", true, "rate_maint.php", "images/icon_rates.gif"));
 	$commandMenu->add(new IconTextCommand("Configuration", true, "config.php", "images/icon_configuration.gif"));
 }
 if (!$authenticationManager->usingLDAP())

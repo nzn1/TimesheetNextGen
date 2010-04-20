@@ -8,13 +8,14 @@ class Command {
 	var $enabled;
 
 	function Command($text, $enabled) {
-		$this->text = str_replace(" ", "&nbsp;", $text);
+		//$this->text = str_replace(" ", "&nbsp;", $text);  don't need to do this because we're using <nobr></nobr> tags
+		$this->text = $text;
 		$this->enabled = $enabled;
 	}
 
 	function toString() {
 		if (!$this->enabled)
-			return "<span class=\"command_current\">$this->text</span>";
+			return "<nobr><span class=\"command_current\">$this->text</span></nobr>";
 		else
 			return $this->text;
 	}
@@ -42,7 +43,7 @@ class TextCommand extends Command {
 		if (!$this->enabled)
 			return parent::toString();
 		else
-			return "<a href=\"" . $this->url . "\" class=\"command\">" . $this->text . "</a>";
+			return "<nobr><a href=\"" . $this->url . "\" class=\"command\">" . $this->text . "</a></nobr>";
 	}
 }
 
@@ -61,7 +62,7 @@ class IconTextCommand extends TextCommand {
 		if (!file_exists($this->img))
 			return parent::toString();
 		else
-			return "<img src=\"" . $this->img . "\" align=\"absbottom\">" . parent::toString();
+			return "<nobr><a href=\"" . $this->url . "\" class=\"command\"><img src=\"" . $this->img . "\" border=\"0\" align=\"absbottom\">" . $this->text . "</a></nobr>";
 	}
 }
 
