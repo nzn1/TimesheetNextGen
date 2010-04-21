@@ -34,7 +34,7 @@ if(!isset($post)) $post ="";
 							?>
 						</td>
 						<td align="center" nowrap class="navcal_header">
-							<? echo date('M Y',$startDateCalendar); ?>
+							<?php echo date('M Y',$startDateCalendar); ?>
 						</td>
 						<td align="right" nowrap class="navcal_header">
 							<?php
@@ -46,7 +46,7 @@ if(!isset($post)) $post ="";
 									"\">Next</a>";
 							?>
 
-							<!--A HREF="<? echo $_SERVER["PHP_SELF"]; ?>?year=<? echo $next_month_year ?>&month=<? echo $next_month ?>&day=<? echo $navday ?>">Next</a-->
+							<!--A HREF="<?php echo $_SERVER["PHP_SELF"]; ?>?year=<?php echo $next_month_year ?>&month=<?php echo $next_month ?>&day=<?php echo $navday ?>">Next</a-->
 						</td>
 					</tr>
 				</table>
@@ -57,7 +57,7 @@ if(!isset($post)) $post ="";
 						<td>
 							<table border="0" cellspacing="0" cellpadding="2" class="table_body">
 								<tr class="inner_table_head">
-									<?
+									<?php
 										//print the days of the week
 										$currentDayDate = $firstPrintedDate;
 										for ($i=0; $i<7; $i++) {
@@ -68,7 +68,7 @@ if(!isset($post)) $post ="";
 									?>
 								</tr>
 								<tr>
-									<? {
+									<?php {
 
 										//define the variable dayRow
 										$dayRow = 0;

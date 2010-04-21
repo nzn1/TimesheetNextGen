@@ -380,7 +380,7 @@ if ($num == 0) {
 
 <?php if(!$export_excel) { ?>
 <!-- include the timesheet face up until the end -->
-<? if(!$print) include("timesheet_face_part_3.inc"); ?>
+<?php if(!$print) include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>

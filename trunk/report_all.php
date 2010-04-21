@@ -256,21 +256,21 @@ function popupPrintWindow() {
 						$projPost="$ymdStr&orderby=project";
 						$taskPost="$ymdStr&orderby=task";
 						if($orderby=='username'): ?>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
 							<td class="inner_table_column_heading">First Name</td>
 							<td class="inner_table_column_heading">Last Name</td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
 						<?php elseif($orderby=='project'): ?>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
 							<td class="inner_table_column_heading">First Name</td>
 							<td class="inner_table_column_heading">Last Name</td>
 						<?php elseif($orderby=='task'): ?>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
 							<td class="inner_table_column_heading">First Name</td>
 							<td class="inner_table_column_heading">Last Name</td>
 						<?php else: ?>
@@ -278,7 +278,7 @@ function popupPrintWindow() {
 						<?php endif; ?>
 						<td class="inner_table_column_heading">Duration</td>
 					</tr>
-<?
+<?php
 
 /*$query =	"select distinct first_name, ".
 			"last_name, ".
@@ -484,13 +484,13 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 
 
 <!-- include the timesheet face up until the end -->
-<? if(!$print) include("timesheet_face_part_3.inc"); ?>
+<?php if(!$print) include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
-<?
+<?php
 if (!$print) include ("footer.inc");
 ?>
 </BODY>

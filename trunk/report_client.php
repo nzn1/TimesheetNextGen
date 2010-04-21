@@ -201,7 +201,7 @@ function popupPrintWindow() {
 	}
 ?>
 
-<form action="<? echo $_SERVER["PHP_SELF"] ?>" method="get">
+<form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="get">
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
@@ -270,12 +270,12 @@ function popupPrintWindow() {
 						$projPost="$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
 						$datePost="$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
 						if($orderby== 'project'): ?>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Project</a></td>
 							<td class="inner_table_column_heading">Task</td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
 						<?php else: ?>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Project</a></td>
 							<td class="inner_table_column_heading">Task</td>
 						<?php endif; ?>
 						<td class="inner_table_column_heading">Log Entry</td>
