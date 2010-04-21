@@ -783,31 +783,39 @@ if (!defined("COMMON_INC")) {
 		return $ret;
 	}
 
-	function user_select_droplist($username='', $disabled='false') {
+	function user_select_droplist_string($varname, $username='', $width='', $disabled='false') {
 		include("table_names.inc");
 
 		$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE ORDER BY last_name, first_name";
 
-		print "<select name=\"uid\" onChange=\"submit()\" style=\"width: 100%;\"";
+		$drop_list_string = "<select name=\"$varname\" onChange=\"submit()\" ";
+		if (!empty($width))
+			$drop_list_string.= "style=\"width: $width;\" ";
 		if ($disabled == 'true')
-			print " disabled";
-		print ">\n";
+			$drop_list_string .= " disabled";
+		$drop_list_string .= ">\n";
 
 		list($qh, $num) = dbQuery($query);
 		if ($num > 0) {
 			while ($return = dbResult($qh)) {
 				$current_username = stripslashes($return["username"]);
 				$current_name = stripslashes($return["last_name"] . " " . $return["first_name"] );
-				print "<option value=\"$current_username\"";
+				$drop_list_string .= "<option value=\"$current_username\"";
 				if ($current_username == $username)
-					print " selected";
+					$drop_list_string .= " selected";
 				if ($current_name == " ")
-					print ">$current_username</option>\n";
+					$drop_list_string .= ">$current_username</option>\n";
 				else
-					print ">$current_name</option>\n";
+					$drop_list_string .= ">$current_name</option>\n";
 			}
 		}
-		print "</select>";
+		$drop_list_string .= "</select>";
+		return $drop_list_string;
+	}
+
+	function user_select_droplist($username='', $disabled='false') {
+		$drop_list_string = user_select_droplist_string('uid', $username, '100%', $disabled);
+		print $drop_list_string;
 	}
 
 	function acl_select_droplist($id, $selected='', $disabled='false') {
@@ -976,9 +984,11 @@ if (!defined("COMMON_INC")) {
 	}
 
 
-	} // end if
-
 	function parse_and_echo($text) {
+		if (isset($_SESSION['loggedInUser'])) 
+			$uid=$_SESSION['loggedInUser'];
+		else
+			$uid='unknown';
 
 		//replace commandMenu string
 		if (isset($GLOBALS["commandMenu"]))
@@ -990,8 +1000,7 @@ if (!defined("COMMON_INC")) {
 		$text = str_replace("%errormsg%", $errormsg, $text);
 
 		//replace username
-		if (isset($_SESSION['loggedInUser']))
-			$text = str_replace("%username%", $_SESSION["loggedInUser"], $text);
+		$text = str_replace("%username%", $uid, $text);
 
 		//replace time
 		$text = str_replace("%time%", date("g:ia"), $text);
@@ -1329,6 +1338,7 @@ if (!defined("COMMON_INC")) {
 		header("Location: $startPage.php");
 		exit();
 	}
+	} // end if
 }?>
 <?php
 // vim:ai:ts=4:sw=4

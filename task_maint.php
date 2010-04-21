@@ -10,10 +10,12 @@ if (!$authenticationManager->isLoggedIn()) {
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
 
-//define the command menu
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
+
+$contextUser = strtolower($_SESSION['contextUser']);
 
 if (empty($proj_id))
 	$proj_id = 1;

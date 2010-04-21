@@ -10,6 +10,11 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //$debug = new logfile();
@@ -24,9 +29,6 @@ if (isset($_REQUEST['print']))
 	$print = true;
 else
 	$print = false;
-
-//define the command menu
-include("timesheet_menu.inc");
 
 //get the context date
 $todayDate = mktime(0, 0, 0,$month, $day, $year);

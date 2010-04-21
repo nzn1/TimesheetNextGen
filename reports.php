@@ -11,14 +11,15 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
-
-//load local vars from superglobals
-$uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']: $contextUser;
 
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
+
+$contextUser = strtolower($_SESSION['contextUser']);
+
+//load local vars from superglobals
+$uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']: $contextUser;
 
 $todayDate = mktime(0, 0, 0, $month, $day, $year);
 $ymdStr = "&year=$year&month=$month&day=$day";

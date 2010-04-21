@@ -9,6 +9,11 @@ if (!$authenticationManager->isLoggedIn()) {
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -24,9 +29,6 @@ if (isset($_POST["action"])) {
 	$passwd2 = $_POST['passwd2'];
 	$old_pass = $_POST['old_pass'];
 }
-
-//define the command menu
-include("timesheet_menu.inc");
 
 //check for guest user
 if ($loggedInUser == 'guest')

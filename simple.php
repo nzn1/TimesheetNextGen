@@ -14,6 +14,11 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -23,22 +28,9 @@ if (empty($loggedInUser))
 if (empty($contextUser))
 	errorPage("Could not determine the context user");
 
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
-
 //bug fix - we must display all projects
 $proj_id = 0;
-
-/*/ Check project assignment.
-if ($proj_id != 0) { // id 0 means 'All Projects'
-	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE WHERE proj_id='$proj_id' AND username='$contextUser'");
-	if ($num < 1)
-		errorPage("You cannot access this project, because you are not assigned to it.");
-}
-else
-*/
-	$task_id = 0;
+$task_id = 0;
 
 //get the passed date (context date)
 $todayStamp = mktime(0, 0, 0,$month, $day, $year);
@@ -60,6 +52,7 @@ list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM $CONFIG_TABLE WHE
 $configData = dbResult($qh2);
 $layout = $configData['simpleTimesheetLayout'];
 
+$post="";
 ?>
 <html>
 <head>

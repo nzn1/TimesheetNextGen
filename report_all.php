@@ -10,6 +10,11 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
@@ -20,10 +25,6 @@ else
 
 $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "username";
 
-//define the command menu
-include("timesheet_menu.inc");
-
-//Need them all
 $uid=''; $proj_id=0; $client_id=0;
 
 //get the context date

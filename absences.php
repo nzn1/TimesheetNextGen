@@ -10,6 +10,11 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -23,10 +28,6 @@ if (!$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR))
 	$disableChangeUser = 'true';
 else
 	$disableChangeUser = 'false';
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
 
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];

@@ -7,10 +7,11 @@ class Command {
 	var $text;
 	var $enabled;
 
-	function Command($text, $enabled) {
+	function Command($text, $enabled, $sep=true) {
 		//$this->text = str_replace(" ", "&nbsp;", $text);  don't need to do this because we're using <nobr></nobr> tags
 		$this->text = $text;
 		$this->enabled = $enabled;
+		$this->wantsep = $sep;
 	}
 
 	function toString() {
@@ -87,14 +88,10 @@ class CommandMenu {
 		//iterate through commands
 		$count = count($this->commands);
 		for ($i=0; $i < $count; $i++) {
-			//only print the separator after printing the first command
-			if ($printedFirstCommand)
-				$returnString = $returnString . "&nbsp;&nbsp; ";
-			else
-				$printedFirstCommand = true;
-
 			//append this command to the string
 			$returnString = $returnString . $this->commands[$i]->toString();
+			if($this->commands[$i]->wantsep)
+				$returnString = $returnString . "&nbsp;&nbsp; ";
 		}
 		//return the command menu as a string
 		return $returnString;
@@ -120,7 +117,7 @@ class CommandMenu {
 			$slashPos = strrpos($self, "/");
 			if (!is_bool($slashPos))
 				$self = substr($self, $slashPos + 1);
-			$url = $this->commands[$i]->url;
+			$url = empty($this->commands[$i]->url) ? 'noURL' : $this->commands[$i]->url;
 			$pos = strpos($url, $self);
 			if (!is_bool($pos) && $pos == 0)
 				$this->commands[$i]->setEnabled(false);

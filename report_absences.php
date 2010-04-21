@@ -9,6 +9,10 @@ if (!$authenticationManager->isLoggedIn()) {
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -28,9 +32,6 @@ if (isset($_REQUEST['print']))
 	$print = true;
 else
 	$print = false;
-
-//define the command menu
-include("timesheet_menu.inc");
 
 //get the context date
 $todayDate = mktime(0, 0, 0,$month, $day, $year);

@@ -10,6 +10,11 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
@@ -29,9 +34,6 @@ if (isset($_REQUEST['print']))
 	$print = true;
 else
 	$print = false;
-
-//define the command menu
-include("timesheet_menu.inc");
 
 //What bi-monthly period is the context date in?
 if($day < 16) {

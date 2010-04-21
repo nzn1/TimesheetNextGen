@@ -1,7 +1,6 @@
 <?php
 require("class.AuthenticationManager.php");   // Authenticate
 require("class.CommandMenu.php");
-include("timesheet_menu.inc");                //define the command menu
 
 /**********************************************************************************************************
  * This function assists the routine in common.inc that splits tasks into discrete days
@@ -38,6 +37,8 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 //
 // Connect to database.
 $dbh = dbConnect();
+
+include("timesheet_menu.inc");                //define the command menu
 
 //default client
 if ($client_id == 0)

@@ -9,15 +9,17 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //make sure "No Client exists with client_id of 1
 //execute the query
 tryDbQuery("INSERT INTO $CLIENT_TABLE VALUES (1,'No Client', 'This is required, do not edit or delete this client record', '', '', '', '', '', '', '', '', '', '', '', '', '', '');");
 tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1'");
-
-//define the command menu
-include("timesheet_menu.inc");
 
 ?>
 
