@@ -150,10 +150,26 @@ class AuthenticationManager {
 									"FROM $USER_TABLE WHERE username='$username'");
 		$data = dbResult($qh);
 
+		//Fix session ID vulnerability: if someone installs this system locally, and creates the same username as an 
+		//administrator/manager/ etc, making the session_id a hash from the username, password, and the access level 
+		//should ensure the real production system won't allow them in without logging in, unless all that data is 
+		//exactly the same.
+
+		session_unset();
+		session_destroy();
+
+		$session_id=md5($username.$password.uniqid());
+		//if we want to use a non-random string (for testing)
+		//$session_id=md5($username.$password.$data["level"]);
+		session_id($session_id);
+		session_start();
+
 		//set session variables
 		$_SESSION["loggedInUser"] = $username;
 		$_SESSION["accessLevel"] = $data["level"];
 		$_SESSION["contextUser"] = $username;
+
+		dbquery("UPDATE $USER_TABLE SET session='$session_id' WHERE username='$username'");
 
 		$this->errorCode = AUTH_SUCCESS;
 		$this->errorText = "Authentication succeeded";
@@ -207,8 +223,16 @@ class AuthenticationManager {
 	* Logs out the currenlty logged in user
 	*/
 	function logout() {
+		require("table_names.inc");
+		require("database_credentials.inc");
+
 		//start/continue the session
 		session_start();
+
+		if($this->isLoggedIn()) {
+			$username=$_SESSION['loggedInUser'];
+			dbquery("UPDATE $USER_TABLE SET session='logged out' WHERE username='$username'");
+		}
 
 		//unset all the variables
 		session_unset();
@@ -225,8 +249,19 @@ class AuthenticationManager {
 	*	returns true if the user is logged in
 	*/
 	function isLoggedIn() {
+		require( "table_names.inc" );
+
 		//start/continue the session
 		@session_start();
+
+		$session_id=session_id();
+		if(empty($_SESSION['loggedInUser'])) return false;
+		$username=$_SESSION['loggedInUser'];
+
+		list( $qh, $num ) = dbQuery( "SELECT session FROM $USER_TABLE WHERE username='$username'" );
+		if($num != 1) return false;
+		$data = dbResult( $qh );
+		if($data['session'] != $session_id) return false;
 
 		return !empty($_SESSION['accessLevel']) && !empty($_SESSION['loggedInUser']) && !empty($_SESSION['contextUser']);
 	}

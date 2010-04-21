@@ -10,6 +10,11 @@ if (!$authenticationManager->isLoggedIn()) {
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
@@ -55,9 +60,6 @@ if ($action == "saveChanges") {
 	Header("Location: daily.php?proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day");
 	exit;
 }
-
-//define the command menu
-include("timesheet_menu.inc");
 
 //get trans info
 $trans_info = get_trans_info($trans_num);

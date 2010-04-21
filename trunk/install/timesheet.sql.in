@@ -194,6 +194,7 @@ CREATE TABLE __TABLE_PREFIX__user (
   time_stamp timestamp(14),
   status enum('IN','OUT') DEFAULT 'OUT' NOT NULL,
   uid int(11) NOT NULL auto_increment,
+  session varchar(32),
   PRIMARY KEY (username),
   KEY uid (uid)
 );

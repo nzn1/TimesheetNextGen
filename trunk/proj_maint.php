@@ -13,10 +13,12 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
 
-//define the command menu
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
+
+$contextUser = strtolower($_SESSION['contextUser']);
 
 //set seleced project status to started when nothing is chosen in the dropdown list
 $proj_status = isset($_REQUEST['proj_status']) ? $_REQUEST['proj_status'] : "Started";

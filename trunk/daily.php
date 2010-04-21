@@ -11,14 +11,15 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
-
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
 
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
+
+$contextUser = strtolower($_SESSION['contextUser']);
+
+if (empty($contextUser))
+	errorPage("Could not determine the context user");
 
 //check that project id is valid
 if ($proj_id == 0)
@@ -34,6 +35,8 @@ $CfgTimeFormat = getTimeFormat();
 
 //include date input classes
 include "form_input.inc";
+
+$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";
 
 ?>
 <html>

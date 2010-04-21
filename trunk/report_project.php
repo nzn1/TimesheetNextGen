@@ -9,6 +9,11 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 
 if (isset($_REQUEST['print']))
@@ -16,10 +21,6 @@ if (isset($_REQUEST['print']))
 else
 	$print = false;
 
-//define the command menu
-include("timesheet_menu.inc");
-
-//Need them all
 $uid=''; $client_id=0;
 
 if ($proj_id == 0)

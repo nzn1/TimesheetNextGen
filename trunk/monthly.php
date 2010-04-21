@@ -11,6 +11,11 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
+
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
+include("timesheet_menu.inc");
+
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -19,10 +24,6 @@ if (empty($loggedInUser))
 
 if (empty($contextUser))
 	errorPage("Could not determine the context user");
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
 
 // Check project assignment.
 if ($proj_id != 0) { // id 0 means 'All Projects'
@@ -59,6 +60,8 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 
 //get the timeformat
 $CfgTimeFormat = getTimeFormat();
+
+$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";
 
 function print_totals($Minutes, $type="", $pyear, $pmonth, $pday) {
 
@@ -397,6 +400,7 @@ include ("navcal/navcal_monthly.inc");
 				$i++;
 
 				$data = dbResult($qh,$i);
+				fixStartEndDuration($data);
 
 				$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
 				$endsToday =   (($data["end_stamp"] > $curStamp ) && ($data["end_stamp"] <= $tomorrowStamp));

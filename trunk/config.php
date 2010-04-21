@@ -10,10 +10,12 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
 
-//define the command menu
+//define the command menu & we get these variables from $_REQUEST:
+//  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
+
+$contextUser = strtolower($_SESSION['contextUser']);
 
 //Get the result set for the config set 1
 list($qh, $num) = dbQuery("SELECT * FROM $CONFIG_TABLE WHERE config_set_id = '1'");
