@@ -179,7 +179,7 @@
 						<?php else: ?>
 							<td align="center" nowrap class="navcal_header" style="font-size: 12">
 						<?php endif; ?>
-								<? echo date('Y',$firstDate); ?>
+								<?php echo date('Y',$firstDate); ?>
 							</td>
 						<?php if($orient == "tall"): ?>
 							<td align="right" nowrap class="navcal_header">
@@ -347,7 +347,7 @@
 						<?php else: ?>
 							<td align="center" nowrap class="navcal_header" style="font-size: 12">
 						<?php endif; ?>
-								<? echo date('Y',$firstStartDate); ?>
+								<?php echo date('Y',$firstStartDate); ?>
 							</td>
 						<?php if($orient == "tall"): ?>
 							<td align="right" nowrap class="navcal_header">

@@ -572,7 +572,7 @@ include("navcal/navcalendars.inc");
 							Timesheet
 						</td>
 						<td align="middle" nowrap class="outer_table_heading">
-							<?
+							<?php
 								$sdStr = date("M d, Y",$startDate);
 								//just need to go back 1 second most of the time, but DST 
 								//could mess things up, so go back 6 hours...

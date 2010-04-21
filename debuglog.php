@@ -1,4 +1,4 @@
-<?
+<?php
 class logfile{
 	function write($the_string ) {
 		if( $fh = @fopen("/tmp/php-debug.log", "a+" ) ) {

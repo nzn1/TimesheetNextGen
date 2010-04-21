@@ -269,12 +269,12 @@ function popupPrintWindow() {
 						$projPost="uid=$uid$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
 						$datePost="uid=$uid$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
 						if($orderby== 'project'): ?>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
 							<td class="inner_table_column_heading">Task</td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
 						<?php else: ?>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
-							<td class="inner_table_column_heading"><a href="<? echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
 							<td class="inner_table_column_heading">Task</td>
 						<?php endif; ?>
 						<td class="inner_table_column_heading">Log Entry</td>
