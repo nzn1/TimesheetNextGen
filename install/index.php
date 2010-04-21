@@ -820,10 +820,10 @@ function draw_ok_or_not_image($ok) {
 	if($ok) { ?>
 		<!--img src="../images/clock-green-sml.gif" border="0"-->
 		<img src="../images/green-check-mark.gif" height="30" border="0">
-	<? } else { ?>
+	<?php } else { ?>
 		<!--img src="../images/clock-red-sml.gif" border="0"-->
 		<img src="../images/red-x.gif" height="30" border="0">
-	<? }
+	<?php }
 }
 
 /**
