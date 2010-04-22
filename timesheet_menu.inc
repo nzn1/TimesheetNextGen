@@ -55,7 +55,7 @@ if ($authenticationManager->hasAccess('aclClients'))
 if ($authenticationManager->hasAccess('aclProjects'))
 	$commandMenu->add(new IconTextCommand("Projects", true, "proj_maint.php", "images/icon_projects.gif"));
 if ($authenticationManager->hasAccess('aclRates'))
-	$commandMenu->add(new IconTextCommand("Project Rates", true, "project_user_rates.php", "images/icon_projects_user_rates.gif"));
+	$commandMenu->add(new IconTextCommand("Project Rates", true, "project_user_rates.php", "images/icon_rates.gif"));
 if ($authenticationManager->hasAccess('aclTasks'))
 	$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint.php", "images/icon_tasks.gif"));
 if ($authenticationManager->hasAccess('aclReports'))
