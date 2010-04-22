@@ -399,13 +399,20 @@ include ("navcal/navcal_monthly.inc");
 				}
 				$i++;
 
-				$data = dbResult($qh,$i);
-				fixStartEndDuration($data);
+				if($i<$num) {
+					$data = dbResult($qh,$i);
+					fixStartEndDuration($data);
 
-				$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
-				$endsToday =   (($data["end_stamp"] > $curStamp ) && ($data["end_stamp"] <= $tomorrowStamp));
-				$startsBeforeToday = ($data["start_stamp"] < $curStamp);
-				$endsAfterToday = ($data["end_stamp"] > $tomorrowStamp);
+					$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
+					$endsToday =   (($data["end_stamp"] > $curStamp ) && ($data["end_stamp"] <= $tomorrowStamp));
+					$startsBeforeToday = ($data["start_stamp"] < $curStamp);
+					$endsAfterToday = ($data["end_stamp"] > $tomorrowStamp);
+				} else {
+					$startsToday=false;
+					$endsToday=false;
+					$startsBeforeToday=false;
+					$endsAftertoday=true;
+				}
 			}
 		}
 
