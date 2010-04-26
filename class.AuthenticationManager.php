@@ -38,7 +38,8 @@ enum(
 	"AUTH_FAILED_EMPTY_PASSWORD", //error empty password not allowed
 	"AUTH_LOGOUT", //user logged out
 	"AUTH_FAILED_LDAP_LOGIN", //failed login via LDAP, check ldapErrorCode
-	"AUTH_FAILED_NO_LDAP_MODULE" //no ldap module detected
+	"AUTH_FAILED_NO_LDAP_MODULE", //no ldap module detected
+	"AUTH_FAILED_INACTIVE" //error account is marked as inactive
 );
 
 //define constants for ldap error code
@@ -190,8 +191,10 @@ class AuthenticationManager {
 		}
 		// check their credentials with LDAP
 		if ( !$this->ldapLogin( $username, $password ) ){
-			$this->errorCode = AUTH_FAILED_LDAP_LOGIN;
-			$this->errorText = "Authentication via LDAP failed";
+			if($this->errorCode == AUTH_NONE ) { //error code hasn't been set to some other error
+				$this->errorCode = AUTH_FAILED_LDAP_LOGIN;
+				$this->errorText = "Authentication via LDAP failed";
+			}
 			return false;
 		}
 		return true;
@@ -204,7 +207,7 @@ class AuthenticationManager {
 		require( "table_names.inc" );
 		require( "database_credentials.inc" );
 		// query the user table for authentication details
-		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2 " . "FROM $USER_TABLE WHERE username='$username'" );
+		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2, status " . "FROM $USER_TABLE WHERE username='$username'" );
 		$data = dbResult( $qh );
 		// is the password correct?
 		if ( $num == 0 || $data["passwd1"] != $data["passwd2"] ){
@@ -216,6 +219,13 @@ class AuthenticationManager {
 			}
 			return false;
 		}
+
+		if ( $data['status'] == 'INACTIVE') {
+			$this->errorCode = AUTH_FAILED_INACTIVE; 
+			$this->errorText = "That account is marked INACTIVE";
+			return false;
+		}
+
 		return true;
 	}
 
@@ -482,24 +492,32 @@ class AuthenticationManager {
 			$firstName = $attributes['givenName'][0];
 
 		$emailAddress = isset($attributes['mail']) ? $attributes['mail'][0]: "";
-		$billRate = 100;
 
 		//does the user exist in the db?
 		if (!$this->userExists($username)) {
 			//create the user
+			if ($this->usingFallback()) //if we're using Fallback, then we want to put the password in the database
+				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
+			else 
+				$pwdstr = "";
 			dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, last_name, " .
 						"email_address, time_stamp, status) " .
-//						"VALUES ('$username',1,$DATABASE_PASSWORD_FUNCTION('$password'),'$firstName',".
-						"VALUES ('$username',1,'','$firstName',".
-						"'$lastName','$emailAddress',0,'OUT')");
+						"VALUES ('$username',1,'$pwdstr','$firstName',".
+						"'$lastName','$emailAddress',0,'ACTIVE')");
 			dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
 			dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
 		} else {
 			//get the existing user details
-			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address " .
+			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address, status " .
 							"FROM $USER_TABLE WHERE username='$username'");
 			$existingUserDetails = dbResult($qh);
 
+			if($existingUserDetails['status'] == 'INACTIVE') {
+				$this->errorCode = AUTH_FAILED_INACTIVE; 
+				$this->errorText = "That account is marked INACTIVE";
+				return false;
+			}
+			
 			//use existing ones if needs be
 			if ($firstName == "")
 				$firstName = $existingUserDetails['first_name'];
@@ -509,8 +527,12 @@ class AuthenticationManager {
 				$emailAddress = $existingUserDetails['email_address'];
 
 			//update the users details
+			if ($this->usingFallback()) //if we're using Fallback, then we want to store the current password in the database
+				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
+			else 
+				$pwdstr = "";
 			dbquery("UPDATE $USER_TABLE SET first_name='$firstName', last_name='$lastName', ".
-								"email_address='$emailAddress' ".
+								"email_address='$emailAddress', password='$pwdstr' ".
 								"WHERE username='$username'");
 		}
 

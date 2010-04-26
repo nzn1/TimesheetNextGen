@@ -97,11 +97,11 @@ if (!empty($errormsg)) {
 					</tr>
 					<tr>
 						<td width="150" align="right" nowrap>New Password:</td>
-						<td><input type="password" name="passwd1" style="width: 100%;"></td>
+						<td><input type="password" name="passwd1" style="width: 100%; AUTOCOMPLETE="OFF""></td>
 					</tr>
 					<tr>
 						<td width="150" align="right" nowrap>New Password (again):</td>
-						<td><input type="password" name="passwd2" style="width: 100%;"></td>
+						<td><input type="password" name="passwd2" style="width: 100%; AUTOCOMPLETE="OFF""></td>
 					</tr>
 				</table>
 			</td>

@@ -192,7 +192,7 @@ CREATE TABLE __TABLE_PREFIX__user (
   last_name varchar(64) DEFAULT '' NOT NULL,
   email_address varchar(63) DEFAULT '' NOT NULL,
   time_stamp timestamp(14),
-  status enum('IN','OUT') DEFAULT 'OUT' NOT NULL,
+  status enum('INACTIVE','ACTIVE') DEFAULT 'ACTIVE' NOT NULL,
   uid int(11) NOT NULL auto_increment,
   session varchar(32),
   PRIMARY KEY (username),

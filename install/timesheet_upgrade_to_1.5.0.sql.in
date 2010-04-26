@@ -1,5 +1,7 @@
 ALTER table __TABLE_PREFIX__times  ADD 'duration' SMALLINT UNSIGNED AFTER end_time;
 ALTER table __TABLE_PREFIX__user  ADD 'session' varchar(32) after uid;
+ALTER table __TABLE_PREFIX__user CHANGE COLUMN status status enum('INACTIVE','ACTIVE') NOT NULL DEFAULT 'ACTIVE';
+UPDATE __TABLE_PREFIX__user SET status='ACTIVE';
 
 ALTER table __TABLE_PREFIX__config CHANGE COLUMN aclCalendar aclMonthly ENUM('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
 
