@@ -1,5 +1,21 @@
 TimesheetNextGen installation.
 
+   <<<<<<<<<<<<<<<<<<<<<x>>>>>>>>>>>>>>>>>>>>>
+
+ATTENTION: This is a BETA version of 1.5.0.  If you have already upgraded to
+1.5.0, and need to update to a newer subversion revision, please execute the
+following as a user with sufficient permissions:
+  php .update-1.5.0-beta.php 
+
+That is not a web app, it must be run on the command line.  It will apply
+only the database changes that are needed to get your database up to the
+necessary configuration for the current SVN revision.
+
+If you have not already upgraded to version 1.5.0, ignore this section.
+
+
+   <<<<<<<<<<<<<<<<<<<<<x>>>>>>>>>>>>>>>>>>>>>
+
 There are two different easy methods available to install or upgrade the 
 TimesheetNextGen system: 
 	1. Using a web browser
