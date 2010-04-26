@@ -24,10 +24,10 @@ if (empty($loggedInUser))
 if (empty($contextUser))
 	errorPage("Could not determine the context user");
 
-if (!$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR))
-	$disableChangeUser = 'true';
+if ($authenticationManager->hasClearance(CLEARANCE_MANAGER))
+	$canChangeUser = true;
 else
-	$disableChangeUser = 'false';
+	$canChangeUser = false;
 
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
@@ -35,27 +35,6 @@ else
 	$uid = $contextUser;
 
 $action = 0;
-
-//get the passed date (context date)
-$todayDate = mktime(0, 0, 0, $month, $day, $year);
-$dateValues = getdate($todayDate);
-$todayDay = $dateValues["mday"];
-
-// Calculate the previous month.
-$last_month = $month - 1;
-$last_year = $year;
-if (!checkdate($last_month, 1, $last_year)) {
-	$last_month += 12;
-	$last_year --;
-}
-
-//calculate the next month
-$next_month = $month+1;
-$next_year = $year;
-if (!checkdate($next_month, 1, $next_year)) {
-	$next_year++;
-	$next_month -= 12;
-}
 
 //run the query
 list($qh,$num) = get_absences($month, $year, $uid);
@@ -86,6 +65,8 @@ include ("body.inc");
 echo ">\n";
 
 include ("banner.inc");
+$MOTD = 0;  //don't want the MOTD printed
+include ("navcal/navcal_monthly.inc");
 ?>
 <form name="theForm" id="theForm" action="absences_action.php" method="post">
 <input type="hidden" name="month" value=<?php echo $month; ?>>
@@ -104,31 +85,15 @@ include ("banner.inc");
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap>
-							<table width="60%" height="100%" border="0" cellpadding="1" cellspacing="2">
-								<tr>
-									<td>
-										<table width="100%" border="0" cellspacing="0" cellpadding="0">
-											<tr>
-												<td>User:</td>
-												<td width="50%"><?php user_select_droplist($uid,$disableChangeUser); ?></td>
-											</tr>
-											<tr>
-												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-						</td>
+					<?php if($canChangeUser) : ?>
+						<td align="left" width="38%" nowrap>User: &nbsp; <?php user_select_droplist($uid); ?></td>
+					<?php else : ?>
+						<td width="38%" nowrap>User: &nbsp;<?php echo "<b>$uid</b>"; ?></td>
+					<?php endif; ?>
 						<td align="center" nowrap class="outer_table_heading">
 							<?php echo date('F Y',mktime(0,0,0,$month, 1, $year)); ?>
 						</td>
-						<td align="right" nowrap>
-							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?client_id=<?php echo $client_id; ?>&proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?php echo $last_year ?>&month=<?php echo $last_month ?>&day=<?php echo $todayDay; ?>&uid=<?php echo $uid; ?>" class="outer_table_action">Prev</a>
-							<a href="<?php echo $_SERVER["PHP_SELF"]; ?>?client_id=<?php echo $client_id; ?>&proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&year=<?php echo $next_year ?>&month=<?php echo $next_month ?>&day=<?php echo $todayDay; ?>&uid=<?php echo $uid; ?>" class="outer_table_action">Next</a>
-						</td>
+						<td align="right">&nbsp; </td>
 						<td align="right">
 							<input type="button" value="Save Changes" name="save" id="save" onClick="onSubmit();">
 						</td>
