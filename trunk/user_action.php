@@ -3,6 +3,7 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
+//require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
 	exit;
@@ -10,6 +11,8 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 
 // Connect to database.
 $dbh = dbConnect();
+
+//$debug = new logfile();
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
@@ -21,6 +24,9 @@ $email_address = $_REQUEST["email_address"];
 $password = $_REQUEST["password"];
 $isAdministrator = isset($_REQUEST["isAdministrator"]) ? $_REQUEST["isAdministrator"]: "false";
 $isManager = isset($_REQUEST["isManager"]) ? $_REQUEST["isManager"]: "false";
+$status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIVE" : "INACTIVE") : "ACTIVE";
+
+//$debug->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
 
@@ -58,6 +64,7 @@ else if ($action == "addupdate") {
 		if ($data["password"] == $password) {
 			//then we are not updating the password
 			dbquery("UPDATE $USER_TABLE SET first_name='$first_name', last_name='$last_name', ".
+								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
 								"level='$level' ".
@@ -66,6 +73,7 @@ else if ($action == "addupdate") {
 		else {
 			//set the password as well
 			dbquery("UPDATE $USER_TABLE SET first_name='$first_name', last_name='$last_name', ".
+								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
 								"level='$level', ".
@@ -78,7 +86,7 @@ else if ($action == "addupdate") {
 		dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, ".
 							"last_name, email_address, time_stamp, status) " .
 						"VALUES ('$username',$level,$DATABASE_PASSWORD_FUNCTION('$password'),'$first_name',".
-							"'$last_name','$email_address',0,'OUT')");
+							"'$last_name','$email_address',0,'$status')");
 		dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
 		dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
 		//create a time string for >>now<<

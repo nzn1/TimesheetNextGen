@@ -23,7 +23,7 @@ include ("header.inc");
 
 	function deleteUser(uid, username) {
 		//get confirmation
-		if (confirm("Deleting user '" + username + "' will also remove all related project and task assignments.")) {
+		if (confirm("Note:  It is recommended that users be marked INACTIVE rather than deleted.\nDeleting user '" + username + "' will also remove all related project and task assignments.\n\tClicking OK will DELETE this user!")) {
 			document.userForm.action.value = "delete";
 			document.userForm.uid.value = uid;
 			document.userForm.username.value = username;
@@ -31,7 +31,7 @@ include ("header.inc");
 		}
 	}
 
-	function editUser(uid, firstName, lastName, username, emailAddress, password, isAdministrator, isManager) {
+	function editUser(uid, firstName, lastName, username, emailAddress, password, isAdministrator, isManager, isActive) {
 		document.userForm.uid.value = uid;
 		document.userForm.first_name.value = firstName;
 		document.userForm.last_name.value = lastName;
@@ -39,7 +39,11 @@ include ("header.inc");
 		document.userForm.email_address.value = emailAddress;
 		document.userForm.password.value = password;
 		document.userForm.checkAdmin.checked = isAdministrator;
+		document.userForm.isAdministrator.value = document.userForm.checkAdmin.checked=='1' ? true : false;
 		document.userForm.checkManager.checked = isManager;
+		document.userForm.isManager.value = document.userForm.checkManager.checked=='1' ? true : false;
+		document.userForm.checkActive.checked = isActive;
+		document.userForm.isActive.value = document.userForm.checkActive.checked=='1' ? true : false;
 		onCheckClearance();
 		document.location.href = "#AddEdit";
 	}
@@ -61,6 +65,11 @@ include ("header.inc");
 			document.userForm.checkAdmin.checked;
 		document.userForm.isManager.value =
 			document.userForm.checkManager.checked;
+	}
+
+	function onCheckActive() {
+		document.userForm.isActive.value =
+			document.userForm.checkActive.checked;
 	}
 
 </script>
@@ -98,6 +107,7 @@ include ("banner.inc");
 					<tr class="inner_table_head">
 						<td class="inner_table_column_heading">First Name</td>
 						<td class="inner_table_column_heading">Last Name</td>
+						<td align="center" class="inner_table_column_heading">Active</td>
 						<td class="inner_table_column_heading">Access</td>
 						<td class="inner_table_column_heading">Login Username</td>
 						<td class="inner_table_column_heading">Email Address</td>
@@ -105,12 +115,13 @@ include ("banner.inc");
 					</tr>
 <?php
 
-list($qh,$num) = dbQuery("SELECT * FROM $USER_TABLE WHERE username!='guest' ORDER BY last_name, first_name");
+list($qh,$num) = dbQuery("SELECT * FROM $USER_TABLE WHERE username!='guest' ORDER BY status desc, last_name, first_name");
 
 while ($data = dbResult($qh)) {
 	$firstNameField = empty($data["first_name"]) ? "&nbsp;": $data["first_name"];
 	$lastNameField = empty($data["last_name"]) ? "&nbsp;": $data["last_name"];
 	$usernameField = empty($data["username"]) ? "&nbsp;": $data["username"];
+	$isActive = ($data["status"]=='ACTIVE');
 	$emailAddressField = empty($data["email_address"]) ? "&nbsp;": $data["email_address"];
 	$isAdministrator = ($data["level"] >= 10);
 	$isManager = ($data["level"] >= 5);
@@ -118,17 +129,23 @@ while ($data = dbResult($qh)) {
 	print "<tr>\n";
 	print "<td class=\"calendar_cell_middle\">$firstNameField</td>";
 	print "<td class=\"calendar_cell_middle\">$lastNameField</td>";
+	if ($isActive)
+		print "<td align=\"center\" class=\"calendar_cell_middle\"><img src=\"images/green-check-mark.gif\" height=\"12\" border=\"0\"></td>";
+	else
+		print "<td align=\"center\" class=\"calendar_cell_middle\"><img src=\"images/red-x.gif\" height=\"12\" border=\"0\"></td>";
+
 	if ($isAdministrator)
 		print "<td class=\"calendar_cell_middle\"><span class=\"calendar_total_value_weekly\">Admin</span></td>";
 	else if ($isManager)
-		print "<td class=\"calendar_cell_middle\">Manager</td>";
+		print "<td style=\"color:blue; font-weight:bold;\" class=\"calendar_cell_middle\">Manager</td>";
 	else
 		print "<td class=\"calendar_cell_middle\">Basic</td>";
+
 	print "<td class=\"calendar_cell_middle\">$usernameField</td>";
 	print "<td class=\"calendar_cell_middle\">$emailAddressField</td>";
 	print "<td class=\"calendar_cell_disabled_right\">";
 	print "	<a href=\"javascript:deleteUser('$data[uid]', '$data[username]')\">Delete</a>,&nbsp;\n";
-	print "	<a href=\"javascript:editUser('$data[uid]', '$data[first_name]', '$data[last_name]', '$data[username]', '$data[email_address]', '$data[password]', '$isAdministrator', '$isManager')\">Edit</a>\n";
+	print "	<a href=\"javascript:editUser('$data[uid]', '$data[first_name]', '$data[last_name]', '$data[username]', '$data[email_address]', '$data[password]', '$isAdministrator', '$isManager', '$isActive')\">Edit</a>\n";
 	print "</td>\n";
 	print "</tr>\n";
 }
@@ -172,16 +189,20 @@ while ($data = dbResult($qh)) {
 						<td>Last name:<br><input size="20" name="last_name" style="width: 100%;"></td>
 						<td>Login username:<br><input size="15" name="username" style="width: 100%;"></td>
 						<td>Email address:<br><input size="35" name="email_address" style="width: 100%;"></td>
-						<td>Password:<br><input type="password" size="20" NAME="password" style="width: 100%;"></td>
+						<td>Password:<br><input type="password" size="20" NAME="password" style="width: 100%;" AUTOCOMPLETE="OFF"></td>
 					</tr>
 					<tr>
 						<td colspan="2" align="left">
 							<input type="checkbox" name="checkAdmin" id="checkAdmin" value="" onClick="onCheckClearance();">This user is an administrator</input>
 							<input type="hidden" name="isAdministrator" id="isAdministrator" value="false" />
 						</td>
-						<td colspan="5" align="left">
+						<td colspan="2" align="left">
 							<input type="checkbox" name="checkManager" id="checkManager" value="" onClick="onCheckClearance();">This user is a project manager</input>
 							<input type="hidden" name="isManager" id="isManager" value="false" />
+						</td>
+						<td align="left">
+							<input type="checkbox" name="checkActive" id="checkActive" value="" onClick="onCheckActive();">is Active</input>
+							<input type="hidden" name="isActive" id="isActive" value="false" />
 						</td>
 					</tr>
 				</table>

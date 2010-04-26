@@ -786,7 +786,16 @@ if (!defined("COMMON_INC")) {
 	function user_select_droplist_string($varname, $username='', $width='', $disabled='false') {
 		include("table_names.inc");
 
-		$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE ORDER BY last_name, first_name";
+		global $authenticationManager;
+	
+		$show_disabled=0;
+		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
+			//show disabled users at bottom of list
+			$show_disabled=1;
+			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
+		} else {
+			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
+		}
 
 		$drop_list_string = "<select name=\"$varname\" onChange=\"submit()\" ";
 		if (!empty($width))
@@ -797,7 +806,18 @@ if (!defined("COMMON_INC")) {
 
 		list($qh, $num) = dbQuery($query);
 		if ($num > 0) {
+
+			if($show_disabled) {
+				$drop_list_string .= "<optgroup label=\"Active Users\">";
+				$found_disabled=0;
+			}
+
 			while ($return = dbResult($qh)) {
+				if($show_disabled && !$found_disabled && $return['status']=='INACTIVE') {
+					$found_disabled=1;
+					$drop_list_string .= "</optgroup><optgroup style=\"color:red\"; label=\"Inactive Users\">";
+				}
+
 				$current_username = stripslashes($return["username"]);
 				$current_name = stripslashes($return["last_name"] . " " . $return["first_name"] );
 				$drop_list_string .= "<option value=\"$current_username\"";
@@ -807,6 +827,10 @@ if (!defined("COMMON_INC")) {
 					$drop_list_string .= ">$current_username</option>\n";
 				else
 					$drop_list_string .= ">$current_name</option>\n";
+			}
+
+			if($show_disabled) {
+				$drop_list_string .= "</optgroup>";
 			}
 		}
 		$drop_list_string .= "</select>";
