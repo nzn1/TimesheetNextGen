@@ -502,7 +502,7 @@ class AuthenticationManager {
 				$pwdstr = "";
 			dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, last_name, " .
 						"email_address, time_stamp, status) " .
-						"VALUES ('$username',1,'$pwdstr','$firstName',".
+						"VALUES ('$username',1,$pwdstr,'$firstName',".
 						"'$lastName','$emailAddress',0,'ACTIVE')");
 			dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
 			dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
@@ -532,7 +532,7 @@ class AuthenticationManager {
 			else 
 				$pwdstr = "";
 			dbquery("UPDATE $USER_TABLE SET first_name='$firstName', last_name='$lastName', ".
-								"email_address='$emailAddress', password='$pwdstr' ".
+								"email_address='$emailAddress', password=$pwdstr ".
 								"WHERE username='$username'");
 		}
 
