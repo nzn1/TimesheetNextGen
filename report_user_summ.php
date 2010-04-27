@@ -84,7 +84,7 @@ else
 
 $orderby="project";
 function make_index($data,$order) {
-	$index=sprintf("%03d-%03d-%03d",$data["client_id"], $data["proj_id"], $data["task_id"]);
+	$index=sprintf("%05d-%05d-%05d",$data["client_id"], $data["proj_id"], $data["task_id"]);
 	$index.="-".$data["start_stamp"];
 	return $index;
 }

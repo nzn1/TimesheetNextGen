@@ -143,10 +143,10 @@ function printInfo($type) {
 
 function make_index($data,$order) {
 	if($order == "date") {
-		$index=$data["start_stamp"] . sprintf("-%03d",$data["task_id"]) . 
-			sprintf("-%03d",$data["task_id"]);
+		$index=$data["start_stamp"] . sprintf("-%05d",$data["task_id"]) . 
+			sprintf("-%05d",$data["task_id"]);
 	} else {
-		$index=sprintf("%-25.25s",$data["uid"]) .  sprintf("-%03d-",$data["task_id"]) .
+		$index=sprintf("%-25.25s",$data["uid"]) .  sprintf("-%05d-",$data["task_id"]) .
 			$data["start_stamp"];
 	}
 	return $index;

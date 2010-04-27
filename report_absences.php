@@ -50,10 +50,10 @@ $public_hol = 'N';
 
 function make_index($data,$order) {
 	if($order == "date") {
-		$index=$data["start_stamp"] . sprintf("-%03d",$data["proj_id"]) . 
-			sprintf("-%03d",$data["task_id"]);
+		$index=$data["start_stamp"] . sprintf("-%05d",$data["proj_id"]) . 
+			sprintf("-%05d",$data["task_id"]);
 	} else {
-		$index=sprintf("%03d",$data["proj_id"]) .  sprintf("-%03d-",$data["task_id"]) .
+		$index=sprintf("%05d",$data["proj_id"]) .  sprintf("-%05d-",$data["task_id"]) .
 			$data["start_stamp"];
 	}
 	return $index;
