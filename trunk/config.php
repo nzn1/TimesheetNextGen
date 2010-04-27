@@ -444,22 +444,15 @@ include ("banner.inc");
 																			<span class="label" nowrap>Bind Username:</span>
 																		</td>
 																		<td width="5">&nbsp;</td>
-																		<td width="100%">
+																		<td width="50%">
 																			<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<?php echo $resultset["LDAPBindUsername"]; ?>" style="width:100%;"></input>
 																		</td>
-																	</tr>
-																</table>
-															</td>
-															<td>&nbsp;&nbsp;&nbsp;</td>
-															<td width="50%">
-																<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																	<tr>
 																		<td nowrap>
-																			<span class="label" nowrap>Bind Password:</span>
+																			<span class="label" nowrap>&nbsp;&nbsp;&nbsp;Bind Password:</span>
 																		</td>
 																		<td width="5">&nbsp;</td>
-																		<td width="100%">
-																			<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<?php echo $resultset["LDAPBindPassword"]; ?>" style="width:100%;"></input>
+																		<td width="50%">
+																			<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<?php echo $resultset["LDAPBindPassword"]; ?>" style="width:100%;" AUTOCOMPLETE="OFF"></input>
 																		</td>
 																	</tr>
 																</table>
@@ -514,17 +507,17 @@ include ("banner.inc");
 					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" >Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<span class="label" nowrap>Stopwatch:</span><?php acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>
-					<span class="label" nowrap>Daily:</span><?php acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>
-					<span class="label" nowrap>Weekly:</span><?php acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>
-					<span class="label" nowrap>Monthly:</span><?php acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>
-					<span class="label" nowrap>Simple:</span><?php acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>
-					<span class="label" nowrap>Clients:</span><?php acl_select_droplist("aclClients", $resultset["aclClients"]); ?>
-					<span class="label" nowrap>Projects:</span><?php acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>
-					<span class="label" nowrap>Tasks:</span><?php acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>
-					<span class="label" nowrap>Reports:</span><?php acl_select_droplist("aclReports", $resultset["aclReports"]); ?>
-					<span class="label" nowrap>Rates:</span><?php acl_select_droplist("aclRates", $resultset["aclRates"]); ?>
-					<span class="label" nowrap>Absences:</span><?php acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>
+					<nobr><span class="label" nowrap>Stopwatch:</span><?php acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Daily:</span><?php acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Weekly:</span><?php acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Monthly:</span><?php acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Simple:</span><?php acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Clients:</span><?php acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Projects:</span><?php acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Tasks:</span><?php acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Reports:</span><?php acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Rates:</span><?php acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</nobr>
+					<nobr><span class="label" nowrap>Absences:</span><?php acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</nobr>
 				</td>
 			</tr>
 

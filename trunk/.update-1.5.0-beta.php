@@ -85,7 +85,7 @@ function update_the_database() {
 	$columns = mysql_query("show columns from ".$USER_TABLE);
 	while($c = mysql_fetch_assoc($columns)){
 		if($c['Field'] == 'status'){
-			if(strpos($c['Type'],'ACTIVE') === FALSE){
+			if(strpos($c['Type'],'ACTIVE') === false) {
 				print "Changing status field in user table...\n";
 				$sql = "ALTER table $USER_TABLE CHANGE COLUMN status status enum('INACTIVE','ACTIVE') NOT NULL DEFAULT 'ACTIVE'";
 				$result = mysql_query($sql);
