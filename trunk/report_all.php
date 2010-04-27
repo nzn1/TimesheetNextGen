@@ -172,11 +172,11 @@ function printBlanks($type) {
 
 function make_index($data,$order) {
 	if($order == "username") {
-		$index=sprintf("%-25.25s",$data["uid"]) .  sprintf("-%03d-",$data["proj_id"]) . sprintf("-%03d-",$data["task_id"]);
+		$index=sprintf("%-25.25s",$data["uid"]) .  sprintf("-%05d-",$data["proj_id"]) . sprintf("-%05d-",$data["task_id"]);
 	} else if($order == "project") {
-		$index=sprintf("-%03d",$data["proj_id"]) . sprintf("-%03d",$data["task_id"]) . sprintf("%-25.25s",$data["uid"]);
+		$index=sprintf("-%05d",$data["proj_id"]) . sprintf("-%05d",$data["task_id"]) . sprintf("%-25.25s",$data["uid"]);
 	} else {
-		$index=sprintf("-%-25.25s",$data["taskName"]) . sprintf("-%03d",$data["proj_id"]) . sprintf("%-25.25s",$data["uid"]);
+		$index=sprintf("-%-25.25s",$data["taskName"]) . sprintf("-%05d",$data["proj_id"]) . sprintf("%-25.25s",$data["uid"]);
 	}
 	return $index;
 }
