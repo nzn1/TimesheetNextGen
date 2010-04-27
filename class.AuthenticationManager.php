@@ -530,7 +530,7 @@ class AuthenticationManager {
 			if ($this->usingFallback()) //if we're using Fallback, then we want to store the current password in the database
 				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
 			else 
-				$pwdstr = "";
+				$pwdstr = "''";
 			dbquery("UPDATE $USER_TABLE SET first_name='$firstName', last_name='$lastName', ".
 								"email_address='$emailAddress', password=$pwdstr ".
 								"WHERE username='$username'");
