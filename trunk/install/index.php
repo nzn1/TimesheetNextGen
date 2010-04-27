@@ -1123,6 +1123,17 @@ function create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix
 	return true;
 }
 
+/* update DB version number */
+function update_db_version($version) {
+	$sql = 'UPDATE '.$db_prefix.'config set version=\''.$version.'\';';
+	if(!mysql_query($sql)) {
+		$_ERROR .= '<strong>Could not update DB version</strong><br />';
+		$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
+		$_ERROR .= 'Our database said: '.mysql_error().'<br />';
+		return false;
+	}
+}
+
 /* Database Upgrade */
 function upgrade_tables($db_prefix, $db_pass_func) {
 	global $_ERROR;
@@ -1130,22 +1141,28 @@ function upgrade_tables($db_prefix, $db_pass_func) {
 	$db_version = get_database_version($db_prefix.'config');
 
 	switch ($db_version) {
+	//If any SQL statements fail, we don't want to continue, and we want to mark the DB
+	//with the version that last succeeded so we can hopefully continue the upgrades later
 	case '1.2.0' :
-		$result &= run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.2.1.sql.in');
+		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.2.1.sql.in');
+		if($result === false) return $result;
+		$result = update_db_version('1.2.1');
+		if($result === false) return $result;
 	case '1.2.1' :
-		$result &= run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.3.1.sql.in');
+		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.3.1.sql.in');
+		if($result === false) return $result;
+		$result = update_db_version('1.3.1');
+		if($result === false) return $result;
 	case '1.3.1' :
-		$result &= run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.4.1.sql.in');
+		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.4.1.sql.in');
+		if($result === false) return $result;
+		$result = update_db_version('1.4.1');
+		if($result === false) return $result;
 	case '1.4.1' :
-		$result &= run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.5.0.sql.in');
-	}
-	//Upgrade the DB version
-	$sql = 'UPDATE '.$db_prefix.'config set version=\''.INSTALLER_VERSION.'\';';
-	if(!mysql_query($sql)) {
-		$_ERROR .= '<strong>Could not update DB version</strong><br />';
-		$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
-		$_ERROR .= 'Our database said: '.mysql_error().'<br />';
-		return false;
+		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.5.0.sql.in');
+		if($result === false) return $result;
+		$result = update_db_version('1.5.0');
+		if($result === false) return $result;
 	}
 	return $result;
 }
