@@ -837,8 +837,8 @@ if (!defined("COMMON_INC")) {
 		return $drop_list_string;
 	}
 
-	function user_select_droplist($username='', $disabled='false') {
-		$drop_list_string = user_select_droplist_string('uid', $username, '100%', $disabled);
+	function user_select_droplist($username='', $disabled='false', $width='') {
+		$drop_list_string = user_select_droplist_string('uid', $username, $width, $disabled);
 		print $drop_list_string;
 	}
 
@@ -873,7 +873,7 @@ if (!defined("COMMON_INC")) {
 
 			$query = "SELECT client_id, organisation FROM $CLIENT_TABLE ORDER BY organisation";
 
-		print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
+		//print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"client_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
 		if ($disabled == 'true')
 			print " disabled";
@@ -882,6 +882,7 @@ if (!defined("COMMON_INC")) {
 		list($qh, $num) = dbQuery($query);
 		if ($num > 0) {
 			while ($return = dbResult($qh)) {
+				if($num > 1 && $return["client_id"] == 1) continue; //ignore default client
 				$current_organisation = stripslashes($return["organisation"]);
 				print "<option value=\"$return[client_id]\"";
 				if ($return["client_id"] == $client_id)
@@ -893,10 +894,11 @@ if (!defined("COMMON_INC")) {
 			print "onclick=window.open(\"client_info.php?client_id=$client_id\",";
 			print "\"Client_Info\",";
 			print "\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\")>";
-			print "</td></tr></table>";
+			//print "</td></tr></table>";
 		}
 		else
-			print "</select></td></tr></table>";
+			print "</select>";
+			//print "</td></tr></table>";
 	}
 
 	function project_select_droplist($proj_id=1, $disabled='false') {

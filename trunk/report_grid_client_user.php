@@ -215,7 +215,7 @@ else
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">User:</td>
 									<td align="left" width="100%">
-										<?php user_select_droplist($uid, false); ?>
+										<?php user_select_droplist($uid, false, "100%"); ?>
 									</td>
 								</tr>
 							</table>
