@@ -169,7 +169,7 @@ $post="uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode";
 <script type="text/javascript">
 <!--
 function popupPrintWindow() {
-	window.open("<?php echo "$Location&print=yes"; ?>", "Popup Window", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
+	window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
 }
 //-->
 </script>
@@ -215,18 +215,18 @@ function popupPrintWindow() {
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap width="200">
+						<td align="left" nowrap width="35%">
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
 									<tr>
 										<td align="right" width="0" class="outer_table_heading">Client:</td>
 										<td align="left" width="100%">
-											<?php client_select_list($client_id, $contextUser, false, false, true, false, "submit();"); ?>
+											<?php client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
 										</td>
 									</tr>
 									<td align="right" width="0" class="outer_table_heading">User:</td>
 									<td align="left" width="100%">
-											<?php user_select_droplist($uid, false); ?>
+											<?php user_select_droplist($uid, false,"100%"); ?>
 									</td>
 								</tr>
 							</table>

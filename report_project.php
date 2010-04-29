@@ -160,7 +160,7 @@ $post="&orderby=$orderby&proj_id=$proj_id&mode=$mode";
 <script type="text/javascript">
 <!--
 function popupPrintWindow() {
-	window.open("<?php echo "$Location&print=yes"; ?>", "Popup Window", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
+	window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
 }
 //-->
 </script>
@@ -208,7 +208,7 @@ function popupPrintWindow() {
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap width="250">
+						<td align="left" nowrap width="35%">
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">Client:</td>

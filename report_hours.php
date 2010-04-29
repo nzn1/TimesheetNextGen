@@ -63,7 +63,7 @@ function make_index($data,$order) {
 	window.onload = init;
 
 	function popupPrintWindow() {
-		window.open("<?php echo "$Location&print=yes"; ?>", "Popup Window", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
+		window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
 	}
 
 	 // Setup Javascript events for date drop-down lists. 
@@ -127,7 +127,7 @@ function make_index($data,$order) {
 
 			<table width="100%" border="0">
 				<tr>
-					<td align="left" nowrap width="200">
+					<td align="left" nowrap width="35%">
 						<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 							<tr>
 								<td align="right" width="0" class="outer_table_heading">User:</td>
@@ -137,14 +137,14 @@ function make_index($data,$order) {
 							</tr>
 						</table>
 					</td>
-					<td align="center" nowrap class="outer_table_heading">
+					<td align="center" nowrap class="outer_table_heading" width="30%">
 						<?php echo date('Y',$todayDate); ?>
 					</td>
 					<?php if(!$print): ?>
-						<td  align="center">
+						<td  align="center" width="15%">
 							<button onClick="popupPrintWindow()">Print Report</button>
 						</td> 
-						<td align="right" nowrap>select year:&nbsp;
+						<td align="right" nowrap width="20%">select year:&nbsp;
 							<?php
 								year_button("year",$year);
 							?>
