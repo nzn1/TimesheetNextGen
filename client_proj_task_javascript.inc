@@ -387,7 +387,7 @@ for ($i=0; $i<$num4; $i++) {
 
 			if (clientProjectsHash[clientId]['projectCount'] > 0) {
 				for (key in clientProjectsHash[clientId]['projects']) {
-					suggestedProjectId = clientProjectsHash[clientId]['projects'][0];
+					suggestedProjectId = clientProjectsHash[clientId]['projects'][key];
 					break;
 				}
 			} else
