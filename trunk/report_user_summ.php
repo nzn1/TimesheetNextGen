@@ -239,7 +239,7 @@ function popupPrintWindow() {
 							<td align="right" nowrap>
 							<?php
 								$p1post="uid=$uid&time_fmt=$time_fmt&start_year=$start_year&start_month=$start_month&start_day=1&end_year=$end_year&end_month=$end_month&end_day=15";
-								$p2post="uid=$uid&time_fmt=$time_fmt&start_year=$start_year&start_month=$start_month&start_day=16&end_year=$end_year&end_month=$end_month&end_day=31";
+								$p2post="uid=$uid&time_fmt=$time_fmt&start_year=$start_year&start_month=$start_month&start_day=16&end_year=$end_year&end_month=$end_month&end_day=".date('t',strtotime("$end_year-$end_month-15"));
 							?>
 								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p1post; ?>" class="outer_table_action">Bi-monthly period 1</a><br>
 								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p2post; ?>" class="outer_table_action">Bi-monthly period 2</a>
