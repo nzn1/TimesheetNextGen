@@ -3,6 +3,25 @@
 	var projectTasksHash = {};
 	var clientProjectsHash = {};
 <?php
+//include("debuglog.php");
+//$debug=new logfile();
+//Get list of clients and projects the contextUser is assigned to
+$getUsersClientList = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id FROM $ASSIGNMENTS_TABLE, $PROJECT_TABLE WHERE ".
+		"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
+		"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
+		"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
+		"ORDER BY $PROJECT_TABLE.title";
+
+list($qh5, $num5) = dbQuery($getUsersClientList);
+//$debug->write("found $num5 clients for $contextUser\n");
+$userClientHash=array();
+$userProjectHash=array();
+for ($i=0; $i<$num5; $i++) {
+	$data = dbResult($qh5, $i);
+	$userClientHash[$data["client_id"]]=$data["client_id"];
+	$userProjectHash[$data["proj_id"]]=$data["proj_id"];
+}
+
 //get all of the clients and put them into a hastable
 $getClientsQuery = "SELECT $CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation FROM " .
 			"$CLIENT_TABLE ORDER BY $CLIENT_TABLE.organisation";
@@ -12,9 +31,14 @@ list($qh2, $num2) = dbQuery($getClientsQuery);
 for ($i=0; $i<$num2; $i++) {
 	//get the current record
 	$data = dbResult($qh2, $i);
-	print("clientProjectsHash['" . $data["client_id"] . "'] = {};\n");
-	print("clientProjectsHash['" . $data["client_id"] . "']['name'] = '". addslashes($data["organisation"]) . "';\n");
-	print("clientProjectsHash['" . $data["client_id"] . "']['projects'] = new Array();\n");
+
+	if(($data["client_id"]==1) && ($num2>1) && ($num5>1)) continue;
+	if(array_key_exists($data["client_id"],$userClientHash)) {
+		print("clientProjectsHash['" . $data["client_id"] . "'] = {};\n");
+		print("clientProjectsHash['" . $data["client_id"] . "']['name'] = '". addslashes($data["organisation"]) . "';\n");
+		print("clientProjectsHash['" . $data["client_id"] . "']['projects'] = {};\n");
+		$projCount[$data["client_id"]]=0;
+	}
 }
 
 //get all of the projects and put them into the hashtable
@@ -32,14 +56,24 @@ for ($i=0; $i<$num3; $i++) {
 	//get the current record
 	$data = dbResult($qh3, $i);
 
+	if(!array_key_exists($data["client_id"],$userClientHash)) continue; 
+	if(!array_key_exists($data["proj_id"],$userProjectHash))  continue;
+	if(($data["client_id"]==1) && ($num3>1)) continue;
+
 	//add the project id to the array for this particular client
-	print("var numProjects = clientProjectsHash['" . $data["client_id"] . "']['projects'].length;\n");
-	print("clientProjectsHash['" . $data["client_id"] . "']['projects'][numProjects] = " . $data["proj_id"] . ";\n");
+	print("clientProjectsHash['" . $data["client_id"] . "']['projects']['".$data["proj_id"]."'] = " . $data["proj_id"] . ";\n");
+
+	$projCount[$data["client_id"]]++;
+	$userProjectHash[$data["proj_id"]]=$data["proj_id"];
 
 	//add the project properties to the projectTasksHash
 	print("projectTasksHash['" . $data["proj_id"] . "'] = {};\n");
 	print("projectTasksHash['" . $data["proj_id"] . "']['name'] = '". addslashes($data["title"]) . "';\n");
 	print("projectTasksHash['" . $data["proj_id"] . "']['tasks'] = {};\n");
+}
+
+foreach ($projCount as $client => $project_count) {
+	print("clientProjectsHash['$client']['projectCount'] = $project_count;\n");
 }
 
 //get all of the tasks and put them into the hashtable
@@ -54,6 +88,10 @@ list($qh4, $num4) = dbQuery($getTasksQuery);
 for ($i=0; $i<$num4; $i++) {
 	//get the current record
 	$data = dbResult($qh4, $i);
+
+	if(!array_key_exists($data["proj_id"],$userProjectHash)) continue; 
+	if(($data["proj_id"]==1) && ($num4>1)) continue;
+
 	print("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
 	print("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
 }
@@ -126,16 +164,38 @@ for ($i=0; $i<$num4; $i++) {
 			document.getElementById('submitButton').disabled = !booleanValue;
 	}
 
+	function getInitialClient() {
+		for (clientKey in clientProjectsHash) {
+			if(clientKey > 0) {
+				return clientKey;
+			}
+		}
+	}
+
+	function getInitialProject() {
+		for (key in projectTasksHash) {
+			if(key > 0) {
+				return key;
+			}
+		}
+	}
+
 	function populateClientSelect(selectedClientId) {
 		//get the client select
 		var clientSelect = document.getElementById('clientSelect');
 
-		clientSelect.options[clientSelect.options.length] = new Option("All Clients", 0);
+		//clientSelect.options[clientSelect.options.length] = new Option("All Clients", 0);
 
 		//add the clients
 		for (clientKey in clientProjectsHash) {
 			//alert("client:" + clientKey + ", name: " + clientProjectsHash[clientKey].name);
 			clientSelect.options[clientSelect.options.length] = new Option(clientProjectsHash[clientKey].name, clientKey);
+
+			if(selectedClientId == undefined || selectedClientId == 0) {
+				if(clientKey > 0) {
+					selectedClientId=clientKey;
+				}
+			}
 
 			if (clientKey == selectedClientId)
 				clientSelect.options[clientSelect.options.length-1].selected = true;
@@ -150,25 +210,30 @@ for ($i=0; $i<$num4; $i++) {
 
 		//add the projects
 		var empty = true;
-		if (clientId == 0) {
+		if (clientId == 0 || clientId == undefined) {
 			//load all projects
 			for (key in projectTasksHash) {
 				projectSelect.options[projectSelect.options.length] = new Option(projectTasksHash[key]['name'], key);
 				empty = false;
 
+				if(selectedProjectId == undefined || selectedProjectId == 0) {
+					if(key > 0) {
+						selectedProjectId=key;
+					}
+				}
+
 				if (key == selectedProjectId)
 					projectSelect.options[projectSelect.options.length-1].selected = true;
 			}
-		}
-		else {
+		} else {
 			//load the projects for this client only
 			var currentProjectId;
 
 			if (clientProjectsHash[clientId] == null)
 				alert('ERROR:clientProjectsHash[clientId] is null, clientId=' + clientId + ' position=1');
 
-			for (i=0; i<clientProjectsHash[clientId]['projects'].length; i++) {
-				currentProjectId = clientProjectsHash[clientId]['projects'][i];
+			for (key in clientProjectsHash[clientId]['projects']) {
+				currentProjectId = clientProjectsHash[clientId]['projects'][key];
 				projectSelect.options[projectSelect.options.length] = new Option(projectTasksHash[currentProjectId]['name'], currentProjectId);
 				empty = false;
 
@@ -181,8 +246,7 @@ for ($i=0; $i<$num4; $i++) {
 		if (empty) {
 			projectSelect.options[projectSelect.options.length] = new Option("None assigned to you", -1);
 			enableProjectSelect(false);
-		}
-		else
+		} else
 			enableProjectSelect(true);
 	}
 
@@ -201,6 +265,12 @@ for ($i=0; $i<$num4; $i++) {
 			for (taskKey in thisProjectTasks) {
 				taskSelect.options[taskSelect.options.length] = new Option(thisProjectTasks[taskKey], taskKey);
 				empty = false;
+
+				if(selectedTaskId == undefined || selectedTaskId == 0) {
+					if(taskKey > 0) {
+						selectedTaskId=taskKey;
+					}
+				}
 
 				if (taskKey == selectedTaskId)
 					taskSelect.options[taskSelect.options.length-1].selected = true;
@@ -237,7 +307,13 @@ for ($i=0; $i<$num4; $i++) {
 			enableClockOff();
 		}
 
+		if(initialClientId == -1 || initialClientId == 0 || initialClientId == undefined)
+			initialClientId=getInitialClient();
+		if(initialProjectId == -1 || initialProjectId == 0 || initialProjectId == undefined)
+			initialProjectId=getInitialProject();
+
 		initialProjectId = getValidProjectIdForClient(initialClientId, initialProjectId);
+
 		if (initialProjectId == -1)
 			initialTaskId = -1;
 		else
@@ -283,13 +359,8 @@ for ($i=0; $i<$num4; $i++) {
 
 	function getValidProjectIdForClient(clientId, suggestedProjectId) {
 
-		//make sure we have a client id
-		if (clientId == 0) {
-			for (key in clientProjectsHash) {
-				clientId = key;
-				break;
-			}
-		}
+		if (clientId == null || clientId == undefined || clientId == 0)
+			alert('ERROR:clientId is ' + clientId + ' in getValidProjectIdForClient');
 
 		//check that the project is valid for the client
 		var currentProjectId;
@@ -299,8 +370,8 @@ for ($i=0; $i<$num4; $i++) {
 			if (clientProjectsHash[clientId] == null)
 				alert('ERROR:clientProjectsHash[clientId] is null, clientId=' + clientId + ' position=2');
 
-			for (i=0; i<clientProjectsHash[clientId]['projects'].length; i++) {
-				currentProjectId = clientProjectsHash[clientId]['projects'][i];
+			for (key in clientProjectsHash[clientId]['projects']) {
+				currentProjectId = clientProjectsHash[clientId]['projects'][key];
 
 				if (currentProjectId == suggestedProjectId) {
 					validProjectId = true;
@@ -314,9 +385,12 @@ for ($i=0; $i<$num4; $i++) {
 			if (clientProjectsHash[clientId] == null)
 				alert('ERROR:clientProjectsHash[clientId] is null, clientId=' + clientId + ' position=3');
 
-			if (clientProjectsHash[clientId]['projects'].length > 0)
-				suggestedProjectId = clientProjectsHash[clientId]['projects'][0];
-			else
+			if (clientProjectsHash[clientId]['projectCount'] > 0) {
+				for (key in clientProjectsHash[clientId]['projects']) {
+					suggestedProjectId = clientProjectsHash[clientId]['projects'][0];
+					break;
+				}
+			} else
 				suggestedProjectId = -1;
 		}
 
