@@ -23,6 +23,10 @@ Export to Excel is working, for me, in exactly two reports: report_grid_client_u
 
 The installation and upgrade scripts have been enhanced a little bit, and the web based installation script has been greatly enhanced.
 
+Administrators are now able to change their "contextUser" and make entries or edit entries on behalf of users.
+
+User status field has been changed so users can now become "inactive", instead of just deleting the user and all their time enties.  Inactive users will only show up for managers, and then they will show up in red.
+
 	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
 Version 1.4.1 notes:
 
