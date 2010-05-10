@@ -57,7 +57,7 @@ if ($action == "saveChanges") {
 
 	list($qh,$num) = dbQuery($queryString);
 
-	Header("Location: daily.php?proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day");
+	Header("Location: daily.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day");
 	exit;
 }
 

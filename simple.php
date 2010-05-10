@@ -817,7 +817,7 @@ include("navcal/navcalendars.inc");
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
 	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
-	list($num5, $qh5) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id, $order_by_str);
+	list($num5, $qh5) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
 
 	//we're going to put the data into an array of
 	//different (unique) TASKS
