@@ -115,7 +115,7 @@ $startStr = date("Y-m-d H:i:s",$todayDate);
 $endStr = date("Y-m-d H:i:s",$tomorrowDate);
 
 $order_by_str = "start_stamp, $CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name, end_stamp";
-list($num, $qh) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id, $order_by_str);
+list($num, $qh) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
 
 if ($num == 0) {
 	print "	<tr>\n";
