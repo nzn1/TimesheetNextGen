@@ -20,8 +20,8 @@ $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 $destination = $_REQUEST["destination"];
 
 //check that the client id is valid
-if ($client_id == 0)
-	$client_id = getFirstClient();
+//if ($client_id == 0)
+//	$client_id = getFirstClient();
 
 //check that project id is valid
 if ($proj_id == 0)
