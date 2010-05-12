@@ -90,7 +90,6 @@ for ($i=0; $i<$num4; $i++) {
 	$data = dbResult($qh4, $i);
 
 	if(!array_key_exists($data["proj_id"],$userProjectHash)) continue; 
-	if(($data["proj_id"]==1) && ($num4>1)) continue;
 
 	print("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
 	print("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
