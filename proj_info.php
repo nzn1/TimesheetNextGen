@@ -133,7 +133,7 @@ include ("header.inc");
 					$workers .= "$worker[username], ";
 				}
 
-				$workers = preg_replace(", $", "", $workers);
+				$workers = preg_replace("/, $/", "", $workers);
 				print $workers;
 				print "</td></tr>";
 			}
