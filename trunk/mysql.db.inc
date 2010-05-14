@@ -22,8 +22,8 @@
 			}
 		}
 		// Remove the last comma...
-		$string["fields"]=preg_replace(", $","",$string["fields"]);
-		$string["values"]=preg_replace(", $","",$string["values"]);
+		$string["fields"]=preg_replace("/, $/","",$string["fields"]);
+		$string["values"]=preg_replace("/, $/","",$string["values"]);
 
 		// Return the completed string.
 		return " ( $string[fields] ) VALUES $string[values] ";
@@ -36,7 +36,7 @@
 				$strings .= $key . " = '" . addslashes($val) . "', ";
 			}
 		}
-		$strings=preg_replace(", $", " ", $strings);
+		$strings=preg_replace("/, $/", " ", $strings);
 		return $strings;
 	}
 
