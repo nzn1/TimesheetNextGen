@@ -555,13 +555,36 @@ if (!defined("COMMON_INC")) {
 	function multi_user_select_list($name, $selected_array=array()) {
 		include("table_names.inc");
 
-		list($qh,$num) = dbQuery("SELECT username FROM $USER_TABLE ORDER BY username");
+		global $authenticationManager;
+	
+		$show_disabled=0;
+		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
+			//show disabled users at bottom of list
+			$show_disabled=1;
+			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
+		} else {
+			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
+		}
+		list($qh, $num) = dbQuery($query);
 		print "<SELECT NAME=\"$name\" multiple size=\"11\">\n";
+		if($show_disabled) {
+			print "<optgroup label=\"Active Users\">";
+			$found_disabled=0;
+		}
+
 		while ($data = dbResult($qh)) {
-				print "<OPTION NAME=\"$data[username]\"";
-				if (in_array($data["username"], $selected_array))
+				if($show_disabled && !$found_disabled && $data['status']=='INACTIVE') {
+					$found_disabled=1;
+					print "</optgroup><optgroup style=\"color:red\"; label=\"Inactive Users\">";
+				}
+
+				$current_username = stripslashes($data["username"]);
+				$current_name = stripslashes($data["last_name"] . " " . $data["first_name"] );
+				if ($current_name == " ") $current_name = $current_username;
+				print "<OPTION value=\"$current_username\"";
+				if (in_array($current_username, $selected_array))
 					print " SELECTED ";
-				print ">$data[username]</OPTION>\n";
+				print ">$current_name</OPTION>\n";
 		}
 		print "</SELECT>";
 	}
