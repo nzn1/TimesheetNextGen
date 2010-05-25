@@ -169,6 +169,8 @@ include ("banner.inc");
 							<?php } else { ?>
 								<span class="disabledLink">Add new task</span>
 							<?php } ?>
+							<br><br>
+							<a href="assign-proj-mbrs-to-all-tasks.php">Assign Mbrs all tasks</a>
 						</td>
 					</tr>
 				</table>

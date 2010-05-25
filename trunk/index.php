@@ -8,8 +8,7 @@ require("class.AuthenticationManager.php");
 if ($authenticationManager->isLoggedIn()) {
 	include_once("common.inc");
 	gotoStartPage();
-}
-else {
+} else {
 	header("Location: login.php");
 }
 
