@@ -7,7 +7,7 @@
 									<img src="images/timesheet_face_06.gif" width="10" height="7" alt="" /></td>
 							</tr>
 							<tr>
-								<td width="10">
+								<td width="10" height="100%">
 									<img src="images/timesheet_face_08.gif" width="10" height="100%" alt="" /></td>
 							</tr>
 						</table>
@@ -17,18 +17,18 @@
 		</td>
 	</tr>
 	<tr>
-		<td width="100%" height="100%">
+		<td>
 			<table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr height="100%">
+				<tr>
 					<td width="13" height="100%">
 						<table width="13" height="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 								<td width="13" height="19">
-									<img src="images/timesheet_face_09.gif" width="13" height="19" /></td>
+									<img src="images/timesheet_face_09.gif" width="13" height="19" alt="" /></td>
 							</tr>
 							<tr>
 								<td width="13" height="100%">
-									<img src="images/timesheet_face_15.gif" width="13" height="100%" /></td>
+									<img src="images/timesheet_face_15.gif" width="13" height="100%" alt="" /></td>
 							</tr>
 							<tr>
 								<td width="13" height="6">
@@ -36,14 +36,22 @@
 							</tr>
 						</table>
 					</td>
+
 					<td width="100%" height="100%" class="faceBackground">
 						<table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr height="17">
+							<tr>
+
+<!--
+Following 2 Lines problematic for Google Chrome Browser
 								<td width="5" height="17">
 									<img src="images/timesheet_face_10.gif" width="5" height="17" alt="" /></td>
-								<td width="100%" height="17">
+-->
+								<td width="100%" height="100%">
+
 									<img src="images/timesheet_face_11.gif" width="100%" height="17" alt="" /></td>
+
 								<td width="4" height="17">
+
 									<img src="images/timesheet_face_12.gif" width="4" height="17" alt="" /></td>
 							</tr>
 							<tr height="100%">
