@@ -58,7 +58,7 @@ for ($i=0; $i<$num3; $i++) {
 
 	if(!array_key_exists($data["client_id"],$userClientHash)) continue; 
 	if(!array_key_exists($data["proj_id"],$userProjectHash))  continue;
-	if(($data["client_id"]==1) && ($num3>1)) continue;
+	if(($data["client_id"]==1) && ($data["proj_id"]==1) && ($num3>1)) continue;
 
 	//add the project id to the array for this particular client
 	print("clientProjectsHash['" . $data["client_id"] . "']['projects']['".$data["proj_id"]."'] = " . $data["proj_id"] . ";\n");
