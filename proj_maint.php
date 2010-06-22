@@ -237,7 +237,7 @@ include ("banner.inc");
 																	<tr>
 																		<td>
 																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? formatSeconds($bill_data["total_time"]): "0h 0m"); ?><br>
-																			<span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? $bill_data["billed"]: "0.00"); ?></b>
+																			<span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? sprintf("%01.2f",$bill_data["billed"]): "0.00"); ?></b>
 																		</td>
 																	</tr>
 																	<tr><td>&nbsp;</td></tr>
