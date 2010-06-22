@@ -98,12 +98,14 @@ include ("navcal/navcalendars.inc");
 							<a href="report_grid_client_user.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
+<?php if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
 					<tr class="diff">
 						<td class="calendar_cell_middle">All users & All projects report</td>
 						<td class="calendar_cell_right">
 							<a href="report_all.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
+<?php } ?>
 <?php if ($authenticationManager->hasAccess('aclAbsences')) { ?>
 					<tr class="inner_table_head">
 						<td class="inner_table_column_heading">Attendance Reports</td>
