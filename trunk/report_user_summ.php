@@ -77,10 +77,8 @@ if($export_excel){
 	header("Content-type: application/vnd.ms-excel");
 	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
 	header("Pragma: no-cache"); 
-	$time_format_mode = 'integer';
+	$time_fmt = "decimal";
 }
-else
-	$time_format_mode = 'time';
 
 $orderby="project";
 function make_index($data,$order) {
