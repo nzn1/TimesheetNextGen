@@ -40,6 +40,21 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 
 //$debug = new logfile();
 
+//export data to excel (or not)
+$export_excel = isset($_GET["export_excel"]) ? (bool)$_GET["export_excel"] : false;
+
+// if exporting data to excel, print appropriate headers. Ensure the numbers written in the spreadsheet
+// are in H.F format rather than HH:MI
+if($export_excel){
+	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+	header("Cache-Control: public");
+	header("Content-type: application/vnd.ms-excel");
+	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+	header("Pragma: no-cache"); 
+	$time_fmt = 'decimal';
+} else
+	$time_fmt = 'time';
+
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
 list($num, $qh) = get_time_records($startStr, $endStr, $uid, $proj_id, $client_id);
@@ -119,6 +134,17 @@ else if($orderby == "task") {
 	$colWrap[]="";
 }
 
+function format_time($time) {
+	global $time_fmt;
+	if($time > 0) {
+		if($time_fmt == "decimal")
+			return minutes_to_hours($time);
+		else 
+			return format_minutes($time);
+	} else 
+		return "-";
+}
+
 function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
 	print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"" . $script .
 		"?$variable=$info\",\"$title\",\"location=0,directories=no,status=no,scrollbar=yes," .
@@ -150,7 +176,7 @@ function printInfo($type) {
 		jsPopupInfoLink("task_info.php", "task_id", $data["task_id"], "Task_Info");
 		print stripslashes($data["taskName"])."</a>&nbsp;\n";
 	} else if($type == "duration") {
-		print format_minutes($data["duration"]);
+		print format_time($data["duration"]);
 	} else print "type unknown: $type &nbsp;";
 }
 
@@ -186,6 +212,7 @@ $post="&orderby=$orderby";
 
 ?>
 
+<?php if(!$export_excel) { ?>
 <script type="text/javascript">
 <!--
 function popupPrintWindow() {
@@ -193,19 +220,30 @@ function popupPrintWindow() {
 }
 //-->
 </script>
+<?php } //end if !export_excel ?>
 
 <html>
 <head>
 <title>Timesheet.php Report: All hours this month</title>
-<?php include ("header.inc"); ?>
+<?php 
+	if(!$export_excel) include ("header.inc");
+	else {
+		print "<style type=\"text/css\"> ";
+		include ("css/timesheet.css");
+		print "</style>";
+	}
+?>
 </head>
-
 <?php 
 	if($print) {
 		echo "<body width=\"100%\" height=\"100%\"";
 		include ("body.inc");
 
 		echo "onLoad=window.print();";
+		echo ">\n";
+	} else if($export_excel) {
+		echo "<body ";
+		include ("body.inc");
 		echo ">\n";
 	} else {
 		echo "<body ";
@@ -217,6 +255,7 @@ function popupPrintWindow() {
 	}
 ?>
 
+<?php if(!$export_excel) { ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
@@ -229,10 +268,10 @@ function popupPrintWindow() {
 						<td align="left" width="34%" nowrap class="outer_table_heading">
 						<?php echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						</td>
-						<?php if (!$print): 
-							//<td  align="center" >
-							//<a href="#" onclick="javascript:esporta('user')" ><img src="images/export_data.gif" name="esporta_dati" border=0></a>
-							//</td> ?>
+						<?php if (!$print): ?>
+							<td  align="center" width="10%" >
+							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
+							</td>
 							<td  align="center" width="33%">
 							<?php 
 								print "<button onClick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
@@ -250,6 +289,8 @@ function popupPrintWindow() {
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
+
+<?php } // end if !export_excel ?>
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 					<tr class="inner_table_head">
 					<?php
@@ -325,7 +366,6 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 
 	list ($qh,$num) = dbQuery($query);
 */
-	$dati_total=array();
 	$darray=array();
 
 	$grand_total_time = 0;
@@ -351,8 +391,6 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 			//fixStartEndDuration returns a 0 if the entry is incomplete.
 			if(!fixStartEndDuration($data)) continue;
 
-			array_push($dati_total,$data);
-
 			//Since we're allowing entries that may span date boundaries, this complicates
 			//our life quite a lot.  We need to "pre-process" the results to split those
 			//entries that do span date boundaries into multiple entries that stop and then
@@ -372,7 +410,7 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 
 				if(isset($subtotal_label[2]) && (($last_colVar[2] != $data[$colVar[2]]) || ($last_colVar[1] != $data[$colVar[1]]) || ($last_colVar[0] != $data[$colVar[0]]))) {
 					if($grand_total_time) {
-						$formatted_time = format_minutes($level_total[2]);
+						$formatted_time = format_time($level_total[2]);
 						print "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[2].": <span class=\"report_sub_total2\">$formatted_time</span></td></tr>\n";
 					}
@@ -380,7 +418,7 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 				}
 				if(isset($subtotal_label[1]) && (($last_colVar[1] != $data[$colVar[1]]) || ($last_colVar[0] != $data[$colVar[0]]))) {
 					if($grand_total_time) {
-						$formatted_time = format_minutes($level_total[1]);
+						$formatted_time = format_time($level_total[1]);
 						print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td>";
 						print "<td class=\"calendar_totals_line_weekly_right\">&nbsp;</td></tr>\n";
@@ -390,7 +428,7 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 				}
 				if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
 					if($grand_total_time) {
-						$formatted_time = format_minutes($level_total[0]);
+						$formatted_time = format_time($level_total[0]);
 						print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td>";
 						print "<td class=\"calendar_totals_line_weekly_right\">&nbsp;</td></tr>\n";
@@ -426,36 +464,24 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 		}
 
 		if (isset($subtotal_label[2]) && $level_total[2]) {
-			$formatted_time = format_minutes($level_total[2]);
+			$formatted_time = format_time($level_total[2]);
 			print "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				$subtotal_label[2].": <span class=\"report_sub_total2\">$formatted_time</span></td></tr>\n";
 		}
 		if (isset($subtotal_label[1]) && $level_total[1]) {
-			$formatted_time = format_minutes($level_total[1]);
+			$formatted_time = format_time($level_total[1]);
 			print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td>";
 			print "<td class=\"calendar_totals_line_weekly_right\">&nbsp;</td></tr>\n";
 		}
 		if (isset($subtotal_label[0]) && $level_total[0]) {
-			$formatted_time = format_minutes($level_total[0]);
+			$formatted_time = format_time($level_total[0]);
 			print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td>";
 			print "<td class=\"calendar_totals_line_weekly_right\">&nbsp;</td></tr>\n";
 		}
-		$formatted_time = format_minutes($grand_total_time);
+		$formatted_time = format_time($grand_total_time);
 	}
-
-	$out_js="<SCRIPT language=javascript> function esporta() {";
-		if (!empty($dati_total)) {
-			$_SESSION['excel_data']=$dati_total;
-			$out_js.="window.open('./export_timesheet.php?type=user')";
-		}else {
-			$out_js.="alert('No records to export')";
-		}
-	$out_js.="} </SCRIPT>";
-
-	echo $out_js;
-
 ?>
 						</tr>
 					</td>
@@ -482,8 +508,7 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 ?>
 	</table>
 
-
-
+<?php if(!$export_excel) { ?>
 <!-- include the timesheet face up until the end -->
 <?php if(!$print) include("timesheet_face_part_3.inc"); ?>
 
@@ -491,9 +516,8 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 	</tr>
 </table>
 
-<?php
-if (!$print) include ("footer.inc");
-?>
+<?php if (!$print) include ("footer.inc"); ?>
+<?php } //end if !export_excel ?>
 </BODY>
 </HTML>
 <?php
