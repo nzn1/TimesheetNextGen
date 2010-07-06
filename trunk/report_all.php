@@ -67,7 +67,7 @@ if($orderby == "username") {
 	$colAlign[]=""; $colWrap[]="nowrap";
 
 	$subtotal_label[]="Project total";
-	$colVar[]="projectTitle";
+	$colVar[]="proj_id";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
 	$colAlign[]=""; $colWrap[]="nowrap";
@@ -86,7 +86,7 @@ if($orderby == "username") {
 
 else if($orderby == "project") {
 	$subtotal_label[]="Project total";
-	$colVar[]="projectTitle";
+	$colVar[]="proj_id";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
 	$colAlign[]=""; $colWrap[]="";
@@ -117,7 +117,7 @@ else if($orderby == "task") {
 	$colAlign[]=""; $colWrap[]="nowrap";
 
 //	$subtotal_label[]="Project total";
-	$colVar[]="projectTitle";
+	$colVar[]="proj_id";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
 	$colAlign[]=""; $colWrap[]="";
@@ -167,7 +167,7 @@ function printInfo($type) {
 		print $data["first_name"]."&nbsp;</td>";
 		print "<td valign=\"top\" class=\"calendar_cell_middle\" nowrap>";
 		print $data["last_name"]."&nbsp;\n";
-	} else if($type == "projectTitle") {
+	} else if($type == "proj_id") {
 		jsPopupInfoLink("client_info.php", "client_id", $data["client_id"], "Client_Info");
 		print stripslashes($data["clientName"])."</a> / ";
 		jsPopupInfoLink("proj_info.php", "proj_id", $data["proj_id"], "Project_Info");
@@ -187,7 +187,7 @@ function printBlanks($type) {
 		print "&nbsp;</td>";
 		print "<td valign=\"top\" class=\"calendar_cell_middle\" nowrap>";
 		print "&nbsp;";
-	} else if($type == "projectTitle") {
+	} else if($type == "proj_id") {
 		print "&nbsp;";
 	} else if($type == "taskName") {
 		print "&nbsp;";
