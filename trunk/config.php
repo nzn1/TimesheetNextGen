@@ -24,7 +24,7 @@ $resultset = dbResult($qh);
 ?>
 <html>
 <head>
-<title>Timesheet.php Configuration Parameters</title>
+<title>Timesheet Configuration Parameters</title>
 <?php
 include ("header.inc");
 ?>
