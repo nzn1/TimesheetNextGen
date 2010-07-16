@@ -224,7 +224,7 @@ function popupPrintWindow() {
 
 <html>
 <head>
-<title>Timesheet.php Report: All hours this month</title>
+<title>Timesheet Report: All hours this month</title>
 <?php 
 	if(!$export_excel) include ("header.inc");
 	else {

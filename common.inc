@@ -256,6 +256,8 @@ if (!defined("COMMON_INC")) {
 	function get_allowance($day, $month, $year, $user, $type='Holiday') {
 		include("table_names.inc");
 		$user_start_date = get_start_date($user);
+		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
+			return 0;
 
 		if ($type=='Holiday')
 			$query = "SELECT sum(Holiday) ";
@@ -270,8 +272,10 @@ if (!defined("COMMON_INC")) {
 
 	function get_balance($day, $month, $year, $user, $type='Holiday') {
 		include("table_names.inc");
-		$current_allowance = get_allowance($day, $month, $year, $user, $type);
 		$user_start_date = get_start_date($user);
+		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
+			return 0;
+		$current_allowance = get_allowance($day, $month, $year, $user, $type);
 		if($user_start_date) {
 			$user_start_date_parts = explode('-',$user_start_date);
 			$user_start_day = $user_start_date_parts[2];
@@ -1058,7 +1062,10 @@ if (!defined("COMMON_INC")) {
 		$text = str_replace("%date%", strftime("%A %B %d, %Y"), $text);
 
 		//replace timezone
-		$text = str_replace("%timezone%", getenv("TZ"), $text);
+		if(function_exists("date_default_timezone_get"))
+			$text = str_replace("%timezone%", date_default_timezone_get(), $text);
+		else
+			$text = str_replace("%timezone%", getenv("TZ"), $text);
 
 		//output the result
 		echo $text;
