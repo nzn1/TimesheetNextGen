@@ -7,6 +7,11 @@ track and log their time spent on multiple projects.
 Please see INSTALL.txt for installation instructions.
 
 	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
+Revisions since 1.5.0 release:
+
+Added ability to administratively close the site by creating a file named 'siteclosed' in the main context of the site (for instance, where simple.php is located), to reopen, simply delete the file.  Allows administrators to loggin, or continue to be logged in to allow for testing or making adjustments.
+
+	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
 Version 1.5.0 notes:
 
 Semi major database changes have been made with regards to how time data is stored and should be retrieved.  Essentially, if you have added any reports, someone will need to at least look at rewritting those reports.  The original reports will probably appear to work just fine, but they have the potential to report incorrect amounts of time during Daylight Savings Time changes.

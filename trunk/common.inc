@@ -5,6 +5,7 @@ if (!defined("COMMON_INC")) {
 
 	include("database_credentials.inc");
 	include("mysql.db.inc");
+	require("timezone.inc");
 
 	//get realToday's values
 	$realToday = getdate(time());

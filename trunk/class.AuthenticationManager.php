@@ -33,7 +33,6 @@ if( file_exists( $cpath . "/siteclosed")) {
 	
 require("table_names.inc");
 require("common.inc");
-require("timezone.inc");
 require("enum.php");
 
 //define constants for error code
