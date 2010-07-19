@@ -45,8 +45,6 @@ if(!isset($post)) $post ="";
 									"&day=".$dti["mday"].
 									"\">Next</a>";
 							?>
-
-							<!--A HREF="<?php echo $_SERVER["PHP_SELF"]; ?>?year=<?php echo $next_month_year ?>&month=<?php echo $next_month ?>&day=<?php echo $navday ?>">Next</a-->
 						</td>
 					</tr>
 				</table>

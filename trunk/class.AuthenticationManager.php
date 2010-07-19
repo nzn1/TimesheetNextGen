@@ -8,20 +8,27 @@ ini_set('display_errors', true);
  * Installation script. As this file is called by every other file,
  * it makes sense to check to see if this app has been installed here.
  */	
+$cpath = dirname(__FILE__);
 if(
-	!file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'database_credentials.inc') ||
-	!file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'table_names.inc') 
+	!file_exists($cpath.DIRECTORY_SEPARATOR.'database_credentials.inc') ||
+	!file_exists($cpath.DIRECTORY_SEPARATOR.'table_names.inc') 
 	) {
 	// this app has not been installed yet, redirect to the installation pages
 	header("Location: ./install/");
 	exit;
-} else if(file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'install')) {
+} else if(file_exists($cpath.DIRECTORY_SEPARATOR.'install')) {
 	// the install directory has not been deleted, redirect to "delete install dir" pages
 	// NOTE: this may also mean that the user has upgraded. The "delete install dir"
 	// pages also check the version number to see if the user is running the latest
 	// version, if not takes user to the "upgrade" pages
 	header("Location: ./install/");
 	exit;	
+}
+
+if( file_exists( $cpath . "/siteclosed")) {
+	$siteclosed=1;
+} else {
+	$siteclosed=0;
 }
 	
 require("table_names.inc");
@@ -97,6 +104,7 @@ class AuthenticationManager {
 	function login($username, $password) {
 		require("table_names.inc");
 		require("database_credentials.inc");
+		global $siteclosed;
 
 		//start/continue the session
 		session_start();
@@ -150,6 +158,9 @@ class AuthenticationManager {
 		list($qh,$num) = dbQuery("SELECT level ".
 									"FROM $USER_TABLE WHERE username='$username'");
 		$data = dbResult($qh);
+
+		if($siteclosed && ($data["level"] < CLEARANCE_ADMINISTRATOR))
+			return false;
 
 		//Fix session ID vulnerability: if someone installs this system locally, and creates the same username as an 
 		//administrator/manager/ etc, making the session_id a hash from the username, password, and the access level 
@@ -259,6 +270,7 @@ class AuthenticationManager {
 	*	returns true if the user is logged in
 	*/
 	function isLoggedIn() {
+		global $siteclosed;
 		require( "table_names.inc" );
 
 		//start/continue the session
@@ -272,6 +284,9 @@ class AuthenticationManager {
 		if($num != 1) return false;
 		$data = dbResult( $qh );
 		if($data['session'] != $session_id) return false;
+
+		if($siteclosed && ($_SESSION['accessLevel'] < CLEARANCE_ADMINISTRATOR))
+			return false;
 
 		return !empty($_SESSION['accessLevel']) && !empty($_SESSION['loggedInUser']) && !empty($_SESSION['contextUser']);
 	}
@@ -294,7 +309,7 @@ class AuthenticationManager {
 		$acl = get_acl_level($page);
 		switch ($acl) {
 		case 'None':
-			$level = 100; //This level is unobtainable
+			$level = 0; //This level is unobtainable
 			break;
 		case 'Basic':
 			$level = CLEARANCE_BASIC;

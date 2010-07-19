@@ -55,7 +55,16 @@ include ("header.inc");
 
 <table border="0" cellspacing="0" cellpadding="0" align="center">
 	<tr>
+<?php if($siteclosed) { ?>
+		<td style="padding-top: 40;">
+			<font face="Verdana, Arial, Helvetica, sans-serif">
+			<p align="center"><font color="red"><strong>The Site is temporarily closed.</strong></font></p>
+			<p align="center">The timesheet system is temporarily closed for maintenance.</p>
+			<p align="center">If you are not an Administrator, you will not be allowed to login; please check back later.</p>
+			</font>
+<?php } else { ?>
 		<td style="padding-top: 100;">
+<?php } ?>
 
 <!-- include the timesheet face up until the heading start section -->
 <?php include("timesheet_face_part_1.inc"); ?>
