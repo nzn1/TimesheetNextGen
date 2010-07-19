@@ -1366,11 +1366,12 @@ if (!defined("COMMON_INC")) {
 		if(isset($data["duration"]) && ($data["duration"] > 0) ) {
 			$new_end_stamp=get_end_date_time($data["start_stamp"], $data["duration"]);
 			if($data["end_stamp"] != $new_end_stamp) {
+				$old_end_stamp = $data["end_stamp"];
 				$data["end_stamp"] = $new_end_stamp;
 				//even if stamps are different, it may result in same string being stored in db
 				//see: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php
 				//and read the comments by Miles Nordin and Joakim Nygard
-				if(strftime("%Y-%m-%d %T", $data["end_stamp"]) != strftime("%Y-%m-%d %T", $new_end_stamp))
+				if(strftime("%Y-%m-%d %T", $old_end_stamp) != strftime("%Y-%m-%d %T", $new_end_stamp))
 					fix_entry_endstamp($data);
 			}
 		} else {

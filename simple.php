@@ -659,6 +659,7 @@ include("navcal/navcalendars.inc");
 	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $daysArray = NULL) {
 		// print project, task and optionally work description
 		global $allTasksDayTotals; //global because of PHP4 thing about passing by reference?
+		$clientId="";
 		?>
 		<tr id="row<?php echo $rowIndex; ?>">
 			<td class="calendar_cell_middle" valign="top">

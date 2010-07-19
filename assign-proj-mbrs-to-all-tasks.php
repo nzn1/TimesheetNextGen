@@ -81,8 +81,9 @@ include ("banner.inc");
 <h3>Clicking on the checkbox below and submitting this form will:
 <ol><li> clear the entire task assignment database table</li>
 <li> iterate through the users and project tables</li>
-<li> and assign each user to all the tasks for every project of which they are a member &nbsp;&nbsp;&nbsp; <a href="explain-assign-all-tasks.php">Click here</a> if you don't understand</li>
+<li> and assign each user to all the tasks for every project of which they are a member</li>
 </ol>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="explain-assign-all-tasks.php">Click here if you don't understand</a><br><br>
 If this is what you want to do, check this box <input type="checkbox" name="assignTasks" value="checked" <?php if($assignTasks) echo " checked" ?>>  and hit submit, or return. <br>
 <img src="images/spacer.gif" width="50" height="1" /><INPUT type="submit" value="Submit"></h3>
 <?php } else { 
