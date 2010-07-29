@@ -7,9 +7,15 @@ track and log their time spent on multiple projects.
 Please see INSTALL.txt for installation instructions.
 
 	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
-Revisions since 1.5.0 release:
+Version 1.5.1 notes:
 
 Added ability to administratively close the site by creating a file named 'siteclosed' in the main context of the site (for instance, where simple.php is located), to reopen, simply delete the file.  Allows administrators to loggin, or continue to be logged in to allow for testing or making adjustments.
+
+Added a favicon, for this to show up, you'll need to edit the headerhtml to include this line: <link rel="shortcut icon" href="images/favicon.ico">, resetting this item to it's default after upgrading will put that line in the config for you, but any modifications you've made to that item will disappear.
+
+Also fixed a "bug" in the bannerhtml configuration item.  If you've not made significant changes to that config item, it is recommended you reset the bannerhtml item to it's default after upgrading.
+
+Several other minor fixes and tweaks.
 
 	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
 Version 1.5.0 notes:

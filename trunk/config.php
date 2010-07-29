@@ -747,7 +747,7 @@ include ("banner.inc");
 					<input type="checkbox" name="headerReset" value="off" onclick="document.configurationForm.headerhtml.disabled=(this.checked);">Reset</input>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="headerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["headerhtml"]))); ?>	</textarea>
+					<textarea rows="5" cols="73" name="headerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["headerhtml"]))); ?></textarea>
 				</td>
 			</tr>
 

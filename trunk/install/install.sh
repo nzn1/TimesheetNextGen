@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TIMESHEET_NEW_VERSION="1.5.0";
+TIMESHEET_NEW_VERSION="1.5.1";
 TIMESHEET_FIRST_VERSION="1.2.1";
 
 echo "###################################################################"
