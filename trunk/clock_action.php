@@ -180,7 +180,7 @@ function clockon() {
 	if ($num > 0)
 		errorPage("You have already clocked on for task '$resultset[name]' at $resultset[start_time].  Please clock off first.", $fromPopupWindow);
 
-	$onStr = strftime("%Y-%m-%d %T", $onStamp);
+	$onStr = strftime("%Y-%m-%d %H:%M:%S", $onStamp);
 
 	//now insert the record for this clock on
 	$querystring = "INSERT INTO $TIMES_TABLE (uid, start_time, proj_id,task_id) ".
@@ -213,7 +213,7 @@ function clockoff() {
 	global $contextUser, $year, $month, $day, $offStamp, $task_id, $proj_id, $Location;
 	global $log_message, $log_message_presented, $fromPopupWindow;
 
-	$offStr = strftime("%Y-%m-%d %T", $offStamp);
+	$offStr = strftime("%Y-%m-%d %H:%M:%S", $offStamp);
 
 	//check that we are actually clocked on
 	$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM $TIMES_TABLE WHERE ".
@@ -274,8 +274,8 @@ function clockonandoff() {
 		getLogMessage();
 
 	$duration=($offStamp - $onStamp)/60; //get duration in minutes
-	$onStr = strftime("%Y-%m-%d %T", $onStamp);
-	$offStr = strftime("%Y-%m-%d %T", $offStamp);
+	$onStr = strftime("%Y-%m-%d %H:%M:%S", $onStamp);
+	$offStr = strftime("%Y-%m-%d %H:%M:%S", $offStamp);
 	
 	$log_message = addslashes($log_message);
 	$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
