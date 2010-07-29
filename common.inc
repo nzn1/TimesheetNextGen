@@ -425,9 +425,9 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function fix_entry_endstamp($entry) {
-		//print "  fix_entry_endstamp ". $entry["trans_num"].") ".strftime("%Y-%m-%d %T", $entry["start_stamp"])." - ".strftime("%Y-%m-%d %T", $entry["end_stamp"])."<br>\n";
+		//print "  fix_entry_endstamp ". $entry["trans_num"].") ".strftime("%Y-%m-%d %H:%M:%S", $entry["start_stamp"])." - ".strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"])."<br>\n";
 		include("table_names.inc");
-		$etsStr = strftime("%Y-%m-%d %T", $entry["end_stamp"]);
+		$etsStr = strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"]);
 		$trans_num = $entry["trans_num"];
 		tryDbQuery("UPDATE $TIMES_TABLE set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
 	}
@@ -1372,7 +1372,7 @@ if (!defined("COMMON_INC")) {
 				//even if stamps are different, it may result in same string being stored in db
 				//see: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php
 				//and read the comments by Miles Nordin and Joakim Nygard
-				if(strftime("%Y-%m-%d %T", $old_end_stamp) != strftime("%Y-%m-%d %T", $new_end_stamp))
+				if(strftime("%Y-%m-%d %H:%M:%S", $old_end_stamp) != strftime("%Y-%m-%d %H:%M:%S", $new_end_stamp))
 					fix_entry_endstamp($data);
 			}
 		} else {

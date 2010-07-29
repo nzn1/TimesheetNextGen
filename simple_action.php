@@ -94,7 +94,7 @@ for ($i=0; $i<$totalRows; $i++) {
 		$nextDaysTimestamp = strtotime(date("d M Y H:i:s",$curDaysTimestamp) . " +1 days");
 
 		//Create the starting timestamp string
-		$stsStr = strftime("%Y-%m-%d %T", $curDaysTimestamp);
+		$stsStr = strftime("%Y-%m-%d %H:%M:%S", $curDaysTimestamp);
 
 		//get the number of hours and minutes entered into the form
 		$hours = $_POST["hours_row" . $i . "_col" . $j];
@@ -112,7 +112,7 @@ for ($i=0; $i<$totalRows; $i++) {
 
 			//calculate and set ending timestamp string
 			$ets = strtotime(date("d M Y H:i:s",$curDaysTimestamp) . " +$minutes Minutes");
-			$etsStr = strftime("%Y-%m-%d %T", $ets);
+			$etsStr = strftime("%Y-%m-%d %H:%M:%S", $ets);
 			
 			//add to database
 			$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
