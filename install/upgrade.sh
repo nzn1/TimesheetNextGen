@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TIMESHEET_NEW_VERSION="1.5.0";
+TIMESHEET_NEW_VERSION="1.5.1";
 DATETIME=`date +%Y-%m-%d_%H-%M-%S`
 DB_BACKUP_FILE="timesheet-backup-${DATETIME}.sql";
 
@@ -214,6 +214,24 @@ if [ "$TIMESHEET_VERSION" \< "1.5.0" ]; then
 	echo "$DBNAME, to version 1.5.0:"
 	echo ""
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.5.0.sql
+
+	if [ $? = 1 ]; then
+		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "
+		echo "has ALTER TABLE privileges. Upgrade will not continue."
+		exit 1;
+	fi
+fi
+
+if [ "$TIMESHEET_VERSION" \< "1.5.1" ]; then
+	#now do the latest changes
+	#replace prefix and version timesheet_upgrade....sql.in
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.5.1.sql.in > timesheet_upgrade_to_1.5.1.sql
+
+	echo ""
+	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
+	echo "$DBNAME, to version 1.5.1:"
+	echo ""
+	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.5.1.sql
 
 	if [ $? = 1 ]; then
 		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "

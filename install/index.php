@@ -1,5 +1,5 @@
 <?php 
-define('INSTALLER_VERSION', '1.5.0');
+define('INSTALLER_VERSION', '1.5.1');
 // set up the global variable that holds any error messages
 // don't really like using globals, but this is quick and dirty
 $_ERROR = '';
@@ -37,8 +37,9 @@ if(!isset($_REQUEST['step'])) {
 		default:
 			install();
 	}
+} else { 
+	install(); 
 }
-else { install(); }
 ?>
 </body>
 </html>
@@ -81,6 +82,10 @@ function check_is_installed() {
 function install() {
 	global $table_inc_file, $db_inc_file;
 	$step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 'one';
+	if(check_is_installed() == 3) {
+			display_install_success();
+			return;
+	}
 	switch ($step) {
 		case 'up-one':
 			display_upgrade_step_2();
@@ -1124,7 +1129,8 @@ function create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix
 }
 
 /* update DB version number */
-function update_db_version($version) {
+function update_db_version($db_prefix, $version) {
+	global $_ERROR;
 	$sql = 'UPDATE '.$db_prefix.'config set version=\''.$version.'\';';
 	if(!mysql_query($sql)) {
 		$_ERROR .= '<strong>Could not update DB version</strong><br />';
@@ -1146,22 +1152,27 @@ function upgrade_tables($db_prefix, $db_pass_func) {
 	case '1.2.0' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.2.1.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version('1.2.1');
+		$result = update_db_version($db_prefix, '1.2.1');
 		if($result === false) return $result;
 	case '1.2.1' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.3.1.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version('1.3.1');
+		$result = update_db_version($db_prefix, '1.3.1');
 		if($result === false) return $result;
 	case '1.3.1' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.4.1.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version('1.4.1');
+		$result = update_db_version($db_prefix, '1.4.1');
 		if($result === false) return $result;
 	case '1.4.1' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.5.0.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version('1.5.0');
+		$result = update_db_version($db_prefix, '1.5.0');
+		if($result === false) return $result;
+	case '1.5.0' :
+		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.5.1.sql.in');
+		if($result === false) return $result;
+		$result = update_db_version($db_prefix, '1.5.1');
 		if($result === false) return $result;
 	}
 	return $result;
