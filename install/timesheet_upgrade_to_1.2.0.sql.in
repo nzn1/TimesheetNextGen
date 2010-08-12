@@ -26,7 +26,6 @@ CREATE TABLE __TABLE_PREFIX__config (
   LDAPHost varchar(255) default NULL,
   LDAPPort int(11) default NULL,
   LDAPBaseDN varchar(255) default NULL,
-  LDAPBindByUser tinyint(4) NOT NULL default '0',
   LDAPUsernameAttribute varchar(255) default NULL,
   LDAPSearchScope enum('base','sub','one') NOT NULL default 'base',
   LDAPFilter varchar(255) default NULL,
