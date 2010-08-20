@@ -308,7 +308,7 @@ class AuthenticationManager {
 		$acl = get_acl_level($page);
 		switch ($acl) {
 		case 'None':
-			$level = 0; //This level is unobtainable
+			$level = 100; //This level is unobtainable
 			break;
 		case 'Basic':
 			$level = CLEARANCE_BASIC;
