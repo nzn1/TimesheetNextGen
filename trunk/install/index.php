@@ -1,5 +1,5 @@
 <?php 
-define('INSTALLER_VERSION', '1.5.1');
+define('INSTALLER_VERSION', '1.5.2');
 // set up the global variable that holds any error messages
 // don't really like using globals, but this is quick and dirty
 $_ERROR = '';
@@ -1173,6 +1173,9 @@ function upgrade_tables($db_prefix, $db_pass_func) {
 		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.5.1.sql.in');
 		if($result === false) return $result;
 		$result = update_db_version($db_prefix, '1.5.1');
+		if($result === false) return $result;
+	case '1.5.1' :
+		$result = update_db_version($db_prefix, '1.5.2');
 		if($result === false) return $result;
 	}
 	return $result;
