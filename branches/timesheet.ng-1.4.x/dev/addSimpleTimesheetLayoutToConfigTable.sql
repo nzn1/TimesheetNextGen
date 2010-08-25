@@ -1,2 +1,0 @@
-ALTER TABLE `timesheet_config` 
-ADD `simpleTimesheetLayout` enum('small work description field', 'big work description field', 'no work description field') NOT NULL DEFAULT 'small work description field';
