@@ -1,4 +1,28 @@
 <?php
+// NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
+//        or the export to excel won't work in IE
+session_cache_limiter('public');
+
+//export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
+$export_excel=false;
+if (isset($_GET["export_excel"]))
+	if($_GET["export_excel"] == "1")
+		$export_excel=true;
+
+if($export_excel){
+	header('Expires: 0');
+	header('Cache-control: public');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Content-Description: File Transfer');
+	header('Content-Type: application/vnd.ms-excel');
+	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+
+	// When exporting data to excel, ensure the numbers written in the spreadsheet 
+	// are in H.F format rather than HH:MI  
+	$time_fmt = "decimal";
+} else
+	$time_fmt = "time";
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
@@ -56,21 +80,6 @@ if ($mode == "weekly") {
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
 }
-
-//export data to excel (or not)
-$export_excel = isset($_GET["export_excel"]) ? (bool)$_GET["export_excel"] : false;
-
-// if exporting data to excel, print appropriate headers. Ensure the numbers written in the spreadsheet
-// are in H.F format rather than HH:MI
-if($export_excel){
-	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	header("Cache-Control: public");
-	header("Content-type: application/vnd.ms-excel");
-	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
-	header("Pragma: no-cache"); 
-	$time_fmt = 'decimal';
-} else
-	$time_fmt = 'time';
 
 //Setup the variables so we can let the user choose how to order things...
 $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
@@ -192,17 +201,9 @@ function make_index($data,$order) {
 $Location="$_SERVER[PHP_SELF]?$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode";
 $post="&orderby=$orderby&client_id=$client_id&mode=$mode";
 
+if(!$export_excel) 
+	require("report_javascript.inc");
 ?>
-
-<?php if(!$export_excel) { ?>
-<script type="text/javascript">
-<!--
-function popupPrintWindow() {
-	window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
-}
-//-->
-</script>
-<?php } //end if !export_excel ?>
 
 <html>
 <head>
@@ -231,13 +232,14 @@ function popupPrintWindow() {
 		echo "<body ";
 		include ("body.inc");
 		echo ">\n";
+		echo "<div id=\"header\">";
 		include ("banner.inc");
 		$MOTD = 0;  //don't want the MOTD printed
 		if($mode=='weekly')
 			include("navcal/navcalendars.inc");
 		else
 			include("navcal/navcal_monthly.inc");
-
+		echo "</div>";
 	}
 ?>
 
@@ -264,7 +266,7 @@ function popupPrintWindow() {
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">Client:</td>
 									<td align="left" width="100%">
-											<?php client_select_droplist($client_id, false); ?>
+											<?php client_select_droplist($client_id, false, !$print); ?>
 									</td>
 								</tr>
 							</table>
@@ -282,19 +284,11 @@ function popupPrintWindow() {
 						?>
 						</td>
 						<?php if (!$print): ?>
-							<td  align="center" width="10%" >
-							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
+							<td  align="right" width="15%" nowrap >
+								<button name="export_excel" onClick="reload2Export()" value="1"><img src="images/icon_xport-2-excel.gif" ALT="Export to Excel" ALIGN="ABSMIDDLE"></button> &nbsp;
+								<button onClick="popupPrintWindow()"><img src="images/icon_printer.gif" ALT="Print Report" ALIGN="ABSMIDDLE"></button>
 							</td>
-							<td  align="center" >
-							<?php 
-								print "<button onClick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
-							?>
-							</td>
-							<td align="right" nowrap>
-						<?php else: ?>
-							<td align="right" nowrap>
 						<?php endif; ?>
-						</td>
 					</tr>
 				</table>
 
@@ -305,7 +299,22 @@ function popupPrintWindow() {
 		<tr>
 			<td>
 
-<?php } // end if !export_excel ?>
+<?php } // end if !export_excel
+else {  //create Excel header
+	$cn = get_client_name($client_id);
+	echo "<h4>Report for $cn<br>";
+	if ($mode == "weekly") {
+		$sdStr = date("M d, Y",$startDate);
+		//just need to go back 1 second most of the time, but DST 
+		//could mess things up, so go back 6 hours...
+		$edStr = date("M d, Y",$endDate - 6*60*60); 
+		echo "Week: $sdStr&nbsp;&nbsp;-&nbsp;&nbsp;$edStr"; 
+	} else
+		echo "Month of ".date('F, Y',$startDate);
+	echo "</h4>";
+}
+?>
+
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 					<!-- Table header line -->
 					<tr class="inner_table_head">
@@ -457,12 +466,8 @@ function popupPrintWindow() {
 		</td>
 	</tr>
 </table>
-<?php if ($print): ?>
+<?php if ($print) { ?>
 	<table width="100%" border="1" cellspacing="0" cellpadding="0">
-		<tr>
-			<td width="30%"><table><tr><td>Employee Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
-		</tr>
 		<tr>
 			<td width="30%"><table><tr><td>Manager Signature:</td></tr></table></td>
 			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
@@ -472,10 +477,15 @@ function popupPrintWindow() {
 			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
 		</tr>
 	</table>		
-<?php endif; ?>
+<?php } //end if($print) ?>
 </form>
-<?php if (!$print) include ("footer.inc"); ?>
-<?php } //end if !export_excel ?>
+<?php if (!$print) {
+		echo "<div id=\"footer\">"; 
+		include ("footer.inc"); 
+		echo "</div>";
+	}
+} //end if !export_excel 
+?>
 </BODY>
 </HTML>
 <?php

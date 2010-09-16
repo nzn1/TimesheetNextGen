@@ -240,6 +240,12 @@ if [ "$TIMESHEET_VERSION" \< "1.5.1" ]; then
 	fi
 fi
 
+if [ "$TIMESHEET_VERSION" \< "1.5.2" ]; then
+	echo ""
+	echo "No DB upgrade needed for 1.5.2"
+	echo ""
+fi
+
 #set the version number in the config table
 echo "UPDATE ${TABLE_PREFIX}config set version='$TIMESHEET_NEW_VERSION';" | mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS
 

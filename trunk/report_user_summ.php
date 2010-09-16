@@ -1,4 +1,24 @@
 <?php
+// NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
+//        or the export to excel won't work in IE
+session_cache_limiter('public');
+
+//export data to excel (or not)  (ie is broken with respect to buttons, so we have to do it this way)
+$export_excel=false;
+if (isset($_GET["export_excel"]))
+	if($_GET["export_excel"] == "1")
+		$export_excel=true;
+
+//Create the excel headers now, if needed
+if($export_excel){
+	header('Expires: 0');
+	header('Cache-control: public');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Content-Description: File Transfer');
+	header('Content-Type: application/vnd.ms-excel');
+	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+}
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
@@ -30,6 +50,11 @@ if (isset($_REQUEST['time_fmt']))
 else
 	$time_fmt = "decimal";
 
+// If exporting data to excel, ensure the numbers written in the spreadsheet 
+// are in H.F format rather than HH:MI  
+if($export_excel)
+	$time_fmt = "decimal";
+
 if (isset($_REQUEST['print']))
 	$print = true;
 else
@@ -59,26 +84,12 @@ $end_day     = isset($_GET['end_day'])     && $_GET['start_day']   ? (int)$_GET[
 $end_month   = $start_month;
 $end_year    = $start_year;
 
-//export data to excel (or not)
-$export_excel = isset($_GET["export_excel"]) ? (bool)$_GET["export_excel"] : false;
-
 $start_time = strtotime($start_year . '/' . $start_month . '/' . $start_day);
 $end_time   = strtotime($end_year   . '/' . $end_month   . '/' . $end_day);
 $end_time2   = strtotime("+1 day",$end_time);  //need last day to be inclusive...
 
 $startStr = date("Y-m-d H:i:s",$start_time);
 $endStr = date("Y-m-d H:i:s",$end_time2);
-
-// if exporting data to excel, print appropriate headers. Ensure the numbers written in the spreadsheet
-// are in H.F format rather than HH:MI
-if($export_excel){
-	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	header("Cache-Control: public");
-	header("Content-type: application/vnd.ms-excel");
-	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
-	header("Pragma: no-cache"); 
-	$time_fmt = "decimal";
-}
 
 $orderby="project";
 function make_index($data,$order) {
@@ -101,8 +112,9 @@ function format_time($time) {
 $Location="$_SERVER[PHP_SELF]?uid=$uid&time_fmt=$time_fmt&start_year=$start_year&start_month=$start_month&start_day=$start_day&end_year=$end_year&end_month=$end_month&end_day=$end_day";
 $post="uid=$uid&time_fmt=$time_fmt";
 
+if(!$export_excel) {
+	require("report_javascript.inc");
 ?>
-<?php if(!$export_excel) { ?>
 <script type="text/javascript">
 <!--
 /*
@@ -112,24 +124,6 @@ $post="uid=$uid&time_fmt=$time_fmt";
 
 //run init function on window load
 window.onload = init;
-
-//gets a DOM object by it's name
-function getObjectByName(sName){				
-	if(document.getElementsByName){
-		oElements = document.getElementsByName(sName);
-
-		if(oElements.length > 0)
-			return oElements[0];
-		else
-			return null;
-	}
-	else if(document.all)
-		return document.all[sName][0];
-	else if(document.layers)
-		return document.layers[sName][0];
-	else
-		return null;
-}
 
 //apply auto-submit behaviour when changing date values
 function init(){
@@ -146,10 +140,6 @@ function init(){
 	end_day.onchange     = function (){this.form.submit();};
 	//end_month.onchange   = function (){this.form.submit();};
 	//end_year.onchange    = function (){this.form.submit();};
-}
-
-function popupPrintWindow() {
-	window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
 }
 //-->
 </script>
@@ -181,9 +171,11 @@ function popupPrintWindow() {
 		echo "<body ";
 		include ("body.inc");
 		echo ">\n";
+		echo "<div id=\"header\">";
 		include ("banner.inc");
 		$MOTD = 0;  //don't want the MOTD printed
 		include("navcal/navcal_monthly_with_end_dates.inc");
+		echo "</div>";
 	}
 ?>
 
@@ -211,21 +203,12 @@ function popupPrintWindow() {
 						<?php
 							echo date("F", $start_time)." ";
 							day_button("start_day",$start_time);
-							echo ", $start_year&nbsp;&nbsp;to&nbsp;&nbsp;";
-							echo date("F", $end_time)." ";
+							echo "&nbsp;&nbsp;to&nbsp;&nbsp;";
 							day_button("end_day",$end_time);
 							echo ", $end_year";
 						?> 
 						</td>
 						<?php if (!$print): ?>
-							<td  align="center" width="10%" >
-							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
-							</td>
-							<td  align="center" nowrap >
-							<?php 
-								print "<button onClick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
-							?>
-							</td>
 							<td align="right" width="10%" nowrap>
 								<input type="radio" name="time_fmt" value="decimal" onClick="this.form.submit()"
 									<?php if($time_fmt == "decimal") print " checked"; ?>
@@ -242,6 +225,10 @@ function popupPrintWindow() {
 								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p1post; ?>" class="outer_table_action">Bi-monthly period 1</a><br>
 								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p2post; ?>" class="outer_table_action">Bi-monthly period 2</a>
 							</td>
+							<td  align="right" width="15%" nowrap >
+								<button name="export_excel" onClick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" ALT="Export to Excel" ALIGN="ABSMIDDLE"></button> &nbsp;
+								<button onClick="popupPrintWindow()"><img src="images/icon_printer.gif" ALT="Print Report" ALIGN="ABSMIDDLE"></button>
+							</td>
 						<?php endif; ?>
 					</tr>
 				</table>
@@ -253,7 +240,16 @@ function popupPrintWindow() {
 		<tr>
 			<td>
 
-<?php } // end if !export_excel ?>
+<?php } // end if !export_excel
+else {  //create Excel header
+	list($fn,$ln) = get_users_name($uid);
+	echo "<h4>Report for $ln, $fn<br>";
+	echo date("F d", $start_time)."  to  ";
+	echo date("d", $end_time);
+	echo ", $end_year";
+	echo "</h4>";
+}
+?>
 				<table width="100%" border="0" cellpadding="4" cellspacing="0" class="table_body">
 <?php
 
@@ -381,8 +377,13 @@ if ($num == 0) {
 </table>
 
 </form>
-<?php if(!$print) include ("footer.inc"); ?>
-<?php } //end if !export_excel ?>
+<?php if (!$print) {
+		echo "<div id=\"footer\">"; 
+		include ("footer.inc"); 
+		echo "</div>";
+	}
+} //end if !export_excel 
+?>
 </BODY>
 </HTML>
 <?php

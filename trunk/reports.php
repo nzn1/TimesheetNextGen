@@ -65,41 +65,58 @@ include ("navcal/navcalendars.inc");
 						<td class="inner_table_column_heading">Report Description</td>
 						<td class="inner_table_column_heading">Actions</td>
 					</tr>
-					<tr>
+
+<?php
+function echo_TR_Class($val='') {
+//if you want "highlighting" on the first row, make this zero instead of one
+static $row = 1;
+
+if(!($val === ''))
+	$row=$val;
+
+	if($row%3)
+		echo "<tr>";
+	else
+		echo "<tr class=\"diff\">";
+
+	$row++;
+}
+?>
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">User report</td>
 						<td class="calendar_cell_right">
 							<a href="report_user.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a> /
 							<a href="report_user.php?<?php print $ymdStr; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
-					<tr class="diff">
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">User summary</td>
 						<td class="calendar_cell_right">
 							<a href="report_user_summ.php?<?php print $ymdStr; ?>">Bi-monthly</a>
 						</td>
 					</tr>
-					<tr>
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Project report</td>
 						<td class="calendar_cell_right">
 							<a href="report_project.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a> /
 							<a href="report_project.php?<?php print $ymdStr; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
-					<tr class="diff">
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Client report</td>
 						<td class="calendar_cell_right">
 							<a href="report_client.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a> /
 							<a href="report_client.php?<?php print $ymdStr; ?>&mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
-					<tr>
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Client / User - grid report</td>
 						<td class="calendar_cell_right">
 							<a href="report_grid_client_user.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
 <?php if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
-					<tr class="diff">
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">All users & All projects report</td>
 						<td class="calendar_cell_right">
 							<a href="report_all.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a>
@@ -111,13 +128,13 @@ include ("navcal/navcalendars.inc");
 						<td class="inner_table_column_heading">Attendance Reports</td>
 						<td class="inner_table_column_heading">Actions</td>
 					</tr>
-					<tr>
+					<?php echo_TR_Class(1);?>
 						<td class="calendar_cell_middle">Absence Report</td>
 						<td class="calendar_cell_right">
 							<a href="report_absences.php?<?php print $ymdStr; ?>">Generate monthly</a>
 						</td>
 					</tr>
-					<tr class="diff">
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Yearly User Report</td>
 						<td class="calendar_cell_right">
 							<a href="report_hours.php?<?php print $ymdStr; ?>">Generate yearly</a>
