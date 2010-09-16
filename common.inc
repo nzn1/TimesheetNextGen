@@ -432,10 +432,30 @@ if (!defined("COMMON_INC")) {
 		tryDbQuery("UPDATE $TIMES_TABLE set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
 	}
 
+	function get_user_empid($username) {
+		include("table_names.inc");
+
+		// Retreives user's payroll Employee ID
+		$sql = "SELECT EmpId FROM $USER_TABLE WHERE username='$username'";
+		list($my_qh, $num) = dbQuery($sql);
+		$result = dbResult($my_qh);
+		return $result['EmpId'];
+	}
+
+	function get_project_name($proj_id) {
+		include("table_names.inc");
+
+		// Retreives project title (name)
+		$sql = "SELECT title FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
+		list($my_qh, $num) = dbQuery($sql);
+		$result = dbResult($my_qh);
+		return $result['title'];
+	}
+
 	function get_project_info($proj_id) {
 		include("table_names.inc");
 
-		// Retreives title, $CLIENT_TABLE, description, deadline and link from database for a given proj_id
+		// Retreives title, client_id, description, deadline and link from database for a given proj_id
 		$result = array();
 		if ($proj_id > 0) {
 			$sql = "SELECT * FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
@@ -557,6 +577,14 @@ if (!defined("COMMON_INC")) {
 		print "</SELECT>";
 	}
 
+	function get_users_name($uid) {
+		include("table_names.inc");
+		$query = "SELECT last_name, first_name, status FROM $USER_TABLE where username='$uid'";
+		list($qh, $num) = dbQuery($query);
+		$data = dbResult($qh);
+		return array($data['first_name'], $data['last_name'], $data['status']);
+	}
+
 	function multi_user_select_list($name, $selected_array=array()) {
 		include("table_names.inc");
 
@@ -592,6 +620,15 @@ if (!defined("COMMON_INC")) {
 				print ">$current_name</OPTION>\n";
 		}
 		print "</SELECT>";
+	}
+
+	function get_client_name($clientId) {
+		include("table_names.inc");
+		if($clientId == 0) return "All Clients";
+		$query = "SELECT organisation FROM $CLIENT_TABLE where client_id='$clientId'";
+		list($qh, $num) = dbQuery($query);
+		$data = dbResult($qh);
+		return $data['organisation'];
 	}
 
 	function client_select_list($currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange="", $restrictedList=true) {
@@ -896,14 +933,14 @@ if (!defined("COMMON_INC")) {
 <?php
 	}
 
-	function client_select_droplist($client_id=1, $disabled='false') {
+	function client_select_droplist($client_id=1, $disabled=false, $info=true) {
 		include("table_names.inc");
 
 			$query = "SELECT client_id, organisation FROM $CLIENT_TABLE ORDER BY organisation";
 
 		//print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"client_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
-		if ($disabled == 'true')
+		if ($disabled)
 			print " disabled";
 		print ">\n";
 
@@ -917,11 +954,14 @@ if (!defined("COMMON_INC")) {
 					print " selected";
 				print ">$current_organisation</option>\n";
 			}
-			print "</select></td><td width=\"0\">";
-			print "<input type=\"button\" name=\"info\" value=\"Info\"";
-			print "onclick=window.open(\"client_info.php?client_id=$client_id\",";
-			print "\"Client_Info\",";
-			print "\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\")>";
+			print "</select>";
+			if($info) {
+				print "</td><td width=\"0\">";
+				print "<input type=\"button\" name=\"info\" value=\"Info\"";
+				print "onclick=window.open(\"client_info.php?client_id=$client_id\",";
+				print "\"Client_Info\",";
+				print "\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\")>";
+			}
 			//print "</td></tr></table>";
 		}
 		else
