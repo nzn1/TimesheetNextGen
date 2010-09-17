@@ -19,11 +19,27 @@ $proj_id = $_REQUEST['proj_id'];
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 $dbh = dbConnect();
-list($qh, $num) = dbQuery("SELECT proj_id, title, client_id, description, DATE_FORMAT(start_date, '%m') as start_month, ".
-					"date_format(start_date, '%d') as start_day, date_format(start_date, '%Y') as start_year, ".
-					"DATE_FORMAT(deadline, '%m') as end_month, date_format(deadline, '%d') as end_day, date_format(deadline, '%Y') as end_year, ".
-					"http_link, proj_status, proj_leader FROM $PROJECT_TABLE WHERE proj_id = $proj_id ORDER BY proj_id");
+list($qh, $num) = dbQuery("SELECT proj_id, " .
+								"title, " .
+								"client_id, " .
+								"description, " .
+								"unix_timestamp(start_date) AS start_stamp, ".
+								"unix_timestamp(deadline) AS end_stamp, ".
+								"http_link, " .
+								"proj_status, " .
+								"proj_leader " .
+							"FROM $PROJECT_TABLE " .
+							"WHERE proj_id = $proj_id " .
+							"ORDER BY proj_id");
 $data = dbResult($qh);
+
+$dti=getdate($data["start_stamp"]);
+$start_month = $dti["mon"];
+$start_year = $dti["year"];
+
+$dti=getdate($data["end_stamp"]);
+$end_month = $dti["mon"];
+$end_year = $dti["year"];
 
 list($qh, $num) = dbQuery("SELECT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
 $selected_array = array();
@@ -82,11 +98,11 @@ while ($datanext = dbResult($qh)) {
 					</tr>
 					<tr>
 						<td align="right">Start Date:</td>
-						<td><?php day_button("start_day",$data["start_day"]); month_button("start_month",$data["start_month"]); year_button("start_year",$data["start_year"]); ?></td>
+						<td><?php day_button("start_day",$data["start_stamp"],0); month_button("start_month",$start_month); year_button("start_year",$start_year); ?></td>
 					</tr>
 					<tr>
 						<td align="right">Deadline:</td>
-						<td><?php day_button("end_day",$data["end_day"]); month_button("end_month",$data["end_month"]); year_button("end_year",$data["end_year"]); ?></td>
+						<td><?php day_button("end_day",$data["end_stamp"],0); month_button("end_month",$end_month); year_button("end_year",$end_year); ?></td>
 					</tr>
 					<tr>
 						<td align="right">Status:</td>
@@ -131,3 +147,7 @@ while ($datanext = dbResult($qh)) {
 
 <?php include ("footer.inc"); ?>
 </BODY>
+</HTML>
+<?php
+// vim:ai:ts=4:sw=4:filetype=php
+?>

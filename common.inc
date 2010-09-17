@@ -494,13 +494,16 @@ if (!defined("COMMON_INC")) {
 		return $configData[$page];
 	}
 
-	function day_button($name, $timeStamp=0) {
+	function day_button($name, $timeStamp=0, $limit=1) {
 		global $realToday, $month, $year;
 		if (!$timeStamp)
 			$timeStamp = $realToday[0];
 
 		$dti=getdate($timeStamp);
-		$last_day = get_last_day($dti["mon"], $dti["year"]);
+		if($limit)
+			$last_day = get_last_day($dti["mon"], $dti["year"]);
+		else
+			$last_day = 31;
 
 		$i = 0;
 		echo "<select name=\"$name\">\n";

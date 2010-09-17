@@ -66,11 +66,11 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 					</tr>
 					<tr>
 						<td align="right">Start Date:</td>
-						<td><?php day_button("start_day"); month_button("start_month"); year_button("start_year"); ?></td>
+						<td><?php day_button("start_day",0,0); month_button("start_month"); year_button("start_year"); ?></td>
 					</tr>
 					<tr>
 						<td align="right">Deadline:</td>
-						<td><?php day_button("end_day"); month_button("end_month"); year_button("end_year"); ?></td>
+						<td><?php day_button("end_day",0,0); month_button("end_month"); year_button("end_year"); ?></td>
 					</tr>
 					<tr>
 						<td align="right">Status:</td>
