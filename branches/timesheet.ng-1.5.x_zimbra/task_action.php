@@ -30,18 +30,57 @@ $time_string = date("Y-m-d H:i:00");
 if (!isset($action))
 	Header("Location: $HTTP_REFERER");
 elseif ($action == "add") {
-	$name = addslashes($name);
-	$description = addslashes($description);
+		// check that the add new task part has been filled in and should be added, not just a set of selected std tasks 
+		if ($_REQUEST['name'] != "" && isset($_REQUEST['name'])) {
+			$name = addslashes($name);
+			$description = addslashes($description);
 
-	list($qh, $num) = dbQuery("INSERT INTO $TASK_TABLE (proj_id, name, description, assigned, started, status) VALUES ".
+			list($qh, $num) = dbQuery("INSERT INTO $TASK_TABLE (proj_id, name, description, assigned, started, status) VALUES ".
 						"('$proj_id', '$name','$description', ".
 						"'$time_string', '$time_string', '$task_status')");
-	$task_id = dbLastID($dbh);
+			$task_id = dbLastID($dbh);
 
-	if (isset($assigned)) {
-		while (list(,$username) = each($assigned))
-			dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
-	}
+			if (isset($assigned)) {
+				while (list(,$username) = each($assigned))
+					dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
+			}
+		}
+		// Now copy any selected standard tasks to the task table and assign to this project
+		// first, get a count of standard tasks
+		$query = "SELECT count(task_id) as numtasks from $STD_TASK_TABLE";
+
+		list($qx, $num) = dbQuery($query);
+		$data = dbResult($qx);
+		$numtasks = $data['numtasks'];
+		if($numtasks > 0) {
+			for($i = 0; $i < $numtasks; $i++) {	
+				// check which standard tasks have been selected, using the tasK_id field
+				if (isset($_REQUEST["add$i"])) {
+					$id = $_REQUEST["id$i"]; 
+					$task_status = $_REQUEST["task_status$i"];
+					
+					// retrieve the standard task details
+					list($qh, $num) = dbQuery("SELECT name, description from $STD_TASK_TABLE where task_id = $id");
+					$results = dbResult($qh);
+					$name = $results["name"];
+					$description = $results["description"];
+					
+					// now add standard task to task table for this project
+					list($qh, $num) = dbQuery("INSERT INTO $TASK_TABLE (proj_id, name, description, assigned, started, status) VALUES ".
+						"('$proj_id', '$name','$description', ".
+					"'$time_string', '$time_string', '$task_status')");
+					$task_id = dbLastID($dbh);
+					
+					// now add assignments for the task
+					if(isset($_REQUEST["stdassigned$i"])) {
+						$stdassigned = $_REQUEST["stdassigned$i"];
+						while (list(,$username) = each($stdassigned))
+							dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
+					}
+										
+				}
+			}
+		}
 
 	// redirect to the task management page (we're done)
 	Header("Location: task_maint.php?proj_id=$proj_id");
