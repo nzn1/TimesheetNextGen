@@ -18,6 +18,11 @@ $proj_id = $_REQUEST['proj_id'];
 //define the command menu
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
+// get all the standard tasks
+$query = "SELECT task_id, name, description from $STD_TASK_TABLE ORDER BY name";
+
+list($stdtasks, $numtasks) = dbQuery($query);
+
 ?>
 <html>
 <head>
@@ -70,6 +75,25 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 						<td><?php multi_user_select_list("assigned[]"); ?></td>
 					</tr>
 				</table>
+		<?php
+		// add standard tasks to the selection list
+		if($numtasks > 0) {
+
+			print("<h3>Add Existing Standard Tasks</h3><table><tr><td>Add</td><td>Task Name</td><td>Description</td><td>Status</td><td>Assignments</td></tr>");
+			for($i = 0; $i < $numtasks; $i++) {
+				$data = dbResult($stdtasks, $i);
+				$task_id = $data["task_id"];
+				print("<tr><td><input type=\"checkbox\" name=\"add".$i."\" size=\"4\" style=\"width: 100%\"></td><td>".$data["name"]."</td><td>".$data["description"]."</td>");
+				print("<td><input type=\"hidden\" name=\"id$i\" value=\"$task_id\"></td><td>");
+				proj_status_list("task_status$i", "Pending");
+				print("<td>");
+				user_select_list("stdassigned".$i."[]");
+				print("</td>	</tr>");
+			}
+		}
+	
+	?>
+	</table>
 			</td>
 		</tr>
 		<tr>
