@@ -5,6 +5,7 @@
 	$CONFIG_TABLE = "__TABLE_PREFIX__config";
 	$PROJECT_TABLE = "__TABLE_PREFIX__project";
 	$TASK_TABLE = "__TABLE_PREFIX__task";
+    $STD_TASK_TABLE = "__TABLE_PREFIX__std_tasks";
 	$TASK_ASSIGNMENTS_TABLE = "__TABLE_PREFIX__task_assignments";
 	$TIMES_TABLE = "__TABLE_PREFIX__times";
 	$USER_TABLE = "__TABLE_PREFIX__user";
