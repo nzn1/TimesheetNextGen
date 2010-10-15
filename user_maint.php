@@ -60,6 +60,14 @@ include ("header.inc");
 		}
 	}
 
+	function goClone() {
+		var cloneTo = document.userForm.username.value;
+		var location = "user_clone.php";
+		if(cloneTo.length > 0)
+			location+="?cloneTo=" + cloneTo;
+		window.location.href=location;
+	}
+
 	function onCheckClearance() {
 		document.userForm.isAdministrator.value =
 			document.userForm.checkAdmin.checked;
@@ -92,7 +100,10 @@ include ("banner.inc");
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
-								Employees/Contractors:
+							Employees/Contractors:
+						</td>
+						<td align="right" nowrap >
+							<A HREF="javascript:goClone()">Copy Projects/Tasks between users</a></td>
 						</td>
 					</tr>
 				</table>
@@ -174,6 +185,9 @@ while ($data = dbResult($qh)) {
 						<td align="left" nowrap class="outer_table_heading">
 							<a name="AddEdit">	Add/Update Employee/Contractor:</a>
 						</td>
+						<td align="right" nowrap >
+							<A HREF="javascript:goClone()">Copy Projects/Tasks between users</a></td>
+						</td>
 					</tr>
 				</table>
 
@@ -234,3 +248,6 @@ include ("footer.inc");
 ?>
 </BODY>
 </HTML>
+<?php
+// vim:ai:ts=4:sw=4
+?>

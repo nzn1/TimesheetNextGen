@@ -105,3 +105,6 @@ include ("header.inc");
 
 </body>
 </html>
+<?php
+// vim:ai:ts=4:sw=4
+?>

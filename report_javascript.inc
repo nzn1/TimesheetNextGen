@@ -34,5 +34,6 @@ function reload2Export(theForm) {
 	}
 	return;
 }
+// vim:ai:ts=4:sw=4:filetype=javascript
 //-->
 </script>

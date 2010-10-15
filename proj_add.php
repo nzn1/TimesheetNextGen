@@ -116,3 +116,6 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 <?php include("footer.inc"); ?>
 </body>
 </html>
+<?php
+// vim:ai:ts=4:sw=4
+?>

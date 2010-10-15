@@ -12,4 +12,5 @@ if ($authenticationManager->isLoggedIn()) {
 	header("Location: login.php");
 }
 
+// vim:ai:ts=4:sw=4
 ?>

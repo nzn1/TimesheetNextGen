@@ -22,4 +22,6 @@ $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 dbQuery("DELETE FROM $TIMES_TABLE WHERE trans_num=$trans_num AND uid='$contextUser'");
 //seems broken: Header("Location: $_SERVER[HTTP_REFERER]");
 Header("Location: daily.php?month=$month&year=$year&day=$day");
+
+// vim:ai:ts=4:sw=4
 ?>

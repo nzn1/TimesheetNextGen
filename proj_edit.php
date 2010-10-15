@@ -17,6 +17,8 @@ $proj_id = $_REQUEST['proj_id'];
 
 //define the command menu
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
+$commandMenu->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
+$commandMenu->add(new TextCommand("Copy Projects/Tasks between users", true, "user_clone.php"));
 
 $dbh = dbConnect();
 list($qh, $num) = dbQuery("SELECT proj_id, " .
@@ -149,5 +151,5 @@ while ($datanext = dbResult($qh)) {
 </BODY>
 </HTML>
 <?php
-// vim:ai:ts=4:sw=4:filetype=php
+// vim:ai:ts=4:sw=4
 ?>

@@ -327,4 +327,6 @@ include ("footer.inc");
 ?>
 </BODY>
 </HTML>
-
+<?php
+// vim:ai:ts=4:sw=4
+?>

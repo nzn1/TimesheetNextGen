@@ -184,4 +184,5 @@ elseif ($action == "edit") {
 //return to the config.php page
 Header("Location: config.php");
 
+// vim:ai:ts=4:sw=4
 ?>

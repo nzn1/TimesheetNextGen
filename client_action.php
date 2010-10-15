@@ -60,4 +60,6 @@ elseif ($action == "delete") {
 }
 
 Header("Location: client_maint.php");
+
+// vim:ai:ts=4:sw=4
 ?>

@@ -115,5 +115,8 @@ include ("banner.inc");
 <?php
 include ("footer.inc");
 ?>
-	</body>
+</body>
 </html>
+<?php
+// vim:ai:ts=4:sw=4
+?>

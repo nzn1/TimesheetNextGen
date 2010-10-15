@@ -152,4 +152,5 @@
 		}
 	}
 
+// vim:ai:ts=4:sw=4:filetype=php
 ?>
