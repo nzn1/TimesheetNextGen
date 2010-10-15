@@ -45,4 +45,6 @@ if ($action == "addupdate") {
 
 //redirect back to the rate management page
 Header("Location: rate_maint.php");
+
+// vim:ai:ts=4:sw=4
 ?>

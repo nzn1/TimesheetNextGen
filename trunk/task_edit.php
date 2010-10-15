@@ -17,6 +17,8 @@ $task_id = $_REQUEST['task_id'];
 
 //define the command menu
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
+$commandMenu->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
+$commandMenu->add(new TextCommand("Copy Projects/Tasks between users", true, "user_clone.php"));
 
 //query database for existing task values
 list($qh, $num) = dbQuery("SELECT task_id, proj_id, name, description, status FROM $TASK_TABLE WHERE task_id = $task_id ");
@@ -110,3 +112,6 @@ while ($datanext = dbResult($qh)) {
 <?php include("footer.inc"); ?>
 </body>
 </html>
+<?php
+// vim:ai:ts=4:sw=4
+?>

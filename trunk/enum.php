@@ -12,4 +12,5 @@ function enum() {
 	for($Int = 0; $Int < $ArgC; $Int++) define($ArgV[$Int], $Int);
 }
 
+// vim:ai:ts=4:sw=4
 ?>

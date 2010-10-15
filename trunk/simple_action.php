@@ -132,3 +132,4 @@ $Location = "simple.php?year=$year&month=$month&day=$day";
 Header("Location: $Location");
 exit;
 // vim:ai:ts=4:sw=4
+?>

@@ -24,4 +24,6 @@
 		if(function_exists("date_default_timezone_set") and function_exists("date_default_timezone_get"))
 			date_default_timezone_set(date_default_timezone_get());
 	}
+
+// vim:ai:ts=4:sw=4:filetype=php
 ?>

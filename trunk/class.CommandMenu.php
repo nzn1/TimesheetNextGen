@@ -128,4 +128,5 @@ class CommandMenu {
 //create the command menu object so that those files which include this one dont need to
 $commandMenu = new CommandMenu;
 
+// vim:ai:ts=4:sw=4
 ?>

@@ -1,4 +1,29 @@
 <?php
+// NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
+//        or the export to excel won't work in IE
+session_cache_limiter('public');
+
+//export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
+$export_excel=false;
+if (isset($_GET["export_excel"]))
+	if($_GET["export_excel"] == "1")
+		$export_excel=true;
+
+//Create the excel headers now, if needed
+if($export_excel){
+	header('Expires: 0');
+	header('Cache-control: public');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Content-Description: File Transfer');
+	header('Content-Type: application/vnd.ms-excel');
+	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+
+	// When exporting data to excel, ensure the numbers written in the spreadsheet 
+	// are in H.F format rather than HH:MI  
+	$time_fmt = "decimal";
+} else
+	$time_fmt = "time";
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");

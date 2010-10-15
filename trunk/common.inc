@@ -567,18 +567,60 @@ if (!defined("COMMON_INC")) {
 		echo "</select>";
 	}
 
-	function single_user_select_list($name, $default='') {
+	function single_user_select_list($varname, $username='', $extra='', $showSelect='false') {
 		include("table_names.inc");
 
-		list($qh,$num) = dbQuery("SELECT username FROM $USER_TABLE ORDER BY username");
-		print "<SELECT NAME=\"$name\">";
-		while ($data = dbResult($qh)) {
-				print "<OPTION NAME=\"$data[username]\"";
-				if ($default == $data["username"]) print " SELECTED ";
-				print ">$data[username]</OPTION>\n";
+		global $authenticationManager;
+	
+		$show_disabled=0;
+		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
+			//show disabled users at bottom of list
+			$show_disabled=1;
+			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
+		} else {
+			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
 		}
-		print "</SELECT>";
+
+		print "<select name=\"$varname\"";
+		if (!empty($extra)) {
+			print " $extra "; 
+		}
+		print ">\n";
+
+		list($qh, $num) = dbQuery($query);
+		if ($num > 0) {
+			if ($showSelect)
+				print "<option value=\"0\">Select User</option>\n";
+
+			if($show_disabled) {
+				print "<optgroup label=\"Active Users\">";
+				$found_disabled=0;
+			}
+
+			while ($return = dbResult($qh)) {
+				if($show_disabled && !$found_disabled && $return['status']=='INACTIVE') {
+					$found_disabled=1;
+					print "</optgroup><optgroup style=\"color:red\"; label=\"Inactive Users\">";
+				}
+
+				$current_username = stripslashes($return["username"]);
+				$current_name = stripslashes($return["last_name"] . " " . $return["first_name"] );
+				print "<option value=\"$current_username\"";
+				if ($current_username == $username)
+					print " selected";
+				if ($current_name == " ")
+					print ">$current_username</option>\n";
+				else
+					print ">$current_name</option>\n";
+			}
+
+			if($show_disabled) {
+				print "</optgroup>";
+			}
+		}
+		print "</select>";
 	}
+
 
 	function get_users_name($uid) {
 		include("table_names.inc");
@@ -1440,7 +1482,7 @@ if (!defined("COMMON_INC")) {
 		exit();
 	}
 	} // end if
-}?>
-<?php
-// vim:ai:ts=4:sw=4
+}
+
+// vim:ai:ts=4:sw=4:filetype=php
 ?>

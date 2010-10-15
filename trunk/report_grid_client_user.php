@@ -470,5 +470,5 @@ if(!$export_excel){
 </BODY>
 </HTML>
 <?php
-// vim:ai:ts=4:sw=4:filetype=php
+// vim:ai:ts=4:sw=4
 ?>

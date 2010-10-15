@@ -80,4 +80,5 @@ if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 //disable yourself
 $commandMenu->disableSelf();
 
+// vim:ai:ts=4:sw=4:filetype=php
 ?>

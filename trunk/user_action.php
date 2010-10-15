@@ -69,8 +69,7 @@ else if ($action == "addupdate") {
 								"email_address='$email_address', ".
 								"level='$level' ".
 								"WHERE uid='$uid'");
-		}
-		else {
+		} else {
 			//set the password as well
 			dbquery("UPDATE $USER_TABLE SET first_name='$first_name', last_name='$last_name', ".
 								"status='$status', " .
@@ -80,8 +79,7 @@ else if ($action == "addupdate") {
 								"password=$DATABASE_PASSWORD_FUNCTION('$password') " .
 								"WHERE uid='$uid'");
 		}
-	}
-	else {
+	} else {
 		// a new user
 		dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, ".
 							"last_name, email_address, time_stamp, status) " .
@@ -97,4 +95,5 @@ else if ($action == "addupdate") {
 
 //redirect back to the user management page
 Header("Location: user_maint.php");
+// vim:ai:ts=4:sw=4
 ?>

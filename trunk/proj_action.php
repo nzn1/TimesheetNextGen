@@ -115,8 +115,5 @@ elseif ($action == 'delete') {
 	Header("Location: proj_maint.php?client_id=$client_id");
 }
 
+// vim:ai:ts=4:sw=4
 ?>
-
-
-
-
