@@ -11,12 +11,12 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclSimple'));
 	exit;
 }
-
+define("A_WEEK", 60 * 60 * 24 * 7); // seconds per week
 // Connect to database.
 $dbh = dbConnect();
 
 //define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
+//  $month $day $year $client_id $proj_id $task_id $copyprev
 include("timesheet_menu.inc");
 
 $copyprev = isset($_REQUEST["copyprev"]) ? $_REQUEST["copyprev"]: "";
@@ -103,11 +103,11 @@ for ($i=0; $i<$num3; $i++) {
 }
 
 //get all of the tasks and put them into the hashtable
-$getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
+$getTasksQuery = "SELECT DISTINCT $TASK_TABLE.proj_id, " .
 						"$TASK_TABLE.task_id, " .
 						"$TASK_TABLE.name, " .
 						"$TIMES_TABLE.status " .
-					"FROM $TIMES_TABLE, $TASK_TABLE, $TASK_ASSIGNMENTS_TABLE " .
+					"FROM $TASK_TABLE, $TASK_ASSIGNMENTS_TABLE, $TIMES_TABLE " .
 					"WHERE $TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
 						"$TIMES_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND " .
 						"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
@@ -365,6 +365,26 @@ for ($i=0; $i<$num4; $i++) {
 		setDirty();
 	}
 
+	// make row read only and mark it submitted
+	function onSubmitRow(idStr) {
+		var row = rowFromIdStr(idStr);
+		var tr = document.getElementById('row' + row)
+		for (var i=1; i<=7; i++) {
+			document.getElementById("hours_row" + row + "_col" + i).setAttribute('readOnly','readOnly');
+			document.getElementById("mins_row" + row + "_col" + i).setAttribute('readOnly','readOnly');
+			recalculateCol(i,idStr);
+		}
+		document.getElementById('clientSelect_row' + row).setAttribute('readOnly','readOnly');
+		document.getElementById('projectSelect_row' + row).setAttribute('readOnly','readOnly');
+		document.getElementById('taskSelect_row' + row).setAttribute('readOnly','readOnly');
+		document.getElementById("description_row" + row).setAttribute('readOnly','readOnly');
+		document.getElementById('row_submit' + row).value="submit";
+		//alert(document.getElementById(tr).value)
+
+		//document.getElementById.element('row' + row).setAttribute('readOnly','readOnly');
+		setDirty();
+	}
+	
 	//clear row and make it invisible
 	function onDeleteRow(idStr) {
 		var row = rowFromIdStr(idStr);
@@ -582,10 +602,10 @@ include("navcal/navcalendars.inc");
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap class="outer_table_heading">
+						<td align="20%" nowrap class="outer_table_heading">
 							Timesheet
 						</td>
-						<td align="middle" nowrap class="outer_table_heading">
+						<td align="50%" nowrap class="outer_table_heading">
 							<?php
 								$sdStr = date("M d, Y",$startDate);
 								//just need to go back 1 second most of the time, but DST 
@@ -666,7 +686,7 @@ include("navcal/navcalendars.inc");
 		var $projectTitle;
 		var $taskName;
 		var $workDescription;
-		var $status;
+		var $currentStatus;
 
 		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $workDescription, $status) {
 			parent::Pair($value1, $value2);
@@ -674,7 +694,7 @@ include("navcal/navcalendars.inc");
 			$this->projectTitle = $projectTitle;
 			$this->taskName = $taskName;
 			$this->workDescription = $workDescription;
-			$this->status = $status;
+			$this->currentStatus = $status;
 		}
 	}
 
@@ -703,6 +723,9 @@ include("navcal/navcalendars.inc");
 						case "no work description field":
 							?>
 							<td align="left" style="width:33%;">
+							<input type="hidden" id="row_submit<?php echo $rowIndex; ?>" name="row_submit<?php echo $rowIndex; ?>" value="0" />
+							</td>
+							<td align="left" style="width:33%;">
 								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
 								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
 							</td>
@@ -721,6 +744,7 @@ include("navcal/navcalendars.inc");
 							// big work description field
 							?>
 							<td align="left" style="width:100px;">
+								<input type="hidden" id="row_submit<?php echo $rowIndex; ?>" name="row_submit<?php echo $rowIndex; ?>" value="0" />
 								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
 								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
 							</td>
@@ -742,6 +766,7 @@ include("navcal/navcalendars.inc");
 							// small work description field = default layout
 							?>
 							<td align="left" style="width:100px;">
+								<input type="hidden" id="row_submit<?php echo $rowIndex; ?>" name="row_submit<?php echo $rowIndex; ?>" value="0" />
 								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
 								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
 							</td>
@@ -803,8 +828,12 @@ include("navcal/navcalendars.inc");
 
 			//create a string to be used in form input names
 			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay+1);
-			$disabled = $isEmptyRow?'disabled="true" ':'';
-			if($status != "Open") $disabled = 'disabled="true" '; 
+			if ($status != "Open") { // if submitted or approved, lock the values
+				$disabled = 'disabled="true" ';
+			}
+			else {
+				$disabled = $isEmptyRow?'disabled="true" ':'';
+			}
 			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>h</span>";
 			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>m</span>";
 
@@ -855,8 +884,8 @@ include("navcal/navcalendars.inc");
 		$dayAdjust = 0;
 	}
 	else {
-		$startStr = date("Y-m-d H:i:s",$startDate);
-		$endStr = date("Y-m-d H:i:s",$endDate);
+		$startStr = date("Y-m-d H:i:s",$copyStartDate);
+		$endStr = date("Y-m-d H:i:s",$copyEndDate);
 		$dayAdjust = A_WEEK; // since we are retrieving records from last week, adjust date by 7
 		// days to bring it into the current week
 	}
@@ -999,7 +1028,7 @@ include("navcal/navcalendars.inc");
 					 $matchedPair->value1,
 					 $matchedPair->workDescription,
 					 $startDate,
-					 $matchedPair->status,
+					 $matchedPair->currentStatus,
 					 $matchedPair->value2,
 					 $allTasksDayTotals);
 
