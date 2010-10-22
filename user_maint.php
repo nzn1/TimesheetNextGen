@@ -31,10 +31,13 @@ include ("header.inc");
 		}
 	}
 
-	function editUser(uid, firstName, lastName, username, emailAddress, password, isAdministrator, isManager, isActive) {
+	function editUser(uid, firstName, lastName, employee_type, in_rate, supervisor, username, emailAddress, password, isAdministrator, isManager, isActive) {
 		document.userForm.uid.value = uid;
 		document.userForm.first_name.value = firstName;
 		document.userForm.last_name.value = lastName;
+		document.userForm.employee_type.value = employee_type;
+		document.userForm.in_rate.value = in_rate;
+		document.userForm.supervisor.value = supervisor;
 		document.userForm.username.value = username;
 		document.userForm.email_address.value = emailAddress;
 		document.userForm.password.value = password;
@@ -120,6 +123,9 @@ include ("banner.inc");
 						<td class="inner_table_column_heading">Last Name</td>
 						<td align="center" class="inner_table_column_heading">Active</td>
 						<td class="inner_table_column_heading">Access</td>
+						<td class="inner_table_column_heading">Employee Type</td>
+						<td class="inner_table_column_heading">In Rate</td>
+						<td class="inner_table_column_heading">Supervisor</td>
 						<td class="inner_table_column_heading">Login Username</td>
 						<td class="inner_table_column_heading">Email Address</td>
 						<td class="inner_table_column_heading"><i>Actions</i></td>
@@ -129,8 +135,16 @@ include ("banner.inc");
 list($qh,$num) = dbQuery("SELECT * FROM $USER_TABLE WHERE username!='guest' ORDER BY status desc, last_name, first_name");
 
 while ($data = dbResult($qh)) {
+	$uid = $data['uid'];
+	list($qs, $num) = dbQuery("SELECT b.username as supervisor FROM $USER_TABLE a, $USER_TABLE b WHERE a.uid = $uid and a.supervisor=b.uid");
+	$svr = dbResult($qs);
+	
 	$firstNameField = empty($data["first_name"]) ? "&nbsp;": $data["first_name"];
 	$lastNameField = empty($data["last_name"]) ? "&nbsp;": $data["last_name"];
+	$employeeTypeField = empty($data["employee_type"]) ? "&nbsp;": $data["employee_type"];
+	$inRateField = empty($data["in_rate"]) ? "&nbsp;": $data["in_rate"];
+	$supervisorField = empty($svr["supervisor"]) ? "None": $svr["supervisor"];
+	
 	$usernameField = empty($data["username"]) ? "&nbsp;": $data["username"];
 	$isActive = ($data["status"]=='ACTIVE');
 	$emailAddressField = empty($data["email_address"]) ? "&nbsp;": $data["email_address"];
@@ -151,15 +165,18 @@ while ($data = dbResult($qh)) {
 		print "<td style=\"color:blue; font-weight:bold;\" class=\"calendar_cell_middle\">Manager</td>";
 	else
 		print "<td class=\"calendar_cell_middle\">Basic</td>";
-
-	print "<td class=\"calendar_cell_middle\">$usernameField</td>";
-	print "<td class=\"calendar_cell_middle\">$emailAddressField</td>";
-	print "<td class=\"calendar_cell_disabled_right\">";
-	print "	<a href=\"javascript:deleteUser('$data[uid]', '$data[username]')\">Delete</a>,&nbsp;\n";
-	print "	<a href=\"javascript:editUser('$data[uid]', '$data[first_name]', '$data[last_name]', '$data[username]', '$data[email_address]', '$data[password]', '$isAdministrator', '$isManager', '$isActive')\">Edit</a>\n";
-	print "</td>\n";
-	print "</tr>\n";
-}
+		print "<td class=\"calendar_cell_middle\">$employeeTypeField</td>";
+		print "<td class=\"calendar_cell_middle\">$inRateField</td>";
+		print "<td class=\"calendar_cell_middle\">$supervisorField</td>";
+		
+		print "<td class=\"calendar_cell_middle\">$usernameField</td>";
+		print "<td class=\"calendar_cell_middle\">$emailAddressField</td>";
+		print "<td class=\"calendar_cell_disabled_right\">";
+		print "	<a href=\"javascript:deleteUser('$data[uid]', '$data[username]')\">Delete</a>,&nbsp;\n";
+		print "	<a href=\"javascript:editUser('$data[uid]', '$data[first_name]', '$data[last_name]', '$data[employee_type]', '$data[in_rate]', '$data[supervisor]', '$data[username]', '$data[email_address]', '$data[password]', '$isAdministrator', '$isManager', '$isActive')\">Edit</a>\n";
+		print "</td>\n";
+		print "</tr>\n";
+	}
 ?>
 				</table>
 			</td>
@@ -201,6 +218,10 @@ while ($data = dbResult($qh)) {
 					<tr>
 						<td>First name:<br><input size="20" name="first_name" style="width: 100%;"></td>
 						<td>Last name:<br><input size="20" name="last_name" style="width: 100%;"></td>
+						<td width="10%">Employee Type:<br><?php emp_button("employee_type", "contractor")?></td>
+						<td>In Rate:<br><input size="15" name="in_rate" style="width: 100%" onKeyUp="numonly(this)"></td>
+						<td width="10%">Supervisor:<br><?php svr_button("supervisor", "none")?></td>
+						
 						<td>Login username:<br><input size="15" name="username" style="width: 100%;"></td>
 						<td>Email address:<br><input size="35" name="email_address" style="width: 100%;"></td>
 						<td>Password:<br><input type="password" size="20" NAME="password" style="width: 100%;" AUTOCOMPLETE="OFF"></td>

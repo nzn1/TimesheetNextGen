@@ -125,8 +125,9 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 .project_name_small { font-size: 9; font-family: Tahoma, Arial, sans-serif; color: E9AD4D; font-weight: bold; }
 .task_name_small { font-size: 9; font-family: Tahoma, Arial, sans-serif; color: 00066F; font-weight: bold; }
 .task_time_small { font-size: 9; font-family: Tahoma, Arial, sans-serif; color: 00066F; }
+.task_time_small_appr { font-size: 9; font-family: Tahoma, Arial, sans-serif; color: #20CD3A; }
+.task_time_small_subbed { font-size: 9; font-family: Tahoma, Arial, sans-serif; color: #FFC60C; }
 .task_time_total_small { font-size: 9; font-family: Tahoma, Arial, sans-serif; color: red; }
-
 
 .project_task_list { height: 80px; overflow: auto; padding-left: 5px; padding-right: 5px; margin: 5; border: 1px solid #5271CC; }
 

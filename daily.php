@@ -161,7 +161,7 @@ else {
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('client_info.php?client_id=$data[client_id]','Client Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$clientName</a></td>\n";
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('proj_info.php?proj_id=$data[proj_id]','Project Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$projectTitle</a></td>\n";
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('task_info.php?task_id=$data[task_id]','Task Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=300,height=150')\">$taskName</a></td>\n";
-
+		print "<td class=\"calendar_cell_middle\">" . $data['log_message'] . "</td>\n";
 		if ($data["duration"] > 0) {
 			//format printable times
 			if ($CfgTimeFormat == "12") {
@@ -230,9 +230,14 @@ else {
 			}
 
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
-			print "	<a href=\"edit.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]&year=$year&month=$month&day=$day\" class=\"action_link\">Edit</a>,&nbsp;\n";
-			//print "	<a href=\"delete.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
-			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
+			if ($data['subStatus'] == "Open") {
+				print "	<a href=\"edit.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]&year=$year&month=$month&day=$day\" class=\"action_link\">Edit</a>,&nbsp;\n";
+				//print "	<a href=\"delete.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
+				print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
+			} else {
+				// submitted or approved times cannot be edited
+				print  $data['subStatus'] . "&nbsp;\n";
+			}
 			print "</td>";
 
 			//add to todays total
@@ -269,7 +274,7 @@ else {
 		$count++;
 	}
 	print "<tr>\n";
-	print "	<td class=\"calendar_totals_line_weekly_right\" colspan=\"6\" align=\"right\">";
+	print "	<td class=\"calendar_totals_line_weekly_right\" colspan=\"7\" align=\"right\">";
 	print " Daily Total: <span class=\"calendar_total_value_weekly\" nowrap>" . formatMinutes($todaysTotal) . "</span></td>\n";
 	print "	<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>&nbsp;</td>\n";
 	print "</tr>\n";

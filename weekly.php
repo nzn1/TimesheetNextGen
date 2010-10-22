@@ -171,14 +171,16 @@ include("navcal/navcalendars.inc");
 		var $taskName;
 		var $clientName;
 		var $clientId;
+		var $currentStatus;
 
-		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName, $clientId) {
+		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName, $clientId, $currentStatus) {
 			parent::Pair($value1, $value2);
 			$this->projectId = $projectId;
 			$this->projectTitle = $projectTitle;
 			$this->taskName = $taskName;
 			$this->clientName = $clientName;
 			$this->clientId = $clientId;
+			$this->currentStatus = $currentStatus;
 		}
 	}
 
@@ -223,8 +225,8 @@ include("navcal/navcalendars.inc");
 		$currentProjectId = $data["proj_id"];
 		$currentClientName = $data["clientName"];
 		$currentClientId = $data["client_id"];
-
-
+		$currentStatus = $data["subStatus"];
+		
 		//find the current task id in the array
 		$taskCount = count($structuredArray);
 		unset($matchedPair);
@@ -271,8 +273,9 @@ include("navcal/navcalendars.inc");
 											$currentProjectTitle,
 											$currentTaskName,
 											$currentClientName,
-											$currentClientId);
-
+											$currentClientId,
+											$currentStatus);
+											
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
 
@@ -379,7 +382,14 @@ include("navcal/navcalendars.inc");
 					else
 						//print a break for the next entry
 						print "&nbsp;"; //"<br>";
-
+					// format background colour for status of Submitted and Approved
+					$class = "class=\"task_time_small\"";
+					if ($matchedPair->currentStatus == "Submitted") 
+						$class="class=\"task_time_small_subbed\""; 
+					if ($matchedPair->currentStatus == "Approved") 
+						$class="class=\"task_time_small_appr\"";
+					print "<span " . $class. "\">"; 
+						
 					//format printable times
 					if ($CfgTimeFormat == "12") {
 						$formattedStartTime = date("g:iA",$currentTaskEntry["start_stamp"]);
