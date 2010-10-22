@@ -19,6 +19,7 @@ $dbh = dbConnect();
 //  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
 
+$copyprev = isset($_REQUEST["copyprev"]) ? $_REQUEST["copyprev"]: "";
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -47,6 +48,17 @@ if ($daysToMinus < 0)
 $startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
 $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 
+// if required to copy the previous week's tasks and times, calculate the date
+if (empty($copyprev)) {
+	$copyStartDate = 0;
+	$copyEndDate = 0;
+}
+else
+{
+	$daysToMinus += 7; // subtract a further 7 days to go a week earlier
+	$copyStartDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
+	$copyEndDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
+}
 //get the configuration of timeformat and layout
 list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qh2);
@@ -87,14 +99,17 @@ for ($i=0; $i<$num3; $i++) {
 	print("projectTasksHash['" . $data["proj_id"] . "']['clientId'] = '". $data["client_id"] . "';\n");
 	print("projectTasksHash['" . $data["proj_id"] . "']['clientName'] = '". addslashes($data["organisation"]) . "';\n");
 	print("projectTasksHash['" . $data["proj_id"] . "']['tasks'] = {};\n");
+	print("projectTasksHash['" . $data["proj_id"] . "']['status'] = {};\n");
 }
 
 //get all of the tasks and put them into the hashtable
 $getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
 						"$TASK_TABLE.task_id, " .
-						"$TASK_TABLE.name " .
-					"FROM $TASK_TABLE, $TASK_ASSIGNMENTS_TABLE " .
+						"$TASK_TABLE.name, " .
+						"$TIMES_TABLE.status " .
+					"FROM $TIMES_TABLE, $TASK_TABLE, $TASK_ASSIGNMENTS_TABLE " .
 					"WHERE $TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
+						"$TIMES_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND " .
 						"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
 					"ORDER BY $TASK_TABLE.name";
 
@@ -103,8 +118,9 @@ list($qh4, $num4) = dbQuery($getTasksQuery);
 for ($i=0; $i<$num4; $i++) {
 	//get the current record
 	$data = dbResult($qh4, $i);
-	print("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
+	print("if (projectTasksHash['" . $data["proj_id"] . "'] != null) {\n");
 	print("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
+	print("  projectTasksHash['" . $data["proj_id"] . "']['status']['" . $data["task_id"] . "'] = '" . addslashes($data["status"]) . "'; }\n");
 }
 
 ?>
@@ -158,6 +174,11 @@ for ($i=0; $i<$num4; $i++) {
 
 					if (taskKey == taskId)
 						taskSelect.options[taskSelect.options.length-1].selected = true;
+				}
+				var thisProjectStatus = projectTasksHash[projectId]['status'];
+				for (statusKey in thisProjectStatus) {
+					if (statusKey == taskId)
+						taskSelect.options[taskSelect.options.length-1].disabled = false;
 				}
 			}
 		}
@@ -573,11 +594,21 @@ include("navcal/navcalendars.inc");
 								echo "Week: $sdStr - $edStr"; 
 							?>
 						</td>
-						<td align="right" nowrap>
-							<!--prev / next buttons used to be here -->
-						</td>
-						<td align="right" nowrap>
-							<input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="true" onClick="validate();" />
+						<!--prev / next buttons used to be here -->
+						<td width="15%" nowrap style="font-size: 11"><a href="<?php echo $_SERVER['PHP_SELF']?>?&year=<?php echo $year?>&month=<?php echo $month?>&day=<?php echo $day?>&copyprev=1">Copy Previous</a></td>
+						<td width="15%" align="right" nowrap>
+						<?php 
+							if($copyprev) { // if copyprev is set, then enable the save changes
+						?>
+							<input type="button" name="saveButton" id="saveButton" value="Save Changes" onClick="validate();" />
+						<?php 
+							}
+							else {
+						?>
+								<input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="true" onClick="validate();" />
+						<?php
+							} 
+						?>
 						</td>
 					</tr>
 				</table>
@@ -635,13 +666,15 @@ include("navcal/navcalendars.inc");
 		var $projectTitle;
 		var $taskName;
 		var $workDescription;
+		var $status;
 
-		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $workDescription) {
+		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $workDescription, $status) {
 			parent::Pair($value1, $value2);
 			$this->projectId = $projectId;
 			$this->projectTitle = $projectTitle;
 			$this->taskName = $taskName;
 			$this->workDescription = $workDescription;
+			$this->status = $status;
 		}
 	}
 
@@ -656,7 +689,7 @@ include("navcal/navcalendars.inc");
 	// taskId = $matchedPair->value1, daysArray = $matchedPair->value2
 	// $allTasksDayTotals = int[7] and sums up the minutes for all tasks at one day
 	// usage: provide an index to generate an empty row or ALL parameters to prefill the row
-	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $daysArray = NULL) {
+	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $status="", $daysArray = NULL) {
 		// print project, task and optionally work description
 		global $allTasksDayTotals; //global because of PHP4 thing about passing by reference?
 		$clientId="";
@@ -771,7 +804,7 @@ include("navcal/navcalendars.inc");
 			//create a string to be used in form input names
 			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay+1);
 			$disabled = $isEmptyRow?'disabled="true" ':'';
-
+			if($status != "Open") $disabled = 'disabled="true" '; 
 			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>h</span>";
 			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>m</span>";
 
@@ -815,10 +848,21 @@ include("navcal/navcalendars.inc");
 	 =======================================================================*/
 
 	// Get the Weekly user data.
-	$startStr = date("Y-m-d H:i:s",$startDate);
-	$endStr = date("Y-m-d H:i:s",$endDate);
+	// if copy previous data is selected, take data from last week
+	if (!$copyStartDate) {
+		$startStr = date("Y-m-d H:i:s",$startDate);
+		$endStr = date("Y-m-d H:i:s",$endDate);
+		$dayAdjust = 0;
+	}
+	else {
+		$startStr = date("Y-m-d H:i:s",$startDate);
+		$endStr = date("Y-m-d H:i:s",$endDate);
+		$dayAdjust = A_WEEK; // since we are retrieving records from last week, adjust date by 7
+		// days to bring it into the current week
+	}
+		
 	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
-	list($num5, $qh5) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
+	list($num5, $qh5) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id, $order_by_str);
 
 	//we're going to put the data into an array of
 	//different (unique) TASKS
@@ -848,7 +892,7 @@ include("navcal/navcalendars.inc");
 		$currentProjectTitle = stripslashes($data["projectTitle"]);
 		$currentProjectId = $data["proj_id"];
 		$currentWorkDescription = $data["log_message"];
-
+		$currentStatus = $data["subStatus"];
 		//debug
 		//print "<p>taskId:$currentTaskId '$data[taskName]', start time:$data[start_time_str], end time:$data[end_time_str]</p>";
 
@@ -890,7 +934,8 @@ include("navcal/navcalendars.inc");
 			//create a new pair
 			$matchedPair = new TaskInfo($currentTaskId, $daysArray,
 										$currentProjectId, $currentProjectTitle,
-										$currentTaskName, $currentWorkDescription
+										$currentTaskName, $currentWorkDescription, 
+										$currentStatus
 										);
 
 			//add the matched pair to the structured array
@@ -954,6 +999,7 @@ include("navcal/navcalendars.inc");
 					 $matchedPair->value1,
 					 $matchedPair->workDescription,
 					 $startDate,
+					 $matchedPair->status,
 					 $matchedPair->value2,
 					 $allTasksDayTotals);
 

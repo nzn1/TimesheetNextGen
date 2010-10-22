@@ -46,6 +46,8 @@ if ($authenticationManager->hasAccess('aclWeekly'))
 	$commandMenu->add(new IconTextCommand("Weekly Timesheet", true, "weekly.php?$post", "images/icon_daily.gif"));
 if ($authenticationManager->hasAccess('aclSimple'))
 	$commandMenu->add(new IconTextCommand("Simple Timesheet", true, "simple.php?$post", "images/icon_daily.gif"));
+if ($authenticationManager->hasAccess('aclSimple'))
+	$commandMenu->add(new IconTextCommand("Submit Times", true, "submit.php?$post", "images/icon_daily.gif"));
 if ($authenticationManager->hasAccess('aclMonthly'))
 	$commandMenu->add(new IconTextCommand("View Month", true, "monthly.php?$post", "images/icon_calendar.gif"));
 if ($authenticationManager->hasAccess('aclAbsences'))
@@ -57,6 +59,8 @@ if ($authenticationManager->hasAccess('aclProjects'))
 if ($authenticationManager->hasAccess('aclRates'))
 	$commandMenu->add(new IconTextCommand("Project Rates", true, "project_user_rates.php", "images/icon_rates.gif"));
 if ($authenticationManager->hasAccess('aclTasks'))
+	$commandMenu->add(new IconTextCommand("Standard Tasks", true, "task_add_std.php", "images/icon_tasks.gif"));
+if ($authenticationManager->hasAccess('aclTasks'))
 	$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint.php", "images/icon_tasks.gif"));
 if ($authenticationManager->hasAccess('aclReports'))
 	$commandMenu->add(new IconTextCommand("Reports", true, "reports.php?$post", "images/icon_reports.gif"));
@@ -64,6 +68,7 @@ if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	$commandMenu->add(new IconTextCommand("Users", true, "user_maint.php", "images/icon_users.gif"));
 	if ($authenticationManager->hasAccess('aclRates'))
 		$commandMenu->add(new IconTextCommand("User Rates", true, "rate_maint.php", "images/icon_rates.gif"));
+	$commandMenu->add(new IconTextCommand("Supervisor", true, "supervisor.php", "images/icon_users.gif"));
 	$commandMenu->add(new IconTextCommand("Configuration", true, "config.php", "images/icon_configuration.gif"));
 }
 if (!$authenticationManager->usingLDAP())
