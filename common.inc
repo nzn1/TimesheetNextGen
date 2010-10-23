@@ -1410,7 +1410,7 @@ if (!defined("COMMON_INC")) {
 		return mktime(0,0,0,$next_month,1,$next_year);
 	}
 
-	function __put_data_in_array(&$newarray, $index, $data, $curStamp, endStamp, $duration, $check_log) {
+	function __put_data_in_array(&$newarray, $index, $data, $curStamp, $endStamp, $duration, $check_log) {
 
 		//if we already have time in the indexed box, and the log messages match
 		//add the duration to the existing duration
