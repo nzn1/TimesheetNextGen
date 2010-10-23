@@ -5,7 +5,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 require_once("debuglog.php");
-$debug = new logfile();
+//$debug = new logfile();
 	
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclTasks'));
@@ -13,12 +13,12 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 }
 
 // Connect to database.
-$dbh = dbConnect();
+//$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
 // submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1
 //load local vars from superglobals
-$action = $_REQUEST["submit"];
+$action = $_REQUEST["Modify"];
 
 	$name = $_REQUEST["name"];
 	$orderby = $_REQUEST["orderby"];
@@ -30,8 +30,9 @@ $action = $_REQUEST["submit"];
 	$uid = $_REQUEST["uid"];
 
 	if (isset($action)) {
-
-	if (isset($_REQUEST['approve'])) {
+		//$debug->write("action = \" $action\" request modify = \"" . $_REQUEST['Modify'] . "\"" .  "\"\n");		
+		
+	if (isset($_REQUEST['Modify'])) {
 		//var_dump ($_REQUEST['sub']);
 		$transids = "";
 		foreach ($_REQUEST['approve'] as $transId) {
