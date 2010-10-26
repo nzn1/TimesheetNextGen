@@ -274,6 +274,19 @@ $post="uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode";
 function popupPrintWindow() {
 	window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
 }
+submitall=false;
+function submitAll (chk) {
+	if (submitall == false) {
+		submitall = true
+	}
+	else {
+		submitall = false
+	}
+	for (var i =0; i < chk.length; i++) 
+		{
+			chk[i].checked = submitall;
+		}
+}
 //-->
 </script>
 <?php } //end if !export_excel ?>
@@ -315,7 +328,7 @@ function popupPrintWindow() {
 ?>
 
 <?php if(!$export_excel) { ?>
-<form action="supervisor_action.php" method="post">
+<form name="subtimes" action="supervisor_action.php" method="post">
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
@@ -374,9 +387,9 @@ function popupPrintWindow() {
 						// add submit button
 							if (!$print): ?>
 							<td  align="center" >
-							<?php 
-								print "<input type=\"submit\" name=\"Modify\" value=\"Modify\""; 
-							?>
+								<input type="submit" name="Modify" value="Modify"> 
+								<input type="checkbox" name="Check Appr" onclick="submitAll(document.subtimes['approve[]']);">
+								<input type="checkbox" name="Check Rej" onclick="submitAll(document.subtimes['reject[]']);">
 							</td>
 						<?php endif; ?>	
 						<td align="right" nowrap>
