@@ -29,10 +29,10 @@ $action = $_REQUEST["Modify"];
 	$day = $_REQUEST["day"];
 	$uid = $_REQUEST["uid"];
 
-	if (isset($action)) {
+	if (isset($_REQUEST['Modify'])) {
 		//$debug->write("action = \" $action\" request modify = \"" . $_REQUEST['Modify'] . "\"" .  "\"\n");		
 		
-	if (isset($_REQUEST['Modify'])) {
+	if (isset($_REQUEST['approve'])) {
 		//var_dump ($_REQUEST['sub']);
 		$transids = "";
 		foreach ($_REQUEST['approve'] as $transId) {

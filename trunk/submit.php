@@ -254,17 +254,28 @@ $Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&orderby=$orderby&client_id=$client
 $post="uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode";
 
 ?>
-
-<?php if(!$export_excel) { ?>
 <script type="text/javascript">
+<?php if(!$export_excel) { ?>
 <!--
 function popupPrintWindow() {
 	window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
 }
 //-->
-</script>
 <?php } //end if !export_excel ?>
-
+submitall=false;
+function submitAll (chk) {
+	if (submitall == false) {
+		submitall = true
+	}
+	else {
+		submitall = false
+	}
+	for (var i =0; i < chk.length; i++) 
+		{
+			chk[i].checked = submitall;
+		}
+}
+</script>
 <html>
 <head>
 <title>User Task Submission</title>
@@ -302,7 +313,7 @@ function popupPrintWindow() {
 ?>
 
 <?php if(!$export_excel) { ?>
-<form action="submit_action.php" method="post">
+<form action="submit_action.php" method="post" name="subtimes" >
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
@@ -357,12 +368,12 @@ function popupPrintWindow() {
 							</td>
 						<?php endif; ?>
 						<?php
-						// add submission button
-							if (!$print): ?>
+						// add submission and check all button
+						if (!$print): ?>
 							<td  align="center" >
-							<?php 
-								print "<input type=\"submit\" name=\"submit\" value=\"Submit\""; 
-							?>
+							<input type="submit" name="submit" value="Submit"> 
+							</td><td  align="center" >
+							<input type="checkbox" name="Check All" onclick="submitAll(document.subtimes['sub[]']);">
 							</td>
 						<?php endif; ?>	
 						<td align="right" nowrap>
