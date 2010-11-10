@@ -17,7 +17,6 @@ if (!defined("COMMON_INC")) {
 	define("WORK_DAY", 8); //hours per day
 	define("SECONDS_PER_HOUR", 60 * 60);
 	$BREAK_RATIO = (0);     // For an hour break every 8 hours this would be: (1/8)
-	$EMP_TYPE = array("Contractor", "Employee");
 
 	function get_time_records($startStr, $endStr, $uid='', $proj_id=0, $client_id=0, 
 							$order_by = "start_time, proj_id, task_id") {
@@ -28,7 +27,6 @@ if (!defined("COMMON_INC")) {
 					"unix_timestamp(start_time) AS start_stamp, ".
 					"unix_timestamp(end_time) AS end_stamp, ".
 					"duration, ".		//duration is stored in minutes
-					"$TIMES_TABLE.status AS subStatus, " . 
 					"trans_num, ".
 					"$TIMES_TABLE.uid, " .
 					"$USER_TABLE.first_name, " .
@@ -495,39 +493,6 @@ if (!defined("COMMON_INC")) {
 		$configData = dbResult($qhq);
 		return $configData[$page];
 	}
-	
-	function emp_button($name, $default='') {
-		global $EMP_TYPE;
-		echo "<select name=\"$name\" style=\"width:100%\">\n";
-			
-		foreach($EMP_TYPE as $emp) {
-				echo "<option value=\"$emp\"";
-				if ($default == $emp) print " selected ";
-				echo "> $emp </option> \n";
-			}
-		
-		echo "</select>";
-	}
-
-	function svr_button($name, $default='') {
-		include("table_names.inc");
-		
-		// get list of employees from database to be used as supervisor name	
-		list($qh,$num) = dbQuery("SELECT uid, username FROM $USER_TABLE ORDER BY username");
-		
-		echo "<select name=\"$name\" style=\"width:100%\">\n";
-		print "<option value=\"none\"";
-				if ($default == "none" | $default == "") print " selected ";
-				print ">None</option>\n";	
-		while ($data = dbResult($qh)) {
-				print "<option value=\"$data[uid]\"";
-				if ($default == $data["username"]) print " selected ";
-				print ">$data[username]</option>\n";	
-			}
-
-		echo "</select>";
-	}
-	
 
 	function day_button($name, $timeStamp=0, $limit=1) {
 		global $realToday, $month, $year;
@@ -1144,14 +1109,6 @@ if (!defined("COMMON_INC")) {
 	</SELECT>
 <?php
 	}	
-	function proj_billing_type($name, $bill='') {
-?>
-	<SELECT NAME=<?php echo $name ?>>
-	<OPTION VALUE="hourly" <?php if ($bill == 'hourly') echo 'SELECTED'?>>Hourly</OPTION>
-	<OPTION VALUE="daily" <?php if ($bill == 'daily') echo 'SELECTED'?>>Daily</OPTION>
-	</SELECT>
-<?php
-	}	
 	
 	function proj_status_list_filter($name, $status='', $onChange='submit();') {
 ?>
@@ -1410,7 +1367,7 @@ if (!defined("COMMON_INC")) {
 		return mktime(0,0,0,$next_month,1,$next_year);
 	}
 
-	function __put_data_in_array(&$newarray, $index, $data, $curStamp, $endStamp, $duration, $check_log) {
+	function __put_data_in_array(&$newarray, $index, $data, $curStamp, $duration, $check_log) {
 
 		//if we already have time in the indexed box, and the log messages match
 		//add the duration to the existing duration
@@ -1432,13 +1389,11 @@ if (!defined("COMMON_INC")) {
 		if(!$found_matching) {
 			$info=array();
 			$info["start_stamp"]=$curStamp;
-			$info["end_stamp"]=$endStamp;
 			$info["duration"]=$duration;
 			$info["clientName"]=$data["clientName"];
 			$info["projectTitle"]=$data["projectTitle"];
 			$info["taskName"]=$data["taskName"];
 			$info["log_message"]=$data["log_message"];
-			$info["status"]=$data["subStatus"];
 			$info["client_id"]=$data["client_id"];
 			$info["proj_id"]=$data["proj_id"];
 			$info["task_id"]=$data["task_id"];
@@ -1467,27 +1422,20 @@ if (!defined("COMMON_INC")) {
 
 			if ($startsBeforeToday && $endsAfterToday) {
 				$duration = get_duration($curStamp, $tomorrowStamp);
-				$endStamp=$tomorrowStamp;
 			} else if ($startsBeforeToday && $endsToday) {
 				$duration = get_duration($curStamp, $data["end_stamp"]);
-				$endStamp = $data["end_stamp"];
 			} else if ($startsToday && $endsToday) {
 				$duration = $data["duration"];
-				$curStamp = $data["start_stamp"];
-				$endStamp = $data["end_stamp"];
 			} else if ($startsToday && $endsAfterToday) {
 				$duration = get_duration($data["start_stamp"],$tomorrowStamp);
-				$endStamp = $tomorrowStamp;
-				$curStamp = $data["start_stamp"];
 			} else {
 				print "Error: time booleans are in a confused state<br>\n";
 				continue;
 			}
 
-			// don't reset the start time of all entries
-			//$data["start_stamp"]=$curStamp;
+			$data["start_stamp"]=$curStamp;
 			$dndx=make_index($data,$orderby);
-			__put_data_in_array($darray,$dndx,$data,$curStamp,$endStamp,$duration,$check_log);
+			__put_data_in_array($darray,$dndx,$data,$curStamp,$duration,$check_log);
 
 			$curStamp = $tomorrowStamp;
 		}

@@ -76,6 +76,7 @@ include("table_names.inc");
 			var clone_from  = getObjectByName('cloneFrom');
 			var clone_to    = getObjectByName('cloneTo');
 
+			if(clone_from == null) return;
 			clone_from.onchange  = function (){document.userForm.submit();};
 			clone_to.onchange    = verify_can_copy;
 

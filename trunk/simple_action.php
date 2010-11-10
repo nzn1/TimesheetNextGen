@@ -64,7 +64,6 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 $queryString = "DELETE FROM $TIMES_TABLE " . 
 					"WHERE uid='$contextUser' AND " .
 							"start_time >= '$startStr' AND ".
-							"status = 'Open' AND " .
 							"start_time < '$endStr'";
 
 // to prevent deleteion when nothing is to be inserted
@@ -88,11 +87,7 @@ for ($i=0; $i<$totalRows; $i++) {
 		$workDescription = mysql_real_escape_string($_POST["description_row" . $i]);
 	}
 	//$debug->write("proj=$projectId  task=$taskId  log=$workDescription\n");
-	
-	$submit = $_POST["row_submit" . $i];
-	if($submit == "submit") $status = "Submitted";
-	else $status = "Open";
-	
+
 	$curDaysTimestamp = $startDate;
 	for ($j=1; $j<=7; $j++) {
 		//get the timestamp for this day
@@ -120,11 +115,11 @@ for ($i=0; $i<$totalRows; $i++) {
 			$etsStr = strftime("%Y-%m-%d %H:%M:%S", $ets);
 			
 			//add to database
-			$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message, status) ".
+			$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
 									"VALUES ('$contextUser','$stsStr', ".
 									"'$etsStr', ".
 									"'$minutes', ".
-									"$projectId, $taskId, '$workDescription', '$status')";
+									"$projectId, $taskId, '$workDescription')";
 			list($qh,$num) = dbQuery($queryString);
 			//$debug->write("   Query = \"$queryString\"\n");
 		}
