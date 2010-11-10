@@ -19,9 +19,6 @@ $action = $_REQUEST["action"];
 $uid = $_REQUEST["uid"];
 $first_name = $_REQUEST["first_name"];
 $last_name = $_REQUEST["last_name"];
-$employee_type = $_REQUEST["employee_type"];
-$supervisor = $_REQUEST["supervisor"];
-$charge_in_rate = $_REQUEST["in_rate"];
 $username = $_REQUEST["username"];
 $email_address = $_REQUEST["email_address"];
 $password = $_REQUEST["password"];
@@ -70,10 +67,7 @@ else if ($action == "addupdate") {
 								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
-								"level='$level', ".
-								"employee_type='$employee_type', ".
-								"in_rate='$charge_in_rate', ".
-								"supervisor='$supervisor' ".
+								"level='$level' ".
 								"WHERE uid='$uid'");
 		} else {
 			//set the password as well
@@ -82,20 +76,16 @@ else if ($action == "addupdate") {
 								"username='$username', " .
 								"email_address='$email_address', ".
 								"level='$level', ".
-								"employee_type='$employee_type', ".
-								"in_rate='$charge_in_rate', ".
-								"supervisor='$supervisor', ".
 								"password=$DATABASE_PASSWORD_FUNCTION('$password') " .
 								"WHERE uid='$uid'");
 		}
 	} else {
 		// a new user
 		dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, ".
-					"last_name, employee_type, in_rate, supervisor, email_address, time_stamp, status) " .
-				"VALUES ('$username',$level,$DATABASE_PASSWORD_FUNCTION('$password'),'$first_name',".
-					"'$last_name','$employee_type','$charge_in_rate','$supervisor','$email_address',0,'OUT')");	
+							"last_name, email_address, time_stamp, status) " .
+						"VALUES ('$username',$level,$DATABASE_PASSWORD_FUNCTION('$password'),'$first_name',".
+							"'$last_name','$email_address',0,'$status')");
 		dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
-		
 		dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
 		//create a time string for >>now<<
 		$today_stamp = date("Y-m-d H:i:00");

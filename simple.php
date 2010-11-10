@@ -11,15 +11,14 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclSimple'));
 	exit;
 }
-define("A_WEEK", 60 * 60 * 24 * 7); // seconds per week
+
 // Connect to database.
 $dbh = dbConnect();
 
 //define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id $copyprev
+//  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
 
-$copyprev = isset($_REQUEST["copyprev"]) ? $_REQUEST["copyprev"]: "";
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -48,17 +47,6 @@ if ($daysToMinus < 0)
 $startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
 $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 
-// if required to copy the previous week's tasks and times, calculate the date
-if (empty($copyprev)) {
-	$copyStartDate = 0;
-	$copyEndDate = 0;
-}
-else
-{
-	$daysToMinus += 7; // subtract a further 7 days to go a week earlier
-	$copyStartDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
-	$copyEndDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
-}
 //get the configuration of timeformat and layout
 list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qh2);
@@ -99,17 +87,14 @@ for ($i=0; $i<$num3; $i++) {
 	print("projectTasksHash['" . $data["proj_id"] . "']['clientId'] = '". $data["client_id"] . "';\n");
 	print("projectTasksHash['" . $data["proj_id"] . "']['clientName'] = '". addslashes($data["organisation"]) . "';\n");
 	print("projectTasksHash['" . $data["proj_id"] . "']['tasks'] = {};\n");
-	print("projectTasksHash['" . $data["proj_id"] . "']['status'] = {};\n");
 }
 
 //get all of the tasks and put them into the hashtable
-$getTasksQuery = "SELECT DISTINCT $TASK_TABLE.proj_id, " .
+$getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
 						"$TASK_TABLE.task_id, " .
-						"$TASK_TABLE.name, " .
-						"$TIMES_TABLE.status " .
-					"FROM $TASK_TABLE, $TASK_ASSIGNMENTS_TABLE, $TIMES_TABLE " .
+						"$TASK_TABLE.name " .
+					"FROM $TASK_TABLE, $TASK_ASSIGNMENTS_TABLE " .
 					"WHERE $TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
-						"$TIMES_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND " .
 						"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
 					"ORDER BY $TASK_TABLE.name";
 
@@ -118,9 +103,8 @@ list($qh4, $num4) = dbQuery($getTasksQuery);
 for ($i=0; $i<$num4; $i++) {
 	//get the current record
 	$data = dbResult($qh4, $i);
-	print("if (projectTasksHash['" . $data["proj_id"] . "'] != null) {\n");
+	print("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
 	print("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
-	print("  projectTasksHash['" . $data["proj_id"] . "']['status']['" . $data["task_id"] . "'] = '" . addslashes($data["status"]) . "'; }\n");
 }
 
 ?>
@@ -174,11 +158,6 @@ for ($i=0; $i<$num4; $i++) {
 
 					if (taskKey == taskId)
 						taskSelect.options[taskSelect.options.length-1].selected = true;
-				}
-				var thisProjectStatus = projectTasksHash[projectId]['status'];
-				for (statusKey in thisProjectStatus) {
-					if (statusKey == taskId)
-						taskSelect.options[taskSelect.options.length-1].disabled = false;
 				}
 			}
 		}
@@ -365,26 +344,6 @@ for ($i=0; $i<$num4; $i++) {
 		setDirty();
 	}
 
-	// make row read only and mark it submitted
-	function onSubmitRow(idStr) {
-		var row = rowFromIdStr(idStr);
-		var tr = document.getElementById('row' + row)
-		for (var i=1; i<=7; i++) {
-			document.getElementById("hours_row" + row + "_col" + i).setAttribute('readOnly','readOnly');
-			document.getElementById("mins_row" + row + "_col" + i).setAttribute('readOnly','readOnly');
-			recalculateCol(i,idStr);
-		}
-		document.getElementById('clientSelect_row' + row).setAttribute('readOnly','readOnly');
-		document.getElementById('projectSelect_row' + row).setAttribute('readOnly','readOnly');
-		document.getElementById('taskSelect_row' + row).setAttribute('readOnly','readOnly');
-		document.getElementById("description_row" + row).setAttribute('readOnly','readOnly');
-		document.getElementById('row_submit' + row).value="submit";
-		//alert(document.getElementById(tr).value)
-
-		//document.getElementById.element('row' + row).setAttribute('readOnly','readOnly');
-		setDirty();
-	}
-	
 	//clear row and make it invisible
 	function onDeleteRow(idStr) {
 		var row = rowFromIdStr(idStr);
@@ -602,10 +561,10 @@ include("navcal/navcalendars.inc");
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="20%" nowrap class="outer_table_heading">
+						<td align="left" nowrap class="outer_table_heading">
 							Timesheet
 						</td>
-						<td align="50%" nowrap class="outer_table_heading">
+						<td align="middle" nowrap class="outer_table_heading">
 							<?php
 								$sdStr = date("M d, Y",$startDate);
 								//just need to go back 1 second most of the time, but DST 
@@ -614,21 +573,11 @@ include("navcal/navcalendars.inc");
 								echo "Week: $sdStr - $edStr"; 
 							?>
 						</td>
-						<!--prev / next buttons used to be here -->
-						<td width="15%" nowrap style="font-size: 11"><a href="<?php echo $_SERVER['PHP_SELF']?>?&year=<?php echo $year?>&month=<?php echo $month?>&day=<?php echo $day?>&copyprev=1">Copy Previous</a></td>
-						<td width="15%" align="right" nowrap>
-						<?php 
-							if($copyprev) { // if copyprev is set, then enable the save changes
-						?>
-							<input type="button" name="saveButton" id="saveButton" value="Save Changes" onClick="validate();" />
-						<?php 
-							}
-							else {
-						?>
-								<input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="true" onClick="validate();" />
-						<?php
-							} 
-						?>
+						<td align="right" nowrap>
+							<!--prev / next buttons used to be here -->
+						</td>
+						<td align="right" nowrap>
+							<input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="true" onClick="validate();" />
 						</td>
 					</tr>
 				</table>
@@ -686,15 +635,13 @@ include("navcal/navcalendars.inc");
 		var $projectTitle;
 		var $taskName;
 		var $workDescription;
-		var $currentStatus;
 
-		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $workDescription, $status) {
+		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $workDescription) {
 			parent::Pair($value1, $value2);
 			$this->projectId = $projectId;
 			$this->projectTitle = $projectTitle;
 			$this->taskName = $taskName;
 			$this->workDescription = $workDescription;
-			$this->currentStatus = $status;
 		}
 	}
 
@@ -709,7 +656,7 @@ include("navcal/navcalendars.inc");
 	// taskId = $matchedPair->value1, daysArray = $matchedPair->value2
 	// $allTasksDayTotals = int[7] and sums up the minutes for all tasks at one day
 	// usage: provide an index to generate an empty row or ALL parameters to prefill the row
-	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $status="", $daysArray = NULL) {
+	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $daysArray = NULL) {
 		// print project, task and optionally work description
 		global $allTasksDayTotals; //global because of PHP4 thing about passing by reference?
 		$clientId="";
@@ -722,9 +669,6 @@ include("navcal/navcalendars.inc");
 					switch ($layout) {
 						case "no work description field":
 							?>
-							<td align="left" style="width:33%;">
-							<input type="hidden" id="row_submit<?php echo $rowIndex; ?>" name="row_submit<?php echo $rowIndex; ?>" value="0" />
-							</td>
 							<td align="left" style="width:33%;">
 								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
 								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
@@ -744,7 +688,6 @@ include("navcal/navcalendars.inc");
 							// big work description field
 							?>
 							<td align="left" style="width:100px;">
-								<input type="hidden" id="row_submit<?php echo $rowIndex; ?>" name="row_submit<?php echo $rowIndex; ?>" value="0" />
 								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
 								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
 							</td>
@@ -766,7 +709,6 @@ include("navcal/navcalendars.inc");
 							// small work description field = default layout
 							?>
 							<td align="left" style="width:100px;">
-								<input type="hidden" id="row_submit<?php echo $rowIndex; ?>" name="row_submit<?php echo $rowIndex; ?>" value="0" />
 								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
 								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
 							</td>
@@ -828,12 +770,8 @@ include("navcal/navcalendars.inc");
 
 			//create a string to be used in form input names
 			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay+1);
-			if ($status != "Open") { // if submitted or approved, lock the values
-				$disabled = 'disabled="true" ';
-			}
-			else {
-				$disabled = $isEmptyRow?'disabled="true" ':'';
-			}
+			$disabled = $isEmptyRow?'disabled="true" ':'';
+
 			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>h</span>";
 			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>m</span>";
 
@@ -877,21 +815,10 @@ include("navcal/navcalendars.inc");
 	 =======================================================================*/
 
 	// Get the Weekly user data.
-	// if copy previous data is selected, take data from last week
-	if (!$copyStartDate) {
-		$startStr = date("Y-m-d H:i:s",$startDate);
-		$endStr = date("Y-m-d H:i:s",$endDate);
-		$dayAdjust = 0;
-	}
-	else {
-		$startStr = date("Y-m-d H:i:s",$copyStartDate);
-		$endStr = date("Y-m-d H:i:s",$copyEndDate);
-		$dayAdjust = A_WEEK; // since we are retrieving records from last week, adjust date by 7
-		// days to bring it into the current week
-	}
-		
+	$startStr = date("Y-m-d H:i:s",$startDate);
+	$endStr = date("Y-m-d H:i:s",$endDate);
 	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
-	list($num5, $qh5) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id, $order_by_str);
+	list($num5, $qh5) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
 
 	//we're going to put the data into an array of
 	//different (unique) TASKS
@@ -921,7 +848,7 @@ include("navcal/navcalendars.inc");
 		$currentProjectTitle = stripslashes($data["projectTitle"]);
 		$currentProjectId = $data["proj_id"];
 		$currentWorkDescription = $data["log_message"];
-		$currentStatus = $data["subStatus"];
+
 		//debug
 		//print "<p>taskId:$currentTaskId '$data[taskName]', start time:$data[start_time_str], end time:$data[end_time_str]</p>";
 
@@ -963,8 +890,7 @@ include("navcal/navcalendars.inc");
 			//create a new pair
 			$matchedPair = new TaskInfo($currentTaskId, $daysArray,
 										$currentProjectId, $currentProjectTitle,
-										$currentTaskName, $currentWorkDescription, 
-										$currentStatus
+										$currentTaskName, $currentWorkDescription
 										);
 
 			//add the matched pair to the structured array
@@ -1028,7 +954,6 @@ include("navcal/navcalendars.inc");
 					 $matchedPair->value1,
 					 $matchedPair->workDescription,
 					 $startDate,
-					 $matchedPair->currentStatus,
 					 $matchedPair->value2,
 					 $allTasksDayTotals);
 

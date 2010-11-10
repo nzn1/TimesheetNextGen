@@ -20,11 +20,10 @@ CREATE TABLE __TABLE_PREFIX__assignments (
   proj_id int(11) DEFAULT '0' NOT NULL,
   username char(32) DEFAULT '' NOT NULL,
   rate_id int(11) NOT NULL,
-  in_rate decimal(8,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (proj_id,username)
 );
 
-INSERT INTO __TABLE_PREFIX__assignments VALUES (1, 'guest', 1, 0.0);
+INSERT INTO __TABLE_PREFIX__assignments VALUES (1, 'guest', 1);
 
 #--------------------------------------------------------
 #
@@ -173,18 +172,6 @@ INSERT INTO __TABLE_PREFIX__project VALUES ( 1, 'Default Project', 1, '','1970-0
 
 #--------------------------------------------------------
 #
-# Table structure for table 'std_tasks'
-#
-DROP TABLE IF EXISTS __TABLE_PREFIX__std_tasks;
-CREATE TABLE __TABLE_PREFIX__std_tasks (
-  task_id int(11) NOT NULL AUTO_INCREMENT,
-  name varchar(127) NOT NULL,
-  description text,
-  PRIMARY KEY (task_id)
-);  
-  
-#--------------------------------------------------------
-#
 # Table structure for table 'task'
 #
 DROP TABLE IF EXISTS __TABLE_PREFIX__task;
@@ -231,7 +218,6 @@ CREATE TABLE __TABLE_PREFIX__times (
   proj_id int(11) DEFAULT '1' NOT NULL,
   task_id int(11) DEFAULT '1' NOT NULL,
   log_message TEXT,
-  status enum('Open','Submitted','Approved') NOT NULL DEFAULT 'Open',
   KEY uid (uid,trans_num),
   UNIQUE trans_num (trans_num)
 );
@@ -251,9 +237,6 @@ CREATE TABLE __TABLE_PREFIX__user (
   time_stamp timestamp(14),
   status enum('INACTIVE','ACTIVE') DEFAULT 'ACTIVE' NOT NULL,
   uid int(11) NOT NULL auto_increment,
-  supervisor int(11) DEFAULT NULL,
-  employee_type enum('contractor','employee') NOT NULL,
-  in_rate decimal(8,2) NOT NULL DEFAULT '0.00',
   session varchar(32),
   PRIMARY KEY (username),
   KEY uid (uid)

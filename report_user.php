@@ -105,10 +105,6 @@ if($orderby == "project") {
 	$colVar[]="log";
 	$colWid[]="width=\"35%\"";
 	$colAlign[]=""; $colWrap[]="";
-	// add status field
-	$colVar[]="status";
-	$colWid[]="width=\"5%\"";
-	$colAlign[]=""; $colWrap[]="";
 
 	$colVar[]="duration";
 	$colWid[]="width=\"10%\"";
@@ -135,10 +131,6 @@ if($orderby == "date") {
 
 	$colVar[]="log";
 	$colWid[]="width=\"35%\"";
-	$colAlign[]=""; $colWrap[]="";
-	// add status field
-	$colVar[]="status";
-	$colWid[]="width=\"5%\"";
 	$colAlign[]=""; $colWrap[]="";
 
 	$colVar[]="duration";
@@ -190,9 +182,6 @@ function printInfo($type) {
 		make_daily_link($ymdStr,0,$formattedDate); 
 	} else if($type == "log") {
 		if ($data['log_message']) print stripslashes($data['log_message']);
-		else print "&nbsp;";
-	} else if($type == "status") {
-		if ($data['status']) print stripslashes($data['status']);
 		else print "&nbsp;";
 	} else print "&nbsp;";
 }
@@ -347,7 +336,6 @@ else {  //create Excel header
 							<td class="inner_table_column_heading">Task</td>
 						<?php endif; ?>
 						<td class="inner_table_column_heading">Log Entry</td>
-						<td class="inner_table_column_heading">Status</td>
 						<td class="inner_table_column_heading">Duration</td>
 					</tr>
 <?php
@@ -410,7 +398,7 @@ else {  //create Excel header
 				}
 
 				print "<tr>";
-				for($i=0; $i<6; $i++) {
+				for($i=0; $i<5; $i++) {
 					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
