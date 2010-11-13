@@ -5,7 +5,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
 	exit;
 }
 
@@ -76,11 +76,11 @@ $startPage = $_REQUEST["startPage"];
 		include("table_names.inc");
 
 		//get the default value
-		list($qh, $num) = dbQuery("SELECT $fieldName FROM $CONFIG_TABLE WHERE config_set_id='0';");
+		list($qh, $num) = dbQuery("SELECT $fieldName FROM $CONFIG_table WHERE config_set_id='0';");
 		$resultset = dbResult($qh);
 
 		//set it
-		dbQuery("UPDATE $CONFIG_TABLE SET $fieldName='" . $resultset[$fieldName] . "' WHERE config_set_id='1';");
+		dbQuery("UPDATE $CONFIG_table SET $fieldName='" . $resultset[$fieldName] . "' WHERE config_set_id='1';");
 	}
 
 if (!isset($action)) {
@@ -97,7 +97,7 @@ elseif ($action == "edit") {
 	$timezone = addslashes(unhtmlentities(trim($timezone)));
 	$projectItemsPerPage = addslashes(unhtmlentities(trim($projectItemsPerPage)));
 	$taskItemsPerPage = addslashes(unhtmlentities(trim($taskItemsPerPage)));
-	$query = "UPDATE $CONFIG_TABLE SET ".
+	$query = "UPDATE $CONFIG_table SET ".
 		"headerhtml='$headerhtml',".
 		"bodyhtml='$bodyhtml',".
 		"footerhtml='$footerhtml',".

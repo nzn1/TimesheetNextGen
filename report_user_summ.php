@@ -24,7 +24,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclReports'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclReports'));
 	exit;
 }
 
@@ -109,8 +109,8 @@ function format_time($time) {
 		return "-";
 }
 
-$Location="$_SERVER[PHP_SELF]?uid=$uid&time_fmt=$time_fmt&start_year=$start_year&start_month=$start_month&start_day=$start_day&end_year=$end_year&end_month=$end_month&end_day=$end_day";
-$post="uid=$uid&time_fmt=$time_fmt";
+$Location="$_SERVER[PHP_SELF]?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=$start_day&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
+$post="uid=$uid&amp;time_fmt=$time_fmt";
 
 if(!$export_excel) {
 	require("report_javascript.inc");
@@ -173,7 +173,7 @@ function init(){
 		echo ">\n";
 		echo "<div id=\"header\">";
 		include ("banner.inc");
-		$MOTD = 0;  //don't want the MOTD printed
+		$MOtd = 0;  //don't want the MOtd printed
 		include("navcal/navcal_monthly_with_end_dates.inc");
 		echo "</div>";
 	}
@@ -181,10 +181,10 @@ function init(){
 
 <?php if(!$export_excel) { ?>
 <form action="<?php print $_SERVER['PHP_SELF'] ?>" method="get">
-<input type="hidden" name="start_month" value="<?php echo $start_month; ?>">
-<input type="hidden" name="start_year" value="<?php echo $start_year; ?>">
-<input type="hidden" name="end_month" value="<?php echo $end_month; ?>">
-<input type="hidden" name="end_year" value="<?php echo $end_year; ?>">
+<input type="hidden" name="start_month" value="<?php echo $start_month; ?>" />
+<input type="hidden" name="start_year" value="<?php echo $start_year; ?>" />
+<input type="hidden" name="end_month" value="<?php echo $end_month; ?>" />
+<input type="hidden" name="end_year" value="<?php echo $end_year; ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -210,24 +210,22 @@ function init(){
 						</td>
 						<?php if (!$print): ?>
 							<td align="right" width="10%" nowrap>
-								<input type="radio" name="time_fmt" value="decimal" onClick="this.form.submit()"
-									<?php if($time_fmt == "decimal") print " checked"; ?>
-								> Hrs.dec&nbsp;<br>
-								<input type="radio" name="time_fmt" value="hrsMins" onClick="this.form.submit()"
-									<?php if($time_fmt != "decimal") print " checked"; ?>
-								> Hrs:Min&nbsp;
+								<input type="radio" name="time_fmt" value="decimal" onclick="this.form.submit()"
+									<?php if($time_fmt == "decimal") print " checked=\"checked\""; ?> /> Hrs.dec&nbsp;<br />
+								<input type="radio" name="time_fmt" value="hrsMins" onclick="this.form.submit()"
+									<?php if($time_fmt != "decimal") print " checked=\"checked\""; ?> /> Hrs:Min&nbsp;
 							</td>
 							<td align="right" nowrap>
 							<?php
-								$p1post="uid=$uid&time_fmt=$time_fmt&start_year=$start_year&start_month=$start_month&start_day=1&end_year=$end_year&end_month=$end_month&end_day=15";
-								$p2post="uid=$uid&time_fmt=$time_fmt&start_year=$start_year&start_month=$start_month&start_day=16&end_year=$end_year&end_month=$end_month&end_day=".date('t',strtotime("$end_year-$end_month-15"));
+								$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=1&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=15";
+								$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=16&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=".date('t',strtotime("$end_year-$end_month-15"));
 							?>
-								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p1post; ?>" class="outer_table_action">Bi-monthly period 1</a><br>
+								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p1post; ?>" class="outer_table_action">Bi-monthly period 1</a><br />
 								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p2post; ?>" class="outer_table_action">Bi-monthly period 2</a>
 							</td>
 							<td  align="right" width="15%" nowrap >
-								<button name="export_excel" onClick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" ALT="Export to Excel" ALIGN="ABSMIDDLE"></button> &nbsp;
-								<button onClick="popupPrintWindow()"><img src="images/icon_printer.gif" ALT="Print Report" ALIGN="ABSMIDDLE"></button>
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>
 						<?php endif; ?>
 					</tr>
@@ -243,7 +241,7 @@ function init(){
 <?php } // end if !export_excel
 else {  //create Excel header
 	list($fn,$ln) = get_users_name($uid);
-	echo "<h4>Report for $ln, $fn<br>";
+	echo "<h4>Report for $ln, $fn<br />";
 	echo date("F d", $start_time)."  to  ";
 	echo date("d", $end_time);
 	echo ", $end_year";
@@ -260,7 +258,7 @@ list($num, $qh) = get_time_records($startStr, $endStr, $uid, 0, $client_id);
 if ($num == 0) {
 	print "	<tr>\n";
 	print "		<td align=\"center\">\n";
-	print "			<i><br>No hours recorded.<br><br></i>\n";
+	print "			<i><br />No hours recorded.<br /><br /></i>\n";
 	print "		</td>\n";
 	print "	</tr>\n";
 } else {
@@ -384,7 +382,7 @@ if ($num == 0) {
 	}
 } //end if !export_excel 
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

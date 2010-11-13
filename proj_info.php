@@ -18,25 +18,25 @@ $proj_id = $_REQUEST['proj_id'];
 			"DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
 			"DATE_FORMAT(deadline, '%M %d, %Y') as deadline,".
 			"proj_status, proj_leader ".
-		"FROM $PROJECT_TABLE ".
-		"WHERE $PROJECT_TABLE.proj_id=$proj_id";
+		"FROM $PROJECT_table ".
+		"WHERE $PROJECT_table.proj_id=$proj_id";
 
-	$query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, $CLIENT_TABLE.organisation, ".
-			"$PROJECT_TABLE.description, DATE_FORMAT(start_date, '%M %d, %Y') as start_date, DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
-			"$PROJECT_TABLE.proj_status, http_link ".
-		"FROM $PROJECT_TABLE, $CLIENT_TABLE, $USER_TABLE ".
-		"WHERE $PROJECT_TABLE.proj_id=$proj_id  ";
+	$query = "SELECT DISTINCT $PROJECT_table.title, $PROJECT_table.proj_id, $PROJECT_table.client_id, $CLIENT_table.organisation, ".
+			"$PROJECT_table.description, DATE_FORMAT(start_date, '%M %d, %Y') as start_date, DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
+			"$PROJECT_table.proj_status, http_link ".
+		"FROM $PROJECT_table, $CLIENT_table, $USER_table ".
+		"WHERE $PROJECT_table.proj_id=$proj_id  ";
 
 //set up query
-$query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, ".
-						"$CLIENT_TABLE.organisation, $PROJECT_TABLE.description, " .
+$query = "SELECT DISTINCT $PROJECT_table.title, $PROJECT_table.proj_id, $PROJECT_table.client_id, ".
+						"$CLIENT_table.organisation, $PROJECT_table.description, " .
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
-						"$PROJECT_TABLE.proj_status, http_link, proj_leader ".
-					"FROM $PROJECT_TABLE, $CLIENT_TABLE, $USER_TABLE ".
-					"WHERE $PROJECT_TABLE.proj_id=$proj_id AND ".
-						"$CLIENT_TABLE.client_id=$PROJECT_TABLE.client_id ".
-					"ORDER BY $PROJECT_TABLE.proj_id";
+						"$PROJECT_table.proj_status, http_link, proj_leader ".
+					"FROM $PROJECT_table, $CLIENT_table, $USER_table ".
+					"WHERE $PROJECT_table.proj_id=$proj_id AND ".
+						"$CLIENT_table.client_id=$PROJECT_table.client_id ".
+					"ORDER BY $PROJECT_table.proj_id";
 ?>
 <html>
 <head>
@@ -62,11 +62,11 @@ include ("header.inc");
 			list($billqh, $bill_num) = dbquery(
 					"SELECT sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, ".
 						"sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))) as billed ".
-						"FROM $TIMES_TABLE, $ASSIGNMENTS_TABLE, $RATE_TABLE ".
-						"WHERE end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] ".
-						"AND $ASSIGNMENTS_TABLE.proj_id = $data[proj_id] ".
-						"AND $ASSIGNMENTS_TABLE.rate_id = $RATE_TABLE.rate_id ".
-						"AND $ASSIGNMENTS_TABLE.username = $TIMES_TABLE.uid ");
+						"FROM $TIMES_table, $ASSIGNMENTS_table, $RATE_table ".
+						"WHERE end_time > 0 AND $TIMES_table.proj_id = $data[proj_id] ".
+						"AND $ASSIGNMENTS_table.proj_id = $data[proj_id] ".
+						"AND $ASSIGNMENTS_table.rate_id = $RATE_table.rate_id ".
+						"AND $ASSIGNMENTS_table.username = $TIMES_table.uid ");
 			$bill_data = dbResult($billqh);
 
 			//start the row
@@ -88,14 +88,14 @@ include ("header.inc");
 												<td align="right">
 <?php
 			if (isset($data["start_date"]) && $data["start_date"] != '' && $data["deadline"] != '')
-				print "<span class=\"label\">Start:</span> $data[start_date]<br><span class=\"label\">Deadline:</span> $data[deadline]";
+				print "<span class=\"label\">Start:</span> $data[start_date]<br /><span class=\"label\">Deadline:</span> $data[deadline]";
 			else
 				print "&nbsp;";
 ?>
 												</td>
 											</tr>
 											<tr>
-												<td><?php echo $data["description"]; ?><br></td>
+												<td><?php echo $data["description"]; ?><br /></td>
 												<td valign="top" align="right"><span class="label">Client:</span> <?php echo $data["organisation"]; ?></td>
 											</tr>
 											<tr>
@@ -108,7 +108,7 @@ include ("header.inc");
 																		<td>
 																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? formatSeconds($bill_data["total_time"]): "0h 0m"); ?>
 																			<?php if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
-																			<br><span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? $bill_data["billed"]: "0.00"); ?></b>
+																			<br /><span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? $bill_data["billed"]: "0.00"); ?></b>
 																			<?php } ?>
 																		</td>
 																	</tr>
@@ -121,7 +121,7 @@ include ("header.inc");
 			print "<tr><td><span class=\"label\">Project Leader:</span> $data[proj_leader] </td></tr>";
 
 			//display assigned users
-			list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $data[proj_id]");
+			list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM $ASSIGNMENTS_table WHERE proj_id = $data[proj_id]");
 			if ($num_workers == 0) {
 				print "<tr><td><font size=\"-1\">Nobody assigned to this project</font></td></tr>\n";
 			}
@@ -145,16 +145,16 @@ include ("header.inc");
 															</td>
 															<td width="30%">
 																<div class="project_task_list">
-																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br>
+																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
 <?php
 			//get tasks
-			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]");
+			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_table WHERE proj_id=$data[proj_id]");
 
 			//are there any tasks?
 			if ($num_tasks > 0) {
 				while ($task_data = dbResult($qh3)) {
 					$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
-					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br>";
+					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
 				}
 			}
 			else
@@ -174,7 +174,7 @@ include ("header.inc");
 		}
 ?>
 				</table>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

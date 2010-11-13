@@ -5,7 +5,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclMonthly')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclMonthly'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclMonthly'));
 	exit;
 }
 
@@ -27,7 +27,7 @@ if (empty($contextUser))
 
 // Check project assignment.
 if ($proj_id != 0) { // id 0 means 'All Projects'
-	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE WHERE proj_id='$proj_id' AND username='$contextUser'");
+	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_table WHERE proj_id='$proj_id' AND username='$contextUser'");
 	if ($num < 1)
 		errorPage("You cannot access this project, because you are not assigned to it.");
 } else 
@@ -61,7 +61,7 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //get the timeformat
 $CfgTimeFormat = getTimeFormat();
 
-$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";
+$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";       //this isn't used anywhere
 
 function print_totals($Minutes, $type="", $pyear, $pmonth, $pday) {
 
@@ -94,7 +94,7 @@ function print_totals($Minutes, $type="", $pyear, $pmonth, $pday) {
 	$curDate = strtotime(date("d M Y H:i:s",$curDate) . " -$pdayOfWeek days");
 
 	$dateValues = getdate($curDate);
-	$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+	$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 	// Called from monthly.php to print out a line summing the hours worked in the past
 	// week.  index.phtml must set all global variables.
@@ -112,14 +112,17 @@ function print_totals($Minutes, $type="", $pyear, $pmonth, $pday) {
 	if ($type=="monthly")
 		print "Monthly total: ";
 	else {
-		print "<a href=\"weekly.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id$ymdStr\">Weekly Total: </a>";
+		print "<a href=\"weekly.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id$ymdStr\">Weekly Total: </a>";
 	}
 
 	print "<span class=\"calendar_total_value_$type\">". formatMinutes($Minutes) ."</span></td>\n";
 }
 
 ?>
-<html>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
 <title>Timesheet for <?php echo "$contextUser" ?></title>
 <?php
@@ -127,7 +130,7 @@ include ("header.inc");
 ?>
 </head>
 <?php
-echo "<body width=\"100%\" height=\"100%\"";
+echo "<body style=\"width:100%; height:100%;\"";
 include ("body.inc");
 if (isset($popup))
 	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
@@ -138,9 +141,9 @@ include ("navcal/navcal_monthly.inc");
 
 ?>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-<input type="hidden" name="month" value=<?php echo $month; ?>>
-<input type="hidden" name="year" value=<?php echo $year; ?>>
-<input type="hidden" name="task_id" value=<?php echo $task_id; ?>>
+<input type="hidden" name="month" value=<?php echo $month; ?> />
+<input type="hidden" name="year" value=<?php echo $year; ?> />
+<input type="hidden" name="task_id" value=<?php echo $task_id; ?> />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -214,7 +217,7 @@ include ("navcal/navcal_monthly.inc");
 	// Print last months' days spots.
 	for ($i=0; $i<$leadInDays; $i++) {
 	//while (($dayCol < $dowForFirstOfMonth) && ($dowForFirstOfMonth != 0)) {
-		print "<td width=\"14%\" HEIGHT=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
+		print "<td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
 
@@ -287,23 +290,23 @@ include ("navcal/navcal_monthly.inc");
 		print "	<table width=\"100%\">\n";
 
 		// Print out date.
-		/*print "<tr><td valign=\"top\"><tt><A HREF=\"daily.php?month=$month&year=$year&".
-			"day=$curDay&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$curDay</a></tt></td></tr>";*/
+		/*print "<tr><td valign=\"top\"><tt><a href=\"daily.php?month=$month&amp;year=$year&amp;".
+			"day=$curDay&amp;client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id\">$curDay</a></tt></td></tr>";*/
 
 		$ymdStr = "&year=".$year . "&month=".$month . "&day=" . $curDay;
 		$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
 											"?client_id=$client_id".
-											"&proj_id=$proj_id".
-											"&task_id=$task_id".
+											"&amp;proj_id=$proj_id".
+											"&amp;task_id=$task_id".
 											"$ymdStr".
-											"&destination=$_SERVER[PHP_SELF]".
+											"&amp;destination=$_SERVER[PHP_SELF]".
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 
 		print "<tr><td valign=\"top\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
-		print "<tr><td valign=\"top\"><A HREF=\"daily.php?$ymdStr".
-			"&client_id=$client_id&proj_id=$proj_id&task_id=$task_id\">$curDay <span class=\"task_time_small\">$holtitle</span></a></td>";
+		print "<tr><td valign=\"top\"><a href=\"daily.php?$ymdStr".
+			"&amp;client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id\">$curDay <span class=\"task_time_small\">$holtitle</span></a></td>";
 		print "<td valign=\"top\" align=\"right\"><a href=\"$popup_href\" class=\"action_link\">".
-				 "<img src=\"images/add.gif\" alt=\"spacer\" width=\"11\" height=\"11\" border=\"0\">".
+				 "<img src=\"images/add.gif\" alt=\"spacer\" width=\"11\" height=\"11\" border=\"0\" />".
 				"</a></td>";
 		print "</tr>";
 		print "</table></td></tr>";
@@ -383,7 +386,7 @@ include ("navcal/navcal_monthly.inc");
 						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= $formattedStartTime . "-...";
 						$todaysTotal += get_duration($data["start_stamp"],$tomorrowStamp);
 					} else {
-						print "Error: time booleans are in a confused state<br>\n";
+						print "Error: time booleans are in a confused state<br />\n";
 					}
 
 
@@ -450,9 +453,9 @@ include ("navcal/navcal_monthly.inc");
 	// Print the rest of the calendar.
 	while (($dayCol % 7) != 0) {
 		if (($dayCol % 7) == 6)
-			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</TD>\n ";
+			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</td>\n ";
 		else
-			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</TD>\n ";
+			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
 	print_totals($weeklyTotal, "weekly", $year, $month, $curDay);

@@ -29,7 +29,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
 	exit;
 }
 
@@ -55,7 +55,7 @@ $uid=''; $proj_id=0; $client_id=0;
 //get the context date
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 $dateValues = getdate($todayDate);
-$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 $startDate = mktime(0,0,0, $month, 1, $year);
 $startStr = date("Y-m-d H:i:s",$startDate);
@@ -156,14 +156,14 @@ function format_time($time) {
 }
 
 function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
-	print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"" . $script .
+	print "<a href=\"javascript:void(0)\" onclick=window.open(\"" . $script .
 		"?$variable=$info\",\"$title\",\"location=0,directories=no,status=no,scrollbar=yes," .
 		"menubar=no,resizable=1,width=500,height=200\")>";
 }
 
 function make_user_link($uid, $string) {
 	global $ymdStr;
-	echo "<a href=\"report_user.php?" . $ymdStr . "&uid=$uid&mode=&monthly\">" . 
+	echo "<a href=\"report_user.php?" . $ymdStr . "&amp;uid=$uid&amp;mode=&monthly\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 
@@ -217,8 +217,8 @@ function make_index($data,$order) {
 	return $index;
 }
 
-$Location="$_SERVER[PHP_SELF]?$ymdStr&orderby=$orderby";
-$post="&orderby=$orderby";
+$Location="$_SERVER[PHP_SELF]?$ymdStr&amp;orderby=$orderby";
+$post="&amp;orderby=$orderby";
 
 if(!$export_excel) 
 	require("report_javascript.inc");
@@ -253,7 +253,7 @@ if(!$export_excel)
 		echo ">\n";
 		echo "<div id=\"header\">";
 		include ("banner.inc");
-		$MOTD = 0;  //don't want the MOTD printed
+		$MOtd = 0;  //don't want the MOtd printed
 		include("navcal/navcal_monthly.inc");
 		echo "</div>";
 	}
@@ -276,8 +276,8 @@ if(!$export_excel)
 						</td>
 						<?php if (!$print): ?>
 							<td  align="right" width="15%" nowrap >
-								<button name="export_excel" onClick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" ALT="Export to Excel" ALIGN="ABSMIDDLE"></button> &nbsp;
-								<button onClick="popupPrintWindow()"><img src="images/icon_printer.gif" ALT="Print Report" ALIGN="ABSMIDDLE"></button>
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>
 						<?php endif; ?>
 					</tr>
@@ -292,7 +292,7 @@ if(!$export_excel)
 
 <?php } // end if !export_excel
 else {  //create Excel header
-	echo "<h4>Report Everything<br>";
+	echo "<h4>Report Everything<br />";
 	echo "Month of " . date("F, Y", $startDate);
 	echo "</h4>";
 }
@@ -301,9 +301,9 @@ else {  //create Excel header
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 					<tr class="inner_table_head">
 					<?php
-						$userPost="$ymdStr&orderby=username";
-						$projPost="$ymdStr&orderby=project";
-						$taskPost="$ymdStr&orderby=task";
+						$userPost="$ymdStr&amp;orderby=username";
+						$projPost="$ymdStr&amp;orderby=project";
+						$taskPost="$ymdStr&amp;orderby=task";
 						if($orderby=='username'): ?>
 							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
 							<td class="inner_table_column_heading">First Name</td>
@@ -331,41 +331,41 @@ else {  //create Excel header
 
 /*$query =	"select distinct first_name, ".
 			"last_name, ".
-			"$USER_TABLE.username, ".
-			"$PROJECT_TABLE.title, ".
-			"$PROJECT_TABLE.proj_id, ".
-			"$TASK_TABLE.name, ".
-			"$TASK_TABLE.task_id ".
-		"FROM $USER_TABLE, $PROJECT_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE, $TASK_ASSIGNMENTS_TABLE ".
-		"WHERE $ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
-			"$TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id AND ".
-			"$PROJECT_TABLE.proj_id = $TASK_TABLE.proj_id AND ".
-			"$ASSIGNMENTS_TABLE.username = $USER_TABLE.username AND ".
-			"$USER_TABLE.username NOT IN ('admin','guest') ".
+			"$USER_table.username, ".
+			"$PROJECT_table.title, ".
+			"$PROJECT_table.proj_id, ".
+			"$TASK_table.name, ".
+			"$TASK_table.task_id ".
+		"FROM $USER_table, $PROJECT_table, $TASK_table, $ASSIGNMENTS_table, $TASK_ASSIGNMENTS_table ".
+		"WHERE $ASSIGNMENTS_table.proj_id = $PROJECT_table.proj_id AND ".
+			"$TASK_ASSIGNMENTS_table.task_id = $TASK_table.task_id AND ".
+			"$PROJECT_table.proj_id = $TASK_table.proj_id AND ".
+			"$ASSIGNMENTS_table.username = $USER_table.username AND ".
+			"$USER_table.username NOT IN ('admin','guest') ".
 		"ORDER BY $orderby";
 
 
-$query = "SELECT $TIMES_TABLE.proj_id, ".
-		"$TIMES_TABLE.task_id, ".
-		"$TIMES_TABLE.log_message, " .
+$query = "SELECT $TIMES_table.proj_id, ".
+		"$TIMES_table.task_id, ".
+		"$TIMES_table.log_message, " .
 		"end_time AS end_time_str, ".
 		"start_time AS start_time_str, ".
 		"timediff(end_time, start_time) as diff_time, ".
 		"unix_timestamp(end_time) as end_stamp, ".
 		"unix_timestamp(start_time) as start_stamp, ".
-		"$PROJECT_TABLE.title, ".
-		"$TASK_TABLE.name, ".
+		"$PROJECT_table.title, ".
+		"$TASK_table.name, ".
 		"first_name, last_name, ".
-		"$TIMES_TABLE.uid as username, ".
+		"$TIMES_table.uid as username, ".
 		"date_format(start_time, '%Y/%m/%d') as start_date, ".
 		"trans_num ".
-	"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
-	"WHERE $TIMES_TABLE.uid=$USER_TABLE.username AND ".
+	"FROM $USER_table, $TIMES_table, $PROJECT_table, $TASK_table ".
+	"WHERE $TIMES_table.uid=$USER_table.username AND ".
 		"end_time > 0 AND ".
-		//"$TIMES_TABLE.uid='$uid' AND ".
+		//"$TIMES_table.uid='$uid' AND ".
 		"start_time >= '$year-$month-1' AND ".
-		"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND ".
-		"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
+		"$PROJECT_table.proj_id = $TIMES_table.proj_id AND ".
+		"$TASK_table.task_id = $TIMES_table.task_id AND ".
 		"end_time < '".date('Y-m-1',$next_month)."' ".
 	"ORDER BY $orderby";
 
@@ -380,7 +380,7 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 	if ($num == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
-		print "			<i><br>No hours recorded.<br><br></i>\n";
+		print "			<i><br />No hours recorded.<br /><br /></i>\n";
 		print "		</td>\n";
 		print "	</tr>\n";
 	} else {
@@ -531,7 +531,7 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 	}
 } //end if !export_excel 
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

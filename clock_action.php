@@ -48,6 +48,11 @@ if($fromPopupWindow == 'false')
 //$debug->write("destination = \"$destination\"\n");
 //$debug->write("fromPopupWindow = \"$fromPopupWindow\"\n");
 
+/**
+ * @todo the &var= stuff needs to be changed to &amp;var= BUT 
+ * if the link is used in javascript then this must be carefully checked
+ * as I think javascript doesn't like &amp;  
+ */ 
 //set the return location
 $Location = "$destination?month=$month&year=$year&day=$day&destination=$destination";
 if ($destination == "stopwatch.php" || $destination == "daily.php")
@@ -163,16 +168,16 @@ function clockon() {
 		errorPage("failed sanity check, location empty");
 
 	//check that we are not already clocked on
-	$querystring = "SELECT $TIMES_TABLE.start_time, $TASK_TABLE.name FROM ".
-			"$TIMES_TABLE, $TASK_TABLE WHERE ".
+	$querystring = "SELECT $TIMES_table.start_time, $TASK_table.name FROM ".
+			"$TIMES_table, $TASK_table WHERE ".
 			"uid='$contextUser' AND ".
 			"end_time='0' AND ".
 			//"start_time>='$year-$month-$day' AND ".
 			//"start_time<='$year-$month-$day 23:59:59' AND ".
-			"$TIMES_TABLE.task_id=$task_id AND ".
-			"$TIMES_TABLE.proj_id=$proj_id AND ".
-			"$TASK_TABLE.task_id=$task_id AND ".
-			"$TASK_TABLE.proj_id=$proj_id";
+			"$TIMES_table.task_id=$task_id AND ".
+			"$TIMES_table.proj_id=$proj_id AND ".
+			"$TASK_table.task_id=$task_id AND ".
+			"$TASK_table.proj_id=$proj_id";
 
 	list($qh,$num) = dbQuery($querystring);
 	$resultset = dbResult($qh);
@@ -183,7 +188,7 @@ function clockon() {
 	$onStr = strftime("%Y-%m-%d %H:%M:%S", $onStamp);
 
 	//now insert the record for this clock on
-	$querystring = "INSERT INTO $TIMES_TABLE (uid, start_time, proj_id,task_id) ".
+	$querystring = "INSERT INTO $TIMES_table (uid, start_time, proj_id,task_id) ".
 			"VALUES ('$contextUser','$onStr', $proj_id, $task_id)";
 	list($qh,$num) = dbQuery($querystring);
 
@@ -216,7 +221,7 @@ function clockoff() {
 	$offStr = strftime("%Y-%m-%d %H:%M:%S", $offStamp);
 
 	//check that we are actually clocked on
-	$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM $TIMES_TABLE WHERE ".
+	$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM $TIMES_table WHERE ".
 			"uid='$contextUser' AND ".
 			"end_time=0 AND ".
 			//"start_time >= '$year-$month-$day' AND ".
@@ -242,7 +247,7 @@ function clockoff() {
 
 	//now insert the record for this clock off
 	$log_message = addslashes($log_message);
-	$querystring = "UPDATE $TIMES_TABLE SET log_message='$log_message', end_time='$offStr', duration='$duration' WHERE ".
+	$querystring = "UPDATE $TIMES_table SET log_message='$log_message', end_time='$offStr', duration='$duration' WHERE ".
 			"uid='$contextUser' AND ".
 			"proj_id=$proj_id AND ".
 			"end_time=0 AND ".
@@ -278,7 +283,7 @@ function clockonandoff() {
 	$offStr = strftime("%Y-%m-%d %H:%M:%S", $offStamp);
 	
 	$log_message = addslashes($log_message);
-	$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
+	$queryString = "INSERT INTO $TIMES_table (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
 			"VALUES ('$contextUser','$onStr', '$offStr', '$duration', " .
 			"$proj_id, $task_id, '$log_message')";
 	list($qh,$num) = dbQuery($queryString);

@@ -23,19 +23,19 @@ $query = "SELECT DATE_FORMAT(start_time, '$dateFormatString') as formattedStartT
 				"DATE_FORMAT(end_time, '$dateFormatString') as formattedEndTime, ".
 				"(unix_timestamp(end_time) - unix_timestamp(start_time)) as time,".
 				"log_message, " .
-				"$PROJECT_TABLE.title AS projectTitle, " .
-				"$PROJECT_TABLE.proj_status AS projectStatus, ".
-				"$TASK_TABLE.name AS taskName, " .
-				"$TASK_TABLE.status AS taskStatus, ".
-				"$CLIENT_TABLE.organisation, ".
-				"$USER_TABLE.first_name, ".
-				"$USER_TABLE.last_name " .
-				"FROM $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE, $USER_TABLE, $CLIENT_TABLE ".
-			"WHERE $PROJECT_TABLE.proj_id=$TIMES_TABLE.proj_id ".
-				"AND $TASK_TABLE.task_id=$TIMES_TABLE.task_id ".
-				"AND $TIMES_TABLE.trans_num=$trans_num ".
-				"AND $PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id ".
-				"AND $USER_TABLE.username = $TIMES_TABLE.uid";
+				"$PROJECT_table.title AS projectTitle, " .
+				"$PROJECT_table.proj_status AS projectStatus, ".
+				"$TASK_table.name AS taskName, " .
+				"$TASK_table.status AS taskStatus, ".
+				"$CLIENT_table.organisation, ".
+				"$USER_table.first_name, ".
+				"$USER_table.last_name " .
+				"FROM $TIMES_table, $PROJECT_table, $TASK_table, $USER_table, $CLIENT_table ".
+			"WHERE $PROJECT_table.proj_id=$TIMES_table.proj_id ".
+				"AND $TASK_table.task_id=$TIMES_table.task_id ".
+				"AND $TIMES_table.trans_num=$trans_num ".
+				"AND $PROJECT_table.client_id = $CLIENT_table.client_id ".
+				"AND $USER_table.username = $TIMES_table.uid";
 
 
 //print "<PRE>$data[date]\n$data[time]\n$data[log_message]\n$data[title]\n$data[client]\n$data[first_name]\n$data[last_name]</PRE>";
@@ -105,7 +105,7 @@ include ("header.inc");
 <?php
 	}
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

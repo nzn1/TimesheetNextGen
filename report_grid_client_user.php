@@ -27,7 +27,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclReports'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclReports'));
 	exit;
 }
 
@@ -107,9 +107,9 @@ function format_time($time) {
 		return "-";
 }
 
-$ymdStr = "&start_year=$start_year&start_month=$start_month&start_day=$start_day".
-		  "&end_year=$end_year&end_month=$end_month&end_day=$end_day";
-$Location="$_SERVER[PHP_SELF]?$ymdStr&client_id=$client_id";
+$ymdStr = "&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=$start_day".
+		  "&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
+$Location="$_SERVER[PHP_SELF]?$ymdStr&amp;client_id=$client_id";
 
 ?>
 <html>
@@ -205,7 +205,7 @@ $Location="$_SERVER[PHP_SELF]?$ymdStr&client_id=$client_id";
 		echo ">\n";
 		echo "<div id=\"header\">";
 		include ("banner.inc");
-		$MOTD = 0;  //don't want the MOTD printed
+		$MOtd = 0;  //don't want the MOtd printed
 		include("navcal/navcal_monthly_with_end_dates.inc");
 		echo "</div>";
 	}
@@ -255,8 +255,8 @@ $Location="$_SERVER[PHP_SELF]?$ymdStr&client_id=$client_id";
 						</td>
 						<?php if (!$print): ?>
 							<td  align="right" width="15%" nowrap >
-								<button name="export_excel" onClick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" ALT="Export to Excel" ALIGN="ABSMIDDLE"></button> &nbsp;
-								<button onClick="popupPrintWindow()"><img src="images/icon_printer.gif" ALT="Print Report" ALIGN="ABSMIDDLE"></button>
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>
 						<?php endif; ?>
 					</tr>
@@ -273,8 +273,8 @@ $Location="$_SERVER[PHP_SELF]?$ymdStr&client_id=$client_id";
 else {  //create Excel header
 	list($fn,$ln) = get_users_name($uid);
 	$cn = get_client_name($client_id);
-	echo "<h4>Report for $cn<br>";
-	echo "User: $ln, $fn<br>";
+	echo "<h4>Report for $cn<br />";
+	echo "User: $ln, $fn<br />";
 	$sdStr = date("M d, Y",$start_time);
 	//just need to go back 1 second most of the time, but DST 
 	//could mess things up, so go back 6 hours...
@@ -293,10 +293,10 @@ if ($num == 0) {
 	print '<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">';
 	print "	<tr>\n";
 	print "		<td align=\"center\">\n";
-	print "			<i><br>No hours recorded.<br></i>\n";
+	print "			<i><br />No hours recorded.<br /></i>\n";
 	if($end_time2 <= $start_time)
-		print "			<i><b><br><font color=\"red\">End time is before Start time!</font><br></b></i>\n";
-	print "		<br></td>\n";
+		print "			<i><b><br /><font color=\"red\">End time is before Start time!</font><br /></b></i>\n";
+	print "		<br /></td>\n";
 	print "	</tr>\n";
 	print " </table>\n";
 } else {
@@ -447,15 +447,15 @@ if(!$export_excel){
 	<table width="100%" border="1" cellspacing="0" cellpadding="0">
 		<tr>
 			<td width="30%"><table><tr><td>Employee Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 		</tr>
 		<tr>
 			<td width="30%"><table><tr><td>Manager Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 		</tr>
 		<tr>
 			<td width="30%"><table><tr><td>Client Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 		</tr>
 	</table>		
 <?php } //end if($print) ?>
@@ -467,7 +467,7 @@ if(!$export_excel){
 	}
 } //end if !export_excel 
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

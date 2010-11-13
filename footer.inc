@@ -1,6 +1,6 @@
 <?php
 //Get the result set for the config set 1
-list($qhq, $numq) = dbQuery("SELECT footerhtml FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+list($qhq, $numq) = dbQuery("SELECT footerhtml FROM $CONFIG_table WHERE config_set_id = '1'");
 $configData = dbResult($qhq);
 parse_and_echo(stripslashes($configData["footerhtml"]));
 ?>
@@ -16,11 +16,11 @@ parse_and_echo(stripslashes($configData["footerhtml"]));
 		</td>
 		<td> </td>
 		<td align="center" width="30%">
-			&copy; 2008-2010 <a href="http://sourceforge.net/projects/tsheetx">Tsheetx Development Team</a><br>
+			&copy; 2008-2010 <a href="http://sourceforge.net/projects/tsheetx">Tsheetx Development Team</a><br />
 		</td>
 		<td> </td>
 		<td align="right" width="30%">
-			Usage under terms of <A HREF="http://www.gnu.org/copyleft/gpl.html">GPL</a>.
+			Usage under terms of <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.
 		</td>
 		<td width="10px"> </td>
 	</tr>

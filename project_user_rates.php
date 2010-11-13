@@ -3,7 +3,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclProjects'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -18,8 +18,8 @@ include("timesheet_menu.inc");
 <?php
 include ("header.inc");
 ?>
-</HEAD>
-<BODY <?php include ("body.inc"); ?> >
+</head>
+<body <?php include ("body.inc"); ?> >
 
 <?php
 include ("banner.inc");
@@ -54,7 +54,7 @@ include ("banner.inc");
 
 list($qh,$num) = dbQuery(
 					"SELECT p.proj_id, p.title, c.organisation ".
-					"FROM $PROJECT_TABLE p, $CLIENT_TABLE c ".
+					"FROM $PROJECT_table p, $CLIENT_table c ".
 					"WHERE p.client_id = c.client_id ".
 					"ORDER BY c.organisation");
 
@@ -69,7 +69,7 @@ while ($data = dbResult($qh)) {
 	print "<td class=\"calendar_cell_middle\">&nbsp;$titleField</td>";
 	print "<td class=\"calendar_cell_middle\">&nbsp;$organisationField</td>";
 	print "<td class=\"calendar_cell_disabled_right\">";
-	print "	<a href=\"project_user_rates_action.php?proj_id=$data[proj_id]&action=show_users\">&nbsp;Edit Rates</a>\n";
+	print "	<a href=\"project_user_rates_action.php?proj_id=$data[proj_id]&amp;action=show_users\">&nbsp;Edit Rates</a>\n";
 	print "</td>\n";
 	print "</tr>\n";
 	$n++;
@@ -90,7 +90,7 @@ while ($data = dbResult($qh)) {
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

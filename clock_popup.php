@@ -52,7 +52,7 @@ include "form_input.inc";
 include("header.inc");
 include("client_proj_task_javascript.inc");
 ?>
-<script language="Javascript">
+<script type="text/javascript">
 
 function resizePopupWindow() {
 	//now resize the window
@@ -76,7 +76,7 @@ function resizePopupWindow() {
 }
 
 </script>
-</HEAD>
+</head>
 <body style="margin: 0; padding: 0;" class="face_padding_cell" <?php include ("body.inc"); ?> onload="doOnLoad();">
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
 	  <tr>
@@ -107,7 +107,7 @@ function resizePopupWindow() {
 	  </tr>
 	</table>
 
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

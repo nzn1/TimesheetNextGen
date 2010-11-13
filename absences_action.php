@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclAbsences')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclAbsences'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclAbsences'));
 	exit;
 }
 
@@ -33,7 +33,7 @@ $last_day = isset($_REQUEST['last_day']) ? $_REQUEST['last_day']: "31";
 $action = isset($_REQUEST['action']) ? $_REQUEST['action']: 0;
 
 //set the return location
-$Location = "absences.php?month=$month&year=$year&day=$day&uid=$uid";
+$Location = "absences.php?month=$month&amp;year=$year&amp;day=$day&amp;uid=$uid";
 
 if ($action!=0) {
 	$endMonth = $month + 1;
@@ -44,7 +44,7 @@ if ($action!=0) {
 
 	}
 	//clear the absences for this user in the month
-	dbQuery("DELETE FROM $ABSENCE_TABLE WHERE user='$uid' AND ".
+	dbQuery("DELETE FROM $ABSENCE_table WHERE user='$uid' AND ".
 				"date >= '$year-$month-01 00:00:00' AND ".
 				"date < '$endYear-$endMonth-01 00:00:00'");
 
@@ -55,11 +55,11 @@ if ($action!=0) {
 		$PMtext = urlencode($_POST["PMtext".$i]);
 
 		if (($AMtype!='')&&($AMtype!='Public')) {
-			dbquery("INSERT INTO $ABSENCE_TABLE VALUES ".
+			dbquery("INSERT INTO $ABSENCE_table VALUES ".
 				"(0,'$year-$month-$i 00:00:00','AM','$AMtext','$AMtype','$uid')");
 		}
 		if (($PMtype!='')&&($PMtype!='Public')) {
-			dbquery("INSERT INTO $ABSENCE_TABLE VALUES ".
+			dbquery("INSERT INTO $ABSENCE_table VALUES ".
 				"(0,'$year-$month-$i 00:00:00','PM','$PMtext','$PMtype','$uid')");
 		}
 	}

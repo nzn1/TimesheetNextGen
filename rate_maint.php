@@ -3,7 +3,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
 	exit;
 }
 
@@ -18,7 +18,7 @@ include("timesheet_menu.inc");
 <?php
 include ("header.inc");
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" type="text/javascript">
 
 	function editRate(rateId, billRate)
 	{
@@ -39,14 +39,14 @@ include ("header.inc");
 		}
 	}
 </script>
-</HEAD>
-<BODY <?php include ("body.inc"); ?> >
+</head>
+<body <?php include ("body.inc"); ?> >
 <?php
 include ("banner.inc");
 ?>
 <form action="rate_action.php" name="rateForm" method="post">
-<input type="hidden" name="action" value="">
-<input type="hidden" name="rate_id" value="">
+<input type="hidden" name="action" value="" />
+<input type="hidden" name="rate_id" value="" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -77,7 +77,7 @@ include ("banner.inc");
 					</tr>
 <?php
 
-list($qh,$num) = dbQuery("select * from $RATE_TABLE where rate_id != 1 order by rate_id");
+list($qh,$num) = dbQuery("select * from $RATE_table where rate_id != 1 order by rate_id");
 
 $count = 0;
 while ($data = dbResult($qh)) {
@@ -131,8 +131,8 @@ while ($data = dbResult($qh)) {
 			<td>
 				<table width="100%" border="0" class="table_body">
 					<tr>
-						<td>Bill rate(per hour):&nbsp;<input size="5" name="bill_rate" style="width: 25%;">
-							<input type="button" name="addupdate" value="Add/Update Rates" onclick="javascript:addRate()" class="bottom_panel_button"></td>
+						<td>Bill rate(per hour):&nbsp;<input size="5" name="bill_rate" style="width: 25%;" />
+							<input type="button" name="addupdate" value="Add/Update Rates" onclick="javascript:addRate()" class="bottom_panel_button" /></td>
 					</tr>
 					<tr>
 					<td align="left">
@@ -156,7 +156,7 @@ while ($data = dbResult($qh)) {
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4
