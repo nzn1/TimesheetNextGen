@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclProjects'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -30,7 +30,7 @@ list($qh, $num) = dbQuery("SELECT proj_id, " .
 								"http_link, " .
 								"proj_status, " .
 								"proj_leader " .
-							"FROM $PROJECT_TABLE " .
+							"FROM $PROJECT_table " .
 							"WHERE proj_id = $proj_id " .
 							"ORDER BY proj_id");
 $data = dbResult($qh);
@@ -43,7 +43,7 @@ $dti=getdate($data["end_stamp"]);
 $end_month = $dti["mon"];
 $end_year = $dti["year"];
 
-list($qh, $num) = dbQuery("SELECT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
+list($qh, $num) = dbQuery("SELECT username FROM $ASSIGNMENTS_table WHERE proj_id = $proj_id");
 $selected_array = array();
 $i = 0;
 while ($datanext = dbResult($qh)) {
@@ -61,8 +61,8 @@ while ($datanext = dbResult($qh)) {
 <?php include ("banner.inc"); ?>
 
 <form action="proj_action.php" method="post">
-<input type="hidden" name="action" value="edit">
-<input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>">
+<input type="hidden" name="action" value="edit" />
+<input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -88,7 +88,7 @@ while ($datanext = dbResult($qh)) {
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Project Title:</td>
-						<td><input type="text" name="title" size="42" value="<?php echo stripslashes($data["title"]); ?>" style="width: 100%;" maxlength="200"></td>
+						<td><input type="text" name="title" size="42" value="<?php echo stripslashes($data["title"]); ?>" style="width: 100%;" maxlength="200" /></td>
 					</tr>
 					<tr>
 						<td align="right">Client:</td>
@@ -112,7 +112,7 @@ while ($datanext = dbResult($qh)) {
 					</tr>
 					<tr>
 						<td align="right">URL:</td>
-						<td><input type="text" name="url" size="42" value="<?php echo $data["http_link"]; ?>" style="width: 100%;"></td>
+						<td><input type="text" name="url" size="42" value="<?php echo $data["http_link"]; ?>" style="width: 100%;" /></td>
 					</tr>
 					<tr>
 						<td align="right" valign="top">Assignments:</td>
@@ -130,7 +130,7 @@ while ($datanext = dbResult($qh)) {
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
 						<td align="center">
-							<input type="submit" value="Update">
+							<input type="submit" value="Update" />
 						</td>
 					</tr>
 				</table>
@@ -148,7 +148,7 @@ while ($datanext = dbResult($qh)) {
 </form>
 
 <?php include ("footer.inc"); ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

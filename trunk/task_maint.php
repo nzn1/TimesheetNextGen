@@ -36,17 +36,17 @@ $query_task = "SELECT DISTINCT task_id, name, description,status, ".
 			"DATE_FORMAT(started, '%M %d, %Y') as started,".
 			"DATE_FORMAT(suspended, '%M %d, %Y') as suspended,".
 			"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
-		"FROM $TASK_TABLE ".
-		"WHERE $TASK_TABLE.proj_id=$proj_id ".
-		"ORDER BY $TASK_TABLE.task_id ".
+		"FROM $TASK_table ".
+		"WHERE $TASK_table.proj_id=$proj_id ".
+		"ORDER BY $TASK_table.task_id ".
 		"LIMIT $start_from, $results_per_page";
 
 $query_project = "SELECT DISTINCT title, description,".
 			"DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
 			"DATE_FORMAT(deadline, '%M %d, %Y') as deadline,".
 			"proj_status, proj_leader ".
-		"FROM $PROJECT_TABLE ".
-		"WHERE $PROJECT_TABLE.proj_id=$proj_id";
+		"FROM $PROJECT_table ".
+		"WHERE $PROJECT_table.proj_id=$proj_id";
 
 function writePageLinks($page, $results_per_page, $num_task_page)
 {
@@ -82,9 +82,9 @@ $query_task_page = "SELECT DISTINCT task_id, name, description,status, ".
 			"DATE_FORMAT(started, '%M %d, %Y') as started,".
 			"DATE_FORMAT(suspended, '%M %d, %Y') as suspended,".
 			"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
-		"FROM $TASK_TABLE ".
-		"WHERE $TASK_TABLE.proj_id=$proj_id ".
-		"ORDER BY $TASK_TABLE.task_id ";
+		"FROM $TASK_table ".
+		"WHERE $TASK_table.proj_id=$proj_id ".
+		"ORDER BY $TASK_table.task_id ";
 
 list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 ?>
@@ -95,7 +95,7 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 <?php
 include ("header.inc");
 ?>
-<script language="Javascript">
+<script type="text/javascript">
 
 	function delete_task(projectId, taskId) {
 		if (confirm('Deleting a task which has been used in the past will make those timesheet ' +
@@ -117,7 +117,7 @@ include ("banner.inc");
 ?>
 
 <form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
-<input type="hidden" name="page">
+<input type="hidden" name="page" />
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
@@ -138,7 +138,7 @@ include ("banner.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 											</tr>
 										</table>
 									</td>
@@ -150,7 +150,7 @@ include ("banner.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 											</tr>
 										</table>
 									</td>
@@ -169,7 +169,7 @@ include ("banner.inc");
 							<?php } else { ?>
 								<span class="disabledLink">Add new task</span>
 							<?php } ?>
-							<br><br>
+							<br /><br />
 							<a href="assign-proj-mbrs-to-all-tasks.php">Assign Mbrs all tasks</a>
 						</td>
 					</tr>
@@ -191,14 +191,14 @@ include ("banner.inc");
 		if ($proj_id == 0) {
 			print "	<tr>\n";
 			print "		<td align=\"center\">\n";
-			print "			<i><br>Please select a client with projects, or 'All Clients'.<br><br></i>\n";
+			print "			<i><br />Please select a client with projects, or 'All Clients'.<br /><br /></i>\n";
 			print "		</td>\n";
 			print "	</tr>\n";
 		}
 		else {
 			print "	<tr>\n";
 			print "		<td align=\"center\">\n";
-			print "			<i><br>There are no tasks for this project.<br><br></i>\n";
+			print "			<i><br />There are no tasks for this project.<br /><br /></i>\n";
 			print "		</td>\n";
 			print "	</tr>\n";
 		}
@@ -215,7 +215,7 @@ include ("banner.inc");
 					<tr>
 						<td valign="center">
 							<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
-							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br>
+							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br />
 								<?php echo stripslashes($data_task["description"]); ?>
 						</td>
 						<td align="right" valign="top" nowrap>
@@ -226,10 +226,10 @@ include ("banner.inc");
 					</tr>
 					<tr>
 						<td align="left" colspan="2" align="top">
-							<span class="label">Assigned persons:</span><br>
+							<span class="label">Assigned persons:</span><br />
 <?php
 			//get assigned users
-			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id=$data_task[task_id]");
+			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM $TASK_ASSIGNMENTS_table WHERE task_id=$data_task[task_id]");
 			if ($num_3 > 0) {
 				while ($data_3 = dbResult($qh3)) {
 					print "$data_3[username] ";
@@ -270,7 +270,7 @@ include ("banner.inc");
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

@@ -8,7 +8,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 require("class.Pair.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclWeekly')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclWeekly'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclWeekly'));
 	exit;
 }
 
@@ -52,7 +52,7 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //get the timeformat
 $CfgTimeFormat = getTimeFormat();
 
-$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";
+$post="proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";
 ?>
 <html>
 <head>
@@ -65,17 +65,17 @@ include ("header.inc");
 echo "<body width=\"100%\" height=\"100%\"";
 include ("body.inc");
 if (isset($popup))
-	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
+	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&amp;task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
 echo ">\n";
 
 include ("banner.inc");
 include("navcal/navcalendars.inc");
 ?>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-<input type="hidden" name="month" value=<?php echo $month; ?>>
-<input type="hidden" name="year" value=<?php echo $year; ?>>
-<input type="hidden" name="day" value=<?php echo $day; ?>>
-<input type="hidden" name="task_id" value=<?php echo $task_id; ?>>
+<input type="hidden" name="month" value=<?php echo $month; ?> />
+<input type="hidden" name="year" value=<?php echo $year; ?> />
+<input type="hidden" name="day" value=<?php echo $day; ?> />
+<input type="hidden" name="task_id" value=<?php echo $task_id; ?> />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -96,7 +96,7 @@ include("navcal/navcalendars.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 											</tr>
 										</table>
 									</td>
@@ -108,7 +108,7 @@ include("navcal/navcalendars.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 											</tr>
 										</table>
 									</td>
@@ -183,7 +183,7 @@ include("navcal/navcalendars.inc");
 	}
 
 	// Get the Weekly data.
-	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
+	$order_by_str = "$CLIENT_table.organisation, $PROJECT_table.title, $TASK_table.name";
 	list($num3, $qh3) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id, $order_by_str);
 
 	//print "<p>Query: $query </p>";
@@ -378,7 +378,7 @@ include("navcal/navcalendars.inc");
 						$emptyCell = false;
 					else
 						//print a break for the next entry
-						print "&nbsp;"; //"<br>";
+						print "&nbsp;"; //"<br />";
 
 					//format printable times
 					if ($CfgTimeFormat == "12") {
@@ -417,15 +417,15 @@ include("navcal/navcalendars.inc");
 			$dateValues = getdate($currentDate);
 			$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
 				"?client_id=$matchedPair->clientId".
-				"&proj_id=$matchedPair->projectId".
-				"&task_id=$matchedPair->value1".
-				"&year=".$dateValues["year"].
-				"&month=".$dateValues["mon"].
-				"&day=".$dateValues["mday"].
-				"&destination=$_SERVER[PHP_SELF]".
+				"&amp;proj_id=$matchedPair->projectId".
+				"&amp;task_id=$matchedPair->value1".
+				"&amp;year=".$dateValues["year"].
+				"&amp;month=".$dateValues["mon"].
+				"&amp;day=".$dateValues["mday"].
+				"&amp;destination=$_SERVER[PHP_SELF]".
 				"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 			print "<a href=\"$popup_href\" class=\"action_link\">".
-				"<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\">".
+				"<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\" alt=\"\" />".
 				"</a>";
 
 			//close the times class
@@ -434,7 +434,7 @@ include("navcal/navcalendars.inc");
 			if (!$emptyCell) {
 				//print todays total
 				$todaysTotalStr = formatMinutes($todaysTotal);
-				print "<br><span class=\"task_time_total_small\">$todaysTotalStr</span>";
+				print "<br /><span class=\"task_time_total_small\">$todaysTotalStr</span>";
 			}
 
 			//end the column
@@ -474,13 +474,13 @@ include("navcal/navcalendars.inc");
 	$currentDate = $startDate;
 	for ($i=0; $i<7; $i++) {
 		$dateValues = getdate($currentDate);
-		$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+		$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 		$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
 											"?client_id=$client_id".
-											"&proj_id=$proj_id".
-											"&task_id=$task_id".
+											"&amp;proj_id=$proj_id".
+											"&amp;task_id=$task_id".
 											"$ymdStr".
-											"&destination=$_SERVER[PHP_SELF]".
+											"&amp;destination=$_SERVER[PHP_SELF]".
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 		print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
 		print "<a href=\"$popup_href\" class=\"action_link\">Add</a>,";

@@ -19,9 +19,9 @@ $proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 $task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 
-dbQuery("DELETE FROM $TIMES_TABLE WHERE trans_num=$trans_num AND uid='$contextUser'");
+dbQuery("DELETE FROM $TIMES_table WHERE trans_num=$trans_num AND uid='$contextUser'");
 //seems broken: Header("Location: $_SERVER[HTTP_REFERER]");
-Header("Location: daily.php?month=$month&year=$year&day=$day");
+Header("Location: daily.php?month=$month&amp;year=$year&amp;day=$day");
 
 // vim:ai:ts=4:sw=4
 ?>

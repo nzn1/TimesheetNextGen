@@ -5,7 +5,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
 	exit;
 }
 
@@ -36,7 +36,7 @@ else
 if($action!='performCopy') {
 	include("timesheet_menu.inc");
 } else {
-	$commandMenu->add(new TextCommand("Back", true, "$_SERVER[PHP_SELF]?cloneFrom=$cloneFrom&cloneTo=$cloneTo"));
+	$commandMenu->add(new TextCommand("Back", true, "$_SERVER[PHP_SELF]?cloneFrom=$cloneFrom&amp;cloneTo=$cloneTo"));
 }
 
 //$debug->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
@@ -45,7 +45,7 @@ include("table_names.inc");
 
 ?>
 <div id="header">
-<HEAD>
+<head>
 	<title>Copy Project and Task Assignments</title> 
 	<?php include ("header.inc"); ?>
 
@@ -113,13 +113,13 @@ include("table_names.inc");
 		}
 	//-->
 	</script>
-</HEAD>
+</head>
 
-<BODY <?php include ("body.inc"); ?> >
+<body <?php include ("body.inc"); ?> >
 <?php
 print "</div>";
 include ("banner.inc");
-//print "Action: $action<br>";
+//print "Action: $action<br />";
 //print_r($projary);
 
 if($action!='performCopy') {
@@ -128,7 +128,7 @@ if($action!='performCopy') {
 //==========================================================================================
 ?>
 <form action="user_clone.php" name="userForm" method="post">
-<input type="hidden" name="action" id="action" value="">
+<input type="hidden" name="action" id="action" value="" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -151,7 +151,7 @@ if($action!='performCopy') {
 						</td>
 						<td align="right" nowrap class="outer_table_heading">
 						<?php
-							echo "&nbsp; &nbsp;<input type=\"button\" name=\"cloneUser\" value=\"Copy Assignments\" onclick=\"javascript:onClone()\" disabled=\"true\" class=\"bottom_panel_button\"> ";
+							echo "&nbsp; &nbsp;<input type=\"button\" name=\"cloneUser\" value=\"Copy Assignments\" onclick=\"javascript:onClone()\" disabled=\"disabled\" class=\"bottom_panel_button\" /> ";
 						?>
 						</td>
 					</tr>
@@ -163,8 +163,8 @@ if($action!='performCopy') {
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
-				Copy selected (checked) projects and their associated task assignments from <?php echo $cfs; ?> to <?php echo $cts; ?><br>
-				Any projects un-checked below will not be assigned to <?php echo $cts; ?>. (But they won't be removed if already assigned to them.)<br>
+				Copy selected (checked) projects and their associated task assignments from <?php echo $cfs; ?> to <?php echo $cts; ?><br />
+				Any projects un-checked below will not be assigned to <?php echo $cts; ?>. (But they won't be removed if already assigned to them.)<br />
 				<table width="100%" border="1" cellspacing="0" cellpadding="3" class="table_body">
 					<tr class="inner_table_head">
 						<td>&nbsp;</td>
@@ -175,15 +175,15 @@ if($action!='performCopy') {
 	function get_task_name($task_id) {
 		include("table_names.inc");
 
-		$sql = "SELECT name FROM $TASK_TABLE WHERE task_id=$task_id";
+		$sql = "SELECT name FROM $TASK_table WHERE task_id=$task_id";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
 		return $result['name'];
 	}
 
 	$proj_list = array();
-	global $TASK_ASSIGNMENTS_TABLE, $ASSIGNMENTS_TABLE;
-	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_TABLE WHERE username = '$cloneFrom' AND  proj_id!=1");
+	global $TASK_ASSIGNMENTS_table, $ASSIGNMENTS_table;
+	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_table WHERE username = '$cloneFrom' AND  proj_id!=1");
 	while ($data = dbResult($qh)) {
 		$p_id=$data['proj_id'];
 		$p_name=get_project_name($p_id);
@@ -192,14 +192,14 @@ if($action!='performCopy') {
 	ksort($proj_list);
 
 	foreach($proj_list as $p_name => $p_id) {
-		print "<tr><td><input type=\"checkbox\" name=\"proj[]\" id=\"proj_$p_id\" value=\"$p_id\" CHECKED>&nbsp;</input></td>\n";
+		print "<tr><td><input type=\"checkbox\" name=\"proj[]\" id=\"proj_$p_id\" value=\"$p_id\" CHECKED />&nbsp;</td>\n";
 		//print "<tr><td><input type=\"checkbox\" name=\"proj[]\" id=\"proj_$p_id\" value=\"$p_id\"";
 		//if(in_array($p_id,$projary)) echo ' CHECKED';
-		//print ">&nbsp;</input></td>\n";
+		//print " />&nbsp;</td>\n";
 
 		print "<td>$p_name</td><td>";
 
-		$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_TABLE WHERE username ='$cloneFrom' AND task_id!=1 AND proj_id=$p_id";
+		$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_table WHERE username ='$cloneFrom' AND task_id!=1 AND proj_id=$p_id";
 		list($qh2,$num2) = dbQuery($sql);
 
 		$ntasks=0;
@@ -257,8 +257,8 @@ if($action!='performCopy') {
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
-				Copying the selected projects and their associated task assignments from <?php echo $cloneFrom; ?> to <?php echo $cloneTo; ?><br>
-				Project op (P op) = means project already existed for the user, + means project was added<br>
+				Copying the selected projects and their associated task assignments from <?php echo $cloneFrom; ?> to <?php echo $cloneTo; ?><br />
+				Project op (P op) = means project already existed for the user, + means project was added<br />
 				Tasks ignored means user was already assigned that task, added means those tasks were assigned to the user
 				<table width="100%" border="1" cellspacing="0" cellpadding="3" class="table_body">
 					<tr class="inner_table_head">
@@ -270,15 +270,15 @@ if($action!='performCopy') {
 	function get_task_name($task_id) {
 		include("table_names.inc");
 
-		$sql = "SELECT name FROM $TASK_TABLE WHERE task_id=$task_id";
+		$sql = "SELECT name FROM $TASK_table WHERE task_id=$task_id";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
 		return $result['name'];
 	}
 
 	$proj_list = array();
-	global $TASK_ASSIGNMENTS_TABLE, $ASSIGNMENTS_TABLE;
-	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_TABLE WHERE username = '$cloneTo' AND  proj_id!=1");
+	global $TASK_ASSIGNMENTS_table, $ASSIGNMENTS_table;
+	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_table WHERE username = '$cloneTo' AND  proj_id!=1");
 	while ($data = dbResult($qh)) {
 		$p_id=$data['proj_id'];
 		$proj_list[]=$p_id;
@@ -294,7 +294,7 @@ if($action!='performCopy') {
 		$p_name = get_project_name($p_id);
 		print "<tr><td>$p_name</td><td> ";
 		if(in_array($p_id,$proj_list)) { //if user is already a member of the project, we must check task assignments...
-			$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_TABLE WHERE username ='$cloneTo' AND proj_id=$p_id";
+			$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_table WHERE username ='$cloneTo' AND proj_id=$p_id";
 			list($qh,$num) = dbQuery($sql);
 			while ($data = dbResult($qh)) {
 				$t_id=$data['task_id'];
@@ -302,11 +302,11 @@ if($action!='performCopy') {
 			}
 			print "=</td><td>";
 		} else {
-			//dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ('$p_id','$cloneTo', 1)");
+			//dbquery("INSERT INTO $ASSIGNMENTS_table VALUES ('$p_id','$cloneTo', 1)");
 			print "+</td><td>";
 		}
 
-		$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_TABLE WHERE username ='$cloneFrom' AND proj_id=$p_id";
+		$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_table WHERE username ='$cloneFrom' AND proj_id=$p_id";
 		list($qh,$num) = dbQuery($sql);
 		while ($data = dbResult($qh)) {
 			$t_id=$data['task_id'];
@@ -320,14 +320,14 @@ if($action!='performCopy') {
 				$ignored++;
 				$ignstr .= get_task_name($t_id);
 			} else {
-				//dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES ('$t_id','$cloneTo','$p_id')");
+				//dbquery("INSERT INTO $TASK_ASSIGNMENTS_table VALUES ('$t_id','$cloneTo','$p_id')");
 				if($added>0)
 					$addstr.=", ";
 				$added++;
 				$addstr .= get_task_name($t_id);
 			}
 		}
-		print "ignored $ignored: $ignstr<br>";
+		print "ignored $ignored: $ignstr<br />";
 		print "added &nbsp; $added: $addstr</td>";
 		print "</tr>";
 	}
@@ -354,7 +354,7 @@ echo "<div id=\"footer\">";
 include ("footer.inc"); 
 echo "</div>";
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

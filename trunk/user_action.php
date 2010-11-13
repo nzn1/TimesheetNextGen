@@ -5,7 +5,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
 	exit;
 }
 
@@ -33,9 +33,9 @@ $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIV
 include("table_names.inc");
 
 if ($action == "delete") {
-	dbquery("DELETE FROM $USER_TABLE WHERE uid='$uid'");
-	dbquery("DELETE FROM $ASSIGNMENTS_TABLE WHERE username='$username'");
-	dbquery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE username='$username'");
+	dbquery("DELETE FROM $USER_table WHERE uid='$uid'");
+	dbquery("DELETE FROM $ASSIGNMENTS_table WHERE username='$username'");
+	dbquery("DELETE FROM $TASK_ASSIGNMENTS_table WHERE username='$username'");
 }
 else if ($action == "addupdate") {
 	//set the level
@@ -47,7 +47,7 @@ else if ($action == "addupdate") {
 		$level = 1;
 
 	//check whether the user exists, and get his encrypted password.
-	list($qh,$num) = dbQuery("SELECT username, password FROM $USER_TABLE WHERE uid='$uid'");
+	list($qh,$num) = dbQuery("SELECT username, password FROM $USER_table WHERE uid='$uid'");
 
 	//if there is a match
 	if ($data = dbResult($qh)) {
@@ -55,15 +55,15 @@ else if ($action == "addupdate") {
 		//has the username changed
 		if ($data["username"] != $username) {
 			//update the assignments
-			dbQuery("UPDATE $ASSIGNMENTS_TABLE SET username='$username' WHERE username='$data[username]'");
-			dbQuery("UPDATE $TASK_ASSIGNMENTS_TABLE SET username='$username' WHERE username='$data[username]'");
-			dbQuery("UPDATE $PROJECT_TABLE SET proj_leader='$username' WHERE proj_leader='$data[username]'");
-			dbQuery("UPDATE $TIMES_TABLE SET uid='$username' WHERE uid='$data[username]'");
+			dbQuery("UPDATE $ASSIGNMENTS_table SET username='$username' WHERE username='$data[username]'");
+			dbQuery("UPDATE $TASK_ASSIGNMENTS_table SET username='$username' WHERE username='$data[username]'");
+			dbQuery("UPDATE $PROJECT_table SET proj_leader='$username' WHERE proj_leader='$data[username]'");
+			dbQuery("UPDATE $TIMES_table SET uid='$username' WHERE uid='$data[username]'");
 		}
 
 		if ($data["password"] == $password) {
 			//then we are not updating the password
-			dbquery("UPDATE $USER_TABLE SET first_name='$first_name', last_name='$last_name', ".
+			dbquery("UPDATE $USER_table SET first_name='$first_name', last_name='$last_name', ".
 								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
@@ -71,7 +71,7 @@ else if ($action == "addupdate") {
 								"WHERE uid='$uid'");
 		} else {
 			//set the password as well
-			dbquery("UPDATE $USER_TABLE SET first_name='$first_name', last_name='$last_name', ".
+			dbquery("UPDATE $USER_table SET first_name='$first_name', last_name='$last_name', ".
 								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
@@ -81,15 +81,15 @@ else if ($action == "addupdate") {
 		}
 	} else {
 		// a new user
-		dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, ".
+		dbquery("INSERT INTO $USER_table (username, level, password, first_name, ".
 							"last_name, email_address, time_stamp, status) " .
 						"VALUES ('$username',$level,$DATABASE_PASSWORD_FUNCTION('$password'),'$first_name',".
 							"'$last_name','$email_address',0,'$status')");
-		dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
-		dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
+		dbquery("INSERT INTO $ASSIGNMENTS_table VALUES (1,'$username', 1)"); // add default project.
+		dbquery("INSERT INTO $TASK_ASSIGNMENTS_table VALUES (1,'$username', 1)"); // add default task
 		//create a time string for >>now<<
 		$today_stamp = date("Y-m-d H:i:00");
-		dbquery("INSERT INTO $ALLOWANCE_TABLE VALUES (NULL,'$username', '$today_stamp', 0, 0.0)"); // add default allowance
+		dbquery("INSERT INTO $ALLOWANCE_table VALUES (NULL,'$username', '$today_stamp', 0, 0.0)"); // add default allowance
 	}
 }
 

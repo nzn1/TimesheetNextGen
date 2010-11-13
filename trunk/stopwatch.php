@@ -36,7 +36,7 @@ include ("header.inc");
 include("client_proj_task_javascript.inc");
 ?>
 
-<script language="javascript">
+<script type="text/javascript">
 function doClockonoff(clockon) {
 	document.mainForm.clockonoff.value = clockon;
 	onSubmit();

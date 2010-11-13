@@ -3,7 +3,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclClients')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclClients'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclClients'));
 	exit;
 }
 
@@ -18,18 +18,18 @@ $contextUser = strtolower($_SESSION['contextUser']);
 
 //make sure "No Client exists with client_id of 1
 //execute the query
-tryDbQuery("INSERT INTO $CLIENT_TABLE VALUES (1,'No Client', 'This is required, do not edit or delete this client record', '', '', '', '', '', '', '', '', '', '', '', '', '', '');");
-tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1'");
+tryDbQuery("INSERT INTO $CLIENT_table VALUES (1,'No Client', 'This is required, do not edit or delete this client record', '', '', '', '', '', '', '', '', '', '', '', '', '', '');");
+tryDbQuery("UPDATE $CLIENT_table set organisation='No Client' WHERE client_id='1'");
 
 ?>
 
 <HTML>
-<HEAD>
+<head>
 <title>Client Management Page</title>
 <?php
 include ("header.inc");
 ?>
-<script language="Javascript">
+<script type="text/javascript">
 
 	function delete_client(clientId) {
 				if (confirm('Are you sure you want to delete this client?'))
@@ -37,8 +37,8 @@ include ("header.inc");
 	}
 
 </script>
-</HEAD>
-<BODY <?php include ("body.inc"); ?> >
+</head>
+<body <?php include ("body.inc"); ?> >
 <?php
 include ("banner.inc");
 ?>
@@ -57,7 +57,7 @@ include ("banner.inc");
 							Clients
 						</td>
 						<td align="right">
-							<a href="client_add.php" class="outer_table_action">Add new client</A>
+							<a href="client_add.php" class="outer_table_action">Add new client</a>
 						</td>
 					</tr>
 				</table>
@@ -74,11 +74,11 @@ include ("banner.inc");
 <?php
 
 //execute the query
-list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE WHERE client_id > 1 ORDER BY organisation");
+list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_table WHERE client_id > 1 ORDER BY organisation");
 
 //are there any results?
 if ($num == 0) {
-	print "<tr><td align=\"center\" colspan=\"5\"><br>There are currently no clients.<br><br></td></tr>";
+	print "<tr><td align=\"center\" colspan=\"5\"><br />There are currently no clients.<br /><br /></td></tr>";
 }
 else {
 
@@ -107,7 +107,7 @@ $count = 0;
 			print "<tr class=\"diff\">";
 		else
 			print "<tr>";
-		print "<td class=\"calendar_cell_middle\"><A HREF=\"javascript:void(0)\" ONCLICK=window.open(\"client_info.php?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=240\")>$organisationField</A></TD>";
+		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=window.open(\"client_info.php?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=240\")>$organisationField</a></td>";
 		print "<td class=\"calendar_cell_middle\">$contactNameField</td>";
 		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
 		print "<td class=\"calendar_cell_middle\">$emailField</td>";
@@ -119,7 +119,7 @@ $count = 0;
 	}
 }
 ?>
-				</TABLE>
+				</table>
 			</td>
 		</tr>
 	</table>
@@ -135,7 +135,7 @@ $count = 0;
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

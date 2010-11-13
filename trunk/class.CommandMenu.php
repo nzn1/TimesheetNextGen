@@ -9,6 +9,7 @@ class Command {
 
 	function Command($text, $enabled, $sep=true) {
 		//$this->text = str_replace(" ", "&nbsp;", $text);  don't need to do this because we're using <nobr></nobr> tags
+		//<nobr> should not be used. it isn't a valid html tag.
 		$this->text = $text;
 		$this->enabled = $enabled;
 		$this->wantsep = $sep;
@@ -17,6 +18,10 @@ class Command {
 	function toString() {
 		if (!$this->enabled)
 			return "<nobr><span class=\"command_current\">$this->text</span></nobr>";
+			//NOBR is not a valid html tag
+      /**
+			 *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
+			 */       	
 		else
 			return $this->text;
 	}
@@ -45,6 +50,10 @@ class TextCommand extends Command {
 			return parent::toString();
 		else
 			return "<nobr><a href=\"" . $this->url . "\" class=\"command\">" . $this->text . "</a></nobr>";
+			//NOBR is not a valid html tag
+			/**
+			 *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
+			 */       	
 	}
 }
 
@@ -63,7 +72,11 @@ class IconTextCommand extends TextCommand {
 		if (!file_exists($this->img))
 			return parent::toString();
 		else
-			return "<nobr><a href=\"" . $this->url . "\" class=\"command\"><img src=\"" . $this->img . "\" border=\"0\" align=\"absbottom\">" . $this->text . "</a></nobr>";
+			return "<nobr><a href=\"" . $this->url . "\" class=\"command\"><img src=\"" . $this->img . "\" alt=\"\" border=\"0\" align=\"absbottom\" />" . $this->text . "</a></nobr>";
+			//NOBR is not a valid html tag
+			/**
+			 *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
+			 */       	
 	}
 }
 
