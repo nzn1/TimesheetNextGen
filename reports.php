@@ -32,7 +32,7 @@ $ymdStr = "&amp;year=$year&amp;month=$month&amp;day=$day";
 <body <?php include ("body.inc"); ?> >
 <?php 
 include ("banner.inc"); 
-$MOtd=0;
+$motd=0;
 include ("navcal/navcalendars.inc");
 ?>
 

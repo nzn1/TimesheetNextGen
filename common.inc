@@ -11,7 +11,7 @@ if (!defined("COMMON_INC")) {
 	$realToday = getdate(time());
 	$realTodayDate = mktime(0, 0, 0, $realToday['mon'], $realToday['mday'], $realToday['year']);
 
-	$MOTD = 1;
+	$motd = 1;
 	//Useful constants
 	define("A_DAY", 24 * 60 * 60);  //seconds per day
 	define("WORK_DAY", 8); //hours per day

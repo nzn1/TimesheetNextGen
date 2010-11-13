@@ -205,7 +205,7 @@ $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;client_id=$client_id";
 		echo ">\n";
 		echo "<div id=\"header\">";
 		include ("banner.inc");
-		$MOtd = 0;  //don't want the MOtd printed
+		$motd = 0;  //don't want the motd printed
 		include("navcal/navcal_monthly_with_end_dates.inc");
 		echo "</div>";
 	}
