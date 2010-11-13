@@ -89,7 +89,7 @@ function popupPrintWindow() {
 		include ("body.inc");
 		echo ">\n";
 		include ("banner.inc");
-		$MOtd = 0;  //don't want the MOtd printed
+		$motd = 0;  //don't want the motd printed
 		include("navcal/navcal_monthly.inc");
 	}
 

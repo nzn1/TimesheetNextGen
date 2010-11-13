@@ -233,7 +233,7 @@ if(!$export_excel)
 		echo ">\n";
 		echo "<div id=\"header\">";
 		include ("banner.inc");
-		$MOtd = 0;  //don't want the MOtd printed
+		$motd = 0;  //don't want the motd printed
 		if($mode=='weekly')
 			include("navcal/navcalendars.inc");
 		else
