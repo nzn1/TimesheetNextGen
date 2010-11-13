@@ -48,7 +48,7 @@ $startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
 $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 
 //get the configuration of timeformat and layout
-list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM $CONFIG_table WHERE config_set_id = '1'");
+list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qh2);
 $layout = $configData['simpleTimesheetLayout'];
 
@@ -65,16 +65,16 @@ include ("header.inc");
 	var projectTasksHash = {};
 <?php
 //get all of the projects and put them into the hashtable
-$getProjectsQuery = "SELECT $PROJECT_table.proj_id, " .
-							"$PROJECT_table.title, " .
-							"$PROJECT_table.client_id, " .
-							"$CLIENT_table.client_id, " .
-							"$CLIENT_table.organisation " .
-						"FROM $PROJECT_table, $ASSIGNMENTS_table, $CLIENT_table " .
-						"WHERE $PROJECT_table.proj_id=$ASSIGNMENTS_table.proj_id AND ".
-							"$ASSIGNMENTS_table.username='$contextUser' AND ".
-							"$PROJECT_table.client_id=$CLIENT_table.client_id ".
-						"ORDER BY $CLIENT_table.organisation, $PROJECT_table.title";
+$getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
+							"$PROJECT_TABLE.title, " .
+							"$PROJECT_TABLE.client_id, " .
+							"$CLIENT_TABLE.client_id, " .
+							"$CLIENT_TABLE.organisation " .
+						"FROM $PROJECT_TABLE, $ASSIGNMENTS_TABLE, $CLIENT_TABLE " .
+						"WHERE $PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
+							"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
+							"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
+						"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
 list($qh3, $num3) = dbQuery($getProjectsQuery);
 
@@ -817,7 +817,7 @@ include("navcal/navcalendars.inc");
 	// Get the Weekly user data.
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
-	$order_by_str = "$CLIENT_table.organisation, $PROJECT_table.title, $TASK_table.name";
+	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
 	list($num5, $qh5) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
 
 	//we're going to put the data into an array of

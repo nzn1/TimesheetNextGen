@@ -29,7 +29,7 @@ if ($action == "show_users") {
 
 	//check whether the project id exists in database
 	list($qh,$num) = dbQuery("SELECT c.organisation, p.title FROM " .
-								"$CLIENT_table c, $PROJECT_table p " .
+								"$CLIENT_TABLE c, $PROJECT_TABLE p " .
 								"WHERE p.proj_id='$proj_id' AND c.client_id = p.client_id");
 	//if there is a match
 	if ($data = dbResult($qh)) {
@@ -38,7 +38,7 @@ if ($action == "show_users") {
 
 		// Get the list of users who are assigned on this project
 		list($qh,$num) = dbQuery("SELECT u.username, u.first_name, u.last_name " .
-									"FROM $USER_table u, $ASSIGNMENTS_table a, $PROJECT_table p " .
+									"FROM $USER_TABLE u, $ASSIGNMENTS_TABLE a, $PROJECT_TABLE p " .
 									"WHERE p.proj_id='$proj_id' " .
 									"AND a.proj_id = p.proj_id " .
 									"AND a.username = u.username");
@@ -60,7 +60,7 @@ if ($action == "show_users") {
 	}
 
 	// Find out which users are assigned to given project
-	list($qh,$num) = dbQuery("SELECT username FROM $ASSIGNMENTS_table " .
+	list($qh,$num) = dbQuery("SELECT username FROM $ASSIGNMENTS_TABLE " .
 								"WHERE proj_id = '$proj_id' ");
 	$user_array = array();
 	while ($data = dbResult($qh)) {
@@ -75,7 +75,7 @@ if ($action == "show_users") {
 			continue;
 		}
 		//if (array_key_exists($username, $user_array)) {
-			$query = "update $ASSIGNMENTS_table set rate_id = '$rateid' where proj_id = '$proj_id' and username = '$username'";
+			$query = "update $ASSIGNMENTS_TABLE set rate_id = '$rateid' where proj_id = '$proj_id' and username = '$username'";
 		//} else {
 		//	$query = "insert into $PROJECT_USER_RATE_table (proj_id, username, rate_id) values ('$proj_id', '$username', '$rateid')";
 		//}
@@ -147,7 +147,7 @@ include ("banner.inc");
 				</tr>
 <?php
 
-list($qh,$num) = dbQuery("SELECT rate_id, bill_rate FROM $RATE_table ORDER BY bill_rate");
+list($qh,$num) = dbQuery("SELECT rate_id, bill_rate FROM $RATE_TABLE ORDER BY bill_rate");
 
 $count = 0;
 $rate_array = array();
@@ -156,7 +156,7 @@ while ($data = dbResult($qh)) {
 	$count++;
 }
 
-list($qh,$num) = dbQuery("SELECT u.username, r.rate_id FROM $USER_table u, $ASSIGNMENTS_table a, $RATE_table r ".
+list($qh,$num) = dbQuery("SELECT u.username, r.rate_id FROM $USER_TABLE u, $ASSIGNMENTS_TABLE a, $RATE_TABLE r ".
 							"WHERE a.proj_id=$proj_id " .
 							"AND a.username = u.username " .
 							"AND a.rate_id = r.rate_id " .

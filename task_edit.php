@@ -21,10 +21,10 @@ $commandMenu->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
 $commandMenu->add(new TextCommand("Copy Projects/Tasks between users", true, "user_clone.php"));
 
 //query database for existing task values
-list($qh, $num) = dbQuery("SELECT task_id, proj_id, name, description, status FROM $TASK_table WHERE task_id = $task_id ");
+list($qh, $num) = dbQuery("SELECT task_id, proj_id, name, description, status FROM $TASK_TABLE WHERE task_id = $task_id ");
 $data = dbResult($qh);
 
-list($qh, $num) = dbQuery("SELECT username FROM $TASK_ASSIGNMENTS_table WHERE proj_id = $data[proj_id] AND task_id = $task_id");
+list($qh, $num) = dbQuery("SELECT username FROM $TASK_ASSIGNMENTS_TABLE WHERE proj_id = $data[proj_id] AND task_id = $task_id");
 $selected_array = array();
 $i = 0;
 while ($datanext = dbResult($qh)) {

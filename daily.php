@@ -114,7 +114,7 @@ function open_cell_middle_td() {
 $startStr = date("Y-m-d H:i:s",$todayDate);
 $endStr = date("Y-m-d H:i:s",$tomorrowDate);
 
-$order_by_str = "start_stamp, $CLIENT_table.organisation, $PROJECT_table.title, $TASK_table.name, end_stamp";
+$order_by_str = "start_stamp, $CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name, end_stamp";
 list($num, $qh) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
 
 if ($num == 0) {

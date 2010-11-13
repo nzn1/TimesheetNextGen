@@ -27,32 +27,32 @@ if (!defined("COMMON_INC")) {
 					"unix_timestamp(start_time) AS start_stamp, ".
 					"unix_timestamp(end_time) AS end_stamp, ".
 					"duration, ".		//duration is stored in minutes
-					"$TIMES_table.status AS subStatus, " . 
+					"$TIMES_TABLE.status AS subStatus, " . 
 					"trans_num, ".
-					"$TIMES_table.uid, " .
-					"$USER_table.first_name, " .
-					"$USER_table.last_name, " .
-					"$PROJECT_table.title AS projectTitle, " .
-					"$TASK_table.name AS taskName, " .
-					"$TIMES_table.proj_id, " .
-					"$TIMES_table.task_id, " .
-					"$TIMES_table.log_message, " .
-					"$CLIENT_table.organisation AS clientName, " .
-					"$PROJECT_table.client_id " .
-				"FROM $TIMES_table, $USER_table, $TASK_table, $PROJECT_table, $CLIENT_table " .
+					"$TIMES_TABLE.uid, " .
+					"$USER_TABLE.first_name, " .
+					"$USER_TABLE.last_name, " .
+					"$PROJECT_TABLE.title AS projectTitle, " .
+					"$TASK_TABLE.name AS taskName, " .
+					"$TIMES_TABLE.proj_id, " .
+					"$TIMES_TABLE.task_id, " .
+					"$TIMES_TABLE.log_message, " .
+					"$CLIENT_TABLE.organisation AS clientName, " .
+					"$PROJECT_TABLE.client_id " .
+				"FROM $TIMES_TABLE, $USER_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE " .
 				"WHERE ";
 
 		if ($uid != '') //otherwise we want all users
-			$query .= "$TIMES_table.uid='$uid' AND ";
+			$query .= "$TIMES_TABLE.uid='$uid' AND ";
 		if ($proj_id > 0) //otherwise we want all projects
-			$query .= "$TIMES_table.proj_id=$proj_id AND ";
+			$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
 		if ($client_id > 0) //otherwise we want all clients
-			$query .= "$PROJECT_table.client_id=$client_id AND ";
+			$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
 
-		$query .=	"$TIMES_table.uid    = $USER_table.username AND ".
-					"$TASK_table.task_id = $TIMES_table.task_id AND ".
-					"$TASK_table.proj_id = $PROJECT_table.proj_id AND ".
-					"$PROJECT_table.client_id = $CLIENT_table.client_id AND ".
+		$query .=	"$TIMES_TABLE.uid    = $USER_TABLE.username AND ".
+					"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
+					"$TASK_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
+					"$PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id AND ".
 					"((start_time    >= '$startStr' AND " . 
 					"  start_time    <  '$endStr') " .
 					" OR (end_time   >  '$startStr' AND " .
@@ -67,7 +67,7 @@ if (!defined("COMMON_INC")) {
 
 	function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
 		include("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_table WHERE config_set_id = '1'");
+		list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 
 		$query = "SELECT date_format(start_time,'%d') AS day_of_month, trans_num, ";
@@ -83,10 +83,10 @@ if (!defined("COMMON_INC")) {
 			"unix_timestamp(end_time) As end_time, ".
 			"end_time As end_time_str, ".
 			"start_time AS start_time_str, ".
-			"$TASK_table.name, $TIMES_table.proj_id, $TIMES_table.task_id ".
-			"FROM $TIMES_table, $TASK_table WHERE uid='$id' AND ";
+			"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id ".
+			"FROM $TIMES_TABLE, $TASK_TABLE WHERE uid='$id' AND ";
 
-		$query .= "$TASK_table.task_id = $TIMES_table.task_id AND ".
+		$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
 			"((start_time >= '$start_year-$start_month-$start_day 00:00:00' AND start_time <= '$end_year-$end_month-$end_day 23:59:59') ".
 			" OR (end_time >= '$start_year-$start_month-$start_day 00:00:00' AND end_time <= '$end_year-$end_month-$end_day 23:59:59') ".
 			" OR (start_time < '$start_year-$start_month-$start_day 00:00:00' AND end_time > '$end_year-$end_month-$end_day 23:59:59')) ".
@@ -210,7 +210,7 @@ if (!defined("COMMON_INC")) {
 			"unix_timestamp(date) AS date, ".
 			"date AS date_str, ".
 			"user, type, ".
-			"AM_PM, subject FROM $ABSENCE_table WHERE ";
+			"AM_PM, subject FROM $ABSENCE_TABLE WHERE ";
 			$query .= "(type='Public') AND ";
 
 		if ($day==0) //want the whole month's entries
@@ -231,7 +231,7 @@ if (!defined("COMMON_INC")) {
 			"unix_timestamp(date) AS date, ".
 			"date AS date_str, ".
 			"user, type, ".
-			"AM_PM, subject FROM $ABSENCE_table WHERE ";
+			"AM_PM, subject FROM $ABSENCE_TABLE WHERE ";
 		if ($user=='') //want only the public holidays
 			$query .= "(type='Public') AND ";
 		else
@@ -249,7 +249,7 @@ if (!defined("COMMON_INC")) {
 
 	function get_start_date($user) {
 		include("table_names.inc");
-		$query = "SELECT min(date) as start_date FROM $ALLOWANCE_table WHERE username='$user'";
+		$query = "SELECT min(date) as start_date FROM $ALLOWANCE_TABLE WHERE username='$user'";
 		list($my_qu, $num) = dbQuery($query); //num should only be 1
 		$userdata = dbResult($my_qu, 1);
 		return $userdata['start_date'];
@@ -265,7 +265,7 @@ if (!defined("COMMON_INC")) {
 			$query = "SELECT sum(Holiday) ";
 		else
 			$query = "SELECT sum(glidetime) ";
-		$query .= "AS balance FROM $ALLOWANCE_table WHERE (username='$user') ";
+		$query .= "AS balance FROM $ALLOWANCE_TABLE WHERE (username='$user') ";
 		$query .= "AND (date >= '$user_start_date 00:00:00' AND date <= '$year-$month-$day 23:59:59')";
 		list($my_qu, $num) = dbQuery($query);
 		$data = dbResult($my_qu, 1);
@@ -330,7 +330,7 @@ if (!defined("COMMON_INC")) {
 
 	function count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, $type='Holiday') {
 		include("table_names.inc");
-		$query = "SELECT date,AM_PM,type,user FROM $ABSENCE_table WHERE ".
+		$query = "SELECT date,AM_PM,type,user FROM $ABSENCE_TABLE WHERE ".
 				"(type='$type') AND (user='$user') AND ".
 				"(date >= '$start_year-$start_month-$start_day 00:00:00' AND date <= '$end_year-$end_month-$end_day 23:59:59') ".
 				" ORDER BY date, AM_PM";
@@ -422,7 +422,7 @@ if (!defined("COMMON_INC")) {
 		include("table_names.inc");
 		$duration = $entry["duration"];
 		$trans_num = $entry["trans_num"];
-		tryDbQuery("UPDATE $TIMES_table set duration=$duration WHERE trans_num=$trans_num");
+		tryDbQuery("UPDATE $TIMES_TABLE set duration=$duration WHERE trans_num=$trans_num");
 	}
 
 	function fix_entry_endstamp($entry) {
@@ -430,14 +430,14 @@ if (!defined("COMMON_INC")) {
 		include("table_names.inc");
 		$etsStr = strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"]);
 		$trans_num = $entry["trans_num"];
-		tryDbQuery("UPDATE $TIMES_table set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
+		tryDbQuery("UPDATE $TIMES_TABLE set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
 	}
 
 	function get_user_empid($username) {
 		include("table_names.inc");
 
 		// Retreives user's payroll Employee ID
-		$sql = "SELECT EmpId FROM $USER_table WHERE username='$username'";
+		$sql = "SELECT EmpId FROM $USER_TABLE WHERE username='$username'";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
 		return $result['EmpId'];
@@ -447,7 +447,7 @@ if (!defined("COMMON_INC")) {
 		include("table_names.inc");
 
 		// Retreives project title (name)
-		$sql = "SELECT title FROM $PROJECT_table WHERE proj_id=$proj_id";
+		$sql = "SELECT title FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
 		return $result['title'];
@@ -459,7 +459,7 @@ if (!defined("COMMON_INC")) {
 		// Retreives title, client_id, description, deadline and link from database for a given proj_id
 		$result = array();
 		if ($proj_id > 0) {
-			$sql = "SELECT * FROM $PROJECT_table WHERE proj_id=$proj_id";
+			$sql = "SELECT * FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
 			list($my_qh, $num) = dbQuery($sql);
 			$result = dbResult($my_qh);
 		}
@@ -471,16 +471,16 @@ if (!defined("COMMON_INC")) {
 
 		$result = array();
 		if ($trans_num > 0) {
-			$query = "SELECT $PROJECT_table.client_id, $TIMES_table.proj_id, task_id, log_message, ".
+			$query = "SELECT $PROJECT_TABLE.client_id, $TIMES_TABLE.proj_id, task_id, log_message, ".
 							"end_time as end_time_str, ".
 							"start_time as start_time_str, ".
 							"unix_timestamp(start_time) as start_stamp, ".
 							"unix_timestamp(end_time) as end_stamp, ".
 							"duration, " .
 							"trans_num " .
-						"FROM $TIMES_table, $PROJECT_table " .
+						"FROM $TIMES_TABLE, $PROJECT_TABLE " .
 						"WHERE trans_num='$trans_num' AND ".
-							"$TIMES_table.proj_id = $PROJECT_table.proj_id";
+							"$TIMES_TABLE.proj_id = $PROJECT_TABLE.proj_id";
 
 			list($my_qh, $num) = dbQuery($query);
 			$result = dbResult($my_qh);
@@ -490,7 +490,7 @@ if (!defined("COMMON_INC")) {
 
 	function get_acl_level($page) {
 		include("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM $CONFIG_table WHERE config_set_id = '1'");
+		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData[$page];
 	}
@@ -577,9 +577,9 @@ if (!defined("COMMON_INC")) {
 		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
 			//show disabled users at bottom of list
 			$show_disabled=1;
-			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_table ORDER BY status DESC, last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
 		} else {
-			$query = "SELECT uid, username, last_name, first_name FROM $USER_table where status='ACTIVE' ORDER BY last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 
 		print "<select name=\"$varname\"";
@@ -625,7 +625,7 @@ if (!defined("COMMON_INC")) {
 
 	function get_users_name($uid) {
 		include("table_names.inc");
-		$query = "SELECT last_name, first_name, status FROM $USER_table where username='$uid'";
+		$query = "SELECT last_name, first_name, status FROM $USER_TABLE where username='$uid'";
 		list($qh, $num) = dbQuery($query);
 		$data = dbResult($qh);
 		return array($data['first_name'], $data['last_name'], $data['status']);
@@ -640,9 +640,9 @@ if (!defined("COMMON_INC")) {
 		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
 			//show disabled users at bottom of list
 			$show_disabled=1;
-			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_table ORDER BY status DESC, last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
 		} else {
-			$query = "SELECT uid, username, last_name, first_name FROM $USER_table where status='ACTIVE' ORDER BY last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 		list($qh, $num) = dbQuery($query);
 		print "<select name=\"$name\" multiple size=\"11\">\n";
@@ -671,7 +671,7 @@ if (!defined("COMMON_INC")) {
 	function get_client_name($clientId) {
 		include("table_names.inc");
 		if($clientId == 0) return "All Clients";
-		$query = "SELECT organisation FROM $CLIENT_table where client_id='$clientId'";
+		$query = "SELECT organisation FROM $CLIENT_TABLE where client_id='$clientId'";
 		list($qh, $num) = dbQuery($query);
 		$data = dbResult($qh);
 		return $data['organisation'];
@@ -682,21 +682,21 @@ if (!defined("COMMON_INC")) {
 
 		if ($restrictedList) {
 				list($qh,$num) = dbQuery(
-						"SELECT $CLIENT_table.client_id, $CLIENT_table.organisation, ".
-						"$PROJECT_table.client_id, $PROJECT_table.proj_id, ".
-						"$ASSIGNMENTS_table.proj_id, $ASSIGNMENTS_table.username ".
-						"FROM $CLIENT_table, $PROJECT_table, $ASSIGNMENTS_table ".
-						"WHERE $CLIENT_table.client_id > 1 ".
-						"AND $CLIENT_table.client_id=$PROJECT_table.client_id ".
-						"AND $PROJECT_table.proj_id=$ASSIGNMENTS_table.proj_id ".
-						"AND $ASSIGNMENTS_table.username='$contextUser' ".
-						"GROUP BY $CLIENT_table.client_id ".
+						"SELECT $CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation, ".
+						"$PROJECT_TABLE.client_id, $PROJECT_TABLE.proj_id, ".
+						"$ASSIGNMENTS_TABLE.proj_id, $ASSIGNMENTS_TABLE.username ".
+						"FROM $CLIENT_TABLE, $PROJECT_TABLE, $ASSIGNMENTS_TABLE ".
+						"WHERE $CLIENT_TABLE.client_id > 1 ".
+						"AND $CLIENT_TABLE.client_id=$PROJECT_TABLE.client_id ".
+						"AND $PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id ".
+						"AND $ASSIGNMENTS_TABLE.username='$contextUser' ".
+						"GROUP BY $CLIENT_TABLE.client_id ".
 						"ORDER BY organisation");
 		}
 		else {
 				list($qh,$num) = dbQuery(
 						"SELECT client_id, organisation ".
-						"FROM $CLIENT_table WHERE client_id > 1 " .
+						"FROM $CLIENT_TABLE WHERE client_id > 1 " .
 						"ORDER BY organisation");
 		}
 
@@ -755,21 +755,21 @@ if (!defined("COMMON_INC")) {
 		}
 
 		if (empty($contextUser)) {
-			$query = "SELECT proj_id, title FROM $PROJECT_table ";
+			$query = "SELECT proj_id, title FROM $PROJECT_TABLE ";
 			if ($currentClientId != 0)
-				$query .= "WHERE $PROJECT_table.client_id = $currentClientId ";
+				$query .= "WHERE $PROJECT_TABLE.client_id = $currentClientId ";
 			$query .= "ORDER BY title";
 		}
 		else {
-			$query = "SELECT DISTINCT $ASSIGNMENTS_table.proj_id, $PROJECT_table.title FROM " .
-							"$ASSIGNMENTS_table, $PROJECT_table WHERE ";
+			$query = "SELECT DISTINCT $ASSIGNMENTS_TABLE.proj_id, $PROJECT_TABLE.title FROM " .
+							"$ASSIGNMENTS_TABLE, $PROJECT_TABLE WHERE ";
 			if ($currentClientId != 0)
-				$query .= "$PROJECT_table.client_id = $currentClientId AND ";
-			$query .= "$ASSIGNMENTS_table.proj_id = $PROJECT_table.proj_id AND " .
-							"$ASSIGNMENTS_table.username='$contextUser' AND " .
-							"$ASSIGNMENTS_table.proj_id > 0 AND " .
-							"$PROJECT_table.proj_status='Started' " .
-							"ORDER BY $PROJECT_table.title,$ASSIGNMENTS_table.proj_id";
+				$query .= "$PROJECT_TABLE.client_id = $currentClientId AND ";
+			$query .= "$ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id AND " .
+							"$ASSIGNMENTS_TABLE.username='$contextUser' AND " .
+							"$ASSIGNMENTS_TABLE.proj_id > 0 AND " .
+							"$PROJECT_TABLE.proj_status='Started' " .
+							"ORDER BY $PROJECT_TABLE.title,$ASSIGNMENTS_TABLE.proj_id";
 		}
 
 		list($qh, $num) = dbQuery($query);
@@ -825,18 +825,18 @@ if (!defined("COMMON_INC")) {
 		}
 
 		if ($contextUser == '')
-			$query = "SELECT task_id, name, status FROM $TASK_table WHERE proj_id=$currentProjectId";
+			$query = "SELECT task_id, name, status FROM $TASK_TABLE WHERE proj_id=$currentProjectId";
 		else {
-// 	$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_table.task_id, $TASK_table.name FROM $TASK_ASSIGNMENTS_table, $TASK_table, $ASSIGNMENTS_table WHERE ".
-// 	  "$ASSIGNMENTS_table.proj_id=$proj_id AND $TASK_ASSIGNMENTS_table.task_id = $TASK_table.task_id and ".
-// 	  "$TASK_ASSIGNMENTS_table.task_id > 1 AND $TASK_table.status='Started' ORDER BY $TASK_ASSIGNMENTS_table.task_id";
-			$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_table.task_id, $TASK_table.name " .
-				"FROM $TASK_ASSIGNMENTS_table, $TASK_table WHERE ".
-				"$TASK_table.proj_id=$currentProjectId AND ".
-				"$TASK_ASSIGNMENTS_table.task_id = $TASK_table.task_id AND ".
-				"$TASK_ASSIGNMENTS_table.username = '$contextUser' AND ".
-				"$TASK_table.status='Started' " .
-				"ORDER BY $TASK_ASSIGNMENTS_table.name,$TASK_ASSIGNMENTS_table.task_id";
+// 	$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_TABLE.task_id, $TASK_TABLE.name FROM $TASK_ASSIGNMENTS_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE WHERE ".
+// 	  "$ASSIGNMENTS_TABLE.proj_id=$proj_id AND $TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id and ".
+// 	  "$TASK_ASSIGNMENTS_TABLE.task_id > 1 AND $TASK_TABLE.status='Started' ORDER BY $TASK_ASSIGNMENTS_TABLE.task_id";
+			$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_TABLE.task_id, $TASK_TABLE.name " .
+				"FROM $TASK_ASSIGNMENTS_TABLE, $TASK_TABLE WHERE ".
+				"$TASK_TABLE.proj_id=$currentProjectId AND ".
+				"$TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id AND ".
+				"$TASK_ASSIGNMENTS_TABLE.username = '$contextUser' AND ".
+				"$TASK_TABLE.status='Started' " .
+				"ORDER BY $TASK_ASSIGNMENTS_TABLE.name,$TASK_ASSIGNMENTS_TABLE.task_id";
 		}
 
 		list($qh, $num) = dbQuery($query);
@@ -903,9 +903,9 @@ if (!defined("COMMON_INC")) {
 		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
 			//show disabled users at bottom of list
 			$show_disabled=1;
-			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_table ORDER BY status DESC, last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
 		} else {
-			$query = "SELECT uid, username, last_name, first_name FROM $USER_table where status='ACTIVE' ORDER BY last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 
 		$drop_list_string = "<select name=\"$varname\" onChange=\"submit()\" ";
@@ -982,7 +982,7 @@ if (!defined("COMMON_INC")) {
 	function client_select_droplist($client_id=1, $disabled=false, $info=true) {
 		include("table_names.inc");
 
-			$query = "SELECT client_id, organisation FROM $CLIENT_table ORDER BY organisation";
+			$query = "SELECT client_id, organisation FROM $CLIENT_TABLE ORDER BY organisation";
 
 		//print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"client_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
@@ -1022,9 +1022,9 @@ if (!defined("COMMON_INC")) {
 							"proj_id, " .
 							"title, " .
 							"organisation " .
-							"FROM $PROJECT_table, $CLIENT_table ".
-							"WHERE $PROJECT_table.client_id = $CLIENT_table.client_id ".
-							"ORDER BY $CLIENT_table.organisation, $PROJECT_table.title";
+							"FROM $PROJECT_TABLE, $CLIENT_TABLE ".
+							"WHERE $PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id ".
+							"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
 		print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"proj_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
@@ -1230,7 +1230,7 @@ if (!defined("COMMON_INC")) {
 
 	function isValidProjectForClient($projectId, $clientId) {
 		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_table " .
+		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE " .
 						"WHERE client_id='$clientId' AND proj_id='$projectId'");
 
 		return ($num > 0);
@@ -1238,7 +1238,7 @@ if (!defined("COMMON_INC")) {
 
 	function getValidProjectForClient($clientId) {
 		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_table " .
+		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE " .
 						"WHERE client_id='$clientId'");
 		if ($num == 0)
 			return 0;
@@ -1250,7 +1250,7 @@ if (!defined("COMMON_INC")) {
 
 	function getFirstClient() {
 		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT client_id FROM $CLIENT_table");
+		list($qh, $num) = dbQuery("SELECT client_id FROM $CLIENT_TABLE");
 		if ($num == 0)
 			return 0;
 
@@ -1261,7 +1261,7 @@ if (!defined("COMMON_INC")) {
 
 	function getClientNameFromProject($proj_id) {
 		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT client_id FROM $PROJECT_table WHERE proj_id = $proj_id");
+		list($qh, $num) = dbQuery("SELECT client_id FROM $PROJECT_TABLE WHERE proj_id = $proj_id");
 		if ($num == 0)
 			return 0;
 
@@ -1269,7 +1269,7 @@ if (!defined("COMMON_INC")) {
 		$data = dbResult($qh);
 		$client_id = $data["client_id"];
 
-		list($qh, $num) = dbQuery("SELECT organisation FROM $CLIENT_table WHERE client_id = $client_id");
+		list($qh, $num) = dbQuery("SELECT organisation FROM $CLIENT_TABLE WHERE client_id = $client_id");
 		if ($num == 0)
 			return 0;
 		$data = dbResult($qh);
@@ -1278,7 +1278,7 @@ if (!defined("COMMON_INC")) {
 
 	function getFirstProject() {
 		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_table");
+		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE");
 		if ($num == 0)
 			return 0;
 
@@ -1289,28 +1289,28 @@ if (!defined("COMMON_INC")) {
 
 	function getWeekStartDay() {
 		include("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT weekstartday FROM $CONFIG_table WHERE config_set_id = '1'");
+		list($qhq, $numq) = dbQuery("SELECT weekstartday FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["weekstartday"];
 	}
 	
 	function getProjectItemsPerPage() {
 		include ("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM $CONFIG_table WHERE config_set_id = '1'");
+		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["project_items_per_page"];
 	}
 	
 	function getTaskItemsPerPage() {
 		include ("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM $CONFIG_table WHERE config_set_id = '1'");
+		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["task_items_per_page"];
 	}
 
 	function getFirstUser() {
 		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT username FROM $USER_table ");
+		list($qh, $num) = dbQuery("SELECT username FROM $USER_TABLE ");
 		if ($num == 0)
 			return 0;
 
@@ -1321,14 +1321,14 @@ if (!defined("COMMON_INC")) {
 
 	function getTimeFormat() {
 			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_table WHERE config_set_id = '1'");
+			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 			$configData = dbResult($qhq);
 			return $configData["timeformat"];
 	}
 
 	function getVersion() {
 		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT version FROM $CONFIG_table WHERE config_set_id = '1'");
+		list($qh, $num) = dbQuery("SELECT version FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		if ($num == 0)
 			return 0;
 
@@ -1476,7 +1476,7 @@ if (!defined("COMMON_INC")) {
 
 	function gotoStartPage() {
 		include('table_names.inc');
-		list($result, $count) = dbQuery("SELECT startPage FROM $CONFIG_table WHERE config_set_id = '1';");
+		list($result, $count) = dbQuery("SELECT startPage FROM $CONFIG_TABLE WHERE config_set_id = '1';");
 		list($startPage) = dbResult($result);
 		
 		header("Location: $startPage.php");

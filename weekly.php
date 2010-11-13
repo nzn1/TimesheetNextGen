@@ -183,7 +183,7 @@ include("navcal/navcalendars.inc");
 	}
 
 	// Get the Weekly data.
-	$order_by_str = "$CLIENT_table.organisation, $PROJECT_table.title, $TASK_table.name";
+	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
 	list($num3, $qh3) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id, $order_by_str);
 
 	//print "<p>Query: $query </p>";

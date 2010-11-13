@@ -27,7 +27,7 @@ if (empty($contextUser))
 
 // Check project assignment.
 if ($proj_id != 0) { // id 0 means 'All Projects'
-	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_table WHERE proj_id='$proj_id' AND username='$contextUser'");
+	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE WHERE proj_id='$proj_id' AND username='$contextUser'");
 	if ($num < 1)
 		errorPage("You cannot access this project, because you are not assigned to it.");
 } else 

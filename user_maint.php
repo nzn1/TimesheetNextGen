@@ -126,7 +126,7 @@ include ("banner.inc");
 					</tr>
 <?php
 
-list($qh,$num) = dbQuery("SELECT * FROM $USER_table WHERE username!='guest' ORDER BY status desc, last_name, first_name");
+list($qh,$num) = dbQuery("SELECT * FROM $USER_TABLE WHERE username!='guest' ORDER BY status desc, last_name, first_name");
 
 while ($data = dbResult($qh)) {
 	$firstNameField = empty($data["first_name"]) ? "&nbsp;": $data["first_name"];

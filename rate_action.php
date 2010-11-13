@@ -27,7 +27,7 @@ if ($action == "addupdate") {
 	    exit(0);
 	}
 	//check whether the rate exists
-	list($qh,$num) = dbQuery("select rate_id, bill_rate from $RATE_table where rate_id='$rate_id'");
+	list($qh,$num) = dbQuery("select rate_id, bill_rate from $RATE_TABLE where rate_id='$rate_id'");
 
 	//if there is a match
 	if ($data = dbResult($qh)) {
@@ -35,11 +35,11 @@ if ($action == "addupdate") {
 		//has the bill_rate changed
 		if ($data["bill_rate"] != $bill_rate) {
 			//update the assignments
-			dbQuery("update $RATE_table set bill_rate='$bill_rate' where rate_id='$data[rate_id]'");
+			dbQuery("update $RATE_TABLE set bill_rate='$bill_rate' where rate_id='$data[rate_id]'");
 		}
 	} else {
 		// a new rate
-		dbquery("insert into $RATE_table (bill_rate) values ('$bill_rate')");
+		dbquery("insert into $RATE_TABLE (bill_rate) values ('$bill_rate')");
 	}
 } 
 

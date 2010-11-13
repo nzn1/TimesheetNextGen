@@ -155,7 +155,7 @@ class AuthenticationManager {
 
 		//get the access level
 		list($qh,$num) = dbQuery("SELECT level ".
-									"FROM $USER_table WHERE username='$username'");
+									"FROM $USER_TABLE WHERE username='$username'");
 		$data = dbResult($qh);
 
 		if($siteclosed && ($data["level"] < CLEARANCE_ADMINISTRATOR))
@@ -180,7 +180,7 @@ class AuthenticationManager {
 		$_SESSION["accessLevel"] = $data["level"];
 		$_SESSION["contextUser"] = $username;
 
-		dbquery("UPDATE $USER_table SET session='$session_id' WHERE username='$username'");
+		dbquery("UPDATE $USER_TABLE SET session='$session_id' WHERE username='$username'");
 
 		$this->errorCode = AUTH_SUCCESS;
 		$this->errorText = "Authentication succeeded";
@@ -217,7 +217,7 @@ class AuthenticationManager {
 		require( "table_names.inc" );
 		require( "database_credentials.inc" );
 		// query the user table for authentication details
-		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2, status " . "FROM $USER_table WHERE username='$username'" );
+		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2, status " . "FROM $USER_TABLE WHERE username='$username'" );
 		$data = dbResult( $qh );
 		// is the password correct?
 		if ( $num == 0 || $data["passwd1"] != $data["passwd2"] ){
@@ -251,7 +251,7 @@ class AuthenticationManager {
 
 		if($this->isLoggedIn()) {
 			$username=$_SESSION['loggedInUser'];
-			dbquery("UPDATE $USER_table SET session='logged out' WHERE username='$username'");
+			dbquery("UPDATE $USER_TABLE SET session='logged out' WHERE username='$username'");
 		}
 
 		//unset all the variables
@@ -279,7 +279,7 @@ class AuthenticationManager {
 		if(empty($_SESSION['loggedInUser'])) return false;
 		$username=$_SESSION['loggedInUser'];
 
-		list( $qh, $num ) = dbQuery( "SELECT session FROM $USER_table WHERE username='$username'" );
+		list( $qh, $num ) = dbQuery( "SELECT session FROM $USER_TABLE WHERE username='$username'" );
 		if($num != 1) return false;
 		$data = dbResult( $qh );
 		if($data['session'] != $session_id) return false;
@@ -328,7 +328,7 @@ class AuthenticationManager {
 	*/
 	function usingLDAP() {
 		require("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT useLDAP FROM $CONFIG_table WHERE config_set_id='1'");
+		list($qh, $num) = dbQuery("SELECT useLDAP FROM $CONFIG_TABLE WHERE config_set_id='1'");
 		$data = dbResult($qh);
 		return $data['useLDAP'] == 1;
 	}
@@ -339,7 +339,7 @@ class AuthenticationManager {
 	*/
 	function usingFallback(){
 		require( "table_names.inc" );
-		list( $qh, $num ) = dbQuery( "SELECT BIN(LDAPFallback) FROM $CONFIG_table WHERE config_set_id='1'" );
+		list( $qh, $num ) = dbQuery( "SELECT BIN(LDAPFallback) FROM $CONFIG_TABLE WHERE config_set_id='1'" );
 		$data = dbResult( $qh );
 		return $data['BIN(LDAPFallback)'] == 1;
 	}
@@ -355,7 +355,7 @@ class AuthenticationManager {
 		list($qh, $num) = dbQuery("SELECT LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, " .
 						"LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, " .
 						"LDAPBindByUser, LDAPBindUsername, LDAPBindPassword, LDAPReferrals " .
-						"FROM $CONFIG_table WHERE config_set_id='1'");
+						"FROM $CONFIG_TABLE WHERE config_set_id='1'");
 		$data = dbResult($qh);
 
 		//build up connection string
@@ -514,16 +514,16 @@ class AuthenticationManager {
 				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
 			else 
 				$pwdstr = "";
-			dbquery("INSERT INTO $USER_table (username, level, password, first_name, last_name, " .
+			dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, last_name, " .
 						"email_address, time_stamp, status) " .
 						"VALUES ('$username',1,$pwdstr,'$firstName',".
 						"'$lastName','$emailAddress',0,'ACTIVE')");
-			dbquery("INSERT INTO $ASSIGNMENTS_table VALUES (1,'$username', 1)"); // add default project.
-			dbquery("INSERT INTO $TASK_ASSIGNMENTS_table VALUES (1,'$username', 1)"); // add default task
+			dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
+			dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
 		} else {
 			//get the existing user details
 			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address, status " .
-							"FROM $USER_table WHERE username='$username'");
+							"FROM $USER_TABLE WHERE username='$username'");
 			$existingUserDetails = dbResult($qh);
 
 			if($existingUserDetails['status'] == 'INACTIVE') {
@@ -545,7 +545,7 @@ class AuthenticationManager {
 				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
 			else 
 				$pwdstr = "''";
-			dbquery("UPDATE $USER_table SET first_name='$firstName', last_name='$lastName', ".
+			dbquery("UPDATE $USER_TABLE SET first_name='$firstName', last_name='$lastName', ".
 								"email_address='$emailAddress', password=$pwdstr ".
 								"WHERE username='$username'");
 		}
@@ -561,7 +561,7 @@ class AuthenticationManager {
 		require("table_names.inc");
 
 		//check whether the user exists
-		list($qh,$num) = dbQuery("SELECT username FROM $USER_table WHERE username='$username'");
+		list($qh,$num) = dbQuery("SELECT username FROM $USER_TABLE WHERE username='$username'");
 
 		//if there is a match
 		return ($data = dbResult($qh));
