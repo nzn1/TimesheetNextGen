@@ -25,7 +25,15 @@ include("navcal/common.inc");
 					</tr>
 				</table>
 			</td>
-			<?php if($motd) include("navcal/motd.inc"); ?>
+			<?php 
+				if(!class_exists('Site')){
+					if($motd) include("navcal/motd.inc");
+				}
+				else{
+					if(Common::getMotd()) include("navcal/motd.inc");
+				}
+				 
+			?>
 		</tr>
 	</table>
 <!-- End Montly Navigation Calendars -->

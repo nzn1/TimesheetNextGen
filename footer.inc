@@ -2,7 +2,10 @@
 //Get the result set for the config set 1
 list($qhq, $numq) = dbQuery("SELECT footerhtml FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configData = dbResult($qhq);
-parse_and_echo(stripslashes($configData["footerhtml"]));
+if(!class_exists('Site')){
+	parse_and_echo(stripslashes($configData['footerhtml']));
+}
+else Common::parse_and_echo(stripslashes($configData['footerhtml']));
 ?>
 <p>
 <table width="100%" class="grey_area">
@@ -10,7 +13,13 @@ parse_and_echo(stripslashes($configData["footerhtml"]));
 		<td width="10px"> </td>
 		<td class="timesheet_logo" width="30%">
 			<?php 
-			$ver = getVersion();
+			if(!class_exists('Site')){
+				$ver = getVersion();
+			}
+			else{
+				$ver = Common::getVersion();
+			}
+			
 			echo "TimesheetNextGen &nbsp;&nbsp; v$ver";
 			?>
 		</td>

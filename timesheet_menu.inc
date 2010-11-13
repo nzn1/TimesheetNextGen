@@ -76,11 +76,13 @@ if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 		$uid='unknown';
 	//$commandMenu->add(new Command("&nbsp; &nbsp; &nbsp; <nobr>context user:&nbsp".user_select_droplist_string('contextuid',$uid)."</nobr></form>",true,false));
 	//<NOBR> is not a valid tag.  Removed for now
-	$commandMenu->add(new Command("&nbsp; &nbsp; &nbsp; context user:&nbsp".user_select_droplist_string('contextuid',$uid)."</form>",true,false));
+	if(class_exists('Site')) $commandMenu->add(new Command("&nbsp; &nbsp; &nbsp; context user:&nbsp".Common::user_select_droplist_string('contextuid',$uid)."</form>",true,false));
+	else $commandMenu->add(new Command("&nbsp; &nbsp; &nbsp; context user:&nbsp".user_select_droplist_string('contextuid',$uid)."</form>",true,false));
 }
 
 //disable yourself
 $commandMenu->disableSelf();
+
 
 // vim:ai:ts=4:sw=4:filetype=php
 ?>

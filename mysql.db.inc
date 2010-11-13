@@ -4,7 +4,11 @@
 	//To port to another database, simply keep this interface and duplicate the functionality.
 	//Should have plug in compatibility.
 
+	
+	//FUNCTION NO LONGER REQUIRED AS CONNECTION IS CONTROLLED BY database.class.php
 	function dbConnect() {
+		if(class_exists('Site')){return false;}
+		trigger_error('The function dbConnect is deprecated',E_USER_DEPRECATED);
 		$GLOBALS["CONNECTED_MYSQL_DB_INC"] = 1;
 		global $DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_DB;
 		$dbh = @mysql_pconnect("$DATABASE_HOST","$DATABASE_USER","$DATABASE_PASS") or die("Unable to connect to SQL server: ". mysql_error());

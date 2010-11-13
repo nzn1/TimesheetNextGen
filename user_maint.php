@@ -143,7 +143,7 @@ while ($data = dbResult($qh)) {
 	if ($isActive)
 		print "<td align=\"center\" class=\"calendar_cell_middle\"><img src=\"images/green-check-mark.gif\" height=\"12\" border=\"0\" alt=\"\" /></td>";
 	else
-		print "<td align=\"center\" class=\"calendar_cell_middle\"><img src=\"images/red-x.gif\" height=\"12\" border=\"0\" alt="" /></td>";
+		print "<td align=\"center\" class=\"calendar_cell_middle\"><img src=\"images/red-x.gif\" height=\"12\" border=\"0\" alt=\"\" /></td>";
 
 	if ($isAdministrator)
 		print "<td class=\"calendar_cell_middle\"><span class=\"calendar_total_value_weekly\">Admin</span></td>";
