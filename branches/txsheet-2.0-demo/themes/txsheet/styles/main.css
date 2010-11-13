@@ -1,0 +1,665 @@
+
+
+.form input.invalid {
+	background-color: #FFC0CB;
+}
+
+
+.form textarea.invalid {
+	background-color: #FFC0CB;
+}
+
+.form select.invalid {
+	background-color: #FFC0CB;
+}
+
+.form strong.error {
+	color: #fe7700;
+}
+
+.form table.one {
+	table-layout: auto
+}
+
+.form label {
+	color: #000000;
+	font-size: 0.8em;
+	display:block;
+}
+
+
+.form input {background-color:#fcfcfc; -moz-border-radius:7px; -webkit-border-radius:5px; }
+.form textarea {background-color:#fcfcfc; -moz-border-radius:7px; -webkit-border-radius:5px; }
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Verdana, Tahoma, Helvetica, Arial;
+	font-size: 0.8em;
+	background: #f0f0f0; /*main background color*/
+}
+
+p {
+	color: #000000;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	margin: 0;
+	line-height: 120%;
+}
+
+a,a#visited {
+	text-decoration: none;
+	border: none;
+}
+
+pre {
+	color: #000000;
+	white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+	white-space: -pre-wrap; /* Opera 4 - 6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	white-space: pre-wrap;
+	/* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+	word-wrap: break-word; /* IE 5.5+ */
+}
+
+h2,h3,h4,h5,h6 {
+	color: #333;
+}
+
+#wrap {
+	position: relative;
+	clear: both;
+	padding: 0;
+	margin: 0 auto;
+	/*width: 1000px;*/
+	width:80%;
+	max-width:1000px;
+}
+
+/***********************HEADER************************************************/
+.headerwrap {
+	position: relative;
+	background-color: #ffffff;
+	background-image: url('../../../images/empty-seats2.jpg');
+  background-repeat: no-repeat;
+  background-position: right top;	
+	text-align: left;
+	height: 150px;
+	margin-bottom: 10px;
+	overflow:hidden;
+}
+
+.logo {
+	position: relative;
+	float: left;
+	/*left:0; 
+  top:0px;*/ /*z-index:100;*/
+	width: 30%;
+}
+
+.logo img {
+	width: 100%;
+}
+
+/**SIDEBAR**/
+.sidebar {
+    float:left;
+    width:17%;
+    position:relative;
+    left:83%;
+    overflow:hidden;
+    text-align: left;
+    color: #ffffff;
+/*  background:green; remove this later*/
+}
+
+.sidebar ul{
+  list-style-type:none;
+  padding:0;
+  margin:0;
+}
+.sidebar ul li{  
+  margin:0;
+}
+
+.sidebar ul li a,.sidebar ul li a:visited{
+  margin:0;
+  padding-top: 3px;
+    padding-bottom: 3px;
+  margin:0px;
+    color: #ffffff;
+    text-decoration: none;
+    width:100%;
+} 
+
+.sidebar ul li a:hover{
+    background: #cba93e;
+}                                           
+
+.sidebar ul li a.firstactive,.sidebar ul li a.active  {
+  /*background-color: #003366;
+  background-image: url('../images/bglbl.gif');*/
+  color: #cba93e;
+  font-weight:bold;
+  }
+
+.sidebar ul li a.firstactive:hover,.sidebar ul li a.active:hover  {
+  color: #ffffff;
+  }
+    
+.sidebar a,.sidebar a:visited {
+  padding-left: 15px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+  margin:0px;
+    color: #ffffff;
+    text-decoration: none;
+    display: block;
+    } 
+
+.sidebar h3 {
+    font-size: 14px;
+    color: #ffffff;
+    padding-left: 15px; 
+    padding-top: 3px;
+    padding-bottom: 3px;
+    display: block;
+    background: #003366 url('../images/header-bar.gif');
+    background-position: top;
+    margin-bottom: 5px;
+    font-weight: normal;
+    margin-top: 0px;
+    }
+/*
+.sidebar_selected {
+  margin:0px;
+    display: block;
+}
+
+.sidebar_selected a{
+  background-color: #003366;
+  background-image: url('../images/bglbl.gif');
+  color: #ffffff;
+  }
+*/
+    
+.sidebarpadding {
+ padding-left: 15px;
+}
+
+
+/***********************Top Right Menu Bar********************************/
+#header_right {
+    position: relative;
+    top: 0;
+    right: 20px;
+    float:right;
+    width:40%;
+    font-weight: bold;
+}
+
+#header_right h2 {
+	text-align:right;
+    color: #ff0000;
+    padding: 5px;
+    text-decoration: none;
+    /*background: url(../../../images/btns-upsidedown2.gif) top no-repeat;
+*/
+}
+
+#header_right a {
+    color: #a0a0a0;
+    padding: 5px;
+    text-decoration: none;
+    /*background: url(../../../images/btns-upsidedown2.gif) top no-repeat;
+*/
+}
+
+#header_right a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+    /*background: url(../../../images/btns-upsidedown2.gif) top no-repeat;
+*/
+}
+
+#header_right p {
+    clear: right;
+    float: right;
+    color: #a0a0a0;
+    text-align: right;
+}
+
+#header_right a:hover {
+    background-color: #f0f0f0;
+    background: url(../../../images/btns-upsidedown.gif) bottom no-repeat;
+}
+
+/***********************Main Navigation Bar********************************/
+#nav-container {
+	clear: both;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	font-size: 0.9em;
+	font-weight: bold;
+	color: #ffffff;
+	/*overflow:hidden;*/
+}
+
+#nav-container ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+#nav-container ul li {
+	float: left;
+	position: relative;
+	min-width: 100px;
+	padding: 0;
+	margin-right: 10px;
+}
+
+#nav-container ul li a {
+	display: block;
+	width: 100%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 3px;
+	padding-right: 3px;
+	text-decoration: none;
+	text-align: center;
+	color: #eee;
+	background-color: #5474C9;
+	background: url(../../../images/btns2.gif) bottom no-repeat;
+}
+
+#nav-container ul li a.first {
+	border-left: none;
+}
+
+#nav-container ul li a.active {
+	background-color: #99CBFF;
+	background: url(../../../images/btns2.gif) top no-repeat;
+}
+
+#nav-container ul li a.firstactive {
+	border-left: none;
+	background-color: #99CBFF;
+	background: url(../../../images/btns2.gif) top no-repeat;
+}
+
+#nav-container ul li a:hover {
+	background-color: #99CBFF;
+	background: url(../../../images/btns2.gif) top no-repeat;
+}
+
+#nav-container ul li ul {
+	display: none;
+}
+
+/***********************Sub Navigation Bar********************************/
+.sub-menu {
+	clear: both;
+	position: relative;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	font-size: 0.9em;
+	font-weight: bold;
+	color: #ffffff;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background-color: #000000;
+	background-image: url(../../../images/sub-menu-fade-blk.gif);
+	background-position: top right;
+	background-repeat: repeat-y;
+}
+
+.sub-menu ul {
+	list-style: none;
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+
+.sub-menu ul li {
+	padding: 0;
+	margin: 0;
+}
+
+.sub-menu li a,.sub-menu li a:visited {
+	display: block;
+	text-decoration: none;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 20px;
+	margin: 0;
+	color: #ffffff;
+	background-color: #000000;
+	background-image: url(../../../images/sub-menu-fade-blk.gif);
+	background-position: top right;
+	background-repeat: repeat-y;
+}
+
+.sub-menu li a.first {
+	border-left: none;
+}
+
+.sub-menu li a.active {
+	background-color: #417be4;
+}
+
+.sub-menu li a.firstactive {
+	border-left: none;
+	background-color: #417be4;
+}
+
+.sub-menu li a:hover {
+	background-color: #417be4;
+	background-image: url(../../../images/sub-menu-fade-blk.gif);
+	background-position: top right;
+	background-repeat: repeat-y;
+	text-decoration: none;
+}
+
+.sub-menu li ul {
+	display: none;
+}
+
+/****************************SIDEBAR & CONTENT LAYOUT*******************************/
+.clearall {
+	clear: both;
+	height: 1px;
+	overflow: hidden;
+}
+
+.response {
+	margin: 0;
+	margin-bottom:10px;
+	border: 2px solid #000000;
+	padding: 5px;
+	display: block;
+	background-color: #ffffff;
+}
+
+.response p {
+	color: #417be4;
+}
+
+/********************* CONTENT ************************/
+
+.content {
+    position:relative;
+    text-align: left;
+    color: #000000;
+    background: #ffffff;   /*this is required here so that highlighting in mozilla works
+    /*overflow: scroll;*/
+}
+
+
+.content pre {
+	color: #000000;
+}
+
+.content p {
+	color: #333;
+}
+
+.content .quote {
+	color: #417be4;
+	font-size: 1.2em;
+	font-weight: bold;
+	padding-left: 10px;
+}
+
+.content p.quote {
+	
+}
+
+.content h1 {
+	position: relative;
+	padding-top: 3px;
+	padding-bottom: 10px;
+	padding-right:0px;
+	padding-left:40px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+
+	text-align: left;
+	font-weight: bold;
+	color: #cba93e;
+	
+    background-image: url('../../../images/single-note.png');
+    background-repeat: no-repeat;
+    background-position: 5px 5px;
+}
+
+.content a,.content a:visited {
+	color: #417be4;
+	text-decoration: none;
+}
+
+.content a:hover {
+	text-decoration: underline;
+}
+
+.content a img {
+	border: 0;
+}
+
+.content a img:hover {
+	border: 0;
+	opacity: 0.8;
+}
+
+.blue {
+	color: #417be4;
+	font-weight: bold;
+}
+
+/********************* COLUMNS ************************/
+.col20,.col30,.col33,.col40,.col50,.col60,.col70,.col80 {
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+
+.col20 {
+	width: 20%;
+}
+
+.col30 {
+	width: 30%;
+}
+
+.col33 {
+	width: 32%;
+}
+
+.col40 {
+	width: 40%;
+}
+
+.col50 { /*position: relative;*/
+	width: 49%;
+}
+
+.col60 {
+	width: 59%;
+}
+
+.col70 {
+    width:68%;
+	}	
+
+.col80 { /*position: relative;*/
+	width: 79%;
+}
+
+.pad5 {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.col33middle {
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.right {
+	float: right;
+}
+
+/********************* FOOTER ************************/
+	/****************************FOOTER STYLING*******************************/
+#footer {
+	font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif;
+	color: #666666;
+	font-size: 10px;
+	background: #020202;
+	float: left;
+	width: 100%;
+}
+
+#footer p {
+	color: #ffffff;
+}
+
+#footer .footer_content {
+	background: #020202;
+}
+
+#footer .footer_content p {
+	color: #ffffff;
+	padding-top: 0px;
+	padding-bottom: 3px;
+}
+
+#footer .footer_content a,a:visited {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+#footer .footer_content a:hover {
+	background: #ffffff;
+	color: black;
+}
+
+#footer .footer_content img{
+	border-style: none;
+	}
+
+#footer .footer_left {
+	float: left;
+	position: relative;
+	color: #ffffff;
+	padding: 0px 3px 3px 3px;
+}
+
+#footer .footer_right {
+	float: right;
+	position: relative;
+	color: #ffffff;
+	padding: 0px 3px 3px 3px;
+}
+
+#footer .footer_right {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+#footer .footer_right a {
+    color: #ffffff;
+}
+#footer .footer_right a:hover {
+	background: #ffffff;
+	color: black;
+}
+
+#footer .footer_right a#visited,#footer .footer_right a#null {
+    color: #ffffff;
+}
+
+/************** NEWS *******************/
+.news-item {
+	font-size: 10px;
+	padding-top: 10px;
+}
+
+.news-item p {
+	clear: right;
+	background: transparent;
+}
+
+.news-item p strong {
+	color: #fe7700;
+}
+
+.news-item span {
+	text-align: right;
+}
+
+.news-item .read-more {
+	float: right;
+	/*margin-bottom:20px*/
+}
+
+/***** STAGES ****/
+.stages {
+	padding-top: 10px;
+	padding-left: 20px;
+}
+
+.stages h2 {
+	display: block;
+	color: #417be4;
+	padding: 0;
+	padding-top: 10px;
+	margin: 0;
+	font-size: 1.2em;
+}
+
+.stages p {
+	padding-left: 60px;
+}
+
+.stages h2 img {
+	width: 50px;
+	vertical-align: middle;
+	padding-right: 10px;
+}
+
+/*********************TABLES***************************/
+
+table.tablesmall{
+table-layout:fixed;
+border:1px solid #000000;
+padding:0px;
+margin:0;
+color: #000000;
+white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+white-space: -pre-wrap; /* Opera 4 - 6 */
+white-space: -o-pre-wrap; /* Opera 7 */
+white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+word-wrap: break-word; /* IE 5.5+ */
+}
+table.tablesmall th{
+
+border:1px solid #000000;
+padding:3px;
+margin:0;
+background-color:#a0a0f0;
+}
+table.tablesmall tr,table.tablesmall td{
+font-size: 0.9em;
+text-align: left;
+border:1px solid #000000;
+padding:3px;
+margin:0;
+}
+/************************************************/

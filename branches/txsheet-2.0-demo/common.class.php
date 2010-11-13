@@ -1,7 +1,15 @@
-<?php {
+<?php 
 //$Header: /cvsroot/tsheet/timesheet.php/common.inc,v 1.24 2005/09/12 23:58:09 vexil Exp $
-if (!defined("COMMON_INC")) {
-	define("COMMON_INC", 1);
+
+class Common{
+	
+	private static $motd;
+	
+  public static function getMotd(){
+    return self::$motd;
+  } 
+	public function __construct(){
+	if (!defined("COMMON_INC")) define("COMMON_INC", 1);
 
 
 	include("database_credentials.inc");
@@ -12,14 +20,16 @@ if (!defined("COMMON_INC")) {
 	$realToday = getdate(time());
 	$realTodayDate = mktime(0, 0, 0, $realToday['mon'], $realToday['mday'], $realToday['year']);
 
-	$motd = 1;
+	self::$motd = 1;
 	//Useful constants
 	define("A_DAY", 24 * 60 * 60);  //seconds per day
 	define("WORK_DAY", 8); //hours per day
 	define("SECONDS_PER_HOUR", 60 * 60);
 	$BREAK_RATIO = (0);     // For an hour break every 8 hours this would be: (1/8)
 
-	function get_time_records($startStr, $endStr, $uid='', $proj_id=0, $client_id=0, 
+	}
+	
+	public static function get_time_records($startStr, $endStr, $uid='', $proj_id=0, $client_id=0, 
 							$order_by = "start_time, proj_id, task_id") {
 		include("table_names.inc");
 	//build the database query
@@ -66,7 +76,7 @@ if (!defined("COMMON_INC")) {
 		return array($num, $my_qh);
 	}
 
-	function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
+	public static function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
 		include("table_names.inc");
 		list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
@@ -115,7 +125,7 @@ if (!defined("COMMON_INC")) {
 		return $worked_sec;
 	}
 
-	function format_hours_minutes($seconds) {
+	public static function format_hours_minutes($seconds) {
 		$temp = $seconds;
 		if ($seconds < 0) {
 			$temp = 0 - $seconds;
@@ -144,7 +154,7 @@ if (!defined("COMMON_INC")) {
 		return "$sign$hour:$minutes";
 	}
 
-	function format_seconds($seconds) {
+	public static function format_seconds($seconds) {
 		$temp = $seconds;
 		$hour = (int) ($temp / (60*60));
 
@@ -166,7 +176,7 @@ if (!defined("COMMON_INC")) {
 		return "$hour:$minutes:$sec";
 	}
 
-	function formatSeconds($seconds) {
+	public static function formatSeconds($seconds) {
 		$hours = (int)($seconds/3600);
 		$seconds -= $hours * 3600;
 		$minutes = (int)($seconds/60);
@@ -175,14 +185,14 @@ if (!defined("COMMON_INC")) {
 		return "${hours}h ${minutes}m";
 	}
 
-	function formatMinutes($minutes) {
+	public static function formatMinutes($minutes) {
 		$hours = (int)($minutes/60);
 		$minutes -= $hours * 60;
 
 		return "${hours}h ${minutes}m";
 	}
 
-	function format_minutes($minutes) {
+	public static function format_minutes($minutes) {
 		$temp = $minutes;
 		$hour = (int) ($temp / (60));
 
@@ -197,14 +207,14 @@ if (!defined("COMMON_INC")) {
 		return "$hour:$minutes";
 	}
 
-	function minutes_to_hours($minutes) {
+	public static function minutes_to_hours($minutes) {
 		$temp = $minutes/60;
 		$hours = number_format(round($temp,2),2);
 
 		return "$hours";
 	}
 
-	function get_holidays($month, $year, $day=0) {
+	public static function get_holidays($month, $year, $day=0) {
 		include("table_names.inc");
 		$last_day = get_last_day($month, $year);
 		$query = "SELECT date_format(date,'%d') AS day_of_month, ".
@@ -225,9 +235,15 @@ if (!defined("COMMON_INC")) {
 		return array($my_qh, $num);
 	}
 
-	function get_absences($month, $year, $user='', $day=0) {
+	public static function get_absences($month, $year, $user='', $day=0) {
 		include("table_names.inc");
-		$last_day = get_last_day($month, $year);
+		if(!class_exists('Site')){
+			$last_day = get_last_day($month, $year);
+		}
+		else{
+			$last_day = Common::get_last_day($month, $year);
+		}
+		
 		$query = "SELECT date_format(date,'%d') AS day_of_month, ".
 			"unix_timestamp(date) AS date, ".
 			"date AS date_str, ".
@@ -248,7 +264,7 @@ if (!defined("COMMON_INC")) {
 		return array($my_qh, $num);
 	}
 
-	function get_start_date($user) {
+	public static function get_start_date($user) {
 		include("table_names.inc");
 		$query = "SELECT min(date) as start_date FROM $ALLOWANCE_TABLE WHERE username='$user'";
 		list($my_qu, $num) = dbQuery($query); //num should only be 1
@@ -256,7 +272,7 @@ if (!defined("COMMON_INC")) {
 		return $userdata['start_date'];
 	}
 
-	function get_allowance($day, $month, $year, $user, $type='Holiday') {
+	public static function get_allowance($day, $month, $year, $user, $type='Holiday') {
 		include("table_names.inc");
 		$user_start_date = get_start_date($user);
 		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
@@ -273,7 +289,7 @@ if (!defined("COMMON_INC")) {
 		return $data['balance'];
 	}
 
-	function get_balance($day, $month, $year, $user, $type='Holiday') {
+	public static function get_balance($day, $month, $year, $user, $type='Holiday') {
 		include("table_names.inc");
 		$user_start_date = get_start_date($user);
 		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
@@ -307,7 +323,7 @@ if (!defined("COMMON_INC")) {
 		return $count;
 	}
 
-	function count_working_time($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user) {
+	public static function count_working_time($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user) {
 		$working_time = 0;
 		$the_day = mktime(0,0,0,$start_month,$start_day,$start_year);
 		$last_day = mktime(23,59,59,$end_month,$end_day,$end_year);
@@ -329,7 +345,7 @@ if (!defined("COMMON_INC")) {
 		return $working_time;
 	}
 
-	function count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, $type='Holiday') {
+	public static function count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, $type='Holiday') {
 		include("table_names.inc");
 		$query = "SELECT date,AM_PM,type,user FROM $ABSENCE_TABLE WHERE ".
 				"(type='$type') AND (user='$user') AND ".
@@ -347,17 +363,17 @@ if (!defined("COMMON_INC")) {
 		return $count;
 	}
 
-	function count_absences_in_month($month, $year, $user, $type='Holiday') {
+	public static function count_absences_in_month($month, $year, $user, $type='Holiday') {
 		$day = get_last_day($month, $year);
 		return count_absences(1, $month, $year, $day, $month, $year, $user, $type);
 	}
 
-	function get_last_day($month, $year) {
+	public static function get_last_day($month, $year) {
 		$days = date('t', strtotime("$year-$month-1"));
 		return $days;
 	}
 
-	function get_dst_adjustment($start_stamp) {
+	public static function get_dst_adjustment($start_stamp) {
 		static $adjustment_array = array();
 
 		//calculate the adjustment made by subtracting the total number of seconds during the DST adjusted day
@@ -377,7 +393,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	//Expects start and end to be in "Unix Timestamp" format, returns answer in minutes
-	function get_duration($start, $end, $wdst=0) {
+	public static function get_duration($start, $end, $wdst=0) {
 		$diff_in_seconds = $end - $start;
 		//print "  get_duration: $end - $start = $diff_in_seconds<br />\n";
 
@@ -413,12 +429,12 @@ if (!defined("COMMON_INC")) {
 
 	//Expects start to be in "Unix Timestamp" format, duration in minutes
 	//Returns answer in "Unix Timestamp" format
-	function get_end_date_time($start, $duration) {
+	public static function get_end_date_time($start, $duration) {
 		$end_date_time = strtotime(date("d M Y H:i:s T",$start) . " + $duration minutes");
 		return ($end_date_time);
 	}
 
-	function fix_entry_duration($entry) {
+	public static function fix_entry_duration($entry) {
 		//print "  fix_entry_duration<br />\n";
 		include("table_names.inc");
 		$duration = $entry["duration"];
@@ -426,7 +442,7 @@ if (!defined("COMMON_INC")) {
 		tryDbQuery("UPDATE $TIMES_TABLE set duration=$duration WHERE trans_num=$trans_num");
 	}
 
-	function fix_entry_endstamp($entry) {
+	public static function fix_entry_endstamp($entry) {
 		//print "  fix_entry_endstamp ". $entry["trans_num"].") ".strftime("%Y-%m-%d %H:%M:%S", $entry["start_stamp"])." - ".strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"])."<br />\n";
 		include("table_names.inc");
 		$etsStr = strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"]);
@@ -434,7 +450,7 @@ if (!defined("COMMON_INC")) {
 		tryDbQuery("UPDATE $TIMES_TABLE set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
 	}
 
-	function get_user_empid($username) {
+	public static function get_user_empid($username) {
 		include("table_names.inc");
 
 		// Retreives user's payroll Employee ID
@@ -444,7 +460,7 @@ if (!defined("COMMON_INC")) {
 		return $result['EmpId'];
 	}
 
-	function get_project_name($proj_id) {
+	public static function get_project_name($proj_id) {
 		include("table_names.inc");
 
 		// Retreives project title (name)
@@ -454,7 +470,7 @@ if (!defined("COMMON_INC")) {
 		return $result['title'];
 	}
 
-	function get_project_info($proj_id) {
+	public static function get_project_info($proj_id) {
 		include("table_names.inc");
 
 		// Retreives title, client_id, description, deadline and link from database for a given proj_id
@@ -467,7 +483,7 @@ if (!defined("COMMON_INC")) {
 		return $result;
 	}
 
-	function get_trans_info($trans_num) {
+	public static function get_trans_info($trans_num) {
 		include("table_names.inc");
 
 		$result = array();
@@ -489,14 +505,14 @@ if (!defined("COMMON_INC")) {
 		return $result;
 	}
 
-	function get_acl_level($page) {
+	public static function get_acl_level($page) {
 		include("table_names.inc");
 		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData[$page];
 	}
 
-	function day_button($name, $timeStamp=0, $limit=1) {
+	public static function day_button($name, $timeStamp=0, $limit=1) {
 		global $realToday, $month, $year;
 		if (!$timeStamp)
 			$timeStamp = $realToday[0];
@@ -524,7 +540,7 @@ if (!defined("COMMON_INC")) {
 		echo "</select>";
 	}
 
-	function month_button ($name, $month=0) {
+	public static function month_button ($name, $month=0) {
 		global $realToday;
 		if(!$month)
 			$month = $realToday["mon"]; //date("m");
@@ -546,7 +562,7 @@ if (!defined("COMMON_INC")) {
 		echo "</select>";
 	}
 
-	function year_button ($name, $year=0) {
+	public static function year_button ($name, $year=0) {
 		global $realToday;
 		if(!$year)
 			$year = $realToday["year"]; //date("Y");
@@ -569,7 +585,7 @@ if (!defined("COMMON_INC")) {
 		echo "</select>";
 	}
 
-	function single_user_select_list($varname, $username='', $extra='', $showSelect='false') {
+	public static function single_user_select_list($varname, $username='', $extra='', $showSelect='false') {
 		include("table_names.inc");
 
 		global $authenticationManager;
@@ -624,7 +640,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 
-	function get_users_name($uid) {
+	public static function get_users_name($uid) {
 		include("table_names.inc");
 		$query = "SELECT last_name, first_name, status FROM $USER_TABLE where username='$uid'";
 		list($qh, $num) = dbQuery($query);
@@ -632,7 +648,7 @@ if (!defined("COMMON_INC")) {
 		return array($data['first_name'], $data['last_name'], $data['status']);
 	}
 
-	function multi_user_select_list($name, $selected_array=array()) {
+	public static function multi_user_select_list($name, $selected_array=array()) {
 		include("table_names.inc");
 
 		global $authenticationManager;
@@ -669,7 +685,7 @@ if (!defined("COMMON_INC")) {
 		print "</select>";
 	}
 
-	function get_client_name($clientId) {
+	public static function get_client_name($clientId) {
 		include("table_names.inc");
 		if($clientId == 0) return "All Clients";
 		$query = "SELECT organisation FROM $CLIENT_TABLE where client_id='$clientId'";
@@ -678,7 +694,7 @@ if (!defined("COMMON_INC")) {
 		return $data['organisation'];
 	}
 
-	function client_select_list($currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange="", $restrictedList=true) {
+	public static function client_select_list($currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange="", $restrictedList=true) {
 		include("table_names.inc");
 
 		if ($restrictedList) {
@@ -745,7 +761,7 @@ if (!defined("COMMON_INC")) {
 		print "</select>";
 	}
 
-	function project_select_list($currentClientId, $needsClient, $currentProjectId, $contextUser, $showSelectProject, $showAllProjects, $onChange="", $disabled=false) {
+	public static function project_select_list($currentClientId, $needsClient, $currentProjectId, $contextUser, $showSelectProject, $showAllProjects, $onChange="", $disabled=false) {
 		include("table_names.inc");
 
 		if ($currentClientId == 0 && $needsClient) {
@@ -815,7 +831,7 @@ if (!defined("COMMON_INC")) {
 		print "</select>";
 	}
 
-	function task_select_list ($currentProjectId, $currentTaskId, $contextUser="", $onChange="") {
+	public static function task_select_list ($currentProjectId, $currentTaskId, $contextUser="", $onChange="") {
 		include("table_names.inc");
 
 		if ($currentProjectId == 0) {
@@ -870,7 +886,7 @@ if (!defined("COMMON_INC")) {
 	 * Returns: A string containing the text to build the required uni-select
 	 *     widget.
 	 */
-	function build_uni_select($name, $values, $selected=NULL) {
+	public static function build_uni_select($name, $values, $selected=NULL) {
 		if (empty($name)) {
 			echo "build_uni_select: first parameter must be non-empty string";
 			return "";
@@ -895,10 +911,16 @@ if (!defined("COMMON_INC")) {
 		return $ret;
 	}
 
-	function user_select_droplist_string($varname, $username='', $width='', $disabled='false') {
+	public static function user_select_droplist_string($varname, $username='', $width='', $disabled='false') {
 		include("table_names.inc");
 
-		global $authenticationManager;
+		if(class_exists('Site')){
+			$authenticationManager = Site::getAuthenticationManager();
+		}
+		
+		else{
+			global $authenticationManager;
+		}
 	
 		$show_disabled=0;
 		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
@@ -949,12 +971,12 @@ if (!defined("COMMON_INC")) {
 		return $drop_list_string;
 	}
 
-	function user_select_droplist($username='', $disabled='false', $width='') {
+	public static function user_select_droplist($username='', $disabled='false', $width='') {
 		$drop_list_string = user_select_droplist_string('uid', $username, $width, $disabled);
 		print $drop_list_string;
 	}
 
-	function acl_select_droplist($id, $selected='', $disabled='false') {
+	public static function acl_select_droplist($id, $selected='', $disabled='false') {
 ?>
 	<select name="<?php echo $id; ?>" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
 	<option value="Admin" <?php if ($selected== 'Admin') echo "selected=\"selected\"";?>>Admin</option>
@@ -965,7 +987,7 @@ if (!defined("COMMON_INC")) {
 <?php
 	}
 
-	function absence_select_droplist($selected='', $disabled='false', $id) {
+	public static function absence_select_droplist($selected='', $disabled='false', $id) {
 ?>
 	<select name="<?php echo $id; ?>" onChange="OnChange()" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
 	<option value="" <?php if ($selected == '') echo "selected=\"selected\"";?>></option>
@@ -980,7 +1002,7 @@ if (!defined("COMMON_INC")) {
 <?php
 	}
 
-	function client_select_droplist($client_id=1, $disabled=false, $info=true) {
+	public static function client_select_droplist($client_id=1, $disabled=false, $info=true) {
 		include("table_names.inc");
 
 			$query = "SELECT client_id, organisation FROM $CLIENT_TABLE ORDER BY organisation";
@@ -1016,7 +1038,7 @@ if (!defined("COMMON_INC")) {
 			//print "</td></tr></table>";
 	}
 
-	function project_select_droplist($proj_id=1, $disabled='false') {
+	public static function project_select_droplist($proj_id=1, $disabled='false') {
 		include("table_names.inc");
 
 			$query = "SELECT " .
@@ -1058,7 +1080,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 
-	function present_log_message($action) {
+	public static function present_log_message($action) {
 		global $check_in_time_hour, $check_out_time_hour,$check_in_time_min, $check_out_time_min, $year,
 		$month, $day, $proj_id, $task_id, $destination;
 	?>
@@ -1101,7 +1123,7 @@ if (!defined("COMMON_INC")) {
 <?php
 	}
 
-	function proj_status_list($name, $status='') {
+	public static function proj_status_list($name, $status='') {
 ?>
 	<select name=<?php echo $name ?>>
 	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>>Pending</option>
@@ -1112,7 +1134,7 @@ if (!defined("COMMON_INC")) {
 <?php
 	}	
 	
-	function proj_status_list_filter($name, $status='', $onChange='submit();') {
+	public static function proj_status_list_filter($name, $status='', $onChange='submit();') {
 ?>
 	<select name=<?php echo $name ?> onChange="<?php echo $onChange?>" >
 	<option value="All" <?php if ($status == 'All') echo "selected=\"selected\"";?>>All</option>
@@ -1125,15 +1147,21 @@ if (!defined("COMMON_INC")) {
 	}
 
 
-	function parse_and_echo($text) {
+	public static function parse_and_echo($text) {
 		if (isset($_SESSION['loggedInUser'])) 
 			$uid=$_SESSION['loggedInUser'];
 		else
 			$uid='unknown';
 
-		//replace commandMenu string
-		if (isset($GLOBALS["commandMenu"]))
-			$text = str_replace("%commandmenu%", $GLOBALS["commandMenu"]->toString(), $text);
+		if(!class_exists('Site')){
+			//replace commandMenu string
+			if (isset($GLOBALS["commandMenu"]))
+				$text = str_replace("%commandmenu%", $GLOBALS["commandMenu"]->toString(), $text);				
+		}
+		else{
+			$text = str_replace("%commandmenu%", Site::getCommandMenu()->toString(), $text);
+		}
+
 
 		global $errormsg;
 
@@ -1161,14 +1189,14 @@ if (!defined("COMMON_INC")) {
 
 
 	//reverses the effects of htmlentities (see PHP manual)
-	function unhtmlentities($str) {
+	public static function unhtmlentities($str) {
 		$trans = get_html_translation_table(HTML_ENTITIES);
 		$trans = array_flip($trans);
 		return strtr($str, $trans);
 	}
 
 
-	function errorPage($message, $from_popup = false) {
+	public static function errorPage($message, $from_popup = false) {
 		$targetWindowLocation = "error.php?errormsg=$message";
 
 		if (!$from_popup)
@@ -1178,7 +1206,7 @@ if (!defined("COMMON_INC")) {
 		exit;
 	}
 
-	function loadMainPageAndCloseWindow($targetWindowLocation) {
+	public static function loadMainPageAndCloseWindow($targetWindowLocation) {
 		//now close this window, and open the target page in the main window
 		//(passing it all the parms it needs)
 
@@ -1229,7 +1257,7 @@ if (!defined("COMMON_INC")) {
 		exit;
 	}
 
-	function isValidProjectForClient($projectId, $clientId) {
+	public static function isValidProjectForClient($projectId, $clientId) {
 		include("table_names.inc");
 		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE " .
 						"WHERE client_id='$clientId' AND proj_id='$projectId'");
@@ -1237,7 +1265,7 @@ if (!defined("COMMON_INC")) {
 		return ($num > 0);
 	}
 
-	function getValidProjectForClient($clientId) {
+	public static function getValidProjectForClient($clientId) {
 		include("table_names.inc");
 		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE " .
 						"WHERE client_id='$clientId'");
@@ -1249,7 +1277,7 @@ if (!defined("COMMON_INC")) {
 		return $data["proj_id"];
 	}
 
-	function getFirstClient() {
+	public static function getFirstClient() {
 		include("table_names.inc");
 		list($qh, $num) = dbQuery("SELECT client_id FROM $CLIENT_TABLE");
 		if ($num == 0)
@@ -1260,7 +1288,7 @@ if (!defined("COMMON_INC")) {
 		return $data["client_id"];
 	}
 
-	function getClientNameFromProject($proj_id) {
+	public static function getClientNameFromProject($proj_id) {
 		include("table_names.inc");
 		list($qh, $num) = dbQuery("SELECT client_id FROM $PROJECT_TABLE WHERE proj_id = $proj_id");
 		if ($num == 0)
@@ -1277,7 +1305,7 @@ if (!defined("COMMON_INC")) {
 		return $data["organisation"];
 	}
 
-	function getFirstProject() {
+	public static function getFirstProject() {
 		include("table_names.inc");
 		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE");
 		if ($num == 0)
@@ -1288,28 +1316,28 @@ if (!defined("COMMON_INC")) {
 		return $data["proj_id"];
 	}
 
-	function getWeekStartDay() {
+	public static function getWeekStartDay() {
 		include("table_names.inc");
 		list($qhq, $numq) = dbQuery("SELECT weekstartday FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["weekstartday"];
 	}
 	
-	function getProjectItemsPerPage() {
+	public static function getProjectItemsPerPage() {
 		include ("table_names.inc");
 		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["project_items_per_page"];
 	}
 	
-	function getTaskItemsPerPage() {
+	public static function getTaskItemsPerPage() {
 		include ("table_names.inc");
 		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["task_items_per_page"];
 	}
 
-	function getFirstUser() {
+	public static function getFirstUser() {
 		include("table_names.inc");
 		list($qh, $num) = dbQuery("SELECT username FROM $USER_TABLE ");
 		if ($num == 0)
@@ -1320,14 +1348,14 @@ if (!defined("COMMON_INC")) {
 		return $data["username"];
 	}
 
-	function getTimeFormat() {
+	public static function getTimeFormat() {
 			include("table_names.inc");
 			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 			$configData = dbResult($qhq);
 			return $configData["timeformat"];
 	}
 
-	function getVersion() {
+	public static function getVersion() {
 		include("table_names.inc");
 		list($qh, $num) = dbQuery("SELECT version FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 		if ($num == 0)
@@ -1338,7 +1366,7 @@ if (!defined("COMMON_INC")) {
 		return $data["version"];
 	}
 
-	function getWeeklyStartEndDates($time) {
+	public static function getWeeklyStartEndDates($time) {
 		$wsd = getWeekStartDay();
 		$daysToMinus = date('w',$time) - $wsd;
 		if ($daysToMinus < 0)
@@ -1358,7 +1386,7 @@ if (!defined("COMMON_INC")) {
 		return array($startDate,$endDate);
 	}
 
-	function getMonthlyEndDate($dti) {
+	public static function getMonthlyEndDate($dti) {
 		$next_month = $dti["mon"] + 1;
 		$next_year = $dti["year"];
 		if($next_month == 13) {
@@ -1369,7 +1397,7 @@ if (!defined("COMMON_INC")) {
 		return mktime(0,0,0,$next_month,1,$next_year);
 	}
 
-	function __put_data_in_array(&$newarray, $index, $data, $curStamp, $duration, $check_log) {
+	public static function __put_data_in_array(&$newarray, $index, $data, $curStamp, $duration, $check_log) {
 
 		//if we already have time in the indexed box, and the log messages match
 		//add the duration to the existing duration
@@ -1408,7 +1436,7 @@ if (!defined("COMMON_INC")) {
 		}
 	}
 
-	function split_data_into_discrete_days($data,$orderby,&$darray,$check_log=0) {
+	public static function split_data_into_discrete_days($data,$orderby,&$darray,$check_log=0) {
 		//The job of this function is to split those entries that span date boundaries 
 		//into multiple entries that stop & re-start on date boundaries, and to put the
 		//new entries into the array $darray
@@ -1443,7 +1471,7 @@ if (!defined("COMMON_INC")) {
 		}
 	}
 	
-	function fixStartEndDuration(&$data) {
+	public static function fixStartEndDuration(&$data) {
 		//Due to a bug in mysql with converting to unix timestamp from the string,
 		//we are going to use php's strtotime to make the timestamp from the string.
 		//the problem has something to do with timezones.
@@ -1452,7 +1480,14 @@ if (!defined("COMMON_INC")) {
 		//If we've got a duration, use that to determine/override the end_stamp
 		//If not, figure out the duration
 		if(isset($data["duration"]) && ($data["duration"] > 0) ) {
-			$new_end_stamp=get_end_date_time($data["start_stamp"], $data["duration"]);
+			if(!class_exists('Site')){
+				$new_end_stamp=get_end_date_time($data["start_stamp"], $data["duration"]);
+			}
+			else{
+				$new_end_stamp = Common::get_end_date_time($data["start_stamp"], $data["duration"]);			
+			}
+			
+			
 			if($data["end_stamp"] != $new_end_stamp) {
 				$old_end_stamp = $data["end_stamp"];
 				$data["end_stamp"] = $new_end_stamp;
@@ -1475,7 +1510,7 @@ if (!defined("COMMON_INC")) {
 		return 1;
 	}
 
-	function gotoStartPage() {
+	public static function gotoStartPage() {
 		include('table_names.inc');
 		list($result, $count) = dbQuery("SELECT startPage FROM $CONFIG_TABLE WHERE config_set_id = '1';");
 		list($startPage) = dbResult($result);
@@ -1483,8 +1518,6 @@ if (!defined("COMMON_INC")) {
 		header("Location: $startPage.php");
 		exit();
 	}
-	} // end if
 }
-
 // vim:ai:ts=4:sw=4:filetype=php
 ?>

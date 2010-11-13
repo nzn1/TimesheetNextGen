@@ -5,12 +5,20 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclMonthly')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclMonthly'));
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . get_acl_level('aclMonthly'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . Common::get_acl_level('aclMonthly'));
+	}
+	
 	exit;
 }
 
 // Connect to database.
-$dbh = dbConnect();
+if(!(@$this instanceof templateParser)){
+	$dbh = dbConnect();	
+}
 
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
@@ -38,7 +46,10 @@ $todayDate = mktime(0, 0, 0, $month, $day, $year);
 $dateValues = getdate($todayDate);
 
 //the day the week should start on: 0=Sunday, 1=Monday
-$startDayOfWeek = getWeekStartDay();
+if(!(@$this instanceof templateParser)){
+	$startDayOfWeek = getWeekStartDay();
+}
+else $startDayOfWeek = Common::getWeekStartDay();
 
 //work out the start date by subtracting days to get to beginning of week
 $startDate = mktime(0,0,0, $month, 1, $year);
@@ -55,11 +66,19 @@ if ($leadInDays < 0)
 //get the first printed date
 $firstPrintedDate = strtotime(date("d M Y H:i:s",$startDate) . " -$leadInDays days");
 
-$endDate = getMonthlyEndDate($dateValues);
+
+if(!(@$this instanceof templateParser)){
+	$endDate = getMonthlyEndDate($dateValues);
+}
+else $endDate = Common::getMonthlyEndDate($dateValues);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 //get the timeformat
-$CfgTimeFormat = getTimeFormat();
+if(!(@$this instanceof templateParser)){
+	$CfgTimeFormat = getTimeFormat();
+}
+else $CfgTimeFormat = Common::getTimeFormat();
+
 
 $post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";       //this isn't used anywhere
 
@@ -115,7 +134,13 @@ function print_totals($Minutes, $type="", $pyear, $pmonth, $pday) {
 		print "<a href=\"weekly.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id$ymdStr\">Weekly Total: </a>";
 	}
 
-	print "<span class=\"calendar_total_value_$type\">". formatMinutes($Minutes) ."</span></td>\n";
+	if(!class_exists('Site')){
+		print "<span class=\"calendar_total_value_$type\">". formatMinutes($Minutes) ."</span></td>\n";	
+	}
+	else{
+		print "<span class=\"calendar_total_value_$type\">". Common::formatMinutes($Minutes) ."</span></td>\n";
+	}
+	
 }
 
 ?>
@@ -161,7 +186,14 @@ include ("navcal/navcal_monthly.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><?php client_select_list($client_id, $contextUser, false, false, true, false, "submit();"); ?></td>
+												<td width="100%"><?php 
+												if(!class_exists('Site')){
+													client_select_list($client_id, $contextUser, false, false, true, false, "submit();");
+												} 
+												else{
+													Common::client_select_list($client_id, $contextUser, false, false, true, false, "submit();");
+												}
+												?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -173,7 +205,14 @@ include ("navcal/navcal_monthly.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><?php project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); ?></td>
+												<td width="100%"><?php 
+												if(!class_exists('Site')){
+													project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); 
+												} 
+												else{
+													Common::project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); 
+												}
+												?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -222,8 +261,15 @@ include ("navcal/navcal_monthly.inc");
 	}
 
 	// Get the Monthly data.
-	list($num, $qh) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id);
-	list($qhol, $holnum) = get_absences($month, $year, $contextUser);
+	if(!class_exists('Site')){
+		list($num, $qh) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id);
+		list($qhol, $holnum) = get_absences($month, $year, $contextUser);	
+	}
+	else{
+		list($num, $qh) = Common::get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id);
+		list($qhol, $holnum) = Common::get_absences($month, $year, $contextUser);
+	}
+
 	$ihol = 0; $holtitle = "";
 	if ($holnum>$ihol)
 		$holdata = dbResult($qhol, $ihol);
@@ -342,7 +388,14 @@ include ("navcal/navcal_monthly.inc");
 			//because this application hasn't taken care to cast the time data into a consistent TZ.
 			//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
 			//So, we handle it as best we can for now...
+
+		if(!class_exists('Site')){
 			fixStartEndDuration($data);
+		}
+		else{
+			Common::fixStartEndDuration($data);
+		}
+			
 
 			//set some booleans
 			$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
@@ -404,7 +457,13 @@ include ("navcal/navcal_monthly.inc");
 
 				if($i<$num) {
 					$data = dbResult($qh,$i);
-					fixStartEndDuration($data);
+					if(!class_exists('Site')){
+						fixStartEndDuration($data);
+					}
+					else{
+						Common::fixStartEndDuration($data);
+					}
+					
 
 					$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
 					$endsToday =   (($data["end_stamp"] > $curStamp ) && ($data["end_stamp"] <= $tomorrowStamp));
@@ -437,7 +496,13 @@ include ("navcal/navcal_monthly.inc");
 				}
 			}
 
-			print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . formatMinutes($todaysTotal) ."</td></tr>";
+			if(!class_exists('Site')){
+				print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . formatMinutes($todaysTotal) ."</td></tr>";
+			}
+			else{
+				print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</td></tr>";
+			}
+		
 
 		} else {
 			print "<tr><td>&nbsp;</td></tr>";

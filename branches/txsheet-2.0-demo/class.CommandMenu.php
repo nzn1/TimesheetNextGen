@@ -139,7 +139,14 @@ class CommandMenu {
 }
 
 //create the command menu object so that those files which include this one dont need to
-$commandMenu = new CommandMenu;
 
+//only add to site if working from the new OO version of txsheet
+if(class_exists('Site')){
+	Site::setCommandMenu(new CommandMenu());
+	$commandMenu = Site::getCommandMenu();
+}
+else{
+$commandMenu = new CommandMenu;	
+}
 // vim:ai:ts=4:sw=4
 ?>

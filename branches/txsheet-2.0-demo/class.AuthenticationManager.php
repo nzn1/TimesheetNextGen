@@ -32,7 +32,13 @@ if( file_exists( $cpath . "/siteclosed")) {
 }
 	
 require("table_names.inc");
-require("common.inc");
+if(class_exists('Site')){
+	require("common.class.php");
+	$common = new Common();
+}
+else{
+	require("common.inc");
+}
 require("enum.php");
 
 //define constants for error code
@@ -305,7 +311,9 @@ class AuthenticationManager {
 	*/
 	function hasAccess($page) {
 
-		$acl = get_acl_level($page);
+		if(class_exists('Site')) $acl = Common::get_acl_level($page);	
+		else $acl = get_acl_level($page);
+			
 		switch ($acl) {
 		case 'None':
 			$level = 100; //This level is unobtainable
@@ -583,6 +591,11 @@ class AuthenticationManager {
 
 //create the instance so its availiable by just including this file
 $authenticationManager = new AuthenticationManager;
+
+//only add to site if working from the new OO version of txsheet
+if(class_exists('Site')){
+	Site::setAuthenticationManager($authenticationManager);
+}
 
 // vim:ai:ts=4:sw=4
 ?>
