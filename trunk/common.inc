@@ -27,7 +27,6 @@ if (!defined("COMMON_INC")) {
 					"unix_timestamp(start_time) AS start_stamp, ".
 					"unix_timestamp(end_time) AS end_stamp, ".
 					"duration, ".		//duration is stored in minutes
-					"$TIMES_TABLE.status AS subStatus, " . 
 					"trans_num, ".
 					"$TIMES_TABLE.uid, " .
 					"$USER_TABLE.first_name, " .
