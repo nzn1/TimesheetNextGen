@@ -24,22 +24,22 @@ $contextUser = strtolower($_SESSION['contextUser']);
 $proj_status = isset($_REQUEST['proj_status']) ? $_REQUEST['proj_status'] : "Started";
 
 //set up query
-$query = "SELECT DISTINCT $PROJECT_table.title, $PROJECT_table.proj_id, $PROJECT_table.client_id, ".
-						"$CLIENT_table.organisation, $PROJECT_table.description, " .
+$query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, ".
+						"$CLIENT_TABLE.organisation, $PROJECT_TABLE.description, " .
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
-						"$PROJECT_table.proj_status, http_link, proj_leader ".
-					"FROM $PROJECT_table, $CLIENT_table, $USER_table ".
+						"$PROJECT_TABLE.proj_status, http_link, proj_leader ".
+					"FROM $PROJECT_TABLE, $CLIENT_TABLE, $USER_TABLE ".
 					"WHERE ";
 if ($client_id != 0)
-	$query .= "$PROJECT_table.client_id = $client_id AND ";
+	$query .= "$PROJECT_TABLE.client_id = $client_id AND ";
 	
 if ($proj_status !== 0 and $proj_status !== 'All' ) {
-	$query .= " $PROJECT_table.proj_status = '$proj_status' AND ";
+	$query .= " $PROJECT_TABLE.proj_status = '$proj_status' AND ";
 }
 
-$query .= "$PROJECT_table.proj_id > 0 AND $CLIENT_table.client_id = $PROJECT_table.client_id ".
-						"ORDER BY $PROJECT_table.title";
+$query .= "$PROJECT_TABLE.proj_id > 0 AND $CLIENT_TABLE.client_id = $PROJECT_TABLE.client_id ".
+						"ORDER BY $PROJECT_TABLE.title";
 
 if (isset($_POST['page']) && $_POST['page'] != 0) { $page  = $_POST['page']; } else { $page=1; }; 
 $results_per_page = getProjectItemsPerPage();
@@ -51,22 +51,22 @@ $query .= " LIMIT $start_from, $results_per_page";
 list($qh, $num) = dbQuery($query);
 
 //build query for determining number of pages
-$query2 = "SELECT DISTINCT $PROJECT_table.title, $PROJECT_table.proj_id, $PROJECT_table.client_id, ".
-						"$CLIENT_table.organisation, $PROJECT_table.description, " .
+$query2 = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, ".
+						"$CLIENT_TABLE.organisation, $PROJECT_TABLE.description, " .
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
-						"$PROJECT_table.proj_status, http_link, proj_leader ".
-					"FROM $PROJECT_table, $CLIENT_table, $USER_table ".
+						"$PROJECT_TABLE.proj_status, http_link, proj_leader ".
+					"FROM $PROJECT_TABLE, $CLIENT_TABLE, $USER_TABLE ".
 					"WHERE ";
 if ($client_id != 0)
-	$query2 .= "$PROJECT_table.client_id = $client_id AND ";
+	$query2 .= "$PROJECT_TABLE.client_id = $client_id AND ";
 	
 if ($proj_status !== 0 and $proj_status !== 'All' ) {
-	$query2 .= " $PROJECT_table.proj_status = '$proj_status' AND ";
+	$query2 .= " $PROJECT_TABLE.proj_status = '$proj_status' AND ";
 }
 
-$query2 .= "$PROJECT_table.proj_id > 0 AND $CLIENT_table.client_id = $PROJECT_table.client_id ".
-						"ORDER BY $PROJECT_table.title";
+$query2 .= "$PROJECT_TABLE.proj_id > 0 AND $CLIENT_TABLE.client_id = $PROJECT_TABLE.client_id ".
+						"ORDER BY $PROJECT_TABLE.title";
 list($qh2, $num2) = dbQuery($query2);
 
 				
@@ -186,11 +186,11 @@ include ("banner.inc");
 			list($billqh, $bill_num) = dbquery(
 					"SELECT sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, ".
 						"sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))) as billed ".
-						"FROM $TIMES_table, $ASSIGNMENTS_table, $RATE_table ".
-						"WHERE end_time > 0 AND $TIMES_table.proj_id = $data[proj_id] ".
-						"AND $ASSIGNMENTS_table.proj_id = $data[proj_id] ".
-						"AND $ASSIGNMENTS_table.rate_id = $RATE_table.rate_id ".
-						"AND $ASSIGNMENTS_table.username = $TIMES_table.uid ");
+						"FROM $TIMES_TABLE, $ASSIGNMENTS_TABLE, $RATE_TABLE ".
+						"WHERE end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] ".
+						"AND $ASSIGNMENTS_TABLE.proj_id = $data[proj_id] ".
+						"AND $ASSIGNMENTS_TABLE.rate_id = $RATE_TABLE.rate_id ".
+						"AND $ASSIGNMENTS_TABLE.username = $TIMES_TABLE.uid ");
 			$bill_data = dbResult($billqh);
 
 			//start the row
@@ -249,7 +249,7 @@ include ("banner.inc");
 			print "<tr><td><span class=\"label\">Project Leader:</span> $data[proj_leader] </td></tr>";
 
 			//display assigned users
-			list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM $ASSIGNMENTS_table WHERE proj_id = $data[proj_id]");
+			list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $data[proj_id]");
 			if ($num_workers == 0) {
 				print "<tr><td><font size=\"-1\">Nobody assigned to this project</font></td></tr>\n";
 			}
@@ -276,7 +276,7 @@ include ("banner.inc");
 																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
 <?php
 			//get tasks
-			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_table WHERE proj_id=$data[proj_id]");
+			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]");
 
 			//are there any tasks?
 			if ($num_tasks > 0) {

@@ -61,7 +61,7 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //$debug->write("  existingRows = \"".$_POST["existingRows"]."\"\n");
 
 //clear the tasks which start on this week
-$queryString = "DELETE FROM $TIMES_table " . 
+$queryString = "DELETE FROM $TIMES_TABLE " . 
 					"WHERE uid='$contextUser' AND " .
 							"start_time >= '$startStr' AND ".
 							"start_time < '$endStr'";

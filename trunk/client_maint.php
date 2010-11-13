@@ -18,8 +18,8 @@ $contextUser = strtolower($_SESSION['contextUser']);
 
 //make sure "No Client exists with client_id of 1
 //execute the query
-tryDbQuery("INSERT INTO $CLIENT_table VALUES (1,'No Client', 'This is required, do not edit or delete this client record', '', '', '', '', '', '', '', '', '', '', '', '', '', '');");
-tryDbQuery("UPDATE $CLIENT_table set organisation='No Client' WHERE client_id='1'");
+tryDbQuery("INSERT INTO $CLIENT_TABLE VALUES (1,'No Client', 'This is required, do not edit or delete this client record', '', '', '', '', '', '', '', '', '', '', '', '', '', '');");
+tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1'");
 
 ?>
 
@@ -74,7 +74,7 @@ include ("banner.inc");
 <?php
 
 //execute the query
-list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_table WHERE client_id > 1 ORDER BY organisation");
+list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE WHERE client_id > 1 ORDER BY organisation");
 
 //are there any results?
 if ($num == 0) {

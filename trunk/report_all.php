@@ -331,41 +331,41 @@ else {  //create Excel header
 
 /*$query =	"select distinct first_name, ".
 			"last_name, ".
-			"$USER_table.username, ".
-			"$PROJECT_table.title, ".
-			"$PROJECT_table.proj_id, ".
-			"$TASK_table.name, ".
-			"$TASK_table.task_id ".
-		"FROM $USER_table, $PROJECT_table, $TASK_table, $ASSIGNMENTS_table, $TASK_ASSIGNMENTS_table ".
-		"WHERE $ASSIGNMENTS_table.proj_id = $PROJECT_table.proj_id AND ".
-			"$TASK_ASSIGNMENTS_table.task_id = $TASK_table.task_id AND ".
-			"$PROJECT_table.proj_id = $TASK_table.proj_id AND ".
-			"$ASSIGNMENTS_table.username = $USER_table.username AND ".
-			"$USER_table.username NOT IN ('admin','guest') ".
+			"$USER_TABLE.username, ".
+			"$PROJECT_TABLE.title, ".
+			"$PROJECT_TABLE.proj_id, ".
+			"$TASK_TABLE.name, ".
+			"$TASK_TABLE.task_id ".
+		"FROM $USER_TABLE, $PROJECT_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE, $TASK_ASSIGNMENTS_TABLE ".
+		"WHERE $ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
+			"$TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id AND ".
+			"$PROJECT_TABLE.proj_id = $TASK_TABLE.proj_id AND ".
+			"$ASSIGNMENTS_TABLE.username = $USER_TABLE.username AND ".
+			"$USER_TABLE.username NOT IN ('admin','guest') ".
 		"ORDER BY $orderby";
 
 
-$query = "SELECT $TIMES_table.proj_id, ".
-		"$TIMES_table.task_id, ".
-		"$TIMES_table.log_message, " .
+$query = "SELECT $TIMES_TABLE.proj_id, ".
+		"$TIMES_TABLE.task_id, ".
+		"$TIMES_TABLE.log_message, " .
 		"end_time AS end_time_str, ".
 		"start_time AS start_time_str, ".
 		"timediff(end_time, start_time) as diff_time, ".
 		"unix_timestamp(end_time) as end_stamp, ".
 		"unix_timestamp(start_time) as start_stamp, ".
-		"$PROJECT_table.title, ".
-		"$TASK_table.name, ".
+		"$PROJECT_TABLE.title, ".
+		"$TASK_TABLE.name, ".
 		"first_name, last_name, ".
-		"$TIMES_table.uid as username, ".
+		"$TIMES_TABLE.uid as username, ".
 		"date_format(start_time, '%Y/%m/%d') as start_date, ".
 		"trans_num ".
-	"FROM $USER_table, $TIMES_table, $PROJECT_table, $TASK_table ".
-	"WHERE $TIMES_table.uid=$USER_table.username AND ".
+	"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
+	"WHERE $TIMES_TABLE.uid=$USER_TABLE.username AND ".
 		"end_time > 0 AND ".
-		//"$TIMES_table.uid='$uid' AND ".
+		//"$TIMES_TABLE.uid='$uid' AND ".
 		"start_time >= '$year-$month-1' AND ".
-		"$PROJECT_table.proj_id = $TIMES_table.proj_id AND ".
-		"$TASK_table.task_id = $TIMES_table.task_id AND ".
+		"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND ".
+		"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
 		"end_time < '".date('Y-m-1',$next_month)."' ".
 	"ORDER BY $orderby";
 

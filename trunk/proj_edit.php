@@ -30,7 +30,7 @@ list($qh, $num) = dbQuery("SELECT proj_id, " .
 								"http_link, " .
 								"proj_status, " .
 								"proj_leader " .
-							"FROM $PROJECT_table " .
+							"FROM $PROJECT_TABLE " .
 							"WHERE proj_id = $proj_id " .
 							"ORDER BY proj_id");
 $data = dbResult($qh);
@@ -43,7 +43,7 @@ $dti=getdate($data["end_stamp"]);
 $end_month = $dti["mon"];
 $end_year = $dti["year"];
 
-list($qh, $num) = dbQuery("SELECT username FROM $ASSIGNMENTS_table WHERE proj_id = $proj_id");
+list($qh, $num) = dbQuery("SELECT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
 $selected_array = array();
 $i = 0;
 while ($datanext = dbResult($qh)) {

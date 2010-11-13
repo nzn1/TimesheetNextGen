@@ -54,7 +54,7 @@ include ("banner.inc");
 
 list($qh,$num) = dbQuery(
 					"SELECT p.proj_id, p.title, c.organisation ".
-					"FROM $PROJECT_table p, $CLIENT_table c ".
+					"FROM $PROJECT_TABLE p, $CLIENT_TABLE c ".
 					"WHERE p.client_id = c.client_id ".
 					"ORDER BY c.organisation");
 

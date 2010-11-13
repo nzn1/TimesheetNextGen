@@ -47,7 +47,7 @@ elseif ($action == "add") {
 	$description = addslashes($description);
 	$url = addslashes($url);*/
 
-	list($qh, $num) = dbQuery("INSERT INTO $PROJECT_table (title, client_id, description, start_date, deadline, http_link, proj_status, proj_leader) VALUES ".
+	list($qh, $num) = dbQuery("INSERT INTO $PROJECT_TABLE (title, client_id, description, start_date, deadline, http_link, proj_status, proj_leader) VALUES ".
 						"('$title','$client_id','$description', '$start_year-$start_month-$start_day', ".
 						"'$end_year-$end_month-$end_day','$url', '$proj_status', '$project_leader')");
 	$proj_id = dbLastID($dbh);
@@ -55,7 +55,7 @@ elseif ($action == "add") {
 	//create a time string for >>now<<
 	$time_string = date("Y-m-d H:i:00");
 
-	list($task_qh, $num) = dbQuery("INSERT INTO $TASK_table (proj_id, name, description, assigned, started, status)\n VALUES ".
+	list($task_qh, $num) = dbQuery("INSERT INTO $TASK_TABLE (proj_id, name, description, assigned, started, status)\n VALUES ".
 							"($proj_id, 'Default Task', '', '$time_string', '$time_string', 'Started')");
 	$task_id = dbLastID($dbh);
 
@@ -69,16 +69,16 @@ elseif ($action == "add") {
 		/*
 		 * Had to add '0.00' to make the query match up to the database
 		 */
-		dbQuery("INSERT INTO $ASSIGNMENTS_table VALUES ($proj_id, '$username', 1,'0.00')");
-		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_table(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1,'0.00')");
+		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
 	}
 	if (!$leader_added) {
 		// Add the project leader.
 		/*
 		 * Had to add '0.00' to make the query match up to the database
 		 */
-		dbQuery("INSERT INTO $ASSIGNMENTS_table VALUES ($proj_id, '$project_leader', 1,'0.00')");
-		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_table(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$project_leader')");
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$project_leader', 1,'0.00')");
+		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$project_leader')");
 	}
 
 	// we're done adding the project so redirect to the maintenance page
@@ -97,16 +97,16 @@ elseif ($action == "edit") {
 	$description = addslashes($description);
 	$url = addslashes($url);*/
 
-	$query = "UPDATE $PROJECT_table set title='$title',client_id='$client_id',description='$description',".
+	$query = "UPDATE $PROJECT_TABLE set title='$title',client_id='$client_id',description='$description',".
 				"start_date='$start_year-$start_month-$start_day', proj_status='$proj_status', proj_leader='$project_leader', ".
 				"deadline='$end_year-$end_month-$end_day',http_link='$url' WHERE proj_id=$proj_id";
 
 	list($qh,$num) = dbquery($query);
 
 	if ($assigned) {
-		dbQuery("DELETE FROM $ASSIGNMENTS_table WHERE proj_id = $proj_id");
+		dbQuery("DELETE FROM $ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
 		while (list(,$username) = each($assigned)) {
-			dbQuery("INSERT INTO $ASSIGNMENTS_table VALUES ($proj_id, '$username', 1)");
+			dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1)");
 		}
 	}
 
@@ -114,10 +114,10 @@ elseif ($action == "edit") {
 	Header("Location: proj_maint.php?client_id=$client_id");
 }
 elseif ($action == 'delete') {
-	dbQuery("DELETE FROM $TASK_ASSIGNMENTS_table WHERE proj_id = $proj_id");
-	dbQuery("DELETE FROM $TASK_table WHERE proj_id = $proj_id");
-	dbQuery("DELETE FROM $PROJECT_table WHERE proj_id=$proj_id");
-	dbQuery("DELETE FROM $ASSIGNMENTS_table WHERE proj_id=$proj_id");
+	dbQuery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
+	dbQuery("DELETE FROM $TASK_TABLE WHERE proj_id = $proj_id");
+	dbQuery("DELETE FROM $PROJECT_TABLE WHERE proj_id=$proj_id");
+	dbQuery("DELETE FROM $ASSIGNMENTS_TABLE WHERE proj_id=$proj_id");
 	Header("Location: proj_maint.php?client_id=$client_id");
 }
 

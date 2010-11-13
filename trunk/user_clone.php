@@ -175,15 +175,15 @@ if($action!='performCopy') {
 	function get_task_name($task_id) {
 		include("table_names.inc");
 
-		$sql = "SELECT name FROM $TASK_table WHERE task_id=$task_id";
+		$sql = "SELECT name FROM $TASK_TABLE WHERE task_id=$task_id";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
 		return $result['name'];
 	}
 
 	$proj_list = array();
-	global $TASK_ASSIGNMENTS_table, $ASSIGNMENTS_table;
-	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_table WHERE username = '$cloneFrom' AND  proj_id!=1");
+	global $TASK_ASSIGNMENTS_TABLE, $ASSIGNMENTS_TABLE;
+	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_TABLE WHERE username = '$cloneFrom' AND  proj_id!=1");
 	while ($data = dbResult($qh)) {
 		$p_id=$data['proj_id'];
 		$p_name=get_project_name($p_id);
@@ -199,7 +199,7 @@ if($action!='performCopy') {
 
 		print "<td>$p_name</td><td>";
 
-		$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_table WHERE username ='$cloneFrom' AND task_id!=1 AND proj_id=$p_id";
+		$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_TABLE WHERE username ='$cloneFrom' AND task_id!=1 AND proj_id=$p_id";
 		list($qh2,$num2) = dbQuery($sql);
 
 		$ntasks=0;
@@ -270,15 +270,15 @@ if($action!='performCopy') {
 	function get_task_name($task_id) {
 		include("table_names.inc");
 
-		$sql = "SELECT name FROM $TASK_table WHERE task_id=$task_id";
+		$sql = "SELECT name FROM $TASK_TABLE WHERE task_id=$task_id";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
 		return $result['name'];
 	}
 
 	$proj_list = array();
-	global $TASK_ASSIGNMENTS_table, $ASSIGNMENTS_table;
-	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_table WHERE username = '$cloneTo' AND  proj_id!=1");
+	global $TASK_ASSIGNMENTS_TABLE, $ASSIGNMENTS_TABLE;
+	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_TABLE WHERE username = '$cloneTo' AND  proj_id!=1");
 	while ($data = dbResult($qh)) {
 		$p_id=$data['proj_id'];
 		$proj_list[]=$p_id;
@@ -294,7 +294,7 @@ if($action!='performCopy') {
 		$p_name = get_project_name($p_id);
 		print "<tr><td>$p_name</td><td> ";
 		if(in_array($p_id,$proj_list)) { //if user is already a member of the project, we must check task assignments...
-			$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_table WHERE username ='$cloneTo' AND proj_id=$p_id";
+			$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_TABLE WHERE username ='$cloneTo' AND proj_id=$p_id";
 			list($qh,$num) = dbQuery($sql);
 			while ($data = dbResult($qh)) {
 				$t_id=$data['task_id'];
@@ -302,11 +302,11 @@ if($action!='performCopy') {
 			}
 			print "=</td><td>";
 		} else {
-			//dbquery("INSERT INTO $ASSIGNMENTS_table VALUES ('$p_id','$cloneTo', 1)");
+			//dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ('$p_id','$cloneTo', 1)");
 			print "+</td><td>";
 		}
 
-		$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_table WHERE username ='$cloneFrom' AND proj_id=$p_id";
+		$sql = "SELECT * FROM  $TASK_ASSIGNMENTS_TABLE WHERE username ='$cloneFrom' AND proj_id=$p_id";
 		list($qh,$num) = dbQuery($sql);
 		while ($data = dbResult($qh)) {
 			$t_id=$data['task_id'];
@@ -320,7 +320,7 @@ if($action!='performCopy') {
 				$ignored++;
 				$ignstr .= get_task_name($t_id);
 			} else {
-				//dbquery("INSERT INTO $TASK_ASSIGNMENTS_table VALUES ('$t_id','$cloneTo','$p_id')");
+				//dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES ('$t_id','$cloneTo','$p_id')");
 				if($added>0)
 					$addstr.=", ";
 				$added++;

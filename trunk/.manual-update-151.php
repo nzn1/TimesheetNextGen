@@ -19,7 +19,7 @@ include_once($table_inc_file);
 			update_the_database();
 			break;
 		default:
-			$db_version = get_database_version($CONFIG_table);
+			$db_version = get_database_version($CONFIG_TABLE);
 			print "\n  Error: This helps to upgrade a 1.5.0 database to a newer 1.5.1 revision\n";
 			print "\n    This installation is version $db_version, not version 1.5.0\n\n";
 			exit;
@@ -27,13 +27,13 @@ include_once($table_inc_file);
 
 function check_installed_version() {
 	global $TIMESHEET_VERSION, $DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS;
-	global $CONFIG_table;
+	global $CONFIG_TABLE;
 
 	if(version_compare($TIMESHEET_VERSION, OLD_VERSION) == 0) { 
 		if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
 			exit;
 		}
-		$db_version = get_database_version($CONFIG_table);
+		$db_version = get_database_version($CONFIG_TABLE);
 		if(version_compare($db_version, OLD_VERSION) == 0) { 
 			return 1; 
 		} else { 
@@ -71,7 +71,7 @@ INSERT INTO __table_PREFIX__config (config_set_id, version, headerhtml, bodyhtml
 VALUES (0, '1.5.1', '<meta name=\"description\" content=\"Timesheet Next Gen\">\n<link href=\"css/timesheet.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"shortcut icon\" href=\"images/favicon.ico\">', 'link=\"#004E8A\" vlink=\"#171A42\"', '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n<tr><td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">\nTimesheetNextGen\n<br /><span style=\"font-size: 9px;\"><b>Page generated %time% %date% (%timezone% time)</b></span>\n</td></tr></table>', '<table border=\"0\" cellpadding=5 width=\"100%\">\n<tr>\n  <td><font size=\"+2\" color=\"red\">%errormsg%</font></td>\n</tr></table>\n<p>Please go <a href=\"javascript:history.back()\">Back</a> and try again.</p>', '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>\n<td colspan=\"2\" background=\"images/timesheet_background_pattern.gif\"><img src=\"images/timesheet_banner.gif\" alt="Timesheet Banner"/></td>\n</tr><tr>\n<td style=\"background-color: #F2F3FF; padding: 3;\">%commandmenu%</td>\n<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">You are logged in as %username%</td>\n</tr><tr>\n<td colspan=\"2\" height=\"1\" style=\"background-color: #758DD6;\"><img src=\"images/spacer.gif\" alt="" width=\"1\" height=\"1\" /></td>\n</tr></table>', '', '', 'Europe/Zurich', '12', 1, 0, 'ldap', 'watson', 389, 'dc=watson', 'cn', 'base', '', '3', '', '', '0', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic');
 */
 	global $TIMESHEET_VERSION, $DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS;
-	global $CONFIG_table;
+	global $CONFIG_TABLE;
 
 
 	if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
@@ -81,7 +81,7 @@ VALUES (0, '1.5.1', '<meta name=\"description\" content=\"Timesheet Next Gen\">\
 
 
 	print "  Remove old default configuration set...\n";
-	$sql = "DELETE FROM $CONFIG_table WHERE config_set_id=0";
+	$sql = "DELETE FROM $CONFIG_TABLE WHERE config_set_id=0";
 	$result = mysql_query($sql);
 	if(!$result) {
 		print "  Error: Could not remove config_set 0\n";
@@ -90,7 +90,7 @@ VALUES (0, '1.5.1', '<meta name=\"description\" content=\"Timesheet Next Gen\">\
 	}
 
 	print "  Inserting new default configuration set...\n";
-	$sql = "INSERT INTO $CONFIG_table (config_set_id, version, headerhtml, bodyhtml, footerhtml, errorhtml, bannerhtml, tablehtml, locale, timezone, timeformat, weekstartday, useLDAP, LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, LDAPBindUsername, LDAPBindPassword, LDAPBindByUser, aclStopwatch, aclDaily, aclWeekly, aclMonthly, aclSimple, aclClients, aclProjects, aclTasks, aclReports, aclRates, aclAbsences) 
+	$sql = "INSERT INTO $CONFIG_TABLE (config_set_id, version, headerhtml, bodyhtml, footerhtml, errorhtml, bannerhtml, tablehtml, locale, timezone, timeformat, weekstartday, useLDAP, LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, LDAPBindUsername, LDAPBindPassword, LDAPBindByUser, aclStopwatch, aclDaily, aclWeekly, aclMonthly, aclSimple, aclClients, aclProjects, aclTasks, aclReports, aclRates, aclAbsences) 
 VALUES (0, '1.5.1', '<meta name=\"description\" content=\"Timesheet Next Gen\">\r\n<link href=\"css/timesheet.css\" rel=\"stylesheet\" type=\"text/css\">\r\n<link rel=\"shortcut icon\" href=\"images/favicon.ico\">', 'link=\"#004E8A\" vlink=\"#171A42\"', '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n<tr><td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">\r\nTimesheetNextGen\r\n<br /><span style=\"font-size: 9px;\"><b>Page generated %time% %date% (%timezone% time)</b></span>\r\n</td></tr></table>', '<table border=\"0\" cellpadding=5 width=\"100%\">\r\n<tr>\r\n  <td><font size=\"+2\" color=\"red\">%errormsg%</font></td>\r\n</tr></table>\r\n<p>Please go <a href=\"javascript:history.back()\">Back</a> and try again.</p>', '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>\r\n<td colspan=\"2\" background=\"images/timesheet_background_pattern.gif\"><img src=\"images/timesheet_banner.gif\" alt="Timesheet Banner" /></td>\r\n</tr><tr>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\">%commandmenu%</td>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">You are logged in as %username%</td>\r\n</tr><tr>\r\n<td colspan=\"2\" height=\"1\" style=\"background-color: #758DD6;\"><img src=\"images/spacer.gif\" alt="" width=\"1\" height=\"1\" /></td>\r\n</tr></table>', '', '', 'Europe/Zurich', '12', 1, 0, 'ldap', 'watson', 389, 'dc=watson', 'cn', 'base', '', '3', '', '', '0', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic')";
 	$result = mysql_query($sql);
 	if(!$result) {
@@ -105,10 +105,10 @@ VALUES (0, '1.5.1', '<meta name=\"description\" content=\"Timesheet Next Gen\">\
 }
 
 function update_db_version($version) {
-	global $CONFIG_table;
-	$sql = "UPDATE `$CONFIG_table` set version='$version';";
+	global $CONFIG_TABLE;
+	$sql = "UPDATE `$CONFIG_TABLE` set version='$version';";
 	if(!mysql_query($sql)) {
-		print "  Error: Could not update DB version in $CONFIG_table\n";
+		print "  Error: Could not update DB version in $CONFIG_TABLE\n";
 		print get_db_error(mysql_error())."\n";
 		return false;
 	}
@@ -116,8 +116,8 @@ function update_db_version($version) {
 
 function run_sql_script($sqlfile) {
 	global $DATABASE_PASSWORD_FUNCTION;
-	global $CONFIG_table;
-	$db_prefix = preg_replace("/config$/","",$CONFIG_table);
+	global $CONFIG_TABLE;
+	$db_prefix = preg_replace("/config$/","",$CONFIG_TABLE);
 	$db_prefix = mysql_real_escape_string($db_prefix);
 
 	$contents = file_get_contents($sqlfile);

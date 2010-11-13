@@ -77,7 +77,7 @@ include ("banner.inc");
 					</tr>
 <?php
 
-list($qh,$num) = dbQuery("select * from $RATE_table where rate_id != 1 order by rate_id");
+list($qh,$num) = dbQuery("select * from $RATE_TABLE where rate_id != 1 order by rate_id");
 
 $count = 0;
 while ($data = dbResult($qh)) {

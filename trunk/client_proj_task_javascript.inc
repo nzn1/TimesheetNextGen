@@ -6,11 +6,11 @@
 //include("debuglog.php");
 //$debug=new logfile();
 //Get list of clients and projects the contextUser is assigned to
-$getUsersClientList = "SELECT $PROJECT_table.proj_id, $PROJECT_table.client_id FROM $ASSIGNMENTS_table, $PROJECT_table WHERE ".
-		"$ASSIGNMENTS_table.username='$contextUser' AND ".
-		"$PROJECT_table.proj_id=$ASSIGNMENTS_table.proj_id AND ".
-		"$PROJECT_table.proj_status!='Suspended' AND $PROJECT_table.proj_status!='Complete' ".
-		"ORDER BY $PROJECT_table.title";
+$getUsersClientList = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id FROM $ASSIGNMENTS_TABLE, $PROJECT_TABLE WHERE ".
+		"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
+		"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
+		"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
+		"ORDER BY $PROJECT_TABLE.title";
 
 list($qh5, $num5) = dbQuery($getUsersClientList);
 //$debug->write("found $num5 clients for $contextUser\n");
@@ -23,8 +23,8 @@ for ($i=0; $i<$num5; $i++) {
 }
 
 //get all of the clients and put them into a hastable
-$getClientsQuery = "SELECT $CLIENT_table.client_id, $CLIENT_table.organisation FROM " .
-			"$CLIENT_table ORDER BY $CLIENT_table.organisation";
+$getClientsQuery = "SELECT $CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation FROM " .
+			"$CLIENT_TABLE ORDER BY $CLIENT_TABLE.organisation";
 
 list($qh2, $num2) = dbQuery($getClientsQuery);
 //iterate through results
@@ -42,13 +42,13 @@ for ($i=0; $i<$num2; $i++) {
 }
 
 //get all of the projects and put them into the hashtable
-$getProjectsQuery = "SELECT $PROJECT_table.proj_id, $PROJECT_table.client_id, $PROJECT_table.title, ".
-			"$PROJECT_table.proj_status FROM ".
-			"$PROJECT_table, $ASSIGNMENTS_table WHERE ".
-			"$PROJECT_table.proj_id=$ASSIGNMENTS_table.proj_id AND ".
-			"$ASSIGNMENTS_table.username='$contextUser' AND ".
-			"$PROJECT_table.proj_status!='Suspended' AND $PROJECT_table.proj_status!='Complete' ".
-			"ORDER BY $PROJECT_table.title";
+$getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, $PROJECT_TABLE.title, ".
+			"$PROJECT_TABLE.proj_status FROM ".
+			"$PROJECT_TABLE, $ASSIGNMENTS_TABLE WHERE ".
+			"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
+			"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
+			"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
+			"ORDER BY $PROJECT_TABLE.title";
 
 list($qh3, $num3) = dbQuery($getProjectsQuery);
 //iterate through results
@@ -77,11 +77,11 @@ foreach ($projCount as $client => $project_count) {
 }
 
 //get all of the tasks and put them into the hashtable
-$getTasksQuery = "SELECT $TASK_table.proj_id, $TASK_table.task_id, $TASK_table.name FROM ".
-			"$TASK_table, $TASK_ASSIGNMENTS_table WHERE ".
-			"$TASK_table.task_id = $TASK_ASSIGNMENTS_table.task_id AND ".
-			"$TASK_ASSIGNMENTS_table.username='$contextUser' ".
-			"ORDER BY $TASK_table.name";
+$getTasksQuery = "SELECT $TASK_TABLE.proj_id, $TASK_TABLE.task_id, $TASK_TABLE.name FROM ".
+			"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE WHERE ".
+			"$TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
+			"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
+			"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);
 //iterate through results

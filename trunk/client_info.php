@@ -28,8 +28,8 @@ include ("header.inc");
 				"city, country, postal_code, contact_first_name, contact_last_name,".
 				"username, contact_email, phone_number, fax_number, gsm_number, ".
 				"http_url ".
-			"FROM $CLIENT_table ".
-			"WHERE $CLIENT_table.client_id=$client_id";
+			"FROM $CLIENT_TABLE ".
+			"WHERE $CLIENT_TABLE.client_id=$client_id";
 
 	print "<center><table border=\"0\" ";
 	include("table.inc");
