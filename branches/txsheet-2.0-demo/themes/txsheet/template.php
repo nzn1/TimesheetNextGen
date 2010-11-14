@@ -57,7 +57,7 @@ html {
 {debugInfoTop}
 <div id="wrap" style="">
 <div class="headerwrap" style="background:#222;">
-	<h1 style="color:#fff;">TimesheetNG 2.0x</h1>
+	<h1 style="color:#fff;">TimesheetNG 1.5.x OO Demo</h1>
 	
 
 

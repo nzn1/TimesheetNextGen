@@ -6,17 +6,17 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclMonthly')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . get_acl_level('aclMonthly'));	
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclMonthly'));	
 	}
 	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . Common::get_acl_level('aclMonthly'));
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
 	}
 	
 	exit;
 }
 
 // Connect to database.
-if(!(@$this instanceof templateParser)){
+if(!class_exists('Site')){
 	$dbh = dbConnect();	
 }
 

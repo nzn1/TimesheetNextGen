@@ -7,7 +7,7 @@
 	}
 
 	//Get the result set for the config set 1
-	if(!(@$this instanceof templateParser)){
+	if(!class_exists('Site')){
 		$dbh = dbConnect();	
 	}
 	
