@@ -37,8 +37,7 @@ class Common{
 					"end_time AS end_time_str, ".
 					"unix_timestamp(start_time) AS start_stamp, ".
 					"unix_timestamp(end_time) AS end_stamp, ".
-					"duration, ".		//duration is stored in minutes
-					"$TIMES_TABLE.status AS subStatus, " . 
+					"duration, ".		//duration is stored in minutes 
 					"trans_num, ".
 					"$TIMES_TABLE.uid, " .
 					"$USER_TABLE.first_name, " .
