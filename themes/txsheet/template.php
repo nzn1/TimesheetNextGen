@@ -51,9 +51,11 @@ html {
   <![endif]-->
 
 
-
+{tsx_header}
 </head>
 <body{onload}>
+<!-- this is the old body tag from body.inc  -->
+<!-- <body style="width:100%; height:100%;"link="#004E8A" vlink="#171A42"> -->
 {debugInfoTop}
 <div id="wrap" style="">
 <div class="headerwrap" style="background:#222;">
@@ -77,7 +79,10 @@ html {
 <!--end headerwrap--> {response}
 
             <div class="content">
+              
+              {tsx_banner}
               {content}
+              {tsx_footer}
             </div><!--end content-->  
 
 

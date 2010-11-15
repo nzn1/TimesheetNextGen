@@ -716,7 +716,7 @@ class Common{
 						"ORDER BY organisation");
 		}
 
-		print "<select name=\"client_id\" onChange=\"$onChange\" style=\"width:100%;\"";
+		print "<select name=\"client_id\" onchange=\"$onChange\" style=\"width:100%;\"";
 		if ($isMultiple)
 			print "multiple size=\"4\"";
 		print ">\n";
@@ -802,7 +802,7 @@ class Common{
 			return;
 		}
 
-		print "<select name=\"proj_id\" onChange=\"$onChange\" style=\"width:100%;\"";
+		print "<select name=\"proj_id\" onchange=\"$onChange\" style=\"width:100%;\"";
 		if ($disabled == 'true')
 			print " disabled=\"disabled\"";
 		print ">\n";
@@ -857,7 +857,7 @@ class Common{
 
 		list($qh, $num) = dbQuery($query);
 		if ($num > 0) {
-			print "<select name=\"task_id\" onChange=\"$onChange\" style=\"width:100%;\">\n";
+			print "<select name=\"task_id\" onchange=\"$onChange\" style=\"width:100%;\">\n";
 			while ($return = dbResult($qh)) {
 				print "<option value=\"$return[task_id]\"";
 				if ($currentTaskId == $return["task_id"])
@@ -930,7 +930,7 @@ class Common{
 			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 
-		$drop_list_string = "<select name=\"$varname\" onChange=\"submit()\" ";
+		$drop_list_string = "<select name=\"$varname\" onchange=\"submit()\" ";
 		if (!empty($width))
 			$drop_list_string.= "style=\"width: $width;\" ";
 		if ($disabled == 'true')
@@ -988,7 +988,7 @@ class Common{
 
 	public static function absence_select_droplist($selected='', $disabled='false', $id) {
 ?>
-	<select name="<?php echo $id; ?>" onChange="OnChange()" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
+	<select name="<?php echo $id; ?>" onchange="OnChange()" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
 	<option value="" <?php if ($selected == '') echo "selected=\"selected\"";?>></option>
 	<option value="Holiday" <?php if ($selected== 'Holiday') echo "selected=\"selected\"";?>>Holiday</option>
 	<option value="Sick" <?php if ($selected== 'Sick') echo "selected=\"selected\"";?>>Sick</option>
@@ -1007,7 +1007,7 @@ class Common{
 			$query = "SELECT client_id, organisation FROM $CLIENT_TABLE ORDER BY organisation";
 
 		//print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
-		print "<select name=\"client_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
+		print "<select name=\"client_id\" onchange=\"submit()\" style=\"width: 100%;\"";
 		if ($disabled)
 			print " disabled=\"disabled\"";
 		print ">\n";
@@ -1049,7 +1049,7 @@ class Common{
 							"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
 		print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
-		print "<select name=\"proj_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
+		print "<select name=\"proj_id\" onchange=\"submit()\" style=\"width: 100%;\"";
 		if ($disabled == 'true')
 			print " disabled=\"disabled\"";
 		print ">\n";
@@ -1135,7 +1135,7 @@ class Common{
 	
 	public static function proj_status_list_filter($name, $status='', $onChange='submit();') {
 ?>
-	<select name=<?php echo $name ?> onChange="<?php echo $onChange?>" >
+	<select name=<?php echo $name ?> onchange="<?php echo $onChange?>" >
 	<option value="All" <?php if ($status == 'All') echo "selected=\"selected\"";?>>All</option>
 	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>>Pending</option>
 	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>>Started</option>

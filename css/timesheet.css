@@ -160,3 +160,8 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 	color:#e04040; }
 tr.diff td { background:#C4C4C4; }
 
+
+.nobr {white-space: nowrap}
+
+.left {float:left;}
+

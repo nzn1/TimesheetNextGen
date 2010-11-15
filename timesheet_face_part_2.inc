@@ -1,7 +1,7 @@
 					<!-- BREAK POINT 1 -->
 					</td>
 					<td width="4" height="100%">
-						<table width="10" height="100%" border="0" cellpadding="0" cellspacing="0">
+						<table width="10" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 								<td width="10" height="7">
 									<img src="images/timesheet_face_06.gif" width="10" height="7" alt="" /></td>
@@ -18,7 +18,7 @@
 	</tr>
 	<tr>
 		<td>
-			<table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="13" height="100%">
 						<table width="13" height="100%" border="0" cellpadding="0" cellspacing="0">

@@ -1,11 +1,24 @@
 <?php
 //Get the result set for the config set 1
-list($qhq, $numq) = dbQuery("SELECT footerhtml FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-$configData = dbResult($qhq);
+
 if(!class_exists('Site')){
+	list($qhq, $numq) = dbQuery("SELECT footerhtml FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+	$configData = dbResult($qhq);
 	parse_and_echo(stripslashes($configData['footerhtml']));
 }
-else Common::parse_and_echo(stripslashes($configData['footerhtml']));
+else {
+
+	$footer = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">
+  <tr>
+    <td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">TimesheetNextGen 
+      <br>
+      <span style=\"font-size: 9px;\"><b>Page generated %time% %date% (%timezone% time)</b>
+      </span></td>
+  </tr>
+</table>";
+	
+	Common::parse_and_echo(stripslashes($footer));
+}
 ?>
 <p>
 <table width="100%" class="grey_area">

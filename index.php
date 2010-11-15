@@ -65,7 +65,13 @@ class Site{
 		self::$session = new Session();
 		self::$database = new MySQLDB();
 		self::$session->startSession();
-			
+
+		
+		require("class.AuthenticationManager.php");
+		self::$authenticationManager = new AuthenticationManager();
+		require("class.CommandMenu.php");
+		
+		self::$commandMenu = new CommandMenu();
 		$tp = new templateParser();
 			
 //		if(!self::$session->isadmin() && debug::getHideDebugData()==true){
@@ -90,6 +96,10 @@ class Site{
 		//debugInfoTop is exempt from the module config selection
 		$tp->getPageElements()->addFile('debugInfoTop','debugInfoTop.php');
 		$tp->getPageElements()->addFile('debugInfoBottom','debugInfoBottom.php');
+		$tp->getPageElements()->addFile('tsx_footer','footer.inc');
+		$tp->getPageElements()->addFile('tsx_banner','banner.inc');
+		$tp->getPageElements()->addFile('tsx_header','header.inc');
+		
 		$tp->getPageElements()->getTagByName('debugInfoTop')->setOutput(ob_get_contents());
 		ob_end_clean();
 			
