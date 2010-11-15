@@ -133,8 +133,44 @@ class Config{
 			
 	}
 	
+
+	/**
+	 * 
+	 * an override flag for when workOutWhereMySiteIs() throws an error and has
+	 * to be configured manually
+	 * @var unknown_type
+	 */
+	private static $overrideWorkOutWhereMySiteIs = false;
 	
 	private static function workOutWhereMySiteIs(){
+		
+		/**
+		 * If this function throws an error, then set self::$overrideWorkOutWhereMySiteIs
+		 * to true and specify the parameters in here manually
+		 */
+		if(self::$overrideWorkOutWhereMySiteIs){
+			/**
+			 * relativeRoot should always have a leading slash and never a trailing slash.
+			 * e.g. self::$relativeRoot = '/TimesheetNG';
+			 */
+			self::$relativeRoot = '/TimesheetNG';
+			
+			/**
+			 * document Root is the full system path to the root directory of the site.
+			 * It should not have a trailing slash.
+			 * e.g. self::$documentRoot = 'C:/htdocs/TimesheetNG';
+			 */
+			self::$documentRoot = 'C:/htdocs/TimesheetNG';
+			
+			/**
+			 * This isn't really utilised yet, but you may aswell define it
+			 * This should configure itself.
+			 */
+			self::$absoluteRoot = "http://".$_SERVER['SERVER_NAME'].self::getRelativeRoot();
+			
+			return;
+			
+		}
 
 			//set document to current working directory
 		//replace backslashes with forward slashes
@@ -146,7 +182,7 @@ class Config{
 		//replace backslashes with forward slashes
 		//trim trailing forward slash
 		$serverDocumentRoot = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']),'/');
-		//ppr($serverDocumentRoot,'Server Doc Root');
+		//ppr($serverDocumentRoot,'$_SERVER[\'DOCUMENT_ROOT\']');
 
 		//we now want to subtract serverDocumentRoot from self::documentRoot
 		//to find self::relativeRoot
@@ -161,7 +197,36 @@ class Config{
 			/**
 			 * @todo cause a massive error here as the auto sensing has failed.
 			 */
-			echo "false";	
+
+			$msg = "<p>The Config Class was unable to determine the directory path"
+			." in which your site resides.  Therefore it cannot load correctly."
+			."<br />This is because the variables:<br />"
+			."SERVER['DOCUMENT_ROOT'] and self::documentRoot don't correlate.<br />"
+			."self::documentRoot is calculated using the getcwd() function (get current working directory)"
+			." and if these two variables don't match up then the function Config::workOutWhereMySiteIs()"
+			."cannot determine the correct value for self::relativeRoot</p>"
+			."<p>A plausible reason for this is that you are using a Linux system with a logical link from something like:<br />"
+			."/var/www/html/mysite<br />"
+			."to:<br />"
+			."/home/username/workspace/project_trunk/branches/branch_name</p>"
+			."<p>If SERVER['DOCUMENT_ROOT'] and self::documentRoot differ significantly then this may be the case</p>"
+			."<br />";
+			$msg .= "<h3>Debug Information</h3>";
+			$msg .= ppr($serverDocumentRoot,'$_SERVER[\'DOCUMENT_ROOT\']',true);
+			$msg.="<pre>This is the absolute path to the root directory of your site.  In apache this is specified in the http.conf file</pre>";
+			$msg .="<hr />";
+			$msg .= ppr(self::$documentRoot,'self::documentRoot',true);
+			$msg.="<pre>self::documentRoot should be the server document root + any subdirectory that your site resides in.<br />"
+			." i.e. localhost/folder1/mysite  should give a documentRoot of root_public_html/folder1/mysite</pre>";
+			$msg .="<hr />";
+			$msg .= ppr(self::$relativeRoot,'self::RelativeRoot',true);
+			$msg.="<pre>self::relativeRoot should be the any subdirectory that your site resides relative to the public_html folder path.<br />"
+			." i.e. localhost/folder1/mysite  should give a relativeRoot of /folder1/mysite</pre>";
+			$msg .="<hr />";
+			$msg .="<h3>How can I fix this error?</h3>";
+			$msg .="<p>You can specify the parameters yourself<br />"
+				."Just set self::overrideWorkOutWhereMySiteIs to true and then setup the values in the first few lines of workOutWhereMySiteIs()</p>";
+			ErrorHandler::fatalError($msg,'Config Failed','Site Configuration Problem',false);	
 		}
 
 		/**
@@ -173,7 +238,10 @@ class Config{
 		//ppr(self::$absoluteRoot,'self::absoluteRoot');
 		//ppr(self::$relativeRoot,'self::relativeRoot');		
 		//die();
+		
 	}
+	
+
 
 	/**
 	 *

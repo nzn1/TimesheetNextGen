@@ -230,7 +230,7 @@ class ErrorHandler
 	 * @param $title - the title of the page
 	 * @param $heading - the level 1 heading of the error page
 	 */
-	public static function fatalError($msg,$title='Fatal Error',$heading='Error'){
+	public static function fatalError($msg,$title='Fatal Error',$heading='Error',$wrapMsgInPTags=true){
 		ob_end_clean();
 		if($msg==''){
 			$msg = 'An error has occured.';
@@ -250,11 +250,10 @@ class ErrorHandler
 			</head>";
 		echo"<body bgcolor=\"black\" text=\"white\" link=\"white\" vlink=\"white\" alink=\"white\">
 			<h1>".$heading."</h1>";
-		echo"<p>";
+		if($wrapMsgInPTags==true)echo"<p>";
 		echo $msg;
-		echo"<br />
-			</p>
-			</body>
+		if($wrapMsgInPTags==true)echo"<br /></p>";
+		echo"</body>
 			</html>";
 		exit;
 	}	

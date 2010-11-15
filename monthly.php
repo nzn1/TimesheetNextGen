@@ -428,16 +428,33 @@ include ("navcal/navcal_monthly.inc");
 
 					if ($startsBeforeToday && $endsAfterToday) {
 						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= "...-...";
-						$todaysTotal += get_duration($curStamp, $tomorrowStamp);
+						if(!class_exists('Site')){
+							$todaysTotal += get_duration($curStamp, $tomorrowStamp);
+						}
+						else{
+							$todaysTotal += Common::get_duration($curStamp, $tomorrowStamp);
+						}
 					} else if ($startsBeforeToday && $endsToday) {
 						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= "...-" . $formattedEndTime;
-						$todaysTotal += get_duration($curStamp, $data["end_stamp"]);
+						if(!class_exists('Site')){
+							$todaysTotal += get_duration($curStamp, $data["end_stamp"]);
+						}
+						else{
+							$todaysTotal += Common::get_duration($curStamp, $data["end_stamp"]);
+						}
+						
 					} else if ($startsToday && $endsToday) {
 						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= $formattedStartTime . "-" . $formattedEndTime;
 						$todaysTotal += $data["duration"];
 					} else if ($startsToday && $endsAfterToday) {
 						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= $formattedStartTime . "-...";
-						$todaysTotal += get_duration($data["start_stamp"],$tomorrowStamp);
+						if(!class_exists('Site')){
+							$todaysTotal += get_duration($data["start_stamp"],$tomorrowStamp);
+						}
+						else{
+							$todaysTotal += Common::get_duration($data["start_stamp"],$tomorrowStamp);
+						}
+						
 					} else {
 						print "Error: time booleans are in a confused state<br />\n";
 					}
