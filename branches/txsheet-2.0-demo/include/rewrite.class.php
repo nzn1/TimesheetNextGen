@@ -19,13 +19,13 @@
 class Rewrite {
 
 	//the url with all GET variables stripped off
-	private $shortUri = null;
+	private static $shortUri = null;
 	//the requested uri of the site.
-	private $uri = null;
+	private static $uri = null;
 	//the page that will be displayed in the content pane
-	private $content = null;
+	private static $content = null;
 	//the name of the module being used
-	private $module = null;
+	private static $module = null;
 
 
 	public function __construct(){
@@ -78,7 +78,7 @@ class Rewrite {
 		$_GET['c'] =  $uri_explode[0];
 		if(debug::getRewrite()==1)ppr($_GET,'GET updated');
 		//used for making self generating links relative to current page without ?id=1... tags
-		$this->shortUri = Config::getRelativeRoot()."/".$uri_explode[0];
+		self::$shortUri = Config::getRelativeRoot()."/".$uri_explode[0];
 
 		//check for a URL that uses the id tag.
 		$id_explode = explode('/id/', $uri_explode[0]);
@@ -114,7 +114,7 @@ class Rewrite {
 		else{
 			if($_GET["c"][strlen($_GET["c"])-1]=="/") $_GET["c"] = substr_replace($_GET["c"],"",-1);
 		}
-		$this->content = $_GET['c'];
+		self::$content = $_GET['c'];
 		unset($_GET['c']);
 		return;
 	}
@@ -136,6 +136,7 @@ class Rewrite {
 		//Explode path to directories and variables:
 		$uri_explode = explode('?', $uri,2);
 		if(debug::getRewrite()==1)ppr($uri_explode,'split uri at ?');
+
 		//uri_explode[0] is the page ref
 		//uri_explode[1 to n] is the arguments
 		//ensure uri has a / on the end.  this is required for consistency.
@@ -161,7 +162,7 @@ class Rewrite {
 		//reconstruct the uri
 		if($get == '') $_SERVER['REQUEST_URI'] = $uri_explode['0'];
 		else $_SERVER['REQUEST_URI'] = $uri_explode['0']."?".$get;
-		$this->uri = $_SERVER['REQUEST_URI'];
+		self::$uri = $_SERVER['REQUEST_URI'];
 		if(debug::getRewrite()==1)echo "<pre>".$_SERVER['REQUEST_URI']."</pre>";
 	}
 	/**
@@ -170,13 +171,13 @@ class Rewrite {
 	 */
 	public function checkDir(){
 		//NOTE THIS IS RELATIVE TO THE CURRENT DIRECTORY i.e. /INDEX.PHP
-		if(debug::getRewrite()==1)ppr($this->content,'check dir');
-		$ext = substr(strrchr($this->content, '.'), 1);
+		if(debug::getRewrite()==1)ppr(self::$content,'check dir');
+		$ext = substr(strrchr(self::$content, '.'), 1);
 		if(strlen($ext)==3){
 			return;     //found file extension so cannot be directory.  so dont append /index.php
 		}
-		if(file_exists($this->content)){
-			$this->content = $this->content."/index.php";
+		if(file_exists(self::$content)){
+			self::$content = self::$content."/index.php";
 		}
 		return;
 	}
@@ -206,14 +207,14 @@ class Rewrite {
 	 */
 	function checkModule(){
 		if(debug::getRewrite()==1)echo"<pre>check_module()</pre>";
-		$module_dir = explode('/', $this->content,2);
+		$module_dir = explode('/', self::$content,2);
 		if(debug::getRewrite()==1)ppr($module_dir,'check module');
 		if ($module_dir[0]=="modules"){
 			$i=1;
 			$temp = $module_dir[1];
-			$module_dir = explode('/', $this->content,3);
+			$module_dir = explode('/', self::$content,3);
 			if(debug::getRewrite()==1)ppr($module_dir,'Module Requested');
-			$this->content = $temp;
+			self::$content = $temp;
 
 			//a module has been requested directly through the modules uri.
 			//i.e. http://www.voltnet.co.uk/modules/admin/index
@@ -235,8 +236,8 @@ class Rewrite {
 		if(!$result || ($num_rows <= 0)){
 			if(file_exists( Config::getDocumentRoot() . "/modules/".$module_dir[$i])){
 				if(debug::getRewrite()==1)echo "error: module not registered";
-				$this->module = $module_dir[$i];
-				$this->content = "modules/not_registered";
+				self::$module = $module_dir[$i];
+				self::$content = "modules/not_registered";
 				return self::MODULE_NOT_REGISTERED;            //module not registered
 			}
 			else {
@@ -252,12 +253,12 @@ class Rewrite {
 		//check to see if a module is active or not
 		if($module['isactive']==0){
 			if(debug::getRewrite()==1)echo "error: module isn't active";
-			$this->module = $module_dir[$i];
-			$this->content = "modules/not_active";
+			self::$module = $module_dir[$i];
+			self::$content = "modules/not_active";
 			return self::MODULE_DISABLED;
 		}
-		$this->content = "modules/".$this->content;   //direct to modules directory
-		$this->module = $module_dir[0];
+		self::$content = "modules/".self::$content;   //direct to modules directory
+		self::$module = $module_dir[0];
 		return self::MODULE_ACTIVE;
 	}
 
@@ -284,19 +285,19 @@ class Rewrite {
 		}
 	}
 
-	public function getUri(){
-		return $this->uri;
+	public static function getUri(){
+		return self::$uri;
 	}
-	public function getShortUri(){
-		return $this->shortUri;
+	public static function getShortUri(){
+		return self::$shortUri;
 	}
-	public function getContent(){
-		return $this->content;
+	public static function getContent(){
+		return self::$content;
 	}
-	public function setContent($s){
-		$this->content = $s;
+	public static function setContent($s){
+		self::$content = $s;
 	}
-	public function getModule(){
-		return $this->module;
+	public static function getModule(){
+		return self::$module;
 	}
 }

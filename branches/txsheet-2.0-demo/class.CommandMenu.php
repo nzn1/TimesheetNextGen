@@ -8,8 +8,6 @@ class Command {
 	var $enabled;
 
 	function Command($text, $enabled, $sep=true) {
-		//$this->text = str_replace(" ", "&nbsp;", $text);  don't need to do this because we're using <nobr></nobr> tags
-		//<nobr> should not be used. it isn't a valid html tag.
 		$this->text = $text;
 		$this->enabled = $enabled;
 		$this->wantsep = $sep;
@@ -17,7 +15,7 @@ class Command {
 
 	function toString() {
 		if (!$this->enabled)
-			return "<nobr><span class=\"command_current\">$this->text</span></nobr>";
+			return "<span class=\"command_current nobr\">$this->text</span>";
 			//NOBR is not a valid html tag
       /**
 			 *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
@@ -49,7 +47,7 @@ class TextCommand extends Command {
 		if (!$this->enabled)
 			return parent::toString();
 		else
-			return "<nobr><a href=\"" . $this->url . "\" class=\"command\">" . $this->text . "</a></nobr>";
+			return "<a class=\"nobr\" href=\"" . $this->url . "\" class=\"command\">" . $this->text . "</a>";
 			//NOBR is not a valid html tag
 			/**
 			 *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
@@ -69,14 +67,20 @@ class IconTextCommand extends TextCommand {
 	}
 
 	function toString() {
-		if (!file_exists($this->img))
-			return parent::toString();
-		else
-			return "<nobr><a href=\"" . $this->url . "\" class=\"command\"><img src=\"" . $this->img . "\" alt=\"\" border=\"0\" align=\"absbottom\" />" . $this->text . "</a></nobr>";
-			//NOBR is not a valid html tag
-			/**
-			 *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
-			 */       	
+//		ppr($this->img);
+		if(!class_exists('Site')){
+			if (!file_exists($this->img))
+				return parent::toString();
+			else               
+				return "<a class=\"command nobr\" href=\"" . $this->url . "\" ><img src=\"" . $this->img . "\" alt=\"\" border=\"0\" align=\"bottom\" />" . $this->text . "</a>\n";			
+				
+		}
+		else{
+			if (!file_exists(Config::getDocumentRoot()."/".$this->img))
+				return parent::toString();
+			else               
+				return "<a class=\"command nobr\" href=\"" . $this->url . "\" ><img src=\"" . $this->img . "\" alt=\"\" border=\"0\" align=\"bottom\" />" . $this->text . "</a>\n";
+			}     	
 	}
 }
 
@@ -140,13 +144,9 @@ class CommandMenu {
 
 //create the command menu object so that those files which include this one dont need to
 
-//only add to site if working from the new OO version of txsheet
-if(class_exists('Site')){
-	Site::setCommandMenu(new CommandMenu());
-	$commandMenu = Site::getCommandMenu();
-}
-else{
-$commandMenu = new CommandMenu;	
+//don't create commandMenu for new OO version of txsheet
+if(!class_exists('Site')){
+	$commandMenu = new CommandMenu;	
 }
 // vim:ai:ts=4:sw=4
 ?>

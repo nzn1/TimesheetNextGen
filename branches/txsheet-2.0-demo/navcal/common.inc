@@ -144,96 +144,103 @@
 		//January has 31 days, so we don't need to verify that Jan, $day, $navyear is a valid date
 		$firstDate = mktime(0,0,0,1,$navday,$navyear);
 
-?>
-		<?php if($orient == "tall"): ?>
-			<table width="102" border="1" bordercolor="black" cellspacing="0" cellpadding="0">
+		if($orient == "tall"){
+			echo '<table width="102" border="1"  cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="100%" class="face_padding_cell" style="background-color: #000788">
-		<?php else: ?>
-			<table width="202" height="5" border="1" bordercolor="black" cellspacing="0" cellpadding="0">
+					<td width="100%" class="face_padding_cell" style="background-color: #000788">';
+		}
+		else {
+			echo '<table width="202"  border="1"  cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="100%" class="face_padding_cell_small" style="background-color: #000788">
-		<?php endif; ?>
+					<td width="100%" class="face_padding_cell_small" style="background-color: #000788">';
+		}
 
-				<!-- print monthly header -->
+		echo'<!-- print monthly header -->';
 
-					<table width="100%" border="0">
-						<tr >
-						<?php if($orient == "tall"): ?>
-							<td align="left" nowrap class="navcal_header">
-						<?php else: ?>
-							<td align="left" nowrap class="navcal_header" style="font-size: 10">
-						<?php endif; ?>
-								<?php 
-								list($prev_year,$next_year) = getPrevNextYear($curDate,$need_ldom);
-								print "<a href=\"$_SERVER[PHP_SELF]?$post";
-								$dti=getdate($prev_year);
-								print 	"&amp;year=".$dti["year"].	
-										"&amp;month=".$dti["mon"].
-										"&amp;day=".$dti["mday"].
-										"\"><font size=\"+1\">&laquo;</font></a>";
-								?>
-							</td>
-						<?php if($orient == "tall"): ?>
-							<td align="center" nowrap class="navcal_header">
-						<?php else: ?>
-							<td align="center" nowrap class="navcal_header" style="font-size: 12">
-						<?php endif; ?>
-								<?php echo date('Y',$firstDate); ?>
-							</td>
-						<?php if($orient == "tall"): ?>
-							<td align="right" nowrap class="navcal_header">
-						<?php else: ?>
-							<td align="right" nowrap class="navcal_header" style="font-size: 10">
-						<?php endif; ?>
-								<?php
-								print "<a href=\"$_SERVER[PHP_SELF]?$post";
-								$dti=getdate($next_year);
-								print 	"&amp;year=".$dti["year"].	
-										"&amp;month=".$dti["mon"].
-										"&amp;day=".$dti["mday"].
-										"\"><font size=\"+1\">&raquo;</font></a>";
-								?>
-							</td>
-						</tr>
-					</table>
+		echo'<table width="100%" border="0">
+			<tr>';
+			if($orient == "tall"){
+				echo'<td align="left" nowrap="nowrap" class="navcal_header">';
+			}
+			else{
+				echo '<td align="left" nowrap="nowrap" class="navcal_header" style="font-size: 10">';
+			}
+					
+			list($prev_year,$next_year) = getPrevNextYear($curDate,$need_ldom);
+			echo "<a href=\"$_SERVER[PHP_SELF]?$post";
+			$dti=getdate($prev_year);
+			echo 	"&amp;year=".$dti["year"].	
+					"&amp;month=".$dti["mon"].
+					"&amp;day=".$dti["mday"].
+					"\"><font size=\"+1\">&laquo;</font></a>";
 
-					<!-- print month names  -->
-					<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
+				echo '</td>';
+						if($orient == "tall"){
+							echo '<td align="center" nowrap="nowrap" class="navcal_header">';
+						}
+						else{
+							echo '<td align="center" nowrap="nowrap" class="navcal_header" style="font-size: 12">';
+						}
+						echo date('Y',$firstDate);
+						echo '</td>';
+						
+						if($orient == "tall"){
+							echo '<td align="right" nowrap="nowrap" class="navcal_header">';
+						}
+						else{
+							echo '<td align="right" nowrap="nowrap" class="navcal_header" style="font-size: 10">';
+						}
+						
+
+						echo "<a href=\"$_SERVER[PHP_SELF]?$post";
+						$dti=getdate($next_year);
+						echo "&amp;year=".$dti["year"].	
+								"&amp;month=".$dti["mon"].
+								"&amp;day=".$dti["mday"].
+								"\"><font size=\"+1\">&raquo;</font></a>";
+
+						echo '</td>
+					</tr>
+				</table>';
+
+				echo '<!-- print month names  -->';
+				echo '<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 						<tr>
-							<td>
-							<?php if($orient == "tall"): ?>
-								<table width="100%" border="0" cellspacing="0" cellpadding="2" class="table_body">
-							<?php else: ?>
-								<table width="100%" border="0" cellspacing="0" cellpadding="1" class="table_body">
-							<?php endif; ?>
-								<?php
-									$curDate = $firstDate;
-									if($orient == "tall") {
-										//print tall format, 2 columns by 6 rows
-										for($i=0; $i<12; $i++) {	
-											$stampsary[]=$curDate;
-											$curDate=getNextMonth($curDate,$navday,$need_ldom);
-										}
+							<td>';
+							if($orient == "tall"){
+								echo '<table width="100%" border="0" cellspacing="0" cellpadding="2" class="table_body">';
+							}
+							else{
+								echo '<table width="100%" border="0" cellspacing="0" cellpadding="1" class="table_body">';
+							}
 
-										for($i=0; $i<6; $i++) {	
-											$dti=getdate($stampsary[$i]);
-											print "<tr>\n";
-											__print_month_name($stampsary[$i],$post);
-											__print_month_name($stampsary[$i+6],$post);
-											print   "</tr>\n";
-										} 
-									} else {
-										//print wide format, 4 columns by 3 rows
-										for($i=0; $i<3; $i++) {	
-											print "<tr>\n";
-											for($j=0; $j<4; $j++) {	
-												__print_month_name($curDate,$post);
-												$curDate=getNextMonth($curDate,$navday,$need_ldom);
-											}
-											print "</tr>\n";
-										} 
+							$curDate = $firstDate;
+							if($orient == "tall") {
+								//print tall format, 2 columns by 6 rows
+								for($i=0; $i<12; $i++) {	
+									$stampsary[]=$curDate;
+									$curDate=getNextMonth($curDate,$navday,$need_ldom);
+								}
+
+								for($i=0; $i<6; $i++) {	
+									$dti=getdate($stampsary[$i]);
+									print "<tr>\n";
+									__print_month_name($stampsary[$i],$post);
+									__print_month_name($stampsary[$i+6],$post);
+									print   "</tr>\n";
+								} 
+							} 
+							else {
+								//print wide format, 4 columns by 3 rows
+								for($i=0; $i<3; $i++) {	
+									echo "<tr>\n";
+									for($j=0; $j<4; $j++) {	
+										__print_month_name($curDate,$post);
+										$curDate=getNextMonth($curDate,$navday,$need_ldom);
 									}
+									echo "</tr>\n";
+								} 
+							}
 								?>
 								</table>
 							</td>
@@ -309,11 +316,11 @@
 
 ?>
 		<?php if($orient == "tall"): ?>
-			<table width="102" border="1" bordercolor="black" cellspacing="0" cellpadding="0">
+			<table width="102" border="1" cellspacing="0" cellpadding="0">
 				<tr>
 					<td width="100%" class="face_padding_cell" style="background-color: #000788">
 		<?php else: ?>
-			<table width="202" height="5" border="1" bordercolor="black" cellspacing="0" cellpadding="0">
+			<table width="202" border="1" cellspacing="0" cellpadding="0">
 				<tr>
 					<td width="100%" class="face_padding_cell_small" style="background-color: #000788">
 		<?php endif; ?>
@@ -323,9 +330,9 @@
 					<table width="100%" border="0">
 						<tr >
 						<?php if($orient == "tall"): ?>
-							<td align="left" nowrap class="navcal_header">
+							<td align="left" nowrap="nowrap" class="navcal_header">
 						<?php else: ?>
-							<td align="left" nowrap class="navcal_header" style="font-size: 10">
+							<td align="left" nowrap="nowrap" class="navcal_header" style="font-size: 10">
 						<?php endif; ?>
 								<?php 
 								list($sprev_year,$snext_year) = getPrevNextYear($startDate,$s_need_ldom);
@@ -343,16 +350,16 @@
 								?>
 							</td>
 						<?php if($orient == "tall"): ?>
-							<td align="center" nowrap class="navcal_header">
+							<td align="center" nowrap="nowrap" class="navcal_header">
 						<?php else: ?>
-							<td align="center" nowrap class="navcal_header" style="font-size: 12">
+							<td align="center" nowrap="nowrap" class="navcal_header" style="font-size: 12">
 						<?php endif; ?>
 								<?php echo date('Y',$firstStartDate); ?>
 							</td>
 						<?php if($orient == "tall"): ?>
-							<td align="right" nowrap class="navcal_header">
+							<td align="right" nowrap="nowrap" class="navcal_header">
 						<?php else: ?>
-							<td align="right" nowrap class="navcal_header" style="font-size: 10">
+							<td align="right" nowrap="nowrap" class="navcal_header" style="font-size: 10">
 						<?php endif; ?>
 								<?php
 								print "<a href=\"$_SERVER[PHP_SELF]?$post";

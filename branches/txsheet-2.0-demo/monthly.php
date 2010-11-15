@@ -2,9 +2,8 @@
 //$Header: /cvsroot/tsheet/timesheet.php/monthly.php,v 1.10 2006/03/15 13:24:28 raghuprasad Exp $
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclMonthly')) {
+
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclMonthly')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclMonthly'));	
 	}
@@ -15,10 +14,8 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 	exit;
 }
 
-// Connect to database.
-if(!class_exists('Site')){
-	$dbh = dbConnect();	
-}
+include('monthly.class.php');
+$mc = new MonthlyClass();
 
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
@@ -35,7 +32,7 @@ if (empty($contextUser))
 
 // Check project assignment.
 if ($proj_id != 0) { // id 0 means 'All Projects'
-	list($qh, $num) = dbQuery("SELECT * FROM $ASSIGNMENTS_TABLE WHERE proj_id='$proj_id' AND username='$contextUser'");
+	list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getAssignmentsTable()." WHERE proj_id='$proj_id' AND username='$contextUser'");
 	if ($num < 1)
 		errorPage("You cannot access this project, because you are not assigned to it.");
 } else 
@@ -46,10 +43,7 @@ $todayDate = mktime(0, 0, 0, $month, $day, $year);
 $dateValues = getdate($todayDate);
 
 //the day the week should start on: 0=Sunday, 1=Monday
-if(!(@$this instanceof templateParser)){
-	$startDayOfWeek = getWeekStartDay();
-}
-else $startDayOfWeek = Common::getWeekStartDay();
+$startDayOfWeek = Common::getWeekStartDay();
 
 //work out the start date by subtracting days to get to beginning of week
 $startDate = mktime(0,0,0, $month, 1, $year);
@@ -67,120 +61,41 @@ if ($leadInDays < 0)
 $firstPrintedDate = strtotime(date("d M Y H:i:s",$startDate) . " -$leadInDays days");
 
 
-if(!(@$this instanceof templateParser)){
-	$endDate = getMonthlyEndDate($dateValues);
-}
-else $endDate = Common::getMonthlyEndDate($dateValues);
+$endDate = Common::getMonthlyEndDate($dateValues);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 //get the timeformat
-if(!(@$this instanceof templateParser)){
-	$CfgTimeFormat = getTimeFormat();
-}
-else $CfgTimeFormat = Common::getTimeFormat();
+$CfgTimeFormat = Common::getTimeFormat();
 
 
 $post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";       //this isn't used anywhere
 
-function print_totals($Minutes, $type="", $pyear, $pmonth, $pday) {
 
-	/**
-	 * Bug fix by robsearles 26 Jan 2008
-	 * Strange bug I noticed whilst fixing bug below. If a month starts
-	 * on a Monday, there is an extra total and link before the month
-	 * starts. Simply check to see if we are on the first day of the
-	 * month, if so, don't do anything.
-	 */
-	if($pday == 1) { return false; }
-	/**
-	 * Bug fix by robsearles 26 Jan 2008
-	 * Fix the "weekly total" link. Both the last and first
-	 * weeks' links now link to the correct week
-	 */
 
-	$curDate = mktime(0,0,0,$pmonth, $pday, $pyear);
+PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
 
-	$pdayOfWeek = date("w", $curDate);
-	// if the start day is a monday, want to view the week before
-	if($pdayOfWeek == 1) { $pdayOfWeek = 7;}
-	// other wise want to view this week (for use for last week of month)
-	else $pdayOfWeek--;
-	// Bug fix, if month ends on Saturday, dow==0, so, dow-- => -1
-	// and then Date math below returns -1 (ie, Dec 31, 1969)
-	if($pdayOfWeek<0) 
-		$pdayOfWeek=6;
-
-	$curDate = strtotime(date("d M Y H:i:s",$curDate) . " -$pdayOfWeek days");
-
-	$dateValues = getdate($curDate);
-	$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
-
-	// Called from monthly.php to print out a line summing the hours worked in the past
-	// week.  index.phtml must set all global variables.
-	global $BREAK_RATIO, $client_id, $proj_id, $task_id;
-	print "</tr><tr>\n";
-	if ($BREAK_RATIO > 0) {
-		print "<td align=\"left\" colspan=\"3\">";
-		$break_sec =  floor($BREAK_RATIO*$seconds);
-		$seconds -= $break_sec;
-		print "<font size=\"-1\">Break time: <font color=\"red\">". formatSeconds($break_sec);
-		print "</font></font></td><td align=\"right\" colspan=\"4\">";
-	} else
-		print "<td align=\"right\" colspan=\"7\" class=\"calendar_totals_line_$type\">";
-
-	if ($type=="monthly")
-		print "Monthly total: ";
-	else {
-		print "<a href=\"weekly.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id$ymdStr\">Weekly Total: </a>";
-	}
-
-	if(!class_exists('Site')){
-		print "<span class=\"calendar_total_value_$type\">". formatMinutes($Minutes) ."</span></td>\n";	
-	}
-	else{
-		print "<span class=\"calendar_total_value_$type\">". Common::formatMinutes($Minutes) ."</span></td>\n";
-	}
-	
-}
-
-?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
-<head>
-<title>Timesheet for <?php echo "$contextUser" ?></title>
-<?php
-include ("header.inc");
-?>
-</head>
-<?php
-echo "<body style=\"width:100%; height:100%;\"";
-include ("body.inc");
 if (isset($popup))
-	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
-echo ">\n";
+	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
-include ("banner.inc");
 include ("navcal/navcal_monthly.inc");
 
 ?>
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-<input type="hidden" name="month" value=<?php echo $month; ?> />
-<input type="hidden" name="year" value=<?php echo $year; ?> />
-<input type="hidden" name="task_id" value=<?php echo $task_id; ?> />
+<form action="<?php echo Rewrite::getShortUri(); ?>" method="get">
+<input type="hidden" name="month" value="<?php echo $month; ?>" />
+<input type="hidden" name="year" value="<?php echo $year; ?>" />
+<input type="hidden" name="task_id" value="<?php echo $task_id; ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1new.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap>
-							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
+						<td align="left" nowrap="nowrap">
+							<table width="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
 									<td>
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -197,7 +112,7 @@ include ("navcal/navcal_monthly.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" alt="spacer" width="150" height="1" /></td>
+												<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
 											</tr>
 										</table>
 									</td>
@@ -216,14 +131,14 @@ include ("navcal/navcal_monthly.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" alt="spacer" width="150" height="1" /></td>
+												<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
 											</tr>
 										</table>
 									</td>
 								</tr>
 							</table>
 						</td>
-						<td align="center" nowrap class="outer_table_heading">
+						<td align="center" nowrap="nowrap" class="outer_table_heading">
 							<?php echo date('F Y', $startDate); ?>
 						</td>
 					</tr>
@@ -282,7 +197,7 @@ include ("navcal/navcal_monthly.inc");
 
 		// New Week.
 		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
-			print_totals($weeklyTotal, "weekly", $year, $month, $curDay);
+			$mc->print_totals($weeklyTotal, "weekly", $year, $month, $curDay);
 			$weeklyTotal = 0;
 			print "</tr>\n<tr>\n";
 		} else
@@ -352,7 +267,7 @@ include ("navcal/navcal_monthly.inc");
 		print "<tr><td valign=\"top\"><a href=\"daily.php?$ymdStr".
 			"&amp;client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id\">$curDay <span class=\"task_time_small\">$holtitle</span></a></td>";
 		print "<td valign=\"top\" align=\"right\"><a href=\"$popup_href\" class=\"action_link\">".
-				 "<img src=\"images/add.gif\" alt=\"spacer\" width=\"11\" height=\"11\" border=\"0\" />".
+				 "<img src=\"".Config::getRelativeRoot()."/images/add.gif\" alt=\"+\" width=\"11\" height=\"11\" border=\"0\" />".
 				"</a></td>";
 		print "</tr>";
 		print "</table></td></tr>";
@@ -540,10 +455,10 @@ include ("navcal/navcal_monthly.inc");
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
-	print_totals($weeklyTotal, "weekly", $year, $month, $curDay);
+	$mc->print_totals($weeklyTotal, "weekly", $year, $month, $curDay);
 	$weeklyTotal = 0;
 	print "</tr>\n<tr>\n";
-	print_totals($monthlyTotal, "monthly", $year, $month, $curDay);
+	$mc->print_totals($monthlyTotal, "monthly", $year, $month, $curDay);
 
 ?>
 					</tr>
@@ -560,11 +475,4 @@ include ("navcal/navcal_monthly.inc");
 </table>
 
 </form>
-<?php
-include ("footer.inc");
-?>
-</body>
-</html>
-<?php
-// vim:ai:ts=4:sw=4
-?>
+

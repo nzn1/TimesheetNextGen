@@ -590,12 +590,7 @@ class AuthenticationManager {
 }
 
 //create the instance so its availiable by just including this file
-$authenticationManager = new AuthenticationManager;
-
-//only add to site if working from the new OO version of txsheet
-if(class_exists('Site')){
-	Site::setAuthenticationManager($authenticationManager);
-}
+$authenticationManager = new AuthenticationManager();
 
 // vim:ai:ts=4:sw=4
 ?>

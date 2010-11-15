@@ -37,6 +37,4 @@ include("navcal/common.inc");
 		</tr>
 	</table>
 <!-- End Montly Navigation Calendars -->
-<?php
-// vim:ai:ts=4:sw=4:filetype=php
-?>
+
