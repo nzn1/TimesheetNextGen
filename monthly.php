@@ -2,7 +2,9 @@
 //$Header: /cvsroot/tsheet/timesheet.php/monthly.php,v 1.10 2006/03/15 13:24:28 raghuprasad Exp $
 
 // Authenticate
-
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclMonthly')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclMonthly'));	
@@ -142,10 +144,10 @@ include ("navcal/navcal_monthly.inc");
 							<?php echo date('F Y', $startDate); ?>
 						</td>
 					</tr>
-				</table>
+				</table><!-- end of the client, project select table and the current month -->
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -176,14 +178,8 @@ include ("navcal/navcal_monthly.inc");
 	}
 
 	// Get the Monthly data.
-	if(!class_exists('Site')){
-		list($num, $qh) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id);
-		list($qhol, $holnum) = get_absences($month, $year, $contextUser);	
-	}
-	else{
-		list($num, $qh) = Common::get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id);
-		list($qhol, $holnum) = Common::get_absences($month, $year, $contextUser);
-	}
+	list($num, $qh) = Common::get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id);
+	list($qhol, $holnum) = Common::get_absences($month, $year, $contextUser);
 
 	$ihol = 0; $holtitle = "";
 	if ($holnum>$ihol)
@@ -199,7 +195,7 @@ include ("navcal/navcal_monthly.inc");
 		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
 			$mc->print_totals($weeklyTotal, "weekly", $year, $month, $curDay);
 			$weeklyTotal = 0;
-			print "</tr>\n<tr>\n";
+			print "</tr>\n<!-- --><tr>\n";
 		} else
 			$dowForFirstOfMonth = 1;
 
@@ -254,14 +250,17 @@ include ("navcal/navcal_monthly.inc");
 		/*print "<tr><td valign=\"top\"><tt><a href=\"daily.php?month=$month&amp;year=$year&amp;".
 			"day=$curDay&amp;client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id\">$curDay</a></tt></td></tr>";*/
 
-		$ymdStr = "&year=".$year . "&month=".$month . "&day=" . $curDay;
-		$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
+		$ymdStr = "&amp;year=".$year . "&amp;month=".$month . "&amp;day=".$curDay;
+		
+		$popup_href = "javascript:void(0)\" onclick=\"window.open('popup.php".
 											"?client_id=$client_id".
 											"&amp;proj_id=$proj_id".
 											"&amp;task_id=$task_id".
-											"$ymdStr".
-											"&amp;destination=$_SERVER[PHP_SELF]".
-											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+											"&amp;year=$year".
+											"&amp;month=$month".
+											"&amp;day=$day".
+											"&amp;destination=".$_SERVER['PHP_SELF'].
+											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 
 		print "<tr><td valign=\"top\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
 		print "<tr><td valign=\"top\"><a href=\"daily.php?$ymdStr".
@@ -304,13 +303,7 @@ include ("navcal/navcal_monthly.inc");
 			//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
 			//So, we handle it as best we can for now...
 
-		if(!class_exists('Site')){
-			fixStartEndDuration($data);
-		}
-		else{
-			Common::fixStartEndDuration($data);
-		}
-			
+			Common::fixStartEndDuration($data);		
 
 			//set some booleans
 			$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
@@ -435,7 +428,6 @@ include ("navcal/navcal_monthly.inc");
 				print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</td></tr>";
 			}
 		
-
 		} else {
 			print "<tr><td>&nbsp;</td></tr>";
 		}
@@ -468,7 +460,7 @@ include ("navcal/navcal_monthly.inc");
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>
