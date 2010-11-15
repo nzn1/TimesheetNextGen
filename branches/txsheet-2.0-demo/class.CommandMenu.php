@@ -4,27 +4,40 @@
 * Abstract class Command representing a command in a command menu
 */
 class Command {
-	var $text;
-	var $enabled;
+	protected $text;
+	protected $enabled;
 
-	function Command($text, $enabled, $sep=true) {
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $text
+	 * @param unknown_type $enabled
+	 * @param unknown_type $sep
+	 */
+	public function __construct($text, $enabled, $sep=true) {
 		$this->text = $text;
 		$this->enabled = $enabled;
 		$this->wantsep = $sep;
 	}
 
-	function toString() {
+	/**
+	 * 
+	 * Enter description here ...
+	 */
+	public function toString() {
 		if (!$this->enabled)
-			return "<span class=\"command_current nobr\">$this->text</span>";
-			//NOBR is not a valid html tag
-      /**
-			 *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
-			 */       	
+			return "<span class=\"command_current nobr\">".$this->text."</span>";
+    	
 		else
 			return $this->text;
 	}
 
-	function setEnabled($enabled) {
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $enabled
+	 */
+	public function setEnabled($enabled) {
 		$this->enabled = $enabled;
 	}
 }
@@ -33,41 +46,48 @@ class Command {
 *		It has a url and a visual reprenstation (text)
 */
 class TextCommand extends Command {
-	var $url;
+	
+	/**
+	 * 
+	 * Enter description here ...
+	 * @var unknown_type
+	 */
+	protected $url;
 
 	/**
 	* Constructor
 	*/
-	function TextCommand($text, $enabled, $url) {
-		parent::Command($text, $enabled);
+	public function __construct($text, $enabled, $url) {
+		parent::__construct($text, $enabled);
 		$this->url = $url;
 	}
 
-	function toString() {
+	
+	public function toString() {
 		if (!$this->enabled)
 			return parent::toString();
 		else
-			return "<a class=\"nobr\" href=\"" . $this->url . "\" class=\"command\">" . $this->text . "</a>";
-			//NOBR is not a valid html tag
-			/**
-			 *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
-			 */       	
+			return "<a class=\"command nobr\" href=\"" . $this->url . "\" >" . $this->text . "</a>";     	
 	}
 }
 
 class IconTextCommand extends TextCommand {
-	var $img;
+	protected $img;
 
 	/**
 	* Constructor
 	*/
-	function IconTextCommand($text, $enabled, $url, $img) {
-		parent::TextCommand($text, $enabled, $url);
+	public function __construct($text, $enabled, $url, $img) {
+		parent::__construct($text, $enabled, $url);
 		$this->img = $img;
 	}
 
-	function toString() {
-//		ppr($this->img);
+	/**
+	 * (non-PHPdoc)
+	 * @see TextCommand::toString()
+	 */
+	public function toString() {
+
 		if(!class_exists('Site')){
 			if (!file_exists($this->img))
 				return parent::toString();
@@ -76,7 +96,7 @@ class IconTextCommand extends TextCommand {
 				
 		}
 		else{
-			if (!file_exists(Config::getDocumentRoot()."/".$this->img))
+			if (!file_exists($_SERVER['DOCUMENT_ROOT'].$this->img))
 				return parent::toString();
 			else               
 				return "<a class=\"command nobr\" href=\"" . $this->url . "\" ><img src=\"" . $this->img . "\" alt=\"\" border=\"0\" align=\"bottom\" />" . $this->text . "</a>\n";
@@ -89,16 +109,24 @@ class IconTextCommand extends TextCommand {
 */
 class CommandMenu {
 
-	//array which holds the commands in the menu
-	var $commands = array();
+	/**
+	 * array which holds the commands in the menu 	
+	 */
+	private $commands = array();
 
-	/* adds a command to the menu */
-	function add($command) {
+	public function __construct(){}
+	/**
+	 *  adds a command to the menu 
+	 */
+	public function add($command) {
 		$this->commands[] = $command;
 	}
 
-	/* returns the command menu as html */
-	function toString() {
+	/**
+	 * 
+	 * returns the command menu as html
+	 */
+	public function toString() {
 		$printedFirstCommand = false;
 		$returnString = "";
 
@@ -117,7 +145,7 @@ class CommandMenu {
 	/**
 	* Disables a menu command with the given text
 	*/
-	function disableCommand($text) {
+	public function disableCommand($text) {
 		//iterate through commands
 		$count = count($this->commands);
 		for ($i=0; $i < $count; $i++) {
@@ -126,7 +154,11 @@ class CommandMenu {
 		}
 	}
 
-	function disableSelf() {
+	/**
+	 * 
+	 * Enter description here ...
+	 */
+	public function disableSelf() {
 		//iterate through commands
 		$count = count($this->commands);
 		for ($i=0; $i < $count; $i++) {
@@ -143,7 +175,6 @@ class CommandMenu {
 }
 
 //create the command menu object so that those files which include this one dont need to
-
 //don't create commandMenu for new OO version of txsheet
 if(!class_exists('Site')){
 	$commandMenu = new CommandMenu;	

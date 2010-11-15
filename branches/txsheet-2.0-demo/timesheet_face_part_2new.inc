@@ -23,8 +23,8 @@
 			<table width="100%"  border="0" cellpadding="0" cellspacing="0"><!--height="100%"-->
 				<tr >     <!--height="100%"-->
 					
-					<td style="vertical-align:top;width:13px;background-image:url('<? echo Config::getRelativeRoot()."/";?>images/timesheet_face_15.gif');">
-					<div style="width:13px;height:19px;background-image:url('<? echo Config::getRelativeRoot()."/";?>images/timesheet_face_09.gif');">&nbsp;</div>
+					<td style="vertical-align:top;width:13px;background-image:url('<?php echo Config::getRelativeRoot();?>/images/timesheet_face_15.gif');background-repeat:y-repeat;">
+					<div style="width:13px;height:19px;background-image:url('<?php echo Config::getRelativeRoot();?>/images/timesheet_face_09.gif');">&nbsp;</div>
 					   <!--td width="13" height="100%">
 						<table width="13" height="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>

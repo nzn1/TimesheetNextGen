@@ -11,7 +11,7 @@ else {
 	$footer = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">
   <tr>
     <td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">TimesheetNextGen 
-      <br>
+      <br />
       <span style=\"font-size: 9px;\"><b>Page generated %time% %date% (%timezone% time)</b>
       </span></td>
   </tr>
@@ -20,7 +20,6 @@ else {
 	Common::parse_and_echo(stripslashes($footer));
 }
 ?>
-<p>
 <table width="100%" class="grey_area">
 	<tr>
 		<td width="10px"> </td>

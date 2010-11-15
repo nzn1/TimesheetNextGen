@@ -80,9 +80,6 @@ h2,h3,h4,h5,h6 {
 .headerwrap {
 	position: relative;
 	background-color: #ffffff;
-	background-image: url('../../../images/empty-seats2.jpg');
-  background-repeat: no-repeat;
-  background-position: right top;	
 	text-align: left;
 	height: 150px;
 	margin-bottom: 10px;
@@ -415,26 +412,15 @@ h2,h3,h4,h5,h6 {
 	padding-left: 10px;
 }
 
-.content p.quote {
-	
-}
-
 .content h1 {
 	position: relative;
 	padding-top: 3px;
 	padding-bottom: 10px;
 	padding-right:0px;
-	padding-left:40px;
-	margin-top: 10px;
-	margin-bottom: 10px;
-
+	padding-left:0px;
 	text-align: left;
 	font-weight: bold;
 	color: #cba93e;
-	
-    background-image: url('../../../images/single-note.png');
-    background-repeat: no-repeat;
-    background-position: 5px 5px;
 }
 
 .content a,.content a:visited {

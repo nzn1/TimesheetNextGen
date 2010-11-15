@@ -78,7 +78,7 @@ class Rewrite {
 		$_GET['c'] =  $uri_explode[0];
 		if(debug::getRewrite()==1)ppr($_GET,'GET updated');
 		//used for making self generating links relative to current page without ?id=1... tags
-		self::$shortUri = Config::getRelativeRoot()."/".$uri_explode[0];
+		$_SERVER['PHP_SELF'] = self::$shortUri = Config::getRelativeRoot()."/".$uri_explode[0];
 
 		//check for a URL that uses the id tag.
 		$id_explode = explode('/id/', $uri_explode[0]);
