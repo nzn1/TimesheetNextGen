@@ -39,14 +39,7 @@ class templateParser{
 
 		$file = $this->pageElements->getTagByName('content')->getFile();
 		if(file_exists($file)){
-//			try{
 				$this->pageElements->getTagByName('content')->setOutput($this->parseFile($file));
-//			}
-//			catch(Exception $e){
-//				$msg = 'wow something went proper wrong and got caught by the templateparser';
-//				$msg .= ppr($e,'Error:',true);
-//				ErrorHandler::fatalError($msg);
-//			}
 		}
 		else{
 			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
@@ -237,11 +230,6 @@ class templateParser{
 			$this->pageElements->setHead("<title>".Config::getMainTitle()."</title>");
 		}
 		$this->output=str_replace('{head}',$this->pageElements->getHead(),$this->output);
-
-		/*    if($this->pageElements->getPageTitle()==''){
-		 $this->pageElements->setPageTitle("<h1>-</h1>");
-		 }
-		 $this->output=str_replace('{page_title}',$this->pageElements->getPageTitle(),$this->output);*/
 
 
 		if(isset($_GET['response'])){

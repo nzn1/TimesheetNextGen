@@ -69,9 +69,12 @@ class Site{
 		
 		require("class.AuthenticationManager.php");
 		self::$authenticationManager = new AuthenticationManager();
-		require("class.CommandMenu.php");
-		
+		require("class.CommandMenu.php");		
 		self::$commandMenu = new CommandMenu();
+		
+		require("globals.class.php");
+		gbl::initialize();
+		
 		$tp = new templateParser();
 			
 //		if(!self::$session->isadmin() && debug::getHideDebugData()==true){

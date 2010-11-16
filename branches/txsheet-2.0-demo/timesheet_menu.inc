@@ -1,10 +1,10 @@
 <?php
 
-//get todays values
+////get todays values
 if(!isset($realToday))
 	$realToday = getdate(time());
-
-//load local vars from superglobals
+//
+////load local vars from superglobals
 $year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: $realToday["year"];
 $month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: $realToday["mon"];
 $day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: $realToday["mday"];
@@ -70,7 +70,7 @@ if(class_exists('Site')){
 	if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
 		Site::getCommandMenu()->add(new IconTextCommand("Simple Timesheet", true, Config::getRelativeRoot()."/simple.php?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclMonthly'))
-		Site::getCommandMenu()->add(new IconTextCommand("View Month", true, Config::getRelativeRoot()."/monthly.php?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("View Month", true, Config::getRelativeRoot()."/monthly?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclAbsences'))
 		Site::getCommandMenu()->add(new IconTextCommand("Absences", true, Config::getRelativeRoot()."/absences.php?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclClients'))
@@ -90,7 +90,7 @@ if(class_exists('Site')){
 		Site::getCommandMenu()->add(new IconTextCommand("Configuration", true, Config::getRelativeRoot()."/config.php", Config::getRelativeRoot()."/images/icon_configuration.gif"));
 	}
 	if (!Site::getAuthenticationManager()->usingLDAP())
-		Site::getCommandMenu()->add(new IconTextCommand("Change Password", true, Config::getRelativeRoot()."changepwd.php", Config::getRelativeRoot()."/images/icon_key.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Change Password", true, Config::getRelativeRoot()."/changepwd.php", Config::getRelativeRoot()."/images/icon_key.gif"));
 	Site::getCommandMenu()->add(new IconTextCommand("Logout", true, Config::getRelativeRoot()."/logout.php?logout=true", Config::getRelativeRoot()."/images/icon_logout.gif"));
 	if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 		if (isset($_SESSION['contextUser'])) 
