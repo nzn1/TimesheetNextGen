@@ -9,6 +9,7 @@ include("navcal/common.inc");
 					<tr>
 						<td>
 						<?php 
+						if(!class_exists('Site')){
 							if($month<7)
 								draw_month_year_navigation($year-1,"wide");
 							else
@@ -20,7 +21,23 @@ include("navcal/common.inc");
 								draw_month_year_navigation($year,"wide");
 							else
 								draw_month_year_navigation($year+1,"wide");
+						}
+						else		
+						{
+							if(gbl::getMonth()<7)
+								draw_month_year_navigation(gbl::getYear()-1,"wide");
+							else
+								draw_month_year_navigation(gbl::getYear(),"wide");
 						?>
+						</td><td width="2">&nbsp;</td><td>
+						<?php 
+							if(gbl::getMonth()<7)
+								draw_month_year_navigation(gbl::getYear(),"wide");
+							else
+								draw_month_year_navigation(gbl::getYear()+1,"wide");
+						}
+								?>
+						
 						</td>
 					</tr>
 				</table>

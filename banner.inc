@@ -8,6 +8,7 @@ if(!class_exists('Site')){
 	parse_and_echo(stripslashes($configData["bannerhtml"]));
 }
 else {
+include("timesheet_menu.inc");
 
 $banner = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">
   <tr>

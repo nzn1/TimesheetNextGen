@@ -31,7 +31,7 @@ class Common{
 	
 	public static function get_time_records($startStr, $endStr, $uid='', $proj_id=0, $client_id=0, 
 							$order_by = "start_time, proj_id, task_id") {
-		include("table_names.inc");
+
 	//build the database query
 		$query = "SELECT start_time AS start_time_str, ".
 					"end_time AS end_time_str, ".
@@ -39,30 +39,30 @@ class Common{
 					"unix_timestamp(end_time) AS end_stamp, ".
 					"duration, ".		//duration is stored in minutes 
 					"trans_num, ".
-					"$TIMES_TABLE.uid, " .
-					"$USER_TABLE.first_name, " .
-					"$USER_TABLE.last_name, " .
-					"$PROJECT_TABLE.title AS projectTitle, " .
-					"$TASK_TABLE.name AS taskName, " .
-					"$TIMES_TABLE.proj_id, " .
-					"$TIMES_TABLE.task_id, " .
-					"$TIMES_TABLE.log_message, " .
-					"$CLIENT_TABLE.organisation AS clientName, " .
-					"$PROJECT_TABLE.client_id " .
-				"FROM $TIMES_TABLE, $USER_TABLE, $TASK_TABLE, $PROJECT_TABLE, $CLIENT_TABLE " .
+					"".tbl::getTimesTable().".uid, " .
+					"".tbl::getUserTable().".first_name, " .
+					"".tbl::getUserTable().".last_name, " .
+					"".tbl::getProjectTable().".title AS projectTitle, " .
+					"".tbl::getTaskTable().".name AS taskName, " .
+					"".tbl::getTimesTable().".proj_id, " .
+					"".tbl::getTimesTable().".task_id, " .
+					"".tbl::getTimesTable().".log_message, " .
+					"".tbl::getClientTable().".organisation AS clientName, " .
+					"".tbl::getProjectTable().".client_id " .
+				"FROM ".tbl::getTimesTable().", ".tbl::getUserTable().", ".tbl::getTaskTable().", ".tbl::getProjectTable().", ".tbl::getClientTable()." " .
 				"WHERE ";
 
 		if ($uid != '') //otherwise we want all users
-			$query .= "$TIMES_TABLE.uid='$uid' AND ";
+			$query .= "".tbl::getTimesTable().".uid='$uid' AND ";
 		if ($proj_id > 0) //otherwise we want all projects
-			$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
+			$query .= "".tbl::getTimesTable().".proj_id=$proj_id AND ";
 		if ($client_id > 0) //otherwise we want all clients
-			$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
+			$query .= "".tbl::getProjectTable().".client_id=$client_id AND ";
 
-		$query .=	"$TIMES_TABLE.uid    = $USER_TABLE.username AND ".
-					"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
-					"$TASK_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
-					"$PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id AND ".
+		$query .=	"".tbl::getTimesTable().".uid    = ".tbl::getUserTable().".username AND ".
+					"".tbl::getTaskTable().".task_id = ".tbl::getTimesTable().".task_id AND ".
+					"".tbl::getTaskTable().".proj_id = ".tbl::getProjectTable().".proj_id AND ".
+					"".tbl::getProjectTable().".client_id = ".tbl::getClientTable().".client_id AND ".
 					"((start_time    >= '$startStr' AND " . 
 					"  start_time    <  '$endStr') " .
 					" OR (end_time   >  '$startStr' AND " .
@@ -76,8 +76,8 @@ class Common{
 	}
 
 	public static function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
-		include("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+
+		list($qhq, $numq) = dbQuery("SELECT timeformat FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 
 		$query = "SELECT date_format(start_time,'%d') AS day_of_month, trans_num, ";
@@ -93,10 +93,10 @@ class Common{
 			"unix_timestamp(end_time) As end_time, ".
 			"end_time As end_time_str, ".
 			"start_time AS start_time_str, ".
-			"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id ".
-			"FROM $TIMES_TABLE, $TASK_TABLE WHERE uid='$id' AND ";
+			"".tbl::getTaskTable().".name, ".tbl::getTimesTable().".proj_id, ".tbl::getTimesTable().".task_id ".
+			"FROM ".tbl::getTimesTable().", ".tbl::getTaskTable()." WHERE uid='$id' AND ";
 
-		$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
+		$query .= "".tbl::getTaskTable().".task_id = ".tbl::getTimesTable().".task_id AND ".
 			"((start_time >= '$start_year-$start_month-$start_day 00:00:00' AND start_time <= '$end_year-$end_month-$end_day 23:59:59') ".
 			" OR (end_time >= '$start_year-$start_month-$start_day 00:00:00' AND end_time <= '$end_year-$end_month-$end_day 23:59:59') ".
 			" OR (start_time < '$start_year-$start_month-$start_day 00:00:00' AND end_time > '$end_year-$end_month-$end_day 23:59:59')) ".
@@ -214,13 +214,13 @@ class Common{
 	}
 
 	public static function get_holidays($month, $year, $day=0) {
-		include("table_names.inc");
+
 		$last_day = get_last_day($month, $year);
 		$query = "SELECT date_format(date,'%d') AS day_of_month, ".
 			"unix_timestamp(date) AS date, ".
 			"date AS date_str, ".
 			"user, type, ".
-			"AM_PM, subject FROM $ABSENCE_TABLE WHERE ";
+			"AM_PM, subject FROM ".tbl::getAbsenceTable()." WHERE ";
 			$query .= "(type='Public') AND ";
 
 		if ($day==0) //want the whole month's entries
@@ -235,19 +235,14 @@ class Common{
 	}
 
 	public static function get_absences($month, $year, $user='', $day=0) {
-		include("table_names.inc");
-		if(!class_exists('Site')){
-			$last_day = get_last_day($month, $year);
-		}
-		else{
-			$last_day = Common::get_last_day($month, $year);
-		}
+
+		$last_day = self::get_last_day($month, $year);
 		
 		$query = "SELECT date_format(date,'%d') AS day_of_month, ".
 			"unix_timestamp(date) AS date, ".
 			"date AS date_str, ".
 			"user, type, ".
-			"AM_PM, subject FROM $ABSENCE_TABLE WHERE ";
+			"AM_PM, subject FROM ".tbl::getAbsenceTable()." WHERE ";
 		if ($user=='') //want only the public holidays
 			$query .= "(type='Public') AND ";
 		else
@@ -264,15 +259,15 @@ class Common{
 	}
 
 	public static function get_start_date($user) {
-		include("table_names.inc");
-		$query = "SELECT min(date) as start_date FROM $ALLOWANCE_TABLE WHERE username='$user'";
+
+		$query = "SELECT min(date) as start_date FROM ".tbl::getAllowanceTable()." WHERE username='$user'";
 		list($my_qu, $num) = dbQuery($query); //num should only be 1
 		$userdata = dbResult($my_qu, 1);
 		return $userdata['start_date'];
 	}
 
 	public static function get_allowance($day, $month, $year, $user, $type='Holiday') {
-		include("table_names.inc");
+
 		$user_start_date = get_start_date($user);
 		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
 			return 0;
@@ -281,7 +276,7 @@ class Common{
 			$query = "SELECT sum(Holiday) ";
 		else
 			$query = "SELECT sum(glidetime) ";
-		$query .= "AS balance FROM $ALLOWANCE_TABLE WHERE (username='$user') ";
+		$query .= "AS balance FROM ".tbl::getAllowanceTable()." WHERE (username='$user') ";
 		$query .= "AND (date >= '$user_start_date 00:00:00' AND date <= '$year-$month-$day 23:59:59')";
 		list($my_qu, $num) = dbQuery($query);
 		$data = dbResult($my_qu, 1);
@@ -289,7 +284,7 @@ class Common{
 	}
 
 	public static function get_balance($day, $month, $year, $user, $type='Holiday') {
-		include("table_names.inc");
+
 		$user_start_date = get_start_date($user);
 		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
 			return 0;
@@ -345,8 +340,8 @@ class Common{
 	}
 
 	public static function count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, $type='Holiday') {
-		include("table_names.inc");
-		$query = "SELECT date,AM_PM,type,user FROM $ABSENCE_TABLE WHERE ".
+
+		$query = "SELECT date,AM_PM,type,user FROM ".tbl::getAbsenceTable()." WHERE ".
 				"(type='$type') AND (user='$user') AND ".
 				"(date >= '$start_year-$start_month-$start_day 00:00:00' AND date <= '$end_year-$end_month-$end_day 23:59:59') ".
 				" ORDER BY date, AM_PM";
@@ -435,47 +430,44 @@ class Common{
 
 	public static function fix_entry_duration($entry) {
 		//print "  fix_entry_duration<br />\n";
-		include("table_names.inc");
+
 		$duration = $entry["duration"];
 		$trans_num = $entry["trans_num"];
-		tryDbQuery("UPDATE $TIMES_TABLE set duration=$duration WHERE trans_num=$trans_num");
+		tryDbQuery("UPDATE ".tbl::getTimesTable()." set duration=$duration WHERE trans_num=$trans_num");
 	}
 
 	public static function fix_entry_endstamp($entry) {
 		//print "  fix_entry_endstamp ". $entry["trans_num"].") ".strftime("%Y-%m-%d %H:%M:%S", $entry["start_stamp"])." - ".strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"])."<br />\n";
-		include("table_names.inc");
+
 		$etsStr = strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"]);
 		$trans_num = $entry["trans_num"];
-		tryDbQuery("UPDATE $TIMES_TABLE set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
+		tryDbQuery("UPDATE ".tbl::getTimesTable()." set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
 	}
 
 	public static function get_user_empid($username) {
-		include("table_names.inc");
 
 		// Retreives user's payroll Employee ID
-		$sql = "SELECT EmpId FROM $USER_TABLE WHERE username='$username'";
+		$sql = "SELECT EmpId FROM ".tbl::getUserTable()." WHERE username='$username'";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
 		return $result['EmpId'];
 	}
 
 	public static function get_project_name($proj_id) {
-		include("table_names.inc");
 
 		// Retreives project title (name)
-		$sql = "SELECT title FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
+		$sql = "SELECT title FROM ".tbl::getProjectTable()." WHERE proj_id=$proj_id";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
 		return $result['title'];
 	}
 
 	public static function get_project_info($proj_id) {
-		include("table_names.inc");
 
 		// Retreives title, client_id, description, deadline and link from database for a given proj_id
 		$result = array();
 		if ($proj_id > 0) {
-			$sql = "SELECT * FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
+			$sql = "SELECT * FROM ".tbl::getProjectTable()." WHERE proj_id=$proj_id";
 			list($my_qh, $num) = dbQuery($sql);
 			$result = dbResult($my_qh);
 		}
@@ -483,20 +475,19 @@ class Common{
 	}
 
 	public static function get_trans_info($trans_num) {
-		include("table_names.inc");
 
 		$result = array();
 		if ($trans_num > 0) {
-			$query = "SELECT $PROJECT_TABLE.client_id, $TIMES_TABLE.proj_id, task_id, log_message, ".
+			$query = "SELECT ".tbl::getProjectTable().".client_id, ".tbl::getTimesTable().".proj_id, task_id, log_message, ".
 							"end_time as end_time_str, ".
 							"start_time as start_time_str, ".
 							"unix_timestamp(start_time) as start_stamp, ".
 							"unix_timestamp(end_time) as end_stamp, ".
 							"duration, " .
 							"trans_num " .
-						"FROM $TIMES_TABLE, $PROJECT_TABLE " .
+						"FROM ".tbl::getTimesTable().", ".tbl::getProjectTable()." " .
 						"WHERE trans_num='$trans_num' AND ".
-							"$TIMES_TABLE.proj_id = $PROJECT_TABLE.proj_id";
+							"".tbl::getTimesTable().".proj_id = ".tbl::getProjectTable().".proj_id";
 
 			list($my_qh, $num) = dbQuery($query);
 			$result = dbResult($my_qh);
@@ -505,8 +496,7 @@ class Common{
 	}
 
 	public static function get_acl_level($page) {
-		include("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData[$page];
 	}
@@ -585,17 +575,16 @@ class Common{
 	}
 
 	public static function single_user_select_list($varname, $username='', $extra='', $showSelect='false') {
-		include("table_names.inc");
 
-		global $authenticationManager;
+		$authenticationManager = Site::getAuthenticationManager();
 	
 		$show_disabled=0;
 		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
 			//show disabled users at bottom of list
 			$show_disabled=1;
-			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getUserTable()." ORDER BY status DESC, last_name, first_name";
 		} else {
-			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name FROM ".tbl::getUserTable()." where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 
 		print "<select name=\"$varname\"";
@@ -640,25 +629,24 @@ class Common{
 
 
 	public static function get_users_name($uid) {
-		include("table_names.inc");
-		$query = "SELECT last_name, first_name, status FROM $USER_TABLE where username='$uid'";
+
+		$query = "SELECT last_name, first_name, status FROM ".tbl::getUserTable()." where username='$uid'";
 		list($qh, $num) = dbQuery($query);
 		$data = dbResult($qh);
 		return array($data['first_name'], $data['last_name'], $data['status']);
 	}
 
 	public static function multi_user_select_list($name, $selected_array=array()) {
-		include("table_names.inc");
 
-		global $authenticationManager;
+		$authenticationManager = Site::getAuthenticationManager();
 	
 		$show_disabled=0;
 		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
 			//show disabled users at bottom of list
 			$show_disabled=1;
-			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getUserTable()." ORDER BY status DESC, last_name, first_name";
 		} else {
-			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name FROM ".tbl::getUserTable()." where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 		list($qh, $num) = dbQuery($query);
 		print "<select name=\"$name\" multiple size=\"11\">\n";
@@ -685,34 +673,34 @@ class Common{
 	}
 
 	public static function get_client_name($clientId) {
-		include("table_names.inc");
+
 		if($clientId == 0) return "All Clients";
-		$query = "SELECT organisation FROM $CLIENT_TABLE where client_id='$clientId'";
+		$query = "SELECT organisation FROM ".tbl::getClientTable()." where client_id='$clientId'";
 		list($qh, $num) = dbQuery($query);
 		$data = dbResult($qh);
 		return $data['organisation'];
 	}
 
 	public static function client_select_list($currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange="", $restrictedList=true) {
-		include("table_names.inc");
+
 
 		if ($restrictedList) {
 				list($qh,$num) = dbQuery(
-						"SELECT $CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation, ".
-						"$PROJECT_TABLE.client_id, $PROJECT_TABLE.proj_id, ".
-						"$ASSIGNMENTS_TABLE.proj_id, $ASSIGNMENTS_TABLE.username ".
-						"FROM $CLIENT_TABLE, $PROJECT_TABLE, $ASSIGNMENTS_TABLE ".
-						"WHERE $CLIENT_TABLE.client_id > 1 ".
-						"AND $CLIENT_TABLE.client_id=$PROJECT_TABLE.client_id ".
-						"AND $PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id ".
-						"AND $ASSIGNMENTS_TABLE.username='$contextUser' ".
-						"GROUP BY $CLIENT_TABLE.client_id ".
+						"SELECT ".tbl::getClientTable().".client_id, ".tbl::getClientTable().".organisation, ".
+						"".tbl::getProjectTable().".client_id, ".tbl::getProjectTable().".proj_id, ".
+						"".tbl::getAssignmentsTable().".proj_id, ".tbl::getAssignmentsTable().".username ".
+						"FROM ".tbl::getClientTable().", ".tbl::getProjectTable().", ".tbl::getAssignmentsTable()." ".
+						"WHERE ".tbl::getClientTable().".client_id > 1 ".
+						"AND ".tbl::getClientTable().".client_id=".tbl::getProjectTable().".client_id ".
+						"AND ".tbl::getProjectTable().".proj_id=".tbl::getAssignmentsTable().".proj_id ".
+						"AND ".tbl::getAssignmentsTable().".username='$contextUser' ".
+						"GROUP BY ".tbl::getClientTable().".client_id ".
 						"ORDER BY organisation");
 		}
 		else {
 				list($qh,$num) = dbQuery(
 						"SELECT client_id, organisation ".
-						"FROM $CLIENT_TABLE WHERE client_id > 1 " .
+						"FROM ".tbl::getClientTable()." WHERE client_id > 1 " .
 						"ORDER BY organisation");
 		}
 
@@ -761,7 +749,6 @@ class Common{
 	}
 
 	public static function project_select_list($currentClientId, $needsClient, $currentProjectId, $contextUser, $showSelectProject, $showAllProjects, $onChange="", $disabled=false) {
-		include("table_names.inc");
 
 		if ($currentClientId == 0 && $needsClient) {
 			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
@@ -771,21 +758,21 @@ class Common{
 		}
 
 		if (empty($contextUser)) {
-			$query = "SELECT proj_id, title FROM $PROJECT_TABLE ";
+			$query = "SELECT proj_id, title FROM ".tbl::getProjectTable()." ";
 			if ($currentClientId != 0)
-				$query .= "WHERE $PROJECT_TABLE.client_id = $currentClientId ";
+				$query .= "WHERE ".tbl::getProjectTable().".client_id = $currentClientId ";
 			$query .= "ORDER BY title";
 		}
 		else {
-			$query = "SELECT DISTINCT $ASSIGNMENTS_TABLE.proj_id, $PROJECT_TABLE.title FROM " .
-							"$ASSIGNMENTS_TABLE, $PROJECT_TABLE WHERE ";
+			$query = "SELECT DISTINCT ".tbl::getAssignmentsTable().".proj_id, ".tbl::getProjectTable().".title FROM " .
+							"".tbl::getAssignmentsTable().", ".tbl::getProjectTable()." WHERE ";
 			if ($currentClientId != 0)
-				$query .= "$PROJECT_TABLE.client_id = $currentClientId AND ";
-			$query .= "$ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id AND " .
-							"$ASSIGNMENTS_TABLE.username='$contextUser' AND " .
-							"$ASSIGNMENTS_TABLE.proj_id > 0 AND " .
-							"$PROJECT_TABLE.proj_status='Started' " .
-							"ORDER BY $PROJECT_TABLE.title,$ASSIGNMENTS_TABLE.proj_id";
+				$query .= "".tbl::getProjectTable().".client_id = $currentClientId AND ";
+			$query .= "".tbl::getAssignmentsTable().".proj_id = ".tbl::getProjectTable().".proj_id AND " .
+							"".tbl::getAssignmentsTable().".username='$contextUser' AND " .
+							"".tbl::getAssignmentsTable().".proj_id > 0 AND " .
+							"".tbl::getProjectTable().".proj_status='Started' " .
+							"ORDER BY ".tbl::getProjectTable().".title,".tbl::getAssignmentsTable().".proj_id";
 		}
 
 		list($qh, $num) = dbQuery($query);
@@ -831,7 +818,7 @@ class Common{
 	}
 
 	public static function task_select_list ($currentProjectId, $currentTaskId, $contextUser="", $onChange="") {
-		include("table_names.inc");
+
 
 		if ($currentProjectId == 0) {
 			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
@@ -841,17 +828,17 @@ class Common{
 		}
 
 		if ($contextUser == '')
-			$query = "SELECT task_id, name, status FROM $TASK_TABLE WHERE proj_id=$currentProjectId";
+			$query = "SELECT task_id, name, status FROM ".tbl::getTaskTable()." WHERE proj_id=$currentProjectId";
 		else {
-// 	$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_TABLE.task_id, $TASK_TABLE.name FROM $TASK_ASSIGNMENTS_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE WHERE ".
-// 	  "$ASSIGNMENTS_TABLE.proj_id=$proj_id AND $TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id and ".
-// 	  "$TASK_ASSIGNMENTS_TABLE.task_id > 1 AND $TASK_TABLE.status='Started' ORDER BY $TASK_ASSIGNMENTS_TABLE.task_id";
-			$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_TABLE.task_id, $TASK_TABLE.name " .
-				"FROM $TASK_ASSIGNMENTS_TABLE, $TASK_TABLE WHERE ".
-				"$TASK_TABLE.proj_id=$currentProjectId AND ".
-				"$TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id AND ".
+// 	$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_TABLE.task_id, ".tbl::getTaskTable().".name FROM $TASK_ASSIGNMENTS_TABLE, ".tbl::getTaskTable().", ".tbl::getAssignmentsTable()." WHERE ".
+// 	  "".tbl::getAssignmentsTable().".proj_id=$proj_id AND $TASK_ASSIGNMENTS_TABLE.task_id = ".tbl::getTaskTable().".task_id and ".
+// 	  "$TASK_ASSIGNMENTS_TABLE.task_id > 1 AND ".tbl::getTaskTable().".status='Started' ORDER BY $TASK_ASSIGNMENTS_TABLE.task_id";
+			$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_TABLE.task_id, ".tbl::getTaskTable().".name " .
+				"FROM $TASK_ASSIGNMENTS_TABLE, ".tbl::getTaskTable()." WHERE ".
+				"".tbl::getTaskTable().".proj_id=$currentProjectId AND ".
+				"$TASK_ASSIGNMENTS_TABLE.task_id = ".tbl::getTaskTable().".task_id AND ".
 				"$TASK_ASSIGNMENTS_TABLE.username = '$contextUser' AND ".
-				"$TASK_TABLE.status='Started' " .
+				"".tbl::getTaskTable().".status='Started' " .
 				"ORDER BY $TASK_ASSIGNMENTS_TABLE.name,$TASK_ASSIGNMENTS_TABLE.task_id";
 		}
 
@@ -911,23 +898,17 @@ class Common{
 	}
 
 	public static function user_select_droplist_string($varname, $username='', $width='', $disabled='false') {
-		include("table_names.inc");
 
-		if(class_exists('Site')){
-			$authenticationManager = Site::getAuthenticationManager();
-		}
-		
-		else{
-			global $authenticationManager;
-		}
+		$authenticationManager = Site::getAuthenticationManager();
+
 	
 		$show_disabled=0;
 		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
 			//show disabled users at bottom of list
 			$show_disabled=1;
-			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getUserTable()." ORDER BY status DESC, last_name, first_name";
 		} else {
-			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name FROM ".tbl::getUserTable()." where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 
 		$drop_list_string = "<select name=\"$varname\" onchange=\"submit()\" ";
@@ -1002,9 +983,8 @@ class Common{
 	}
 
 	public static function client_select_droplist($client_id=1, $disabled=false, $info=true) {
-		include("table_names.inc");
 
-			$query = "SELECT client_id, organisation FROM $CLIENT_TABLE ORDER BY organisation";
+		$query = "SELECT client_id, organisation FROM ".tbl::getClientTable()." ORDER BY organisation";
 
 		//print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"client_id\" onchange=\"submit()\" style=\"width: 100%;\"";
@@ -1038,15 +1018,14 @@ class Common{
 	}
 
 	public static function project_select_droplist($proj_id=1, $disabled='false') {
-		include("table_names.inc");
 
 			$query = "SELECT " .
 							"proj_id, " .
 							"title, " .
 							"organisation " .
-							"FROM $PROJECT_TABLE, $CLIENT_TABLE ".
-							"WHERE $PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id ".
-							"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
+							"FROM ".tbl::getProjectTable().", ".tbl::getClientTable()." ".
+							"WHERE ".tbl::getProjectTable().".client_id = ".tbl::getClientTable().".client_id ".
+							"ORDER BY ".tbl::getClientTable().".organisation, ".tbl::getProjectTable().".title";
 
 		print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"proj_id\" onchange=\"submit()\" style=\"width: 100%;\"";
@@ -1152,14 +1131,8 @@ class Common{
 		else
 			$uid='unknown';
 
-		if(!class_exists('Site')){
-			//replace commandMenu string
-			if (isset($GLOBALS["commandMenu"]))
-				$text = str_replace("%commandmenu%", $GLOBALS["commandMenu"]->toString(), $text);				
-		}
-		else{
-			$text = str_replace("%commandmenu%", Site::getCommandMenu()->toString(), $text);
-		}
+
+		$text = str_replace("%commandmenu%", Site::getCommandMenu()->toString(), $text);
 
 
 		global $errormsg;
@@ -1257,16 +1230,16 @@ class Common{
 	}
 
 	public static function isValidProjectForClient($projectId, $clientId) {
-		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE " .
+
+		list($qh, $num) = dbQuery("SELECT proj_id FROM ".tbl::getProjectTable()." " .
 						"WHERE client_id='$clientId' AND proj_id='$projectId'");
 
 		return ($num > 0);
 	}
 
 	public static function getValidProjectForClient($clientId) {
-		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE " .
+
+		list($qh, $num) = dbQuery("SELECT proj_id FROM ".tbl::getProjectTable()." " .
 						"WHERE client_id='$clientId'");
 		if ($num == 0)
 			return 0;
@@ -1277,8 +1250,8 @@ class Common{
 	}
 
 	public static function getFirstClient() {
-		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT client_id FROM $CLIENT_TABLE");
+
+		list($qh, $num) = dbQuery("SELECT client_id FROM ".tbl::getClientTable()."");
 		if ($num == 0)
 			return 0;
 
@@ -1288,8 +1261,8 @@ class Common{
 	}
 
 	public static function getClientNameFromProject($proj_id) {
-		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT client_id FROM $PROJECT_TABLE WHERE proj_id = $proj_id");
+
+		list($qh, $num) = dbQuery("SELECT client_id FROM ".tbl::getProjectTable()." WHERE proj_id = $proj_id");
 		if ($num == 0)
 			return 0;
 
@@ -1297,7 +1270,7 @@ class Common{
 		$data = dbResult($qh);
 		$client_id = $data["client_id"];
 
-		list($qh, $num) = dbQuery("SELECT organisation FROM $CLIENT_TABLE WHERE client_id = $client_id");
+		list($qh, $num) = dbQuery("SELECT organisation FROM ".tbl::getClientTable()." WHERE client_id = $client_id");
 		if ($num == 0)
 			return 0;
 		$data = dbResult($qh);
@@ -1305,8 +1278,8 @@ class Common{
 	}
 
 	public static function getFirstProject() {
-		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE");
+
+		list($qh, $num) = dbQuery("SELECT proj_id FROM ".tbl::getProjectTable()."");
 		if ($num == 0)
 			return 0;
 
@@ -1316,29 +1289,29 @@ class Common{
 	}
 
 	public static function getWeekStartDay() {
-		include("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT weekstartday FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+
+		list($qhq, $numq) = dbQuery("SELECT weekstartday FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["weekstartday"];
 	}
 	
 	public static function getProjectItemsPerPage() {
-		include ("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+
+		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["project_items_per_page"];
 	}
 	
 	public static function getTaskItemsPerPage() {
-		include ("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+
+		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		return $configData["task_items_per_page"];
 	}
 
 	public static function getFirstUser() {
-		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT username FROM $USER_TABLE ");
+
+		list($qh, $num) = dbQuery("SELECT username FROM ".tbl::getUserTable()." ");
 		if ($num == 0)
 			return 0;
 
@@ -1348,15 +1321,15 @@ class Common{
 	}
 
 	public static function getTimeFormat() {
-			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+
+			list($qhq, $numq) = dbQuery("SELECT timeformat FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 			$configData = dbResult($qhq);
 			return $configData["timeformat"];
 	}
 
 	public static function getVersion() {
-		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT version FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+
+		list($qh, $num) = dbQuery("SELECT version FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 		if ($num == 0)
 			return 0;
 
@@ -1479,12 +1452,8 @@ class Common{
 		//If we've got a duration, use that to determine/override the end_stamp
 		//If not, figure out the duration
 		if(isset($data["duration"]) && ($data["duration"] > 0) ) {
-			if(!class_exists('Site')){
-				$new_end_stamp=get_end_date_time($data["start_stamp"], $data["duration"]);
-			}
-			else{
-				$new_end_stamp = Common::get_end_date_time($data["start_stamp"], $data["duration"]);			
-			}
+			$new_end_stamp = self::get_end_date_time($data["start_stamp"], $data["duration"]);			
+
 			
 			
 			if($data["end_stamp"] != $new_end_stamp) {
@@ -1494,13 +1463,13 @@ class Common{
 				//see: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php
 				//and read the comments by Miles Nordin and Joakim Nygard
 				if(strftime("%Y-%m-%d %H:%M:%S", $old_end_stamp) != strftime("%Y-%m-%d %H:%M:%S", $new_end_stamp))
-					fix_entry_endstamp($data);
+					self::fix_entry_endstamp($data);
 			}
 		} else {
 			if($data["end_time_str"] != '0000-00-00 00:00:00') {
 				$data["end_stamp"] = strtotime($data["end_time_str"]);
 				$data["duration"]=get_duration($data["start_stamp"], $data["end_stamp"], 1);
-				fix_entry_duration($data);
+				self::fix_entry_duration($data);
 			} else {
 				//have start time, but no end time or duration, return 0 (false)
 				return 0;
@@ -1510,8 +1479,7 @@ class Common{
 	}
 
 	public static function gotoStartPage() {
-		include('table_names.inc');
-		list($result, $count) = dbQuery("SELECT startPage FROM $CONFIG_TABLE WHERE config_set_id = '1';");
+		list($result, $count) = dbQuery("SELECT startPage FROM ".tbl::getConfigTable()." WHERE config_set_id = '1';");
 		list($startPage) = dbResult($result);
 		
 		header("Location: $startPage.php");

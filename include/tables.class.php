@@ -49,7 +49,7 @@ private static $ALLOWANCE_TABLE = "tsx_allowances";
 	public static function getTaskAssignmentsTable(){
     	return self::$TASK_ASSIGNMENTS_TABLE;
     }
-	public static function getTimeTables(){
+	public static function getTimesTable(){
     	return self::$TIMES_TABLE;
     }
 	public static function getUserTable(){

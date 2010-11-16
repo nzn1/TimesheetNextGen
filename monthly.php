@@ -20,8 +20,9 @@ include('monthly.class.php');
 $mc = new MonthlyClass();
 
 //define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
+//  $month gbl::getDay() ".gbl::getYear()." gbl::getClientId() gbl::getProjId() ".gbl::getTaskId()."
+//include("timesheet_menu.inc");
+
 
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
@@ -33,22 +34,22 @@ if (empty($contextUser))
 	errorPage("Could not determine the context user");
 
 // Check project assignment.
-if ($proj_id != 0) { // id 0 means 'All Projects'
-	list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getAssignmentsTable()." WHERE proj_id='$proj_id' AND username='$contextUser'");
+if (gbl::getProjId() != 0) { // id 0 means 'All Projects'
+	list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getAssignmentsTable()." WHERE proj_id='".gbl::getProjId()."' AND username='$contextUser'");
 	if ($num < 1)
 		errorPage("You cannot access this project, because you are not assigned to it.");
 } else 
-	$task_id = 0;
+	gbl::setTaskId(0);
 
 //get the context date
-$todayDate = mktime(0, 0, 0, $month, $day, $year);
+$todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $dateValues = getdate($todayDate);
 
 //the day the week should start on: 0=Sunday, 1=Monday
 $startDayOfWeek = Common::getWeekStartDay();
 
 //work out the start date by subtracting days to get to beginning of week
-$startDate = mktime(0,0,0, $month, 1, $year);
+$startDate = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
 $startStr = date("Y-m-d H:i:s",$startDate);
 
 // Get day of week of 1st of month
@@ -70,22 +71,22 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 $CfgTimeFormat = Common::getTimeFormat();
 
 
-$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";       //this isn't used anywhere
+$post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId();       //this isn't used anywhere
 
 
 
 PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
 
 if (isset($popup))
-	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
 include ("navcal/navcal_monthly.inc");
 
 ?>
 <form action="<?php echo Rewrite::getShortUri(); ?>" method="get">
-<input type="hidden" name="month" value="<?php echo $month; ?>" />
-<input type="hidden" name="year" value="<?php echo $year; ?>" />
-<input type="hidden" name="task_id" value="<?php echo $task_id; ?>" />
+<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
+<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
+<input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -105,10 +106,10 @@ include ("navcal/navcal_monthly.inc");
 												<td><table width="50"><tr><td>Client:</td></tr></table></td>
 												<td width="100%"><?php 
 												if(!class_exists('Site')){
-													client_select_list($client_id, $contextUser, false, false, true, false, "submit();");
+													client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
 												} 
 												else{
-													Common::client_select_list($client_id, $contextUser, false, false, true, false, "submit();");
+													Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
 												}
 												?></td>
 											</tr>
@@ -124,10 +125,10 @@ include ("navcal/navcal_monthly.inc");
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
 												<td width="100%"><?php 
 												if(!class_exists('Site')){
-													project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); 
+													project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
 												} 
 												else{
-													Common::project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); 
+													Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
 												}
 												?></td>
 											</tr>
@@ -178,8 +179,8 @@ include ("navcal/navcal_monthly.inc");
 	}
 
 	// Get the Monthly data.
-	list($num, $qh) = Common::get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id);
-	list($qhol, $holnum) = Common::get_absences($month, $year, $contextUser);
+	list($num, $qh) = Common::get_time_records($startStr, $endStr, $contextUser, gbl::getProjId(), gbl::getClientId());
+	list($qhol, $holnum) = Common::get_absences(gbl::getMonth(), gbl::getYear(), $contextUser);
 
 	$ihol = 0; $holtitle = "";
 	if ($holnum>$ihol)
@@ -187,13 +188,13 @@ include ("navcal/navcal_monthly.inc");
 
 	$a=0; $b=0; $curDay = 1; $monthlyTotal = 0; $weeklyTotal = 0; 
 
-	while (checkdate($month, $curDay, $year)) {
-		$curStamp = mktime(0,0,0, $month, $curDay, $year);
+	while (checkdate(gbl::getMonth(), $curDay, gbl::getYear())) {
+		$curStamp = mktime(0,0,0, gbl::getMonth(), $curDay, gbl::getYear());
 		$tomorrowStamp = strtotime(date("d M Y H:i:s",$curStamp) . " +1 day");
 
 		// New Week.
 		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
-			$mc->print_totals($weeklyTotal, "weekly", $year, $month, $curDay);
+			$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 			$weeklyTotal = 0;
 			print "</tr>\n<!-- --><tr>\n";
 		} else
@@ -247,24 +248,24 @@ include ("navcal/navcal_monthly.inc");
 		print "	<table width=\"100%\">\n";
 
 		// Print out date.
-		/*print "<tr><td valign=\"top\"><tt><a href=\"daily.php?month=$month&amp;year=$year&amp;".
-			"day=$curDay&amp;client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id\">$curDay</a></tt></td></tr>";*/
+		/*print "<tr><td valign=\"top\"><tt><a href=\"daily.php?month=".gbl::getMonth()."&amp;year=".gbl::getYear()."&amp;".
+			"day=$curDay&amp;client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\">$curDay</a></tt></td></tr>";*/
 
-		$ymdStr = "&amp;year=".$year . "&amp;month=".$month . "&amp;day=".$curDay;
+		$ymdStr = "&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".$curDay;
 		
 		$popup_href = "javascript:void(0)\" onclick=\"window.open('popup.php".
-											"?client_id=$client_id".
-											"&amp;proj_id=$proj_id".
-											"&amp;task_id=$task_id".
-											"&amp;year=$year".
-											"&amp;month=$month".
-											"&amp;day=$day".
+											"?client_id=".gbl::getClientId()."".
+											"&amp;proj_id=".gbl::getProjId()."".
+											"&amp;task_id=".gbl::getTaskId()."".
+											"&amp;year=".gbl::getYear()."".
+											"&amp;month=".gbl::getMonth()."".
+											"&amp;day=".gbl::getDay()."".
 											"&amp;destination=".$_SERVER['PHP_SELF'].
 											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 
 		print "<tr><td valign=\"top\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
 		print "<tr><td valign=\"top\"><a href=\"daily.php?$ymdStr".
-			"&amp;client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id\">$curDay <span class=\"task_time_small\">$holtitle</span></a></td>";
+			"&amp;client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\">$curDay <span class=\"task_time_small\">$holtitle</span></a></td>";
 		print "<td valign=\"top\" align=\"right\"><a href=\"$popup_href\" class=\"action_link\">".
 				 "<img src=\"".Config::getRelativeRoot()."/images/add.gif\" alt=\"+\" width=\"11\" height=\"11\" border=\"0\" />".
 				"</a></td>";
@@ -447,10 +448,10 @@ include ("navcal/navcal_monthly.inc");
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
-	$mc->print_totals($weeklyTotal, "weekly", $year, $month, $curDay);
+	$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 	$weeklyTotal = 0;
 	print "</tr>\n<tr>\n";
-	$mc->print_totals($monthlyTotal, "monthly", $year, $month, $curDay);
+	$mc->print_totals($monthlyTotal, "monthly", gbl::getYear(), gbl::getMonth(), $curDay);
 
 ?>
 					</tr>
