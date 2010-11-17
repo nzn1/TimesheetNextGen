@@ -4,10 +4,14 @@
 class Common{
 	
 	private static $motd;
+	private static $realTodayDate;
 	
   public static function getMotd(){
     return self::$motd;
-  } 
+  }  
+  public static function getRealTodayDate(){
+    return self::$realTodayDate;
+  }
 	public function __construct(){
 	if (!defined("COMMON_INC")) define("COMMON_INC", 1);
 

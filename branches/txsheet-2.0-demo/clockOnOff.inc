@@ -17,7 +17,9 @@
 <?php 
 	$fromPopup="false";
 	$destination=$_SERVER["PHP_SELF"];
-	include("clockOnOff_core.inc"); 
+	
+	if(class_exists('Site'))include("clockOnOff_core_new.inc"); 
+	else include("clockOnOff_core.inc");
 ?>
 
 			</td>

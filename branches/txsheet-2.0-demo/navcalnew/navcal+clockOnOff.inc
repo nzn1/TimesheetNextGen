@@ -1,6 +1,5 @@
 <?php
-if(class_exists('Site'))die('Error: old file.  please use navcalnew/navcal+clockOnOff.inc');
-include("navcal/common.inc");
+include("navcalnew/common.inc");
 ?>
 <!-- Navigation Calendar with clockOnOff form -->
 	<table width="100%">
@@ -10,19 +9,19 @@ include("navcal/common.inc");
 					<tr>
 						<td>
 						<?php 
-							if($month<7)
-								draw_month_year_navigation($year-1);
+							if(gbl::getMonth()<7)
+								draw_month_year_navigation(gbl::getYear()-1);
 							else
-								draw_month_year_navigation($year);
+								draw_month_year_navigation(gbl::getYear());
 						?>
 						</td><td width="2">&nbsp;</td><td>
-						<?php include("navcal/navcal_core.inc"); ?>
+						<?php include("navcalnew/navcal_core.inc"); ?>
 						</td><td width="2">&nbsp;</td><td>
 						<?php 
-							if($month<7)
-								draw_month_year_navigation($year);
+							if(gbl::getMonth()<7)
+								draw_month_year_navigation(gbl::getYear());
 							else
-								draw_month_year_navigation($year+1);
+								draw_month_year_navigation(gbl::getYear()+1);
 						?>
 						</td>
 					</tr>

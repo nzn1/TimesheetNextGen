@@ -14,14 +14,23 @@ if(
 	!file_exists($cpath.DIRECTORY_SEPARATOR.'table_names.inc') 
 	) {
 	// this app has not been installed yet, redirect to the installation pages
-	header("Location: ./install/");
+	
+	/**
+	 * @todo put these headers back in
+	 */
+	
+	//header("Location: ./install/");
 	exit;
 } else if(file_exists($cpath.DIRECTORY_SEPARATOR.'install')) {
 	// the install directory has not been deleted, redirect to "delete install dir" pages
 	// NOTE: this may also mean that the user has upgraded. The "delete install dir"
 	// pages also check the version number to see if the user is running the latest
 	// version, if not takes user to the "upgrade" pages
-	header("Location: ./install/");
+	
+	/**
+	 * @todo put these headers back in
+	 */
+	//header("Location: ./install/");
 	exit;	
 }
 
@@ -590,7 +599,7 @@ class AuthenticationManager {
 }
 
 //create the instance so its availiable by just including this file
-$authenticationManager = new AuthenticationManager();
+if(!class_exists('Site'))$authenticationManager = new AuthenticationManager();
 
 // vim:ai:ts=4:sw=4
 ?>

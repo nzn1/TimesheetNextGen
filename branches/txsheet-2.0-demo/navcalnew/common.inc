@@ -1,5 +1,4 @@
 <?php
-if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc');
 // navigational calendar functions
 
 	function getNextMonth($time,$orig_day=0,$need_ldom=-1) {

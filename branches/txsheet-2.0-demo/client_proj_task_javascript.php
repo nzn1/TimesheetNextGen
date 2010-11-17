@@ -1,5 +1,5 @@
 <?php 
-if(class_exists('Site'))die('Error: please use client_proj_task_javascript.php instead');
+if(!class_exists('Site'))die('Error: not accessed through the class structure.  For the old site version please use client_proj_task_javascript.inc instead');
 ?>
 <script type="text/javascript">
 	//define the hash table
@@ -9,11 +9,11 @@ if(class_exists('Site'))die('Error: please use client_proj_task_javascript.php i
 //include("debuglog.php");
 //$debug=new logfile();
 //Get list of clients and projects the contextUser is assigned to
-$getUsersClientList = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id FROM $ASSIGNMENTS_TABLE, $PROJECT_TABLE WHERE ".
-		"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
-		"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
-		"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
-		"ORDER BY $PROJECT_TABLE.title";
+$getUsersClientList = "SELECT ".tbl::getProjectTable().".proj_id, ".tbl::getProjectTable().".client_id FROM ".tbl::getAssignmentsTable().", ".tbl::getProjectTable()." WHERE ".
+		"".tbl::getAssignmentsTable().".username='$contextUser' AND ".
+		"".tbl::getProjectTable().".proj_id=".tbl::getAssignmentsTable().".proj_id AND ".
+		"".tbl::getProjectTable().".proj_status!='Suspended' AND ".tbl::getProjectTable().".proj_status!='Complete' ".
+		"ORDER BY ".tbl::getProjectTable().".title";
 
 list($qh5, $num5) = dbQuery($getUsersClientList);
 //$debug->write("found $num5 clients for $contextUser\n");
@@ -26,8 +26,8 @@ for ($i=0; $i<$num5; $i++) {
 }
 
 //get all of the clients and put them into a hastable
-$getClientsQuery = "SELECT $CLIENT_TABLE.client_id, $CLIENT_TABLE.organisation FROM " .
-			"$CLIENT_TABLE ORDER BY $CLIENT_TABLE.organisation";
+$getClientsQuery = "SELECT ".tbl::getClientTable().".client_id, ".tbl::getClientTable().".organisation FROM " .
+			"".tbl::getClientTable()." ORDER BY ".tbl::getClientTable().".organisation";
 
 list($qh2, $num2) = dbQuery($getClientsQuery);
 //iterate through results
@@ -45,13 +45,13 @@ for ($i=0; $i<$num2; $i++) {
 }
 
 //get all of the projects and put them into the hashtable
-$getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, $PROJECT_TABLE.title, ".
-			"$PROJECT_TABLE.proj_status FROM ".
-			"$PROJECT_TABLE, $ASSIGNMENTS_TABLE WHERE ".
-			"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
-			"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
-			"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
-			"ORDER BY $PROJECT_TABLE.title";
+$getProjectsQuery = "SELECT ".tbl::getProjectTable().".proj_id, ".tbl::getProjectTable().".client_id, ".tbl::getProjectTable().".title, ".
+			"".tbl::getProjectTable().".proj_status FROM ".
+			"".tbl::getProjectTable().", ".tbl::getAssignmentsTable()." WHERE ".
+			"".tbl::getProjectTable().".proj_id=".tbl::getAssignmentsTable().".proj_id AND ".
+			"".tbl::getAssignmentsTable().".username='$contextUser' AND ".
+			"".tbl::getProjectTable().".proj_status!='Suspended' AND ".tbl::getProjectTable().".proj_status!='Complete' ".
+			"ORDER BY ".tbl::getProjectTable().".title";
 
 list($qh3, $num3) = dbQuery($getProjectsQuery);
 //iterate through results
@@ -80,11 +80,11 @@ foreach ($projCount as $client => $project_count) {
 }
 
 //get all of the tasks and put them into the hashtable
-$getTasksQuery = "SELECT $TASK_TABLE.proj_id, $TASK_TABLE.task_id, $TASK_TABLE.name FROM ".
-			"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE WHERE ".
-			"$TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
-			"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
-			"ORDER BY $TASK_TABLE.name";
+$getTasksQuery = "SELECT ".tbl::getTaskTable().".proj_id, ".tbl::getTaskTable().".task_id, ".tbl::getTaskTable().".name FROM ".
+			"".tbl::getTaskTable().", ".tbl::getTaskAssignmentsTable()." WHERE ".
+			"".tbl::getTaskTable().".task_id = ".tbl::getTaskAssignmentsTable().".task_id AND ".
+			"".tbl::getTaskAssignmentsTable().".username='$contextUser' ".
+			"ORDER BY ".tbl::getTaskTable().".name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);
 //iterate through results
@@ -101,9 +101,9 @@ for ($i=0; $i<$num4; $i++) {
 ?>
 
 	//set initial values
-	var initialClientId = <?php echo $client_id; ?>;
-	var initialProjectId = <?php echo $proj_id; ?>;
-	var initialTaskId = <?php echo $task_id; ?>;
+	var initialClientId = <?php echo gbl::getClientId(); ?>;
+	var initialProjectId = <?php echo gbl::getProjId(); ?>;
+	var initialTaskId = <?php echo gbl::getTaskId(); ?>;
 
 	function enableClockOn() {
 		var isChecked = document.getElementById('clock_on_check').checked;
