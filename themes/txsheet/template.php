@@ -7,15 +7,11 @@
 <meta name="audience" content="all" />
 <meta name="distribution" content="global" />
 <meta name="revisit-after" content="5 days" />
-<meta name="author" content="Mark Wrightson" />
-<meta name="copyright" content="2010 Mark Wrightson, All rights reserved." />
+<meta name="description" content="Timesheet Next Gen" />
+<link rel="stylesheet" href="<?php echo Config::getRelativeRoot();?>/css/timesheet.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo Config::getRelativeRoot();?>/themes/txsheet/styles/main.css" type="text/css" />
+<link rel="shortcut icon" href="<?php echo Config::getRelativeRoot();?>/favicon.ico" />
 
-<link rel="shortcut icon"
-	href="<?php echo Config::getRelativeRoot();?>/favicon.png" />
-
-<link rel="stylesheet"
-	href="<?php echo Config::getRelativeRoot();?>/themes/txsheet/styles/main.css"
-	type="text/css" />
 {head}
 <style type="text/css">
 html {
@@ -50,8 +46,6 @@ html {
   </style>
   <![endif]-->
 
-
-{tsx_header}
 </head>
 <body{onload}>
 <!-- this is the old body tag from body.inc  -->
@@ -60,29 +54,16 @@ html {
 <div id="wrap" style="">
 <div class="headerwrap" style="background:#222;">
 	<h1 style="color:#fff;">TimesheetNG 1.5.x OO Demo</h1>
-	
-
-
-<div id="header_right">
-	<p style="color:#fff;">Usage: your table names must be defined in: table_names.inc and include/tables.class.php<br />
-	Only the monthly page has been ported so far.<br />
-	the url for the new version is /monthly<br />
-	the url for the old version is /monthly.php<br />
-	</p>
-</div>
-
-<div class="clearall"></div>
-{menu}
-
-
+<!--	<p style="color:#fff;">The surrounding template can be customised easily in the themes directory!</p>-->
+	{tsx_banner}
 </div>
 <!--end headerwrap--> {response}
 
             <div class="content">
               
-              {tsx_banner}
+              
               {content}
-              {tsx_footer}
+              
             </div><!--end content-->  
 
 
@@ -90,25 +71,7 @@ html {
 
 
 <div id="footer">
-<div class="footer_content">
-<div class="col20">
-	<ul>
-		<li><a href="<?php echo Config::getRelativeRoot(); ?>/terms">Terms &amp; Conditions</a></li> 
-		<li><a href="<?php echo Config::getRelativeRoot(); ?>/privacy">Privacy</a></li> 
-		<li><a href="<?php echo Config::getRelativeRoot(); ?>/sitemap">Site Map</a></li>
-		<li><a href="<?php echo Config::getRelativeRoot(); ?>/contact">Contact</a></li>
-	</ul>
-</div>
-
-</div><!-- end footer content -->
-<div class="clearall"></div>
-<div class="footer_left">
-<p>Copyright &copy; 2010 Mark Wrightson. All rights reserved</p>
-
-</div>
-<div class="footer_right">
-<p><a href="http://www.voltnet.co.uk">VoltNet Web Design Services</a></p>
-</div>
+{tsx_footer}
 </div>
 <!--end footer--> {debugInfoBottom}</div>
 <!--end wrap-->
