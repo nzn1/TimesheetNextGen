@@ -1,5 +1,5 @@
 <?php
-include("navcal/common.inc");
+include("navcalnew/common.inc");
 ?>
 <!-- Navigation Calendars -->
 	<table width="100%">
@@ -27,7 +27,7 @@ include("navcal/common.inc");
 					</tr>
 				</table>
 			</td>
-			<?php if($motd) include("navcal/motd.inc"); ?>
+			<?php if($motd) include("navcalnew/motd.inc"); ?>
 		</tr>
 	</table>
 <!-- End Navigation Calendars -->

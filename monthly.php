@@ -80,7 +80,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$cont
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
-include ("navcal/navcal_monthly.inc");
+include ("navcalnew/navcal_monthly.inc");
 
 ?>
 <form action="<?php echo Rewrite::getShortUri(); ?>" method="get">

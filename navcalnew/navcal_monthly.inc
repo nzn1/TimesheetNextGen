@@ -1,5 +1,5 @@
 <?php
-include("navcal/common.inc");
+include("navcalnew/common.inc");
 ?>
 <!-- Monthly Navigation Calendars > -->
 	<table width="100%">
@@ -44,10 +44,10 @@ include("navcal/common.inc");
 			</td>
 			<?php 
 				if(!class_exists('Site')){
-					if($motd) include("navcal/motd.inc");
+					if($motd) include("navcalnew/motd.inc");
 				}
 				else{
-					if(Common::getMotd()) include("navcal/motd.inc");
+					if(Common::getMotd()) include("navcalnew/motd.inc");
 				}
 				 
 			?>
