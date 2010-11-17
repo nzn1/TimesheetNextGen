@@ -1,5 +1,4 @@
 <?php
-if(class_exists('Site'))die('Error: old file.  please use navcalnew/navcalendars.inc');
 include("navcal/common.inc");
 ?>
 <!-- Navigation Calendars -->

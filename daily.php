@@ -18,11 +18,11 @@ include('daily.class.php');
 $dc = new DailyClass();
 
 // Connect to database.
-$dbh = dbConnect();
+//$dbh = dbConnect();
 
 //define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
+//  gbl::getMonth() gbl::getDay() gbl::getYear() gbl::getClientId() gbl::getProjId() gbl::getTaskId()
+//include("timesheet_menu.inc");
 
 $contextUser = strtolower($_SESSION['contextUser']);
 
@@ -30,46 +30,48 @@ if (empty($contextUser))
 	errorPage("Could not determine the context user");
 
 //check that project id is valid
-if ($proj_id == 0)
-	$task_id = 0;
+if (gbl::getProjId() == 0)
+	gbl::setTaskId(0);
 
-$startDayOfWeek = getWeekStartDay();  //needed by NavCalendar
-$todayDate = mktime(0, 0, 0,$month, $day, $year);
+$startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
+$todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
 
 $tomorrowDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 days");
 
 //get the timeformat
-$CfgTimeFormat = getTimeFormat();
+$CfgTimeFormat = Common::getTimeFormat();
 
 //include date input classes
 include "form_input.inc";
 
-$post="proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";   //THIS LINE ISN'T USED!!
+$post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()."";   //THIS LINE ISN'T USED!!
 
-?>
-<html>
-<head>
-<title>Update timesheet for <?php echo $contextUser; ?></title>
-<?php
-include("header.inc");
-include("client_proj_task_javascript.inc");
+
+//<html>
+//<head>
+//<title>Update timesheet for echo $contextUser;</title>
+PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+ob_start();
+//include("header.inc");
+include("client_proj_task_javascript.php");
 ?>
 <script type="text/javascript">
 
 	function delete_entry(transNum) {
 		if (confirm('Are you sure you want to delete this time entry?'))
-			location.href = 'delete.php?month=<?php echo $month; ?>&amp;year=<?php echo $year; ?>&amp;day=<?php echo $day; ?>&amp;client_id=<?php echo $client_id; ?>&amp;proj_id=<?php echo $proj_id; ?>&amp;task_id=<?php echo $task_id; ?>&amp;trans_num=' + transNum;
+			location.href = 'delete.php?month=<?php echo gbl::getMonth(); ?>&amp;year=<?php echo gbl::getYear(); ?>&amp;day=<?php echo gbl::getDay(); ?>&amp;client_id=<?php echo gbl::getClientId(); ?>&amp;proj_id=<?php echo gbl::getProjId(); ?>&amp;task_id=<?php echo gbl::getTaskId(); ?>&amp;trans_num=' + transNum;
 	}
 
 </script>
-</head>
-<body <?php include ("body.inc"); ?> onload="doOnLoad();">
-<?php
-	include ("banner.inc");
+<?php PageElements::setHead(PageElements::getHead().ob_get_contents());
+ob_end_clean();
+PageElements::setBodyOnLoad('doOnLoad();');
+
+//	include ("banner.inc");
 
 	$currentDate = $todayDate;
 	$fromPopup = "false";
-	include("navcal/navcal+clockOnOff.inc"); 
+	include("navcalnew/navcal+clockOnOff.inc"); 
 ?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -115,8 +117,8 @@ include("client_proj_task_javascript.inc");
 $startStr = date("Y-m-d H:i:s",$todayDate);
 $endStr = date("Y-m-d H:i:s",$tomorrowDate);
 
-$order_by_str = "start_stamp, $CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name, end_stamp";
-list($num, $qh) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
+$order_by_str = "start_stamp, ".tbl::getClientTable().".organisation, ".tbl::getProjectTable().".title, ".tbl::getTaskTable().".name, end_stamp";
+list($num, $qh) = Common::get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
 
 if ($num == 0) {
 	print "	<tr>\n";
@@ -141,7 +143,7 @@ else {
 		//because this application hasn't taken care to cast the time data into a consistent TZ.
 		//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
 		//So, we handle it as best we can for now...
-		fixStartEndDuration($data);
+		Common::fixStartEndDuration($data);
 
 		$dateValues = getdate($data["start_stamp"]);
 		$ymdStrSd = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
@@ -180,12 +182,12 @@ else {
 
 				$dc->open_cell_middle_td(); //<td....>
 				echo "<font color=\"#909090\"><i>" . $formattedStartTime . ",";
-				$dc->make_daily_link($ymdStrSd,$proj_id,date("d-M",$data["start_stamp"])); 
+				$dc->make_daily_link($ymdStrSd,gbl::getProjId(),date("d-M",$data["start_stamp"])); 
 				echo "</i></font></td>" ;
 
 				$dc->open_cell_middle_td(); //<td....>
 				echo "<font color=\"#909090\"><i>" . $formattedEndTime . ",";
-				$dc->make_daily_link($ymdStrEd,$proj_id,date("d-M",$data["end_stamp"])); 
+				$dc->make_daily_link($ymdStrEd,gbl::getProjId(),date("d-M",$data["end_stamp"])); 
 				echo "</i></font></td>" ;
 
 				$dc->open_cell_middle_td(); //<td....>
@@ -193,25 +195,25 @@ else {
 					formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} //if end time is not today
 			  elseif ($data["end_stamp"] > $tomorrowDate) {
-				$taskTotal = get_duration($data["start_stamp"],$tomorrowDate);
+				$taskTotal = Common::get_duration($data["start_stamp"],$tomorrowDate);
 
 				$dc->open_cell_middle_td(); //<td....>
 				echo $formattedStartTime . "</td>" ;
 
 				$dc->open_cell_middle_td(); //<td....>
 				echo "<font color=\"#909090\"><i>" . $formattedEndTime . "," ;
-				$dc->make_daily_link($ymdStrEd,$proj_id,date("d-M",$data["end_stamp"])); 
+				$dc->make_daily_link($ymdStrEd,gbl::getProjId(),date("d-M",$data["end_stamp"])); 
 				echo "</i></font></td>" ;
 
 				$dc->open_cell_middle_td(); //<td....>
-				echo  formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " . formatMinutes($data["duration"]) . "</i></font></td>\n";
+				echo  Common::formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " . Common::formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} //elseif start time is not today
 			  elseif ($data["start_stamp"] < $todayDate) {
-				$taskTotal = get_duration($todayDate,$data["end_stamp"]);
+				$taskTotal = Common::get_duration($todayDate,$data["end_stamp"]);
 
 				$dc->open_cell_middle_td(); //<td....>
 				echo "<font color=\"#909090\"><i>" . $formattedStartTime . "," ;
-				$dc->make_daily_link($ymdStrSd,$proj_id,date("d-M",$data["start_stamp"])); 
+				$dc->make_daily_link($ymdStrSd,gbl::getProjId(),date("d-M",$data["start_stamp"])); 
 				echo "</i></font></td>"; 
 
 				$dc->open_cell_middle_td(); //<td....>
@@ -227,12 +229,12 @@ else {
 				$dc->open_cell_middle_td(); //<td....>
 				print "$formattedEndTime</td>\n";
 				$dc->open_cell_middle_td(); //<td....>
-				print formatMinutes($data["duration"]) . "</td>\n";
+				print Common::formatMinutes($data["duration"]) . "</td>\n";
 			}
 
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
-			print "	<a href=\"edit.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;trans_num=$data[trans_num]&amp;year=$year&amp;month=$month&amp;day=$day\" class=\"action_link\">Edit</a>,&nbsp;\n";
-			//print "	<a href=\"delete.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
+			print "	<a href=\"edit.php?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">Edit</a>,&nbsp;\n";
+			//print "	<a href=\"delete.php?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
 			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
 			print "</td>";
 
@@ -254,9 +256,9 @@ else {
 			/**
 			 * Update by robsearles 26 Jan 2008
 			 * Added a "Clock Off" link to make it easier to stop timing a task
-			 * $realTodayDate is defined in common.inc
+			 * Common::getRealTodayDate() is defined in common.inc
 			 */
-			if ($data["start_stamp"] == $realTodayDate) {
+			if ($data["start_stamp"] == Common::getRealTodayDate()) {
 				$stop_link = '<a href="clock_action.php?client_id='.$data['client_id'].'&amp;proj_id='.
 						$data['proj_id'].'&amp;task_id='.$data['task_id'].
 						'&amp;clock_off_check=on&amp;clock_off_radio=now" class="action_link\">Clock Off</a>, ';
@@ -271,7 +273,7 @@ else {
 	}
 	print "<tr>\n";
 	print "	<td class=\"calendar_totals_line_weekly_right\" colspan=\"6\" align=\"right\">";
-	print " Daily Total: <span class=\"calendar_total_value_weekly\" nowrap>" . formatMinutes($todaysTotal) . "</span></td>\n";
+	print " Daily Total: <span class=\"calendar_total_value_weekly\" nowrap>" . Common::formatMinutes($todaysTotal) . "</span></td>\n";
 	print "	<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>&nbsp;</td>\n";
 	print "</tr>\n";
 	print "</table>";
@@ -291,12 +293,3 @@ else {
 </table>
 
 <!-- ?php include("clockOnOff.inc"); ?-->
-
-<?php
-include ("footer.inc");
-?>
-</body>
-</html>
-<?php
-// vim:ai:ts=4:sw=4
-?>

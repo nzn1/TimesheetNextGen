@@ -1,18 +1,17 @@
 <!-- core of clock on/off form -->
 
 <?php 
-if(class_exists('Site'))die('Error: please use clockOnOff_core_new.inc instead');
-
+if(!class_exists('Site'))die('Error: not accessed through the class structure.  For the old site version please use clockOnOff_core.inc instead');
 include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<form action="clock_action.php" method="post" name="mainForm" id="theForm">
-		<input type="hidden" name="year" value="<?php echo $year; ?>" />
-		<input type="hidden" name="month" value="<?php echo $month; ?>" />
-		<input type="hidden" name="day" value="<?php echo $day; ?>" />
-		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>" />
-		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>" />
-		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>" />
+		<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
+		<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
+		<input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
+		<input type="hidden" id="client_id" name="client_id" value="<?php echo gbl::getClientId(); ?>" />
+		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo gbl::getProjId(); ?>" />
+		<input type="hidden" id="task_id" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
 		<input type="hidden" name="clockonoff" value="" />
 		<input type="hidden" name="fromPopupWindow" value="<?php echo $fromPopup; ?>" />
 		<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>" />
@@ -96,7 +95,7 @@ include("timesheet_face_part_2.inc"); ?>
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
-																if ($currentDate == $realTodayDate): ?>
+																if ($currentDate == Common::getRealTodayDate()): ?>
 																	<input type="radio" name="clock_on_radio" id="clock_on_radio_date" value="date" onclick="enableClockOn();" checked="checked"  />
 																<?php endif; ?>
 																<?php $hourInput = new HourInput("clock_on_time_hour");
@@ -110,7 +109,7 @@ include("timesheet_face_part_2.inc"); ?>
 															</td>
 														</tr>
 														<?php // If the current day is today:
-														if ($currentDate == $realTodayDate): ?>
+														if ($currentDate == Common::getRealTodayDate()): ?>
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_on_text">
@@ -131,7 +130,7 @@ include("timesheet_face_part_2.inc"); ?>
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
-																if ($currentDate == $realTodayDate): ?>
+																if ($currentDate == Common::getRealTodayDate()): ?>
 																	<input type="radio" name="clock_off_radio" id="clock_off_radio_date" value="date" onclick="enableClockOff();" />
 																<?php endif; ?>
 																<?php $hourInput = new HourInput("clock_off_time_hour");
@@ -145,7 +144,7 @@ include("timesheet_face_part_2.inc"); ?>
 															</td>
 														</tr>
 														<?php // If the current day is today:
-														if ($currentDate == $realTodayDate): ?>
+														if ($currentDate == Common::getRealTodayDate()): ?>
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_off_text">

@@ -39,6 +39,7 @@ class Site{
 		if(ini_get('short_open_tag')==0){
 			die('PHP short tags are currently disabled.  This site won\'t work without short tags enabled');
 		}
+
 		require('include/debug.class.php');
 		require('include/common_functions.php');
 		$timeStart = getmicrotime();
@@ -69,9 +70,12 @@ class Site{
 		
 		require("class.AuthenticationManager.php");
 		self::$authenticationManager = new AuthenticationManager();
+
 		require("class.CommandMenu.php");		
 		self::$commandMenu = new CommandMenu();
 		
+				
+				
 		require("globals.class.php");
 		gbl::initialize();
 		

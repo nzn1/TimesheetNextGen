@@ -1,14 +1,13 @@
 <!-- Daily Navigation Calendar -->
 <?php
-if(class_exists('Site'))die('Error: old file.  please use navcalnew/navcal_core.inc');
-$todayDate = mktime(0,0,0,$month,$day,$year);
-$startDateCalendar = mktime(0,0,0, $month, 1, $year);
+$todayDate = mktime(0,0,0,gbl::getMonth(),gbl::getDay(),gbl::getYear());
+$startDateCalendar = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
 
 if(class_exists('Site')){
 	$startDayOfWeek = Common::getWeekStartDay();	
 }
 else $startDayOfWeek = getWeekStartDay();
-$dowForFirstOfMonth = date('w',mktime(0,0,0,$month,1,$year));
+$dowForFirstOfMonth = date('w',mktime(0,0,0,gbl::getMonth(),1,gbl::getYear()));
 $leadInDays = $dowForFirstOfMonth - $startDayOfWeek;
 if ($leadInDays < 0)
 	$leadInDays += 7;
@@ -85,7 +84,7 @@ if(!isset($post)) $post ="";
 										}
 
 										$i=0; $navday = 1;
-										while (checkdate($month, $navday, $year)) {
+										while (checkdate(gbl::getMonth(), $navday, gbl::getYear())) {
 
 											// New Week.
 											if ((($dayRow % 7) == 0) && ($dowForFirstOfMonth != 0)) {
@@ -99,11 +98,11 @@ if(!isset($post)) $post ="";
 											else
 												print "<td width=\"25px\" height=\"25%\" align=\"center\" valign=\"top\" class=\"calendar_cell_middle\">";
 
-											if($navday == $day) 
+											if($navday == gbl::getDay()) 
 												print "<font color=\"#CC9900\"><b>$navday</b></font>";
 											else
 												print "<a href=\"".$_SERVER["PHP_SELF"]."?$post".
-													"&amp;year=$year&amp;month=$month&amp;day=$navday\">$navday</a>";
+													"&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=$navday\">$navday</a>";
 
 											print " </td>\n";
 
