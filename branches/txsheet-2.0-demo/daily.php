@@ -1,13 +1,21 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/daily.php,v 1.7 2005/05/10 11:42:53 vexil Exp $
-
-// Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclDaily')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclDaily'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
+	}
+	
 	exit;
 }
+
+include('daily.class.php');
+$dc = new DailyClass();
 
 // Connect to database.
 $dbh = dbConnect();
@@ -36,7 +44,7 @@ $CfgTimeFormat = getTimeFormat();
 //include date input classes
 include "form_input.inc";
 
-$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";   //THIS LINE ISN'T USED!!
+$post="proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";   //THIS LINE ISN'T USED!!
 
 ?>
 <html>
@@ -50,7 +58,7 @@ include("client_proj_task_javascript.inc");
 
 	function delete_entry(transNum) {
 		if (confirm('Are you sure you want to delete this time entry?'))
-			location.href = 'delete.php?month=<?php echo $month; ?>&year=<?php echo $year; ?>&day=<?php echo $day; ?>&client_id=<?php echo $client_id; ?>&proj_id=<?php echo $proj_id; ?>&task_id=<?php echo $task_id; ?>&trans_num=' + transNum;
+			location.href = 'delete.php?month=<?php echo $month; ?>&amp;year=<?php echo $year; ?>&amp;day=<?php echo $day; ?>&amp;client_id=<?php echo $client_id; ?>&amp;proj_id=<?php echo $proj_id; ?>&amp;task_id=<?php echo $task_id; ?>&amp;trans_num=' + transNum;
 	}
 
 </script>
@@ -101,14 +109,7 @@ include("client_proj_task_javascript.inc");
 					</tr>
 <?php
 
-function make_daily_link($ymdStr, $proj_id, $string) {
-	echo "<a href=\"daily.php?" .  $ymdStr .  "&proj_id=$proj_id\"><i>" . 
-		$string .  "</i></a>"; 
-}
 
-function open_cell_middle_td() {
-	echo "<td class=\"calendar_cell_middle\" align=\"right\" nowrap>";
-}
 
 //Get the data
 $startStr = date("Y-m-d H:i:s",$todayDate);
@@ -177,61 +178,61 @@ else {
 				//all day - no one should work this hard!
 				$taskTotal += get_duration($todayDate, $tomorrowDate);  
 
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				echo "<font color=\"#909090\"><i>" . $formattedStartTime . ",";
-				make_daily_link($ymdStrSd,$proj_id,date("d-M",$data["start_stamp"])); 
+				$dc->make_daily_link($ymdStrSd,$proj_id,date("d-M",$data["start_stamp"])); 
 				echo "</i></font></td>" ;
 
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				echo "<font color=\"#909090\"><i>" . $formattedEndTime . ",";
-				make_daily_link($ymdStrEd,$proj_id,date("d-M",$data["end_stamp"])); 
+				$dc->make_daily_link($ymdStrEd,$proj_id,date("d-M",$data["end_stamp"])); 
 				echo "</i></font></td>" ;
 
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				echo formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " .
 					formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} //if end time is not today
 			  elseif ($data["end_stamp"] > $tomorrowDate) {
 				$taskTotal = get_duration($data["start_stamp"],$tomorrowDate);
 
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				echo $formattedStartTime . "</td>" ;
 
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				echo "<font color=\"#909090\"><i>" . $formattedEndTime . "," ;
-				make_daily_link($ymdStrEd,$proj_id,date("d-M",$data["end_stamp"])); 
+				$dc->make_daily_link($ymdStrEd,$proj_id,date("d-M",$data["end_stamp"])); 
 				echo "</i></font></td>" ;
 
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				echo  formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " . formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} //elseif start time is not today
 			  elseif ($data["start_stamp"] < $todayDate) {
 				$taskTotal = get_duration($todayDate,$data["end_stamp"]);
 
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				echo "<font color=\"#909090\"><i>" . $formattedStartTime . "," ;
-				make_daily_link($ymdStrSd,$proj_id,date("d-M",$data["start_stamp"])); 
+				$dc->make_daily_link($ymdStrSd,$proj_id,date("d-M",$data["start_stamp"])); 
 				echo "</i></font></td>"; 
 
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				echo $formattedEndTime . "</td>" ;
 
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				echo formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " .
 					formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} else {
 				$taskTotal = $data["duration"];
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				print "$formattedStartTime</td>\n";
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				print "$formattedEndTime</td>\n";
-				open_cell_middle_td(); //<td....>
+				$dc->open_cell_middle_td(); //<td....>
 				print formatMinutes($data["duration"]) . "</td>\n";
 			}
 
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
-			print "	<a href=\"edit.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]&year=$year&month=$month&day=$day\" class=\"action_link\">Edit</a>,&nbsp;\n";
-			//print "	<a href=\"delete.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
+			print "	<a href=\"edit.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;trans_num=$data[trans_num]&amp;year=$year&amp;month=$month&amp;day=$day\" class=\"action_link\">Edit</a>,&nbsp;\n";
+			//print "	<a href=\"delete.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
 			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
 			print "</td>";
 
@@ -243,11 +244,11 @@ else {
 			else
 				$formattedStartTime = date("G:i",$data["start_stamp"]);
 			
-			open_cell_middle_td(); //<td....>
+			$dc->open_cell_middle_td(); //<td....>
 			print "$formattedStartTime</td>\n";
-			open_cell_middle_td(); //<td....>
+			$dc->open_cell_middle_td(); //<td....>
 			print "&nbsp;</td>\n";
-			open_cell_middle_td(); //<td....>
+			$dc->open_cell_middle_td(); //<td....>
 			print "&nbsp;</td>\n";
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
 			/**
@@ -295,7 +296,7 @@ else {
 include ("footer.inc");
 ?>
 </body>
-</HTML>
+</html>
 <?php
 // vim:ai:ts=4:sw=4
 ?>
