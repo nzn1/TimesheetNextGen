@@ -4,29 +4,11 @@ Options -MultiViews
 <IfModule mod_rewrite.c>
 RewriteEngine on
 
-###
-#To shut the site down for maintenance use this code:
-###
-
-#RewriteCond %{REMOTE_ADDR} !^87.\112.\14.\103
-#RewriteCond %{REQUEST_URI} !^/maintenance/index.php$
-#RewriteRule ^(.*)$ /uybb/maintenance [R=307,L]
-
-###
-#use these lines when on a personal server
-#1. if the file exists, then don't process any rules on it
-#2. route everything through index.php
-###
-
+#if the file exists, then don't process any rules on it
 RewriteCond %{REQUEST_FILENAME} !-f 
-RewriteRule .* index.php/$0 [PT,L]
+
+#route everything through index.php
+#the actual rewriting is done in php be the Rewrite class
+RewriteRule .* index.php [PT,L]
 
 </IfModule> 
-
-###
-#  PHP Configuration
-###
-
-#<IfModule mod_php5.c>
-# php_value magic_quotes_gpc off
-#</IfModule>

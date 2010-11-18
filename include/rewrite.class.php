@@ -18,20 +18,35 @@
 
 class Rewrite {
 
-	//the url with all GET variables stripped off
+	/**
+	 * the url with all GET variables stripped off
+	 */
 	private static $shortUri = null;
-	//the requested uri of the site.
+	/**
+	 * the requested uri of the site.
+	 * @var string
+	 */
 	private static $uri = null;
-	//the page that will be displayed in the content pane
+	/**
+	 * the page that will be displayed in the content pane
+	 * @var string
+	 */
 	private static $content = null;
-	//the name of the module being used
+	/**
+	 * 
+	 * the name of the module being used
+	 * @var string
+	 */
 	private static $module = null;
 
 
 	public function __construct(){
+		if(debug::getRewrite())echo"<hr /><pre>Rewrite::__construct()</pre>";
+		if(debug::getRewrite())echo"<p><strong>--START OF REWRITE DATA--</strong></p><hr />";
 		$this->checkRewriteModule();
 		$this->phpModRewrite();         //rewrite url here instead of mod rewrite
 		$this->rewriteRequestUri();
+		if(debug::getRewrite())echo"<p><strong>--END OF REWRITE DATA--</strong></p><hr />";
 
 
 	}
@@ -41,21 +56,23 @@ class Rewrite {
 	 *
 	 */
 	private function phpModRewrite(){
+		if(debug::getRewrite())echo"<hr /><pre>phpModRewrite()</pre>";
 		//get the URI to work with
 		$uri = $_SERVER['REQUEST_URI'];
+		if(debug::getRewrite())echo"<pre>Get the uri to work with</pre>";
 		if(debug::getRewrite()==1)echo "<pre>REQUEST_URI: ".$uri."</pre>";
 
 		//Remove script path:
 		$uri = substr($uri, strlen(Config::getRelativeRoot())+1);
-		if(debug::getRewrite()==1)echo "<pre>Removed script path: ".$uri."</pre>";
+		if(debug::getRewrite()==1)echo "<pre>Removed Config::relativeRoot from uri. uri='".$uri."'</pre>";
 
-
-
-		if(preg_match("|^index.php|",$uri)){
-			//default to home when no page requested
-			if(!isset($_GET["c"])||$_GET["c"]=="")$_GET["c"]='content/index';
-			return;
-		}
+//		if(preg_match("|^index.php|",$uri)){
+//			//default to home when no page requested
+//			if(!isset($content)||$content==""){
+//				$content='content/index';
+//			}
+//			return;
+//		}
 		//clear out GET.  We will re-generate this
 		$_GET = null;
 		 
@@ -66,56 +83,49 @@ class Rewrite {
 		if($uri_explode['0'] != '' && $uri_explode['0'][strlen($uri_explode['0'])-1]=="/") {
 			$uri_explode['0'] = substr_replace($uri_explode['0'],"",-1);
 		}
-		if(debug::getRewrite()==1)ppr($uri_explode,'uri_explode');
+		if(debug::getRewrite()){
+			echo"<pre>Explode the path to directories and remove empty items.<br />"
+			."uri_explose[0] is the page ref.<br />"
+			."uri_explode[1 to n] is the arguments:</pre>";	
+		}
 		//uri_explode[0] is the page ref
 		//uri_explode[1 to n] is the arguments
-
-
+		if(debug::getRewrite()==1)ppr($uri_explode,'uri_explode');
+		
 		//get all the get variables and repopulate the $_GET
 		isset($uri_explode['1'])?parse_str($uri_explode['1'],$i):$i=array();
 		$_GET = $i;
 		//populate the c variable
-		$_GET['c'] =  $uri_explode[0];
+		$content =  $uri_explode[0];
+		if(debug::getRewrite())echo"<pre>Parse the string to extract all of the get variables</pre>";
 		if(debug::getRewrite()==1)ppr($_GET,'GET updated');
 		//used for making self generating links relative to current page without ?id=1... tags
 		$_SERVER['PHP_SELF'] = self::$shortUri = Config::getRelativeRoot()."/".$uri_explode[0];
 
 		//check for a URL that uses the id tag.
 		$id_explode = explode('/id/', $uri_explode[0]);
+		if(debug::getRewrite())echo"<pre>Check for a special seo url that containss '/id/ i.e.page/id/3
+		and add the argument to the \$_GET[] array</pre>";
+		
 		if(debug::getRewrite()==1)ppr($id_explode,'check for /id/');
 		if(isset($id_explode[1])){
-			$_GET['c'] = $id_explode[0];
+			$content = $id_explode[0];
 			$_GET['id'] = $id_explode[1];
 		}
 
-//		//check for a URL that uses the section tag
-//		$section_explode = explode('/section/', $uri_explode[0]);
-//		if(debug::getRewrite()==1)ppr($section_explode,'check for /section/');
-//		if(isset($section_explode[1])){
-//			$_GET['c'] = $section_explode[0];
-//			$_GET['section'] = $section_explode[1];
-//		}
-
-		//check for a URL that uses the user tag
-//		$user_explode = explode('/user/', $uri_explode[0]);
-//		if(debug::getRewrite()==1)ppr($user_explode,'check for /user/');
-//		if(isset($user_explode[1])){
-//			$_GET['c'] = $user_explode[0];
-//			$_GET['user'] = $user_explode[1];
-//		}
 
 		//default to home when no page requested
-		if(!isset($_GET["c"])||$_GET["c"]=="")$_GET["c"]='content/index';
+		if(!isset($content)||$content=="")$content='content/index';
 
 		//strip the last slash off it is present.  (fixes a mod_rewrite issue)
-		if(file_exists($_GET['c'])){
-			if($_GET["c"][strlen($_GET["c"])-1] != "/") $_GET["c"] = $_GET["c"]."/";
+		if(file_exists($content)){
+			if($content[strlen($content)-1] != "/") $content = $content."/";
 		}
 		else{
-			if($_GET["c"][strlen($_GET["c"])-1]=="/") $_GET["c"] = substr_replace($_GET["c"],"",-1);
+			if($content[strlen($content)-1]=="/") $content = substr_replace($content,"",-1);
 		}
-		self::$content = $_GET['c'];
-		unset($_GET['c']);
+		self::$content = $content;
+		if(debug::getRewrite())echo"<p><strong>The page that will be retrieved is: '".$content."'</strong></p>";
 		return;
 	}
 
@@ -129,13 +139,18 @@ class Rewrite {
 	 *  -  http://domain/tasks/view/id/8?&response=127?&response=127?&response=127
 	 */
 	private function rewriteRequestUri(){
-		if(debug::getRewrite()==1)echo"<pre>rewrite_request_uri()</pre>";
+		if(debug::getRewrite())echo"<hr /><pre>rewriteRequestUri()</pre>";
 
 		if(!isset($get))$get = array();
 		$uri = $_SERVER['REQUEST_URI'];
 		//Explode path to directories and variables:
 		$uri_explode = explode('?', $uri,2);
-		if(debug::getRewrite()==1)ppr($uri_explode,'split uri at ?');
+		if(debug::getRewrite()){
+			echo"<pre>Explode the path to directories and remove empty items.<br />"
+			."uri_explose[0] is the page ref.<br />"
+			."uri_explode[1 to n] is the arguments:</pre>";	
+		}
+		if(debug::getRewrite()==1)ppr($uri_explode,'uri_explode');
 
 		//uri_explode[0] is the page ref
 		//uri_explode[1 to n] is the arguments
@@ -145,7 +160,7 @@ class Rewrite {
 		 
 		isset($uri_explode['1'])?parse_str($uri_explode['1'],$get):$i=array();
 
-		if(debug::getRewrite()==1)ppr($get);
+		if(debug::getRewrite()==1)ppr($get,'the extracted get arguments');
 		if(isset($get['response']))unset($get['response']);        //remove the response element
 
 
@@ -163,7 +178,8 @@ class Rewrite {
 		if($get == '') $_SERVER['REQUEST_URI'] = $uri_explode['0'];
 		else $_SERVER['REQUEST_URI'] = $uri_explode['0']."?".$get;
 		self::$uri = $_SERVER['REQUEST_URI'];
-		if(debug::getRewrite()==1)echo "<pre>".$_SERVER['REQUEST_URI']."</pre>";
+		
+		if(debug::getRewrite()==1)echo "<pre>The modified request_uri with key arguments removed: ".$_SERVER['REQUEST_URI']."</pre>";
 	}
 	/**
 	 * checkDir() -
@@ -268,12 +284,16 @@ class Rewrite {
 	 *
 	 */
 	function checkRewriteModule(){
+		if(debug::getRewrite())echo"<hr /><pre>checkRewriteModule()</pre>";
 		if(!function_exists('apache_get_modules')){
+			if(debug::getRewrite())echo"<pre>The function apache_get_modules()"
+			."doesn't exist so we can only assume that mod_rewrite is enabled</pre>";
 			//if here then apache_get_modules cannot be used
 			//we can therefore only assume that mod_rewrite is enabled
 			return true;
 		}
 		if (in_array("mod_rewrite", apache_get_modules())) {
+			if(debug::getRewrite())echo"<pre>Apache module: mod_rewrite loaded correctly</pre>";
 			//echo "mod_rewrite loaded";
 			return true;
 		}
@@ -285,18 +305,39 @@ class Rewrite {
 		}
 	}
 
+	/**
+	 * 
+	 * the requested uri of the site.
+	 */
 	public static function getUri(){
 		return self::$uri;
 	}
+	/**
+	 * 
+	 * the url with all GET variables stripped off
+	 */
 	public static function getShortUri(){
 		return self::$shortUri;
 	}
+	/**
+	 * 
+	 * the page that will be displayed in the content pane
+	 */
 	public static function getContent(){
 		return self::$content;
 	}
+	/**
+	 * 
+	 * set the page that will be displayed in the content pane
+	 * @param unknown_type $s
+	 */
 	public static function setContent($s){
 		self::$content = $s;
 	}
+	/**
+	 * 
+	 * Retrieve the name of the module currently being accessed
+	 */
 	public static function getModule(){
 		return self::$module;
 	}
