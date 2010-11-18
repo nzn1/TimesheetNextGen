@@ -40,6 +40,12 @@ class Site{
 			die('PHP short tags are currently disabled.  This site won\'t work without short tags enabled');
 		}
 
+		$dieMsg1 = 'of '. __FILE__ . ': <br />
+		You have hit a debug kill statement.<br />  
+		This means you are accessing '.__FILE__ . ' correctly.<br />  
+		Comment out this line to proceed to stage 2';
+		die('Line: '.__LINE__ . ' '.$dieMsg1);
+		
 		require('include/debug.class.php');
 		require('include/common_functions.php');
 		$timeStart = getmicrotime();
@@ -87,6 +93,13 @@ class Site{
 
 		self::$rewrite =new Rewrite();
 
+		$dieMsg2 = 'of '. __FILE__ . ': <br />
+		You have hit a debug kill statement.<br />  
+		This means you have completed the rewrite stuff.<br />
+		The page that should be opened is: "'.Rewrite::getContent().'"  
+		Comment out this line to proceed to loading the site';
+		die('Line: '.__LINE__ . ' '.$dieMsg2);
+		
 		//check for site shutdown flag
 		if(debug::getSiteDown() == 1 && !self::$session->isAdmin()){
 			header("HTTP/1.1 503 Service Temporarily Unavailable");
@@ -105,7 +118,7 @@ class Site{
 		$tp->getPageElements()->addFile('debugInfoBottom','debugInfoBottom.php');
 		$tp->getPageElements()->addFile('tsx_footer','footer.inc');
 		$tp->getPageElements()->addFile('tsx_banner','banner.inc');
-		$tp->getPageElements()->addFile('tsx_header','header.inc');
+		//$tp->getPageElements()->addFile('tsx_header','header.inc');
 		
 		$tp->getPageElements()->getTagByName('debugInfoTop')->setOutput(ob_get_contents());
 		ob_end_clean();
