@@ -44,7 +44,7 @@ class Site{
 		You have hit a debug kill statement.<br />  
 		This means you are accessing '.__FILE__ . ' correctly.<br />  
 		Comment out this line to proceed to stage 2';
-		die('Line: '.__LINE__ . ' '.$dieMsg1);
+		//die('Line: '.__LINE__ . ' '.$dieMsg1);
 		
 		require('include/debug.class.php');
 		require('include/common_functions.php');
@@ -61,7 +61,21 @@ class Site{
 		Config::setDbPass($DATABASE_PASS);
 		Config::setDbName($DATABASE_DB);		
 
+		include("database_credentials.inc");
+		require("table_names.inc");
 		include("include/tables.class.php");
+
+		tbl::setAssignmentsTable($ASSIGNMENTS_TABLE);
+		tbl::setClientTable($CLIENT_TABLE);
+		tbl::setConfigTable($CONFIG_TABLE);
+		tbl::setProjectTable($PROJECT_TABLE);
+		tbl::setTaskTable($TASK_TABLE);
+		tbl::setTaskAssignmentsTable($TASK_ASSIGNMENTS_TABLE);
+		tbl::setTimesTable($TIMES_TABLE);
+		tbl::setUserTable($USER_TABLE);
+		tbl::setRateTable($RATE_TABLE);		
+		tbl::setAbscenceTable($ABSENCE_TABLE);
+		tbl::setAllowanceTable($ALLOWANCE_TABLE);
 		
 		require('include/session.class.php');
 		require('include/templateparser/templateparser.class.php');
@@ -85,11 +99,7 @@ class Site{
 		require("globals.class.php");
 		gbl::initialize();
 		
-		$tp = new templateParser();
-			
-//		if(!self::$session->isadmin() && debug::getHideDebugData()==true){
-//			debug::hideDebug();
-//		}
+
 
 		self::$rewrite =new Rewrite();
 
@@ -98,7 +108,7 @@ class Site{
 		This means you have completed the rewrite stuff.<br />
 		The page that should be opened is: "'.Rewrite::getContent().'"  
 		Comment out this line to proceed to loading the site';
-		die('Line: '.__LINE__ . ' '.$dieMsg2);
+		//die('Line: '.__LINE__ . ' '.$dieMsg2);
 		
 		//check for site shutdown flag
 		if(debug::getSiteDown() == 1 && !self::$session->isAdmin()){
@@ -107,8 +117,9 @@ class Site{
 			header("Retry-After: 3600");
 			self::$rewrite->setContent('maintenance');
 		}
-		
 
+		$tp = new templateParser();
+				
 		//the default template that will be loaded
 		$tp->getPageElements()->addFile('content',self::$rewrite->getContent());
 		$tp->getPageElements()->addFile('menu','menu.php');

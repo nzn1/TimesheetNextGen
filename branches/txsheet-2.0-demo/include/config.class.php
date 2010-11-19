@@ -126,6 +126,8 @@ class Config{
 		self::$initialised = true;
 		
 		self::workOutWhereMySiteIs();
+		
+		self::testDirectoryVariables();
 	
 		self::$docType = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n"
 		."\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
@@ -172,7 +174,7 @@ class Config{
 			
 		}
 
-			//set document to current working directory
+		//set document to current working directory
 		//replace backslashes with forward slashes
 		//trim trailing forward slash
 		self::$documentRoot = rtrim(str_replace('\\', '/', getcwd()),'/');		
@@ -192,56 +194,155 @@ class Config{
 		if(is_int($pos)){
 			//replace the string and save it to relativeRoot
 			self::$relativeRoot = substr_replace(self::$documentRoot, '', $pos,strlen($serverDocumentRoot));
+//			ppr(self::$relativeRoot,'relativeRoot');
+			$errorCode = 0;			
 		}
 		else{
-			/**
-			 * @todo cause a massive error here as the auto sensing has failed.
-			 */
-
-			$msg = "<p>The Config Class was unable to determine the directory path"
-			." in which your site resides.  Therefore it cannot load correctly."
-			."<br />This is because the variables:<br />"
-			."SERVER['DOCUMENT_ROOT'] and self::documentRoot don't correlate.<br />"
-			."self::documentRoot is calculated using the getcwd() function (get current working directory)"
-			." and if these two variables don't match up then the function Config::workOutWhereMySiteIs()"
-			."cannot determine the correct value for self::relativeRoot</p>"
-			."<p>A plausible reason for this is that you are using a Linux system with a logical link from something like:<br />"
-			."/var/www/html/mysite<br />"
-			."to:<br />"
-			."/home/username/workspace/project_trunk/branches/branch_name</p>"
-			."<p>If SERVER['DOCUMENT_ROOT'] and self::documentRoot differ significantly then this may be the case</p>"
-			."<br />";
-			$msg .= "<h3>Debug Information</h3>";
-			$msg .= ppr($serverDocumentRoot,'$_SERVER[\'DOCUMENT_ROOT\']',true);
-			$msg.="<pre>This is the absolute path to the root directory of your site.  In apache this is specified in the http.conf file</pre>";
-			$msg .="<hr />";
-			$msg .= ppr(self::$documentRoot,'self::documentRoot',true);
-			$msg.="<pre>self::documentRoot should be the server document root + any subdirectory that your site resides in.<br />"
-			." i.e. localhost/folder1/mysite  should give a documentRoot of root_public_html/folder1/mysite</pre>";
-			$msg .="<hr />";
-			$msg .= ppr(self::$relativeRoot,'self::RelativeRoot',true);
-			$msg.="<pre>self::relativeRoot should be the any subdirectory that your site resides relative to the public_html folder path.<br />"
-			." i.e. localhost/folder1/mysite  should give a relativeRoot of /folder1/mysite</pre>";
-			$msg .="<hr />";
-			$msg .="<h3>How can I fix this error?</h3>";
-			$msg .="<p>You can specify the parameters yourself<br />"
-				."Just set self::overrideWorkOutWhereMySiteIs to true and then setup the values in the first few lines of workOutWhereMySiteIs()</p>";
-			ErrorHandler::fatalError($msg,'Config Failed','Site Configuration Problem',false);	
+			$errorCode = 1;	
 		}
 
-		/**
-		 * @todo check what happens when the server is on a different port
-		 */
-		self::$absoluteRoot = "http://".$_SERVER['SERVER_NAME'].self::getRelativeRoot();
-		//ppr(self::$absoluteRoot,'self::absoluteRoot');	
-				
-		//ppr(self::$absoluteRoot,'self::absoluteRoot');
-		//ppr(self::$relativeRoot,'self::relativeRoot');		
-		//die();
+		//ok so the first attempt at resolving the relativeRoot failed
+		//this is probably because $_SERVER['document_root'] and getcwd()
+		//don't correlate.  A symlink would cause this to happen.
+		
+		//so lets try another way to calculate the directory:
+		
+		if(isset($_SERVER['SCRIPT_FILENAME']) && $errorCode !=0){
+	
+			//get the script_filename from the server variables
+			//replace backslashes with forward slashes
+			//trim trailing forward slash
+			$scriptFileName = rtrim(str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME']),'/');
+			//ppr($scriptFileName,'scriptFileName');
+			
+			//the only page this is called from is index.php
+			//so strip the index.php and the trailing slash
+			$scriptFileName = rtrim(str_replace('index.php', '', $scriptFileName),'/');
+			//ppr($scriptFileName,'index.php stripped');
+
+			//create a temporary version of _server['document_root']
+			//replace backslashes with forward slashes
+			//trim trailing forward slash
+			$serverDocumentRoot = rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']),'/');
+			//ppr($serverDocumentRoot,'$_SERVER[\'DOCUMENT_ROOT\']');
+	
+			//we now want to subtract $serverDocumentRoot from $scriptFileName
+			//to find self::relativeRoot
+	
+			//find the position in the string which it starts
+			$pos = strpos($scriptFileName,$serverDocumentRoot);
+			if(is_int($pos)){
+				//replace the string and save it to relativeRoot
+				self::$relativeRoot = substr_replace($scriptFileName, '', $pos,strlen($serverDocumentRoot));
+//				ppr(self::$relativeRoot,'relativeRoot');
+				$errorCode = 0;
+			
+			}
+			else{
+				$errorCode = 2;	
+			}
+			
+		}
+
+		
+		if($errorCode == 0){
+				/**
+				 * @todo check what happens when the server is on a different port
+				 */
+				self::$absoluteRoot = "http://".$_SERVER['SERVER_NAME'].self::getRelativeRoot();
+		}
+		
+		else if($errorCode == 1 || $errorCode == 2){
+				/**
+				 * @todo cause a massive error here as the auto sensing has failed.
+				 */
+				$msg = "<p>The Config Class was unable to determine the directory path"
+				." in which your site resides.  Therefore it cannot load correctly."
+				."<br />This is because the variables:<br />"
+				."SERVER['DOCUMENT_ROOT'] and self::documentRoot don't correlate.<br />"
+				."self::documentRoot is calculated using the getcwd() function (get current working directory)"
+				." and if these two variables don't match up then the function Config::workOutWhereMySiteIs()"
+				."cannot determine the correct value for self::relativeRoot</p>"
+				."<p>A plausible reason for this is that you are using a Linux system with a logical link from something like:<br />"
+				."/var/www/html/mysite<br />"
+				."to:<br />"
+				."/home/username/workspace/project_trunk/branches/branch_name</p>"
+				."<p>If SERVER['DOCUMENT_ROOT'] and self::documentRoot differ significantly then this may be the case</p>"
+				."<br />";
+				$msg .= "<h3>Debug Information</h3>";
+				$msg .= ppr($serverDocumentRoot,'$_SERVER[\'DOCUMENT_ROOT\']',true);
+				$msg.="<pre>This is the absolute path to the root directory of your site.  In apache this is specified in the http.conf file</pre>";
+				$msg .="<hr />";
+				$msg .= ppr(self::$documentRoot,'self::documentRoot',true);
+				$msg.="<pre>self::documentRoot should be the server document root + any subdirectory that your site resides in.<br />"
+				." i.e. localhost/folder1/mysite  should give a documentRoot of root_public_html/folder1/mysite</pre>";
+				$msg .="<hr />";
+				$msg .= ppr(self::$relativeRoot,'self::RelativeRoot',true);
+				$msg.="<pre>self::relativeRoot should be the any subdirectory that your site resides relative to the public_html folder path.<br />"
+				." i.e. localhost/folder1/mysite  should give a relativeRoot of /folder1/mysite</pre>";
+				$msg .="<hr />";
+				$msg .="<h3>How can I fix this error?</h3>";
+				$msg .="<p>You can specify the parameters yourself<br />"
+					."Just set self::overrideWorkOutWhereMySiteIs to true and then setup the values in the first few lines of workOutWhereMySiteIs()</p>";
+				//ErrorHandler::fatalError($msg,'Config Failed','Site Configuration Problem',false);
+		
+		}
+		
 		
 	}
 	
-
+	/**
+	 * 
+	 * Perform a file exists test to check whether the variable
+	 * self::$documentRoot is configured correctly.
+	 * We will try to find the file include/config.class.php
+	 * (i.e. this class)
+	 */
+	private static function testDirectoryVariables(){
+		$path = self::$documentRoot."/include/config.class.php";
+		if(file_exists($path)){
+			//echo "document root is correct";
+		}
+		else{
+			$msg = "<p>Your value for Config::\$documentRoot is not correct.<br />"
+			."We just ran a test to check whether we could find the class:<br />"
+			."include/config.class.php and unfortunately it failed.</p>"
+			."The file we requested was:<br />"
+			."<pre>".$path."</pre>"
+			."<p>This means that you need to check your parameters in the config class.<br />"
+			."Specifically check the self::\$relativeRoot and self::\$documentRoot variables.</p>";
+			
+			if(self::$overrideWorkOutWhereMySiteIs){
+				$msg .="<p>The parameters have been manually configured as the variable:<br />"
+				."self::\$overrideWorkOutWhereMySiteIs has been set.<br />"
+				."Please review the variables and try again."							
+				."</p>";
+			}
+			else{
+				$msg .="<p>The parameters could not be determined automatically.<br />"
+				."Set the variable self::\$overrideWorkOutWhereMySiteIs to true and"
+				." setup the variables manually in the function workOutWhereMySiteIs()."							
+				."</p>";		
+			}
+			
+			$msg .= "<h3>Debug Information</h3>";
+				$msg .= ppr($serverDocumentRoot,'$_SERVER[\'DOCUMENT_ROOT\']',true);
+				$msg.="<pre>This is the absolute path to the root directory of your site.  In apache this is specified in the http.conf file</pre>";
+				$msg .="<hr />";
+				$msg .= ppr(self::$documentRoot,'self::documentRoot',true);
+				$msg.="<pre>self::documentRoot should be the server document root + any subdirectory that your site resides in.<br />"
+				." i.e. localhost/folder1/mysite  should give a documentRoot of root_public_html/folder1/mysite</pre>";
+				$msg .="<hr />";
+				$msg .= ppr(self::$relativeRoot,'self::RelativeRoot',true);
+				$msg.="<pre>self::relativeRoot should be the any subdirectory that your site resides relative to the public_html folder path.<br />"
+				." i.e. localhost/folder1/mysite  should give a relativeRoot of /folder1/mysite</pre>";
+				$msg .="<hr />";
+				$msg .="<h3>How can I fix this error?</h3>";
+				$msg .="<p>You can specify the parameters yourself<br />"
+					."Just set self::overrideWorkOutWhereMySiteIs to true and then setup the values in the first few lines of workOutWhereMySiteIs()</p>";
+			ErrorHandler::fatalError($msg,'Config Failed','Site Configuration Problem',false);
+		}
+	}
 
 	/**
 	 *

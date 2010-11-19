@@ -11,6 +11,7 @@ if(!class_exists('Site')){
 	parse_and_echo(stripslashes($configData["headerhtml"]));
 }
 else {
+	die('header.inc not used in the new OO version');
 $header = "<meta name=\"description\" content=\"Timesheet Next Gen\" />
 <link href=\"".Config::getRelativeRoot()."/css/timesheet.css\" rel=\"stylesheet\" type=\"text/css\" />
 <link rel=\"shortcut icon\" href=\"".Config::getRelativeRoot()."/images/favicon.ico\" />";
