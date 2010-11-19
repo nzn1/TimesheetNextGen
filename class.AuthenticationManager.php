@@ -18,8 +18,13 @@ if(
 	/**
 	 * @todo put these headers back in
 	 */
-	
-	//header("Location: ./install/");
+	if(class_exists('Site')){
+		header("Location: ".config::getRelativeRoot()."/install/");
+	}
+	else{
+		header("Location: ./install/");
+	}
+	//
 	exit;
 } else if(file_exists($cpath.DIRECTORY_SEPARATOR.'install')) {
 	// the install directory has not been deleted, redirect to "delete install dir" pages
@@ -31,6 +36,12 @@ if(
 	 * @todo put these headers back in
 	 */
 	//header("Location: ./install/");
+	if(class_exists('Site')){
+		header("Location: ".config::getRelativeRoot()."/install/");
+	}
+	else{
+		header("Location: ./install/");
+	}
 	exit;	
 }
 

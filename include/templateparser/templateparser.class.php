@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 include('templateparser.datastructure.class.php');
-class templateParser{
+class TemplateParser{
 	private $pageElements;
 	private $output;
 
@@ -34,7 +34,18 @@ class templateParser{
 		}
 	}
 	public function parseTemplate(){
+		//FIRST LINE HERE MUST BE OB_START() as otherwise any echo statements
+		//will appear outside the template, will cause HTML errors and it
+		//will also appear as if echo statements here appeared before other stuff
 		ob_start();
+		if(debug::getTemplateTags()){
+			echo"<hr /><p><strong>Start TemplateParser::parseTemplate()</strong></p>";
+			echo"<pre>These two variables are vital to the templateParser:</pre>";
+			ppr(Config::getRelativeRoot(),'config::relativeRoot');
+			ppr(Config::getDocumentRoot(),'config::documentRoot');
+		}
+		
+		//check through the tags array to ensure that all of the files exist
 		$this->checkTags();
 
 		$file = $this->pageElements->getTagByName('content')->getFile();
@@ -97,25 +108,27 @@ class templateParser{
 	 * It also searches for tags that don't have specific file extensions
 	 */
 	private function checkTags(){
+		if(debug::getTemplateTags())echo"<pre>checkTags()<br />Check all the tags to ensure the files exist and to resolve missing file extensions</pre>";
 		if(count($this->pageElements->getTags())<=0) {
 			$msg = 'Error: No tags were provided for replacement';
 			ErrorHandler::fatalError($msg,'Template Parser Error','Template Parser Error');
 			exit;
 		}
+		if(debug::getTemplateTags())echo"<pre>Loop through all \$this->pageElements->getTags()</pre>";
 		//loop through each tag to check the file exists
 		foreach($this->pageElements->getTags() as $id=>$data){
-
-			if(debug::getTemplateTags())ppr($data,'data id' .$id);
+			if(debug::getTemplateTags())echo"<hr />";
+			if(debug::getTemplateTags())ppr($data,'Tag id ' .$id);
 			$found = false;
 
-			if(debug::getTemplateTags())ppr($data->getFile(),'search for');
+			if(debug::getTemplateTags())ppr($data->getFile(),'search for the file');
 
 			//search for the following file extensions
 			$checkList = array();
 			$checkList[] = '.php';
 			$checkList[] = '.htm';
 			$checkList[] = '';        //check for a file without adding an extension
-			if(debug::getTemplateTags())ppr($checkList,'ext checklist');
+			if(debug::getTemplateTags())ppr($checkList,'Check for the following extensions');
 
 			//loop through the file extension list
 			foreach($checkList as $i=>$ext){
@@ -128,10 +141,11 @@ class templateParser{
 				//check the path as it came in on data
 				$uriPath = $data->getFile().$ext;
 				$str = Config::getDocumentRoot().'/'.$uriPath;
-				if(debug::getTemplateTags())ppr($str);
+				if(debug::getTemplateTags())ppr($str,'check Path');
 
 				//if the path is a directory, then add /index.php to the end and check again
 				if(file_exists($str) && is_dir($str)){
+					//rtrim function could be used here
 					if($str[strlen($str)-1] == "/"){
 						$str = substr_replace($str,"",-1);
 					}
@@ -157,7 +171,7 @@ class templateParser{
 				//check the path as if it were in the content folder
 				$uriPath = 'content/'.$data->getFile().$ext;
 				$str = Config::getDocumentRoot().'/'.$uriPath;
-				if(debug::getTemplateTags())ppr($str);
+				if(debug::getTemplateTags())ppr($str,'check content folder:');
 
 				//if the path is a directory, then add /index.php to the end and check again
 				if(file_exists($str) && is_dir($str)){
@@ -185,19 +199,16 @@ class templateParser{
 			}//end checkList foreach loop
 
 			if(debug::getTemplateTags()){
-				if(isset($path))ppr($path,'path');
+				if($found)echo "<p><strong>Success! found the file: ".$path."</strong></p>";
+				else echo "<p><strong>Error couldn't find file: ".$data->getFile()."</strong></p>";
 			}
 			 
-			/*
-			 //test code lines
-			 if($found==true)die('found');
-			 else die('not found');
-			 */
-
 			//if the file is found then update the tag as appropriate
 			if($found==true)$this->pageElements->getTagById($id)->setFile($path);
 			//if the main content tag is not found add the error page instead
 			else if($found==false && $data->getName()=='content'){
+				if(debug::getTemplateTags())echo "<p><strong>Changing the requested page to: ".Config::getError404()."</strong></p>";
+							
 				$this->pageElements->getTagById($id)->setFile(Config::getError404());
 			}
 			//otherwise print out 'File Not Found'

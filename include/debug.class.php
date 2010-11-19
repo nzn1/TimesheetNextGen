@@ -27,10 +27,10 @@ class debug{
 	private static $contentSession   = 0;        //display sesion data within content pane
 	private static $_files           = 0;
 	private static $_post            = 0;        //display POST data
-	private static $_get             = 1;        //display GET data
+	private static $_get             = 0;        //display GET data
 	private static $_server          = 0;        //display server data
 	private static $_cookie          = 0;        //display cookie data
-	private static $templateTags     = 0;        //display template tags
+	private static $templateTags     = 1;        //display template tags
 	private static $errors			 = 1;		 //show error debug data
 	
 	private static $formFiles        = 0;        //display form file related debug data	
@@ -45,7 +45,7 @@ class debug{
 	private static $destroySession   = 0;        //show destroy session menu option
 	private static $authFull         = 0;        //display user authorisation data detailed
 	private static $authBasic        = 0;        //display user authorisation data basic
-	private static $rewrite          = 1;        //display php rewrite information
+	private static $rewrite          = 0;        //display php rewrite information
 	private static $pprTrace         = 0;        //display the trace log for all ppr commands
 
 	/*END DEBUG*/
