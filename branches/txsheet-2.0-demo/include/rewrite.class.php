@@ -50,6 +50,7 @@ class Rewrite {
 
 
 	}
+
 	/**
 	 * phpModRewrite() - rewrites the received url into the form used by
 	 * this web application
@@ -66,13 +67,6 @@ class Rewrite {
 		$uri = substr($uri, strlen(Config::getRelativeRoot())+1);
 		if(debug::getRewrite()==1)echo "<pre>Removed Config::relativeRoot from uri. uri='".$uri."'</pre>";
 
-//		if(preg_match("|^index.php|",$uri)){
-//			//default to home when no page requested
-//			if(!isset($content)||$content==""){
-//				$content='content/index';
-//			}
-//			return;
-//		}
 		//clear out GET.  We will re-generate this
 		$_GET = null;
 		 
@@ -113,6 +107,21 @@ class Rewrite {
 			$_GET['id'] = $id_explode[1];
 		}
 
+//		//check for a URL that uses the section tag
+//		$section_explode = explode('/section/', $uri_explode[0]);
+//		if(debug::getRewrite()==1)ppr($section_explode,'check for /section/');
+//		if(isset($section_explode[1])){
+//			$_GET['c'] = $section_explode[0];
+//			$_GET['section'] = $section_explode[1];
+//		}
+
+		//check for a URL that uses the user tag
+//		$user_explode = explode('/user/', $uri_explode[0]);
+//		if(debug::getRewrite()==1)ppr($user_explode,'check for /user/');
+//		if(isset($user_explode[1])){
+//			$_GET['c'] = $user_explode[0];
+//			$_GET['user'] = $user_explode[1];
+//		}
 
 		//default to home when no page requested
 		if(!isset($content)||$content=="")$content='content/index';
@@ -181,6 +190,7 @@ class Rewrite {
 		
 		if(debug::getRewrite()==1)echo "<pre>The modified request_uri with key arguments removed: ".$_SERVER['REQUEST_URI']."</pre>";
 	}
+
 	/**
 	 * checkDir() -
 	 *
@@ -222,6 +232,8 @@ class Rewrite {
 	 *          3 - MODULE_ACTIVE
 	 */
 	function checkModule(){
+	  //FUNCTION NOT UTILISED YET....
+    return self::NOT_A_MODULE;
 		if(debug::getRewrite()==1)echo"<pre>check_module()</pre>";
 		$module_dir = explode('/', self::$content,2);
 		if(debug::getRewrite()==1)ppr($module_dir,'check module');

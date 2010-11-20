@@ -39,13 +39,7 @@ class Site{
 		if(ini_get('short_open_tag')==0){
 			die('PHP short tags are currently disabled.  This site won\'t work without short tags enabled');
 		}
-
-		$dieMsg1 = 'of '. __FILE__ . ': <br />
-		You have hit a debug kill statement.<br />  
-		This means you are accessing '.__FILE__ . ' correctly.<br />  
-		Comment out this line to proceed to stage 2';
-		//die('Line: '.__LINE__ . ' '.$dieMsg1);
-		
+	
 		require('include/debug.class.php');
 		require('include/common_functions.php');
 		$timeStart = getmicrotime();
@@ -93,43 +87,44 @@ class Site{
 
 		require("class.CommandMenu.php");		
 		self::$commandMenu = new CommandMenu();
-		
-				
-				
+					
 		require("globals.class.php");
 		gbl::initialize();
-		
-
 
 		self::$rewrite =new Rewrite();
-
-		$dieMsg2 = 'of '. __FILE__ . ': <br />
-		You have hit a debug kill statement.<br />  
-		This means you have completed the rewrite stuff.<br />
-		The page that should be opened is: "'.Rewrite::getContent().'"  
-		Comment out this line to proceed to loading the site';
-		//die('Line: '.__LINE__ . ' '.$dieMsg2);
-		
+		//check for installed modules
+		$module = self::$rewrite->checkModule();
+	
 		//check for site shutdown flag
 		if(debug::getSiteDown() == 1 && !self::$session->isAdmin()){
 			header("HTTP/1.1 503 Service Temporarily Unavailable");
 			header("Status: 503 Service Temporarily Unavailable");
 			header("Retry-After: 3600");
 			self::$rewrite->setContent('maintenance');
+      $module = Rewrite::MODULE_NOT_REGISTERED;
 		}
 
 		$tp = new templateParser();
-				
-		//the default template that will be loaded
-		$tp->getPageElements()->addFile('content',self::$rewrite->getContent());
-		$tp->getPageElements()->addFile('menu','menu.php');
+
+		$filename = Config::getDocumentRoot()."/modules/".self::$rewrite->getModule()."/config.php";
+
+		if($module == Rewrite::MODULE_ACTIVE && file_exists($filename)){
+			/*if a module is detected then we need to load the module config
+			 * to determine what files need to be loaded
+			 */
+			include($filename);
+		}
+		else{
+
+    		$tp->getPageElements()->addFile('content',self::$rewrite->getContent());
+		    $tp->getPageElements()->addFile('menu','menu.php');
+  		  $tp->getPageElements()->addFile('tsx_footer','footer.inc');
+	     	$tp->getPageElements()->addFile('tsx_banner','banner.inc');
+		}				
 
 		//debugInfoTop is exempt from the module config selection
 		$tp->getPageElements()->addFile('debugInfoTop','debugInfoTop.php');
 		$tp->getPageElements()->addFile('debugInfoBottom','debugInfoBottom.php');
-		$tp->getPageElements()->addFile('tsx_footer','footer.inc');
-		$tp->getPageElements()->addFile('tsx_banner','banner.inc');
-		//$tp->getPageElements()->addFile('tsx_header','header.inc');
 		
 		$tp->getPageElements()->getTagByName('debugInfoTop')->setOutput(ob_get_contents());
 		ob_end_clean();
