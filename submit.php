@@ -6,10 +6,10 @@ if(!class_exists('Site')){
 }
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . get_acl_level('aclDaily'));	
 	}
 	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . Common::get_acl_level('aclDaily'));
 	}
 	
 	exit;
@@ -40,40 +40,43 @@ else
 //get the context date
 $todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $dateValues = getdate($todayDate);
-$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+$mode = gbl::getMode();
+$proj_id = gbl::getProjId();
+$client_id = gbl::getClientId();
 
 if ($mode == "all") $mode = "monthly";
 if ($mode == "monthly") {
-	$startDate = mktime(0,0,0, $month, 1, $year);
+	$startDate = mktime(0,0,0, $dateValues["mon"], 1, $dateValues["year"]);
 	$startStr = date("Y-m-d H:i:s",$startDate);
 
-	$endDate = getMonthlyEndDate($dateValues);
+	$endDate = Common::getMonthlyEndDate($dateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
 	
-	$next_month = mktime(0,0,0,$month+1,1,$year);
+	$next_month = mktime(0,0,0,$dateValues["mon"]+1,1,$dateValues["year"]);
 	$next_month_text = date("F \'y", $next_month);
 	
-	$previous_month = mktime(0,0,0,$month-1,1,$year);
+	$previous_month = mktime(0,0,0,$dateValues["mon"]-1,1,$dateValues["year"]);
 	$previous_month_text = date("F \'y", $previous_month);
 	
-	$next_year = mktime(0,0,0,$month,1,$year+1);
+	$next_year = mktime(0,0,0,$dateValues["mon"],1,$dateValues["year"]+1);
 	$next_year_text = date("F \'y", $next_year);
 	
-	$previous_year = mktime(0,0,0,$month,1,$year-1);
+	$previous_year = mktime(0,0,0,$dateValues["mon"],1,$dateValues["year"]-1);
 	$previous_year_text = date("F \'y", $previous_year);
 	
-	$prevYear = date('F Y', mktime(0,0,0,$month, 1, $year-1));
-	$dateValues = getdate(mktime(0,0,0,$month, 1, $year-1));
-	$prevYearStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
-	$prevMonth = date('F Y',mktime(0,0,0,$month-1, 1, $year)); 
-	$dateValues = getdate(mktime(0,0,0,$month-1, 1, $year));
-	$prevMonthStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
-	$nextMonth = date('F Y',mktime(0,0,0,$month+1, 1, $year));
-	$dateValues = getdate(mktime(0,0,0,$month+1, 1, $year));
-	$nextMonthStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
-	$nextYear = date('F Y', mktime(0,0,0,$month, 1, $year+1));
-	$dateValues = getdate(mktime(0,0,0,$month, 1, $year+1));
-	$nextYearStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+	$prevYear = date('F Y', mktime(0,0,0,$dateValues["mon"], 1, $dateValues["year"]-1));
+	$dateValues = getdate(mktime(0,0,0,$dateValues["mon"], 1, $dateValues["year"]-1));
+	$prevYearStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+	$prevMonth = date('F Y',mktime(0,0,0,$dateValues["mon"]-1, 1, $dateValues["year"])); 
+	$dateValues = getdate(mktime(0,0,0,$dateValues["mon"]-1, 1, $dateValues["year"]));
+	$prevMonthStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+	$nextMonth = date('F Y',mktime(0,0,0,$dateValues["mon"]+1, 1, $dateValues["year"]));
+	$dateValues = getdate(mktime(0,0,0,$dateValues["mon"]+1, 1, $dateValues["year"]));
+	$nextMonthStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+	$nextYear = date('F Y', mktime(0,0,0,$dateValues["mon"], 1, $dateValues["year"]+1));
+	$dateValues = getdate(mktime(0,0,0,$dateValues["mon"], 1, $dateValues["year"]+1));
+	$nextYearStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 }
 if ($mode == "weekly") {
 	list($startDate,$endDate) = getWeeklyStartEndDates($todayDate);
@@ -221,7 +224,7 @@ function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
 }
 
 function make_daily_link($ymdStr, $proj_id, $string) {
-	echo "<a href=\"daily.php?" .  $ymdStr .  "&proj_id=$proj_id\">" . 
+	echo "<a href=\"daily.php?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 
@@ -242,7 +245,7 @@ function printInfo($type) {
 		print format_time($data["duration"]);
 	} else if($type == "start_stamp") {
 		$dateValues = getdate($data["start_stamp"]);
-		$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+		$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 		$formattedDate = sprintf("%04d-%02d-%02d",$dateValues["year"],$dateValues["mon"],$dateValues["mday"]); 
 		make_daily_link($ymdStr,0,$formattedDate); 
 	} else if($type == "start_time") {
@@ -282,15 +285,15 @@ function make_index($data,$order) {
 	return $index;
 }
 
-$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode";
-$post="uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode";
+$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
+$post="uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
 
 ?>
 <script type="text/javascript">
 <?php if(!$export_excel) { ?>
 <!--
 function popupPrintWindow() {
-	window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
+	window.open("<?php echo "$Location&amp;print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
 }
 //-->
 <?php } //end if !export_excel ?>
@@ -384,9 +387,9 @@ PageElements::setBodyOnLoad('doOnLoad();');
 							</table>
 						</td>
 						<th>
-						<a href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$prevYearStr&orderby=$orderby&client_id=$client_id&mode=$mode"?>"
+						<a href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$prevYearStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
 				title="<?php echo $prevYear?>">&lt;&lt;</a></th>
-			<th><a href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$prevMonthStr&orderby=$orderby&client_id=$client_id&mode=$mode"?>"
+			<th><a href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$prevMonthStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
 				title="<?php echo $prevMonth?>">&lt;</a></th>
 			<th>&nbsp;</th>
 					<td align="center" nowrap class="outer_table_heading">
@@ -401,15 +404,15 @@ PageElements::setBodyOnLoad('doOnLoad();');
 								echo date('F Y',$startDate);
 						?>
 			<th><a
-				href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$nextMonthStr&orderby=$orderby&client_id=$client_id&mode=$mode"?>"
+				href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$nextMonthStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
 				title="<?php echo $nextMonth?>">&gt;</a></th>
 			<th><a
-				href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$nextYearStr&orderby=$orderby&client_id=$client_id&mode=$mode"?>"
+				href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$nextYearStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
 				title="<?php echo $nextYear?>">&gt;&gt;</a></th>
 										</td>
 						<?php if (!$print): ?>
 							<td  align="center" width="10%" >
-							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
+							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&amp;rArr;&amp;nbsp;Excel </a>
 							</td>
 							<td  align="center" >
 							<?php 
@@ -443,8 +446,8 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					<!-- Table header line -->
 					<tr class="inner_table_head">
 					<?php 
-						$projPost="uid=$uid$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
-						$datePost="uid=$uid$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
+						$projPost="uid=$uid$ymdStr&amp;orderby=project&amp;client_id=$client_id&amp;mode=$mode";
+						$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
 						if($orderby== 'project'): ?>
 							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
 							<td class="inner_table_column_heading">Task</td>
