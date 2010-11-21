@@ -1,23 +1,21 @@
 <?php
 //$Header: /cvsroot/tsheet/timesheet.php/weekly.php,v 1.6 2005/05/23 05:39:39 vexil Exp $
-error_reporting(E_ALL);
-ini_set('display_errors', true);
-
-// Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-require("class.Pair.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclWeekly')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclWeekly'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclWeekly')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . get_acl_level('aclWeekly'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . Common::get_acl_level('aclWeekly'));
+	}
+	
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
+//include('weekly.class.php');
+//$wc = new WeeklyClass();
 
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
@@ -27,13 +25,16 @@ if (empty($loggedInUser))
 
 if (empty($contextUser))
 	errorPage("Could not determine the context user");
+//check that project id is valid
+if (gbl::getProjId() == 0)
+	gbl::setTaskId(0);
 
 // Check project assignment.
-if ($proj_id != 0 && $client_id != 0) { // id 0 means 'All Projects'
+if (gbl::getProjId() != 0 && gbl::getClientId() != 0) { // id 0 means 'All Projects'
 
 	//make sure project id is valid for client. If not then choose another.
-	if (!isValidProjectForClient($proj_id, $client_id)) {
-		$proj_id = getValidProjectForClient($client_id);
+	if (!isValidProjectForClient($proj_id, gbl::getClientId())) {
+		$proj_id = getValidProjectForClient(gbl::getClientId());
 	}
 }
 else
@@ -41,26 +42,29 @@ else
 
 
 //get the context date
-$todayDate = mktime(0, 0, 0,$month, $day, $year);
+$startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
+$todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $dateValues = getdate($todayDate);
 
-list($startDate,$endDate) = getWeeklyStartEndDates($todayDate);
+list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
 
 $startStr = date("Y-m-d H:i:s",$startDate);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 //get the timeformat
-$CfgTimeFormat = getTimeFormat();
+$CfgTimeFormat = Common::getTimeFormat();
 
-$post="proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";
+//$post="proj_id=$proj_id&amp;amp;task_id=$task_id&amp;amp;client_id=$client_id";
 ?>
-<html>
-<head>
-<title>Weekly Timesheet for <?php echo "$contextUser" ?></title>
+//<html>
+//<head>
+//<title>Weekly Timesheet for <?php echo "$contextUser" ?></title>
 <?php
-include ("header.inc");
+//include ("header.inc");
+PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+ob_start();
 ?>
-</head>
+//</head>
 <?php
 echo "<body width=\"100%\" height=\"100%\"";
 include ("body.inc");
@@ -68,8 +72,11 @@ if (isset($popup))
 	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&amp;task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
 echo ">\n";
 
-include ("banner.inc");
-include("navcal/navcalendars.inc");
+//include ("banner.inc");
+//include("navcal/navcalendars.inc");
+	$currentDate = $todayDate;
+	$fromPopup = "false";
+	include("navcalnew/navcal+clockOnOff.inc"); 
 ?>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 <input type="hidden" name="month" value=<?php echo $month; ?> />
@@ -212,7 +219,7 @@ include("navcal/navcalendars.inc");
 		//because this application hasn't taken care to cast the time data into a consistent TZ.
 		//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
 		//So, we handle it as best we can for now...
-		fixStartEndDuration($data);
+		Common::fixStartEndDuration($data);
 
 		//get the current task properties
 		$currentTaskId = $data["task_id"];
@@ -529,11 +536,4 @@ include("navcal/navcalendars.inc");
 </table>
 
 </form>
-<?php
-include ("footer.inc");
-?>
-</body>
-</html>
-<?php
-// vim:ai:ts=4:sw=4
-?>
+

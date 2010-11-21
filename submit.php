@@ -15,8 +15,8 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-//include('submit.class.php');
-//$dc = new DailyClass();
+include('submit.class.php');
+$subcl = new SubmitClass();
 
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
@@ -91,11 +91,11 @@ $export_excel = isset($_GET["export_excel"]) ? (bool)$_GET["export_excel"] : fal
 // if exporting data to excel, print appropriate headers. Ensure the numbers written in the spreadsheet
 // are in H.F format rather than HH:MI
 if($export_excel){
-	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	header("Cache-Control: public");
-	header("Content-type: application/vnd.ms-excel");
-	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
-	header("Pragma: no-cache"); 
+	//header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+	//header("Cache-Control: public");
+	//header("Content-type: application/vnd.ms-excel");
+	//header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+	//header("Pragma: no-cache"); 
 	$time_fmt = 'decimal';
 } else
 	$time_fmt = 'time';
@@ -206,73 +206,8 @@ if($orderby == "date") {
 	$colWrap[]="";
 }
 
-function format_time($time) {
-	global $time_fmt;
-	if($time > 0) {
-		if($time_fmt == "decimal")
-			return minutes_to_hours($time);
-		else 
-			return format_minutes($time);
-	} else 
-		return "-";
-}
-
-function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
-	print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"" . $script .
-		"?$variable=$info\",\"$title\",\"location=0,directories=no,status=no,scrollbar=yes," .
-		"menubar=no,resizable=1,width=500,height=200\")>";
-}
-
-function make_daily_link($ymdStr, $proj_id, $string) {
-	echo "<a href=\"daily.php?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
-		$string .  "</a>&nbsp;"; 
-}
-
-function printInfo($type) {
-	global $data;	
-//	global $debug;
-	
-	if($type == "projectTitle") {
-		jsPopupInfoLink("client_info.php", "client_id", $data["client_id"], "Client_Info");
-		print stripslashes($data["clientName"])."</a> / ";
-		jsPopupInfoLink("proj_info.php", "proj_id", $data["proj_id"], "Project_Info");
-		print stripslashes($data["projectTitle"])."</a>&nbsp;\n";
-	} else if($type == "taskName") {
-		jsPopupInfoLink("task_info.php", "task_id", $data["task_id"], "Task_Info");
-		print stripslashes($data["taskName"])."</a>&nbsp;\n";
-	} else if($type == "duration") {
-		//jsPopupInfoLink("trans_info.php", "trans_num", $data["trans_num"], "Time_Entry_Info");
-		print format_time($data["duration"]);
-	} else if($type == "start_stamp") {
-		$dateValues = getdate($data["start_stamp"]);
-		$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
-		$formattedDate = sprintf("%04d-%02d-%02d",$dateValues["year"],$dateValues["mon"],$dateValues["mday"]); 
-		make_daily_link($ymdStr,0,$formattedDate); 
-	} else if($type == "start_time") {
-		$dateValues = getdate($data["start_stamp"]);
-		//$hmStr = "&hour=".$dateValues["hours"] . "&mins=".$dateValues["minutes"];
-		$formattedTime = sprintf("%02d:%02d",$dateValues["hours"],$dateValues["minutes"]); 
-//	$debug->write("starttime start_stamp = \"" .  $data["start_stamp"]   ."\" hr =\"" .  $dateValues["hours"]   .
-//		"\" min =\"" .  $dateValues["minutes"] . "\" formattedtime =\"" .  $formattedTime . "\"\n");
-		print $formattedTime;
-				//else print "&nbsp;";
-	} else if($type == "stop_time") {
-		$dateValues = getdate($data["end_stamp"]);
-		//$hmStr = "&hour=".$dateValues["hours"] . "&mins=".$dateValues["minutes"];
-		$formattedTime = sprintf("%02d:%02d",$dateValues["hours"],$dateValues["minutes"]); 
-		print $formattedTime;
-		//else print "&nbsp;";
-	} else if($type == "log") {
-		if ($data['log_message']) print stripslashes($data['log_message']);
-		else print "&nbsp;";
-	} else if($type == "status") {
-		if ($data['status']) print stripslashes($data['status']);
-		else print "&nbsp;";
-	} else if($type == "submit") {
-		if ($data['status'] == "Open") print "<input type=\"checkbox\" name=\"sub[]\" value=\"" . $data["trans_num"] . "\">";
-		else print "&nbsp;";
-	} else print "&nbsp;";
-}
+$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
+$post="uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
 
 function make_index($data,$order) {
 	if($order == "date") {
@@ -284,10 +219,6 @@ function make_index($data,$order) {
 	}
 	return $index;
 }
-
-$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
-$post="uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
-
 ?>
 <script type="text/javascript">
 <?php if(!$export_excel) { ?>
@@ -311,46 +242,20 @@ function submitAll (chk) {
 		}
 }
 </script>
-//<html>
-//<head>
-//<title>User Task Submission</title>
 
-<?php 
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+<?php PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
 ob_start();
-	if(!$export_excel) include ("header.inc");
-	else {
-		print "<style type=\"text/css\"> ";
-		include ("css/timesheet.css");
-		print "</style>";
-	}
-?>
-//</head>
+	//if(!$export_excel) include ("header.inc");
+	//else {
+	//	print "<style type=\"text/css\"> ";
+	//	include ("css/timesheet.css");
+	//	print "</style>";
+	//}
+
+
 PageElements::setHead(PageElements::getHead().ob_get_contents());
 ob_end_clean();
 PageElements::setBodyOnLoad('doOnLoad();');
-<?php
-	if($print) {
-		echo "<body width=\"100%\" height=\"100%\"";
-		include ("body.inc");
-
-		echo "onLoad=window.print();";
-		echo ">\n";
-	} else if($export_excel) {
-		echo "<body ";
-		include ("body.inc");
-		echo ">\n";
-	} else {
-		echo "<body ";
-		include ("body.inc");
-		echo ">\n";
-		include ("banner.inc");
-		$MOTD = 0;  //don't want the MOTD printed
-		if($mode=='weekly')
-		; //	include("navcal/navcalendars.inc");
-		else
-		; //	include("navcal/navcal_monthly.inc");
-	}
 ?>
 
 <?php if(!$export_excel) { ?>
@@ -376,12 +281,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 									<tr>
 										<td align="right" width="0" class="outer_table_heading">Client:</td>
 										<td align="left" width="100%">
-											<?php client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
+											<?php Common::client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
 										</td>
 									</tr>
 									<td align="right" width="0" class="outer_table_heading">User:</td>
 									<td align="left" width="100%">
-											<?php user_select_droplist($uid, false,"100%"); ?>
+											<?php Common::user_select_droplist($uid, false,"100%"); ?>
 									</td>
 								</tr>
 							</table>
@@ -492,7 +397,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			//if entry doesn't have an end time or duration, it's an incomplete entry
 			//fixStartEndDuration returns a 0 if the entry is incomplete.
 			
-			if(!fixStartEndDuration($data)) continue;
+			if(!Common::fixStartEndDuration($data)) continue;
 			
 			array_push($dati_total,$data);
 
@@ -501,7 +406,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			//entries that do span date boundaries into multiple entries that stop and then
 			//re-start on date boundaries.
 			//NOTE: there must be a make_index() function defined in this file for the following function to, well, function
-			split_data_into_discrete_days($data,$orderby,$darray,1);
+			Common::split_data_into_discrete_days($data,$orderby,$darray,1);
 		}
 
 		ksort($darray);
@@ -523,7 +428,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 				if(isset($subtotal_label[1]) && (($last_colVar[1] != $data[$colVar[1]]) 
 					|| ($last_colVar[0] != $data[$colVar[0]]))) {
 					if($grand_total_time) {
-						$formatted_time = format_time($level_total[1]);
+						$formatted_time = $subcl::format_time($level_total[1]);
 						print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 					}
@@ -531,7 +436,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 				}
 				if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
 					if($grand_total_time) {
-						$formatted_time = format_time($level_total[0]);
+						$formatted_time = $subcl::format_time($level_total[0]);
 						print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 					}
@@ -545,12 +450,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
-							printInfo($colVar[$i]);
+							$subcl::printInfo($colVar[$i]);
 							$last_colVar[$i]=$data[$colVar[$i]];
 						} else
 							print "&nbsp;";
 					} else
-							printInfo($colVar[$i]);
+							$subcl::printInfo($colVar[$i]);
 					print "</td>";
 				}
 				print "</tr>";
@@ -562,18 +467,18 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		}
 
 		if (isset($subtotal_label[1]) && $level_total[1]) {
-			$formatted_time = format_time($level_total[1]);
+			$formatted_time = $subcl::format_time($level_total[1]);
 			print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[1].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 		}
 		if (isset($subtotal_label[0]) && $level_total[0]) {
-			$formatted_time = format_time($level_total[0]);
+			$formatted_time = $subcl::format_time($level_total[0]);
 			print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[0].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 		}
-		$formatted_time = format_time($grand_total_time);
+		$formatted_time = $subcl::format_time($grand_total_time);
 	}
 
 ?>
@@ -633,10 +538,5 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <?php endif; //end if($print) ?>
 
 </form>
-<?php if (!$print) include ("footer.inc"); ?>
+
 <?php } //end if !export_excel ?>
-</BODY>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>
