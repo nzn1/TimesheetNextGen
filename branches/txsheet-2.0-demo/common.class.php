@@ -956,7 +956,7 @@ class Common{
 	}
 
 	public static function user_select_droplist($username='', $disabled='false', $width='') {
-		$drop_list_string = user_select_droplist_string('uid', $username, $width, $disabled);
+		$drop_list_string = self::user_select_droplist_string('uid', $username, $width, $disabled);
 		print $drop_list_string;
 	}
 
@@ -1343,7 +1343,7 @@ class Common{
 	}
 
 	public static function getWeeklyStartEndDates($time) {
-		$wsd = getWeekStartDay();
+		$wsd = self::getWeekStartDay();
 		$daysToMinus = date('w',$time) - $wsd;
 		if ($daysToMinus < 0)
 		    $daysToMinus += 7;
@@ -1427,13 +1427,13 @@ class Common{
 			$endsAfterToday = ($data["end_stamp"] > $tomorrowStamp);
 
 			if ($startsBeforeToday && $endsAfterToday) {
-				$duration = get_duration($curStamp, $tomorrowStamp);
+				$duration = self::get_duration($curStamp, $tomorrowStamp);
 			} else if ($startsBeforeToday && $endsToday) {
-				$duration = get_duration($curStamp, $data["end_stamp"]);
+				$duration = self::get_duration($curStamp, $data["end_stamp"]);
 			} else if ($startsToday && $endsToday) {
 				$duration = $data["duration"];
 			} else if ($startsToday && $endsAfterToday) {
-				$duration = get_duration($data["start_stamp"],$tomorrowStamp);
+				$duration = self::get_duration($data["start_stamp"],$tomorrowStamp);
 			} else {
 				print "Error: time booleans are in a confused state<br />\n";
 				continue;
@@ -1441,7 +1441,7 @@ class Common{
 
 			$data["start_stamp"]=$curStamp;
 			$dndx=make_index($data,$orderby);
-			__put_data_in_array($darray,$dndx,$data,$curStamp,$duration,$check_log);
+			self::__put_data_in_array($darray,$dndx,$data,$curStamp,$duration,$check_log);
 
 			$curStamp = $tomorrowStamp;
 		}
@@ -1472,7 +1472,7 @@ class Common{
 		} else {
 			if($data["end_time_str"] != '0000-00-00 00:00:00') {
 				$data["end_stamp"] = strtotime($data["end_time_str"]);
-				$data["duration"]=get_duration($data["start_stamp"], $data["end_stamp"], 1);
+				$data["duration"]=self::get_duration($data["start_stamp"], $data["end_stamp"], 1);
 				self::fix_entry_duration($data);
 			} else {
 				//have start time, but no end time or duration, return 0 (false)
