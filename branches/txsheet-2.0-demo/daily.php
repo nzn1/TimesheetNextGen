@@ -41,9 +41,6 @@ $tomorrowDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 days");
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
-//include date input classes
-include "form_input.inc";
-
 $post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()."";   //THIS LINE ISN'T USED!!
 
 
@@ -78,7 +75,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	<tr>
 		<td width="100%" class="face_padding_cell">
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1new.inc"); ?>
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
@@ -94,7 +91,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -286,7 +283,7 @@ else {
 
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>

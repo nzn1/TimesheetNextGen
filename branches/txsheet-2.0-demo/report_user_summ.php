@@ -98,8 +98,7 @@ function make_index($data,$order) {
 	return $index;
 }
 
-function format_time($time) {
-	global $time_fmt;
+function format_time($time,$time_fmt) {
 	if($time > 0) {
 		if($time_fmt == "decimal")
 			return minutes_to_hours($time);
@@ -333,14 +332,14 @@ if ($num == 0) {
 			foreach($cptary as $day => $duration) {
 				$tasktotal+=$duration;
 				$grandtotal+=$duration;
-				$time = format_time($duration);
+				$time = format_time($duration,$time_fmt);
 		?>
 						<td class="calendar_cell_right" align="right" width="50">
 							<?php echo $time; ?>
 						</td>
 		<?php } //end foreach $cptary ?>
 						<td class="calendar_cell_right" align="right" style="font-weight: bold;">
-							<?php print format_time($tasktotal); ?>
+							<?php print format_time($tasktotal,$time_fmt); ?>
 						</td></tr>
 	<?php } //end foreach $cptarray ?>
 
@@ -350,14 +349,14 @@ if ($num == 0) {
 						</td>
 	<?php
 		for ($mm = $start_day; $mm <= $end_day; $mm++) {
-			$time = format_time($daytotals[$mm]);
+			$time = format_time($daytotals[$mm],$time_fmt);
 	?>
 						<td class="calendar_cell_right" align="right" style="font-weight: bold; border-bottom: 0px;">
 							<?php echo $time; ?>
 						</td>
 	<?php }?>
 						<td class="calendar_cell_right" align="right" style="font-weight: bold; border-bottom: 0px;">
-							<?php print format_time($grandtotal); ?>
+							<?php print format_time($grandtotal,$time_fmt); ?>
 						</td>
 					</tr>
 <?php } //end if $num==0 ?>

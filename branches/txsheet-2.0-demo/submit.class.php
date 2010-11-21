@@ -1,11 +1,16 @@
 <?php
 class SubmitClass{
+
+  private $time_fmt;
+  
+  public function setTimeFmt($t){
+    $this->time_fmt = $t;
+  }
 	public function __construct(){}
 	
 public function format_time($time) {
-	global $time_fmt;
 	if($time > 0) {
-		if($time_fmt == "decimal")
+		if($this->time_fmt == "decimal")
 			return Common::minutes_to_hours($time);
 		else 
 			return Common::format_minutes($time);
@@ -24,8 +29,8 @@ public function make_daily_link($ymdStr, $proj_id, $string) {
 		$string .  "</a>&nbsp;"; 
 }
 
-public function printInfo($type) {
-	global $data;	
+public function printInfo($type,$data) {
+
 //	global $debug;
 	
 	if($type == "projectTitle") {

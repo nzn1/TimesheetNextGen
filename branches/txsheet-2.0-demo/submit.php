@@ -6,10 +6,10 @@ if(!class_exists('Site')){
 }
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . get_acl_level('aclDaily'));	
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
 	}
 	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . Common::get_acl_level('aclDaily'));
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
 	}
 	
 	exit;
@@ -18,7 +18,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 include('submit.class.php');
 $subcl = new SubmitClass();
 
-global $data;
 
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
@@ -105,6 +104,7 @@ if($export_excel){
 } else
 	$time_fmt = 'time';
 
+$subcl->setTimeFmt($time_fmt);
 //Setup the variables so we can let the user choose how to order things...
 $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 
@@ -264,7 +264,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 ?>
 
 <?php if(!$export_excel) { ?>
-<form action="submit_action.php" method="post" name="subtimes" >
+<form action="<?php echo Config::getRelativeRoot();?>/submit_action" method="post" name="subtimes" >
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
@@ -276,7 +276,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_1.inc"); ?>
+<?php if(!$print) include("timesheet_face_part_1new.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -345,7 +345,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_2.inc"); ?>
+<?php if(!$print) include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -455,12 +455,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
-							$subcl->printInfo($colVar[$i]);
+							$subcl->printInfo($colVar[$i],$data);
 							$last_colVar[$i]=$data[$colVar[$i]];
 						} else
 							print "&nbsp;";
 					} else
-							$subcl->printInfo($colVar[$i]);
+							$subcl->printInfo($colVar[$i],$data);
 					print "</td>";
 				}
 				print "</tr>";
@@ -520,7 +520,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 <?php if(!$export_excel) { ?>
 <!-- include the timesheet face up until the end -->
-<?php if (!$print) include("timesheet_face_part_3.inc"); ?>
+<?php if (!$print) include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>

@@ -191,25 +191,6 @@ class Rewrite {
 		if(debug::getRewrite()==1)echo "<pre>The modified request_uri with key arguments removed: ".$_SERVER['REQUEST_URI']."</pre>";
 	}
 
-	/**
-	 * checkDir() -
-	 *
-	 */
-	public function checkDir(){
-		//NOTE THIS IS RELATIVE TO THE CURRENT DIRECTORY i.e. /INDEX.PHP
-		if(debug::getRewrite()==1)ppr(self::$content,'check dir');
-		$ext = substr(strrchr(self::$content, '.'), 1);
-		if(strlen($ext)==3){
-			return;     //found file extension so cannot be directory.  so dont append /index.php
-		}
-		if(file_exists(self::$content)){
-			self::$content = self::$content."/index.php";
-		}
-		return;
-	}
-
-	
-	
 	/*-1 - SQL Error
 		 *   0 - Module not Registered
 		 *   1 - Not a module
