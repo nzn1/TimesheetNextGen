@@ -96,8 +96,7 @@ function make_index($data,$order) {
 	return $index;
 }
 
-function format_time($time) {
-	global $time_fmt;
+function format_time($time,$time_fmt) {
 	if($time > 0) {
 		if($time_fmt == "decimal")
 			return minutes_to_hours($time);
@@ -387,7 +386,7 @@ if ($num == 0) {
 		echo '<td class="date"><strong>' . date('D, jS M, Y',$start_time) . '</strong></td>';
 
 		if($data)
-			echo '<td><strong>' . format_time($data['total']) . '</strong></td>';
+			echo '<td><strong>' . format_time($data['total'],$time_fmt) . '</strong></td>';
 		else
 			echo '<td>&nbsp;</td>';
 
@@ -396,7 +395,7 @@ if ($num == 0) {
 				echo '<td class="cell">';
 
 				if(array_key_exists($task_id, $data)){
-					echo htmlentities(format_time($data[$task_id]));
+					echo htmlentities(format_time($data[$task_id],$time_fmt));
 
 					$projects[$project_id]['tasks'][$task_id]['total'] += $data[$task_id];
 					$grand_total_time                                  += $data[$task_id];
@@ -417,11 +416,11 @@ if ($num == 0) {
 	echo '<tfoot>';
 	echo '<tr>';
 	echo '<td class="grandtotal"><strong>TOTAL</strong></td>';
-	echo '<td class="grandtotal"><strong>' . format_time($grand_total_time) . '</strong></td>';
+	echo '<td class="grandtotal"><strong>' . format_time($grand_total_time,$time_fmt) . '</strong></td>';
 
 	foreach($projects as $project_id => $project){
 		foreach($project['tasks'] as $task_id => $task)
-			echo '<td class="total"><strong>' . htmlentities(format_time($task['total'])) . '</strong></td>';
+			echo '<td class="total"><strong>' . htmlentities(format_time($task['total'],$time_fmt)) . '</strong></td>';
 	}
 
 	echo '</tr>';

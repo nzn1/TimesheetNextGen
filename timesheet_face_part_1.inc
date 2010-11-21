@@ -1,3 +1,6 @@
+<?php 
+if(class_exists('Site'))ErrorHandler::fatalError('Error: old file.  please use timesheet_face_part_1new.inc<br />'.ppr(getShortDebugTrace(3),'trace',true));
+?>
 <table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>

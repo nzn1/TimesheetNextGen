@@ -64,9 +64,9 @@ if(class_exists('Site')){
 	if (Site::getAuthenticationManager()->hasAccess('aclStopwatch'))	
 		Site::getCommandMenu()->add(new IconTextCommand("Stopwatch", true, $popup_href, Config::getRelativeRoot()."/images/icon_stopwatch.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclDaily'))
-		Site::getCommandMenu()->add(new IconTextCommand("Daily Timesheet", true, Config::getRelativeRoot()."/daily.php?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Daily Timesheet", true, Config::getRelativeRoot()."/daily?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclWeekly'))
-		Site::getCommandMenu()->add(new IconTextCommand("Weekly Timesheet", true, Config::getRelativeRoot()."/weekly.php?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Weekly Timesheet", true, Config::getRelativeRoot()."/weekly?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
 		Site::getCommandMenu()->add(new IconTextCommand("Simple Timesheet", true, Config::getRelativeRoot()."/simple.php?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclMonthly'))

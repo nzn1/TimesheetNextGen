@@ -33,12 +33,12 @@ if (gbl::getProjId() == 0)
 if (gbl::getProjId() != 0 && gbl::getClientId() != 0) { // id 0 means 'All Projects'
 
 	//make sure project id is valid for client. If not then choose another.
-	if (!isValidProjectForClient($proj_id, gbl::getClientId())) {
-		$proj_id = getValidProjectForClient(gbl::getClientId());
+	if (!isValidProjectForClient(gbl::getProjId(), gbl::getClientId())) {
+		gbl::setProjId(getValidProjectForClient(gbl::getClientId()));
 	}
 }
 else
-	$task_id = 0;
+	gbl::setTaskId(0);
 
 
 //get the context date
@@ -54,23 +54,16 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
-//$post="proj_id=$proj_id&amp;amp;task_id=$task_id&amp;amp;client_id=$client_id";
-?>
-//<html>
-//<head>
-//<title>Weekly Timesheet for <?php echo "$contextUser" ?></title>
-<?php
+//$post="proj_id=".gbl::getProjId()."&amp;amp;task_id=".gbl::getTaskId()."&amp;amp;client_id=".gbl::getClientId()."";
+
+
 //include ("header.inc");
 PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
-ob_start();
-?>
-//</head>
-<?php
-echo "<body width=\"100%\" height=\"100%\"";
-include ("body.inc");
-if (isset($popup))
-	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&amp;task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
-echo ">\n";
+
+if (isset($popup)){
+	$str = "window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
+	PageElements::setBodyOnLoad($str);
+}	
 
 //include ("banner.inc");
 //include("navcal/navcalendars.inc");
@@ -79,16 +72,16 @@ echo ">\n";
 	include("navcalnew/navcal+clockOnOff.inc"); 
 ?>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-<input type="hidden" name="month" value=<?php echo $month; ?> />
-<input type="hidden" name="year" value=<?php echo $year; ?> />
-<input type="hidden" name="day" value=<?php echo $day; ?> />
-<input type="hidden" name="task_id" value=<?php echo $task_id; ?> />
+<input type="hidden" name="month" value=<?php echo gbl::getMonth(); ?> />
+<input type="hidden" name="year" value=<?php echo gbl::getYear(); ?> />
+<input type="hidden" name="day" value=<?php echo gbl::getDay(); ?> />
+<input type="hidden" name="task_id" value=<?php echo gbl::getTaskId(); ?> />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1new.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -99,7 +92,7 @@ echo ">\n";
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><?php client_select_list($client_id, $contextUser, false, false, true, false, "submit();"); ?></td>
+												<td width="100%"><?php Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();"); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -111,7 +104,7 @@ echo ">\n";
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><?php project_select_list($client_id, false, $proj_id, $contextUser, false, true, "submit();"); ?></td>
+												<td width="100%"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -132,7 +125,7 @@ echo ">\n";
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -142,10 +135,10 @@ echo ">\n";
 						<td class="inner_table_column_heading" align="left" width="22%">
 <?php
 
-						if ($client_id == 0)
+						if (gbl::getClientId() == 0)
 							print "Client / ";
 
-						if ($proj_id == 0)
+						if (gbl::getProjId() == 0)
 							print "Project / ";
 
 						print "Task";
@@ -172,6 +165,8 @@ echo ">\n";
 	//$endDateStr = strftime("%D", $endDate);
 	//print "<p>WEEK start: $startDateStr WEEK end: $endDateStr</p>";
 
+	require("class.Pair.php");
+	
 	class TaskInfo extends Pair {
 		var $projectId;
 		var $projectTitle;
@@ -190,8 +185,8 @@ echo ">\n";
 	}
 
 	// Get the Weekly data.
-	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
-	list($num3, $qh3) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id, $order_by_str);
+	$order_by_str = "".tbl::getClientTable().".organisation, ".tbl::getProjectTable().".title, ".tbl::getTaskTable().".name";
+	list($num3, $qh3) = Common::get_time_records($startStr, $endStr, $contextUser, gbl::getProjId(), gbl::getClientId(), $order_by_str);
 
 	//print "<p>Query: $query </p>";
 	//print "<p>there were $num3 results</p>";
@@ -337,11 +332,11 @@ echo ">\n";
 		print "<td  class=\"calendar_cell_middle\" valign=\"top\">";
 
 		//should we print the client name?
-		if ($client_id == 0)
+		if (gbl::getClientId() == 0)
 			print "<span class=\"client_name_small\">$matchedPair->clientName / </span>";
 
 		//print the project title
-		if ($proj_id == 0)
+		if (gbl::getProjId() == 0)
 			print "<span class=\"project_name_small\">$matchedPair->projectTitle / </span>";
 
 		//print the task name
@@ -483,9 +478,9 @@ echo ">\n";
 		$dateValues = getdate($currentDate);
 		$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 		$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
-											"?client_id=$client_id".
-											"&amp;proj_id=$proj_id".
-											"&amp;task_id=$task_id".
+											"?client_id=".gbl::getClientId()."".
+											"&amp;proj_id=".gbl::getProjId()."".
+											"&amp;task_id=".gbl::getTaskId()."".
 											"$ymdStr".
 											"&amp;destination=$_SERVER[PHP_SELF]".
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
@@ -508,14 +503,14 @@ echo ">\n";
 	$grandTotal = 0;
 	foreach ($allTasksDayTotals as $currentAllTasksDayTotal) {
 		$grandTotal += $currentAllTasksDayTotal;
-		$formattedTotal = formatMinutes($currentAllTasksDayTotal);
+		$formattedTotal = Common::formatMinutes($currentAllTasksDayTotal);
 		print "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
 		//print "<td class=\"calendar_totals_line_weekly\" align=\"right\">\n";
 		print "<span class=\"calendar_total_value_weekly\">$formattedTotal</span></td>";
 	}
 
 	//print grand total
-	$formattedGrandTotal = formatMinutes($grandTotal);
+	$formattedGrandTotal = Common::formatMinutes($grandTotal);
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	print "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
 	print "<span class=\"calendar_total_value_monthly\">$formattedGrandTotal</span></td>";
@@ -529,7 +524,7 @@ echo ">\n";
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>

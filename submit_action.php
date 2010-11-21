@@ -2,12 +2,12 @@
 // $Header: /cvsroot/tsheet/timesheet.php/submit_action.php,v 1.7 2005/05/23 07:32:00 vexil Exp $
 // Authenticate
 
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
+//require("class.AuthenticationManager.php");
+//require("class.CommandMenu.php");
 require_once("debuglog.php");
 $debug = new logfile();
 	
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclSimple')) {
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclSimple'));
 	exit;
 }
@@ -49,7 +49,10 @@ $action = $_REQUEST["submit"];
 	}
 
 	// we're done so redirect to the submission page
-	Header("Location: submit.php?uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode&year=$year&month=$month&day=$day");
+
+	$path = Config::getRelativeRoot()."/submit?uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode&year=$year&month=$month&day=$day";
+	if(debug::getLocation()==1)echo "Location: <a href=\"".$path."\">".$path."</a>";
+	else header("Location: ".$path);	
 
 ?>
 

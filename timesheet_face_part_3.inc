@@ -1,3 +1,6 @@
+<?php 
+if(class_exists('Site'))ErrorHandler::fatalError('Error: old file.  please use timesheet_face_part_3new.inc<br />'.ppr(getShortDebugTrace(3),'trace',true));
+?>
 								<!-- BREAK POINT 2 -->
 									</td>
 							</tr>
