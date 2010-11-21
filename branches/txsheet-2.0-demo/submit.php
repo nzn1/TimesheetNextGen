@@ -18,6 +18,8 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 include('submit.class.php');
 $subcl = new SubmitClass();
 
+global $data;
+
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 //include("timesheet_menu.inc");
@@ -44,6 +46,9 @@ $ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . 
 $mode = gbl::getMode();
 $proj_id = gbl::getProjId();
 $client_id = gbl::getClientId();
+$year = $dateValues["year"];
+$month = $dateValues["mon"];
+$day = $dateValues["mday"];
 
 if ($mode == "all") $mode = "monthly";
 if ($mode == "monthly") {
@@ -428,7 +433,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 				if(isset($subtotal_label[1]) && (($last_colVar[1] != $data[$colVar[1]]) 
 					|| ($last_colVar[0] != $data[$colVar[0]]))) {
 					if($grand_total_time) {
-						$formatted_time = $subcl::format_time($level_total[1]);
+						$formatted_time = $subcl->format_time($level_total[1]);
 						print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 					}
@@ -436,7 +441,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 				}
 				if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
 					if($grand_total_time) {
-						$formatted_time = $subcl::format_time($level_total[0]);
+						$formatted_time = $subcl->format_time($level_total[0]);
 						print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 					}
@@ -450,12 +455,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
-							$subcl::printInfo($colVar[$i]);
+							$subcl->printInfo($colVar[$i]);
 							$last_colVar[$i]=$data[$colVar[$i]];
 						} else
 							print "&nbsp;";
 					} else
-							$subcl::printInfo($colVar[$i]);
+							$subcl->printInfo($colVar[$i]);
 					print "</td>";
 				}
 				print "</tr>";
@@ -467,18 +472,18 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		}
 
 		if (isset($subtotal_label[1]) && $level_total[1]) {
-			$formatted_time = $subcl::format_time($level_total[1]);
+			$formatted_time = $subcl->format_time($level_total[1]);
 			print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[1].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 		}
 		if (isset($subtotal_label[0]) && $level_total[0]) {
-			$formatted_time = $subcl::format_time($level_total[0]);
+			$formatted_time = $subcl->format_time($level_total[0]);
 			print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[0].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 		}
-		$formatted_time = $subcl::format_time($grand_total_time);
+		$formatted_time = $subcl->format_time($grand_total_time);
 	}
 
 ?>

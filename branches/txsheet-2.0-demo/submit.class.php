@@ -2,7 +2,7 @@
 class SubmitClass{
 	public function __construct(){}
 	
-function format_time($time) {
+public function format_time($time) {
 	global $time_fmt;
 	if($time > 0) {
 		if($time_fmt == "decimal")
@@ -13,18 +13,18 @@ function format_time($time) {
 		return "-";
 }
 
-function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
+public function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
 	print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"" . $script .
 		"?$variable=$info\",\"$title\",\"location=0,directories=no,status=no,scrollbar=yes," .
 		"menubar=no,resizable=1,width=500,height=200\")>";
 }
 
-function make_daily_link($ymdStr, $proj_id, $string) {
+public function make_daily_link($ymdStr, $proj_id, $string) {
 	echo "<a href=\"daily.php?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 
-function printInfo($type) {
+public function printInfo($type) {
 	global $data;	
 //	global $debug;
 	
@@ -71,5 +71,4 @@ function printInfo($type) {
 }
 
 
-	
 }
