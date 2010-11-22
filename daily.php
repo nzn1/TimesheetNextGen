@@ -101,6 +101,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						<td class="inner_table_column_heading" align="center">Client</td>
 						<td class="inner_table_column_heading" align="center">Project</td>
 						<td class="inner_table_column_heading" align="center">Task</td>
+						<td class="inner_table_column_heading" align="center">Work Description</td>
 						<td class="inner_table_column_heading" align="center" width="10%">Start</td>
 						<td class="inner_table_column_heading" align="center" width="10%">End</td>
 						<td class="inner_table_column_heading" align="center" width="10%">Total</td>
@@ -161,7 +162,8 @@ else {
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('client_info.php?client_id=$data[client_id]','Client Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$clientName</a></td>\n";
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('proj_info.php?proj_id=$data[proj_id]','Project Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$projectTitle</a></td>\n";
 		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('task_info.php?task_id=$data[task_id]','Task Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=300,height=150')\">$taskName</a></td>\n";
-
+		print "<td class=\"calendar_cell_middle\">" . $data['log_message'] . "</td>\n";
+		
 		if ($data["duration"] > 0) {
 			//format printable times
 			if ($CfgTimeFormat == "12") {
@@ -230,9 +232,14 @@ else {
 			}
 
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
-			print "	<a href=\"edit.php?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">Edit</a>,&nbsp;\n";
-			//print "	<a href=\"delete.php?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
-			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
+			if ($data['subStatus'] == "Open") {
+				print "	<a href=\"edit.php?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">Edit</a>,&nbsp;\n";
+				//print "	<a href=\"delete.php?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
+				print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
+			} else {
+				// submitted or approved times cannot be edited
+				print  $data['subStatus'] . "&nbsp;\n";
+			}
 			print "</td>";
 
 			//add to todays total
@@ -269,7 +276,7 @@ else {
 		$count++;
 	}
 	print "<tr>\n";
-	print "	<td class=\"calendar_totals_line_weekly_right\" colspan=\"6\" align=\"right\">";
+	print "	<td class=\"calendar_totals_line_weekly_right\" colspan=\"7\" align=\"right\">";
 	print " Daily Total: <span class=\"calendar_total_value_weekly\" nowrap>" . Common::formatMinutes($todaysTotal) . "</span></td>\n";
 	print "	<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>&nbsp;</td>\n";
 	print "</tr>\n";
