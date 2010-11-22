@@ -40,50 +40,50 @@ else
 
 //get the context date
 $todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
-$dateValues = getdate($todayDate);
-$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+$todayDateValues = getdate($todayDate);
+$ymdStr = "&amp;year=".$todayDateValues["year"] . "&amp;month=".$todayDateValues["mon"] . "&amp;day=".$todayDateValues["mday"];
 $mode = gbl::getMode();
 $proj_id = gbl::getProjId();
 $client_id = gbl::getClientId();
-$year = $dateValues["year"];
-$month = $dateValues["mon"];
-$day = $dateValues["mday"];
+$year = $todayDateValues["year"];
+$month = $todayDateValues["mon"];
+$day = $todayDateValues["mday"];
 
 if ($mode == "all") $mode = "monthly";
 if ($mode == "monthly") {
-	$startDate = mktime(0,0,0, $dateValues["mon"], 1, $dateValues["year"]);
+	$startDate = mktime(0,0,0, $todayDateValues["mon"], 1, $todayDateValues["year"]);
 	$startStr = date("Y-m-d H:i:s",$startDate);
 
-	$endDate = Common::getMonthlyEndDate($dateValues);
+	$endDate = Common::getMonthlyEndDate($todayDateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
 	
-	$next_month = mktime(0,0,0,$dateValues["mon"]+1,1,$dateValues["year"]);
+	$next_month = mktime(0,0,0,$todayDateValues["mon"]+1,1,$todayDateValues["year"]);
 	$next_month_text = date("F \'y", $next_month);
 	
-	$previous_month = mktime(0,0,0,$dateValues["mon"]-1,1,$dateValues["year"]);
+	$previous_month = mktime(0,0,0,$todayDateValues["mon"]-1,1,$todayDateValues["year"]);
 	$previous_month_text = date("F \'y", $previous_month);
 	
-	$next_year = mktime(0,0,0,$dateValues["mon"],1,$dateValues["year"]+1);
+	$next_year = mktime(0,0,0,$todayDateValues["mon"],1,$todayDateValues["year"]+1);
 	$next_year_text = date("F \'y", $next_year);
 	
-	$previous_year = mktime(0,0,0,$dateValues["mon"],1,$dateValues["year"]-1);
+	$previous_year = mktime(0,0,0,$todayDateValues["mon"],1,$todayDateValues["year"]-1);
 	$previous_year_text = date("F \'y", $previous_year);
 	
-	$prevYear = date('F Y', mktime(0,0,0,$dateValues["mon"], 1, $dateValues["year"]-1));
-	$dateValues = getdate(mktime(0,0,0,$dateValues["mon"], 1, $dateValues["year"]-1));
+	$prevYear = date('F Y', mktime(0,0,0,$todayDateValues["mon"], 1, $todayDateValues["year"]-1));
+	$dateValues = getdate(mktime(0,0,0,$todayDateValues["mon"], 1, $todayDateValues["year"]-1));
 	$prevYearStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
-	$prevMonth = date('F Y',mktime(0,0,0,$dateValues["mon"]-1, 1, $dateValues["year"])); 
-	$dateValues = getdate(mktime(0,0,0,$dateValues["mon"]-1, 1, $dateValues["year"]));
+	$prevMonth = date('F Y',mktime(0,0,0,$todayDateValues["mon"]-1, 1, $todayDateValues["year"])); 
+	$dateValues = getdate(mktime(0,0,0,$todayDateValues["mon"]-1, 1, $todayDateValues["year"]));
 	$prevMonthStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
-	$nextMonth = date('F Y',mktime(0,0,0,$dateValues["mon"]+1, 1, $dateValues["year"]));
-	$dateValues = getdate(mktime(0,0,0,$dateValues["mon"]+1, 1, $dateValues["year"]));
+	$nextMonth = date('F Y',mktime(0,0,0,$todayDateValues["mon"]+1, 1, $todayDateValues["year"]));
+	$dateValues = getdate(mktime(0,0,0,$todayDateValues["mon"]+1, 1, $todayDateValues["year"]));
 	$nextMonthStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
-	$nextYear = date('F Y', mktime(0,0,0,$dateValues["mon"], 1, $dateValues["year"]+1));
-	$dateValues = getdate(mktime(0,0,0,$dateValues["mon"], 1, $dateValues["year"]+1));
+	$nextYear = date('F Y', mktime(0,0,0,$todayDateValues["mon"], 1, $todayDateValues["year"]+1));
+	$dateValues = getdate(mktime(0,0,0,$todayDateValues["mon"], 1, $todayDateValues["year"]+1));
 	$nextYearStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 }
 if ($mode == "weekly") {
-	list($startDate,$endDate) = getWeeklyStartEndDates($todayDate);
+	list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
@@ -95,11 +95,11 @@ $export_excel = isset($_GET["export_excel"]) ? (bool)$_GET["export_excel"] : fal
 // if exporting data to excel, print appropriate headers. Ensure the numbers written in the spreadsheet
 // are in H.F format rather than HH:MI
 if($export_excel){
-	//header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	//header("Cache-Control: public");
-	//header("Content-type: application/vnd.ms-excel");
-	//header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
-	//header("Pragma: no-cache"); 
+	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+	header("Cache-Control: public");
+	header("Content-type: application/vnd.ms-excel");
+	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+	header("Pragma: no-cache"); 
 	$time_fmt = 'decimal';
 } else
 	$time_fmt = 'time';
@@ -322,7 +322,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 										</td>
 						<?php if (!$print): ?>
 							<td  align="center" width="10%" >
-							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&amp;rArr;&amp;nbsp;Excel </a>
+							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
 							</td>
 							<td  align="center" >
 							<?php 

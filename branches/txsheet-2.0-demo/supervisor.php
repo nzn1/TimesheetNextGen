@@ -1,32 +1,39 @@
 <?php
-// Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-require("debuglog.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclReports'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
+	}
+	
 	exit;
 }
 
+// Note supervisor form uses the same functions as the submit form.
+include('submit.class.php');
+$sc = new SubmitClass();
+
 // Connect to database.
-$dbh = dbConnect();
+//$dbh = dbConnect();
 
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
+//include("timesheet_menu.inc");
 
 $contextUser = strtolower($_SESSION['contextUser']);
-
-$debug = new logfile();
 
 //load local vars from superglobals
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else {
 	// need to find the first user managed by this supervisor, otherwise we display the supervisor's times
-	$query = "SELECT uid, last_name, first_name, status FROM $USER_TABLE " .
-			" WHERE (select uid from ts1_user s WHERE s.username = 'peter') = supervisor ORDER BY status DESC, last_name, first_name";
-	list($qh, $num) = dbQuery($query);
+	//$query = "SELECT uid, last_name, first_name, status FROM $USER_TABLE " .
+	//		" WHERE (select uid from ts1_user s WHERE s.username = 'peter') = supervisor ORDER BY status DESC, last_name, first_name";
+	list($qh, $num) = Common::get_users_for_supervisor($contextUser);
 	if ($num > 0) {
 		$data = dbResult($qh);
 		$uid = $data['uid'];
@@ -41,20 +48,53 @@ else
 	$print = false;
 
 //get the context date
-$todayDate = mktime(0, 0, 0,$month, $day, $year);
-$dateValues = getdate($todayDate);
-$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+$todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
+$todayDateValues = getdate($todayDate);
+$ymdStr = "&amp;year=".$todayDateValues["year"] . "&amp;month=".$todayDateValues["mon"] . "&amp;day=".$todayDateValues["mday"];
+$mode = gbl::getMode();
+$proj_id = gbl::getProjId();
+$client_id = gbl::getClientId();
+$year = $todayDateValues["year"];
+$month = $todayDateValues["mon"];
+$day = $todayDateValues["mday"];
+
+$day = $todayDateValues["mday"];
 
 if ($mode == "all") $mode = "monthly";
 if ($mode == "monthly") {
-	$startDate = mktime(0,0,0, $month, 1, $year);
+	$startDate = mktime(0,0,0, $todayDateValues["mon"], 1, $todayDateValues["year"]);
 	$startStr = date("Y-m-d H:i:s",$startDate);
 
-	$endDate = getMonthlyEndDate($dateValues);
+	$endDate = Common::getMonthlyEndDate($todayDateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	
+	$next_month = mktime(0,0,0,$todayDateValues["mon"]+1,1,$todayDateValues["year"]);
+	$next_month_text = date("F \'y", $next_month);
+	
+	$previous_month = mktime(0,0,0,$todayDateValues["mon"]-1,1,$todayDateValues["year"]);
+	$previous_month_text = date("F \'y", $previous_month);
+	
+	$next_year = mktime(0,0,0,$todayDateValues["mon"],1,$todayDateValues["year"]+1);
+	$next_year_text = date("F \'y", $next_year);
+	
+	$previous_year = mktime(0,0,0,$todayDateValues["mon"],1,$todayDateValues["year"]-1);
+	$previous_year_text = date("F \'y", $previous_year);
+	
+	$prevYear = date('F Y', mktime(0,0,0,$todayDateValues["mon"], 1, $todayDateValues["year"]-1));
+	$dateValues = getdate(mktime(0,0,0,$todayDateValues["mon"], 1, $todayDateValues["year"]-1));
+	$prevYearStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+	$prevMonth = date('F Y',mktime(0,0,0,$todayDateValues["mon"]-1, 1, $todayDateValues["year"])); 
+	$dateValues = getdate(mktime(0,0,0,$todayDateValues["mon"]-1, 1, $todayDateValues["year"]));
+	$prevMonthStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+	$nextMonth = date('F Y',mktime(0,0,0,$todayDateValues["mon"]+1, 1, $todayDateValues["year"]));
+	$dateValues = getdate(mktime(0,0,0,$todayDateValues["mon"]+1, 1, $todayDateValues["year"]));
+	$nextMonthStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+	$nextYear = date('F Y', mktime(0,0,0,$todayDateValues["mon"], 1, $todayDateValues["year"]+1));
+	$dateValues = getdate(mktime(0,0,0,$todayDateValues["mon"], 1, $todayDateValues["year"]+1));
+	$nextYearStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 }
 if ($mode == "weekly") {
-	list($startDate,$endDate) = getWeeklyStartEndDates($todayDate);
+	list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
@@ -83,7 +123,7 @@ $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
-list($num, $qh) = get_time_records($startStr, $endStr, $uid, $proj_id, $client_id);
+list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, $proj_id, $client_id);
 
 if($orderby == "project") {
 	$subtotal_label[]="Project total";
@@ -191,77 +231,6 @@ if($orderby == "date") {
 	$colWrap[]="";
 }
 
-function format_time($time) {
-	global $time_fmt;
-	if($time > 0) {
-		if($time_fmt == "decimal")
-			return minutes_to_hours($time);
-		else 
-			return format_minutes($time);
-	} else 
-		return "-";
-}
-
-function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
-	print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"" . $script .
-		"?$variable=$info\",\"$title\",\"location=0,directories=no,status=no,scrollbar=yes," .
-		"menubar=no,resizable=1,width=500,height=200\")>";
-}
-
-function make_daily_link($ymdStr, $proj_id, $string) {
-	echo "<a href=\"daily.php?" .  $ymdStr .  "&proj_id=$proj_id\">" . 
-		$string .  "</a>&nbsp;"; 
-}
-
-function printInfo($type) {
-	global $data;	
-//	global $debug;
-	
-	if($type == "projectTitle") {
-		jsPopupInfoLink("client_info.php", "client_id", $data["client_id"], "Client_Info");
-		print stripslashes($data["clientName"])."</a> / ";
-		jsPopupInfoLink("proj_info.php", "proj_id", $data["proj_id"], "Project_Info");
-		print stripslashes($data["projectTitle"])."</a>&nbsp;\n";
-	} else if($type == "taskName") {
-		jsPopupInfoLink("task_info.php", "task_id", $data["task_id"], "Task_Info");
-		print stripslashes($data["taskName"])."</a>&nbsp;\n";
-	} else if($type == "duration") {
-		//jsPopupInfoLink("trans_info.php", "trans_num", $data["trans_num"], "Time_Entry_Info");
-		print format_time($data["duration"]);
-	} else if($type == "start_stamp") {
-		$dateValues = getdate($data["start_stamp"]);
-		$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
-		$formattedDate = sprintf("%04d-%02d-%02d",$dateValues["year"],$dateValues["mon"],$dateValues["mday"]); 
-		make_daily_link($ymdStr,0,$formattedDate); 
-	} else if($type == "start_time") {
-		$dateValues = getdate($data["start_stamp"]);
-		//$hmStr = "&hour=".$dateValues["hours"] . "&mins=".$dateValues["minutes"];
-		$formattedTime = sprintf("%02d:%02d",$dateValues["hours"],$dateValues["minutes"]); 
-//	$debug->write("starttime start_stamp = \"" .  $data["start_stamp"]   ."\" hr =\"" .  $dateValues["hours"]   .
-//		"\" min =\"" .  $dateValues["minutes"] . "\" formattedtime =\"" .  $formattedTime . "\"\n");
-		print $formattedTime;
-				//else print "&nbsp;";
-	} else if($type == "stop_time") {
-		$dateValues = getdate($data["end_stamp"]);
-		//$hmStr = "&hour=".$dateValues["hours"] . "&mins=".$dateValues["minutes"];
-		$formattedTime = sprintf("%02d:%02d",$dateValues["hours"],$dateValues["minutes"]); 
-		print $formattedTime;
-		//else print "&nbsp;";
-	} else if($type == "log") {
-		if ($data['log_message']) print stripslashes($data['log_message']);
-		else print "&nbsp;";
-	} else if($type == "status") {
-		if ($data['status']) print stripslashes($data['status']);
-		else print "&nbsp;";
-	} else if($type == "approve") {
-		if ($data['status'] == "Submitted") print "<input type=\"checkbox\" name=\"approve[]\" value=\"" . $data["trans_num"] . "\">";
-		else print "&nbsp;";
-	} else if($type == "reject") {
-		if ($data['status'] == "Submitted") print "<input type=\"checkbox\" name=\"reject[]\" value=\"" . $data["trans_num"] . "\">";
-		else print "&nbsp;";
-	} else print "&nbsp;";
-}
-
 function make_index($data,$order) {
 	if($order == "date") {
 		$index=$data["start_stamp"] . sprintf("-%05d",$data["proj_id"]) . 
@@ -299,43 +268,23 @@ function submitAll (chk) {
 }
 //-->
 </script>
-<?php } //end if !export_excel ?>
+<?php } //end if !export_excel 
+PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+ob_start();
 
-<html>
-<head>
-<title>Supervisor Display</title>
+PageElements::setHead(PageElements::getHead().ob_get_contents());
+ob_end_clean();
+PageElements::setBodyOnLoad('doOnLoad();');
+?>
 <?php 
-	if(!$export_excel) include ("header.inc");
-	else {
-		print "<style type=\"text/css\"> ";
-		include ("css/timesheet.css");
-		print "</style>";
-	}
+	//if(!$export_excel) include ("header.inc");
+	//else {
+	//	print "<style type=\"text/css\"> ";
+	//	include ("css/timesheet.css");
+	//	print "</style>";
+	//}
 ?>
-</head>
-<?php
-	if($print) {
-		echo "<body width=\"100%\" height=\"100%\"";
-		include ("body.inc");
 
-		echo "onLoad=window.print();";
-		echo ">\n";
-	} else if($export_excel) {
-		echo "<body ";
-		include ("body.inc");
-		echo ">\n";
-	} else {
-		echo "<body ";
-		include ("body.inc");
-		echo ">\n";
-		include ("banner.inc");
-		$MOTD = 0;  //don't want the MOTD printed
-		if($mode=='weekly')
-			include("navcal/navcalendars.inc");
-		else
-			include("navcal/navcal_monthly.inc");
-	}
-?>
 
 <?php if(!$export_excel) { ?>
 <form name="subtimes" action="supervisor_action.php" method="post">
@@ -350,7 +299,7 @@ function submitAll (chk) {
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_1.inc"); ?>
+<?php if(!$print) include("timesheet_face_part_1new.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -360,18 +309,24 @@ function submitAll (chk) {
 									<tr>
 										<td align="right" width="0" class="outer_table_heading">Client:</td>
 										<td align="left" width="100%">
-											<?php client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
+											<?php Common::client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
 											
 										</td>
 									</tr>
 									<td align="right" width="0" class="outer_table_heading">User:</td>
 									<td align="left" width="100%">
-											<?php supervised_user_select_droplist($uid, false,"100%"); ?>
+											<?php Common::supervised_user_select_droplist($uid, false,"100%"); ?>
 									</td>
 								</tr>
 							</table>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
+						<a href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$prevYearStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
+				title="<?php echo $prevYear?>">&lt;&lt;</a></th>
+			<th><a href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$prevMonthStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
+				title="<?php echo $prevMonth?>">&lt;</a></th>
+			<th>&nbsp;</th>
+					<td align="center" nowrap class="outer_table_heading">
 						<?php
 							if ($mode == "weekly") {
 								$sdStr = date("M d, Y",$startDate);
@@ -382,7 +337,12 @@ function submitAll (chk) {
 							} else
 								echo date('F Y',$startDate);
 						?>
-						</td>
+			<th><a
+				href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$nextMonthStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
+				title="<?php echo $nextMonth?>">&gt;</a></th>
+			<th><a
+				href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$nextYearStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
+				title="<?php echo $nextYear?>">&gt;&gt;</a></th>						</td>
 						<?php if (!$print): ?>
 							<td  align="center" width="10%" >
 							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
@@ -408,7 +368,7 @@ function submitAll (chk) {
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_2.inc"); ?>
+<?php if(!$print) include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -466,7 +426,7 @@ function submitAll (chk) {
 			//if entry doesn't have an end time or duration, it's an incomplete entry
 			//fixStartEndDuration returns a 0 if the entry is incomplete.
 			
-			if(!fixStartEndDuration($data)) continue;
+			if(!Common::fixStartEndDuration($data)) continue;
 			
 			array_push($dati_total,$data);
 
@@ -475,7 +435,7 @@ function submitAll (chk) {
 			//entries that do span date boundaries into multiple entries that stop and then
 			//re-start on date boundaries.
 			//NOTE: there must be a make_index() function defined in this file for the following function to, well, function
-			split_data_into_discrete_days($data,$orderby,$darray,1);
+			Common::split_data_into_discrete_days($data,$orderby,$darray,1);
 		}
 
 		ksort($darray);
@@ -497,7 +457,7 @@ function submitAll (chk) {
 				if(isset($subtotal_label[1]) && (($last_colVar[1] != $data[$colVar[1]]) 
 					|| ($last_colVar[0] != $data[$colVar[0]]))) {
 					if($grand_total_time) {
-						$formatted_time = format_time($level_total[1]);
+						$formatted_time = $sc->format_time($level_total[1]);
 						print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 					}
@@ -505,7 +465,7 @@ function submitAll (chk) {
 				}
 				if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
 					if($grand_total_time) {
-						$formatted_time = format_time($level_total[0]);
+						$formatted_time = $sc->format_time($level_total[0]);
 						print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 					}
@@ -519,12 +479,12 @@ function submitAll (chk) {
 					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
-							printInfo($colVar[$i]);
+							$sc->printInfo($colVar[$i], $data);
 							$last_colVar[$i]=$data[$colVar[$i]];
 						} else
 							print "&nbsp;";
 					} else
-							printInfo($colVar[$i]);
+							$sc->printInfo($colVar[$i], $data);
 					print "</td>";
 				}
 				print "</tr>";
@@ -536,18 +496,18 @@ function submitAll (chk) {
 		}
 
 		if (isset($subtotal_label[1]) && $level_total[1]) {
-			$formatted_time = format_time($level_total[1]);
+			$formatted_time = $sc->format_time($level_total[1]);
 			print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[1].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 		}
 		if (isset($subtotal_label[0]) && $level_total[0]) {
-			$formatted_time = format_time($level_total[0]);
+			$formatted_time = $sc->format_time($level_total[0]);
 			print "<tr><td colspan=\"7\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[0].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 		}
-		$formatted_time = format_time($grand_total_time);
+		$formatted_time = $sc->format_time($grand_total_time);
 	}
 
 ?>
@@ -584,7 +544,7 @@ function submitAll (chk) {
 
 <?php if(!$export_excel) { ?>
 <!-- include the timesheet face up until the end -->
-<?php if (!$print) include("timesheet_face_part_3.inc"); ?>
+<?php if (!$print) include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>

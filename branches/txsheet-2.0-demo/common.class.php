@@ -80,6 +80,25 @@ class Common{
 		return array($num, $my_qh);
 	}
 
+	public static function get_users_for_supervisor($username) {
+		if ($username) {
+			//build the database query and select by $uid if present
+			$query = "SELECT uid, last_name, first_name, status FROM ".tbl::getUserTable(). 
+				" WHERE (select uid FROM " .tbl::getUserTable(). " s WHERE s.username = '$username') = supervisor " .
+				" ORDER BY status DESC, last_name, first_name";
+			//print $query;
+		}
+		else {
+			//build the database query and get all users
+			$query = "SELECT uid, last_name, first_name, status FROM ".tbl::getUserTable(). 
+				" ORDER BY status DESC, last_name, first_name";
+			
+		}
+
+		list($my_qh, $num) = dbQuery($query);
+		return array($num, $my_qh);
+	}
+	
 	public static function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
 
 		list($qhq, $numq) = dbQuery("SELECT timeformat FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
@@ -688,7 +707,6 @@ class Common{
 
 	public static function client_select_list($currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange="", $restrictedList=true) {
 
-
 		if ($restrictedList) {
 				list($qh,$num) = dbQuery(
 						"SELECT ".tbl::getClientTable().".client_id, ".tbl::getClientTable().".organisation, ".
@@ -751,6 +769,64 @@ class Common{
 			print "$result[organisation]</option>\n";
 		}
 		print "</select>";
+	}
+	
+	public static function supervised_user_select_droplist($username='', $disabled='false', $width='') {
+		// Creates a drop-down list of users supervised by this uid 
+	
+		$authenticationManager = Site::getAuthenticationManager();
+	
+		$show_disabled=0;
+		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
+			// show disabled users at bottom of list
+			$show_disabled=1;
+			$query = "SELECT uid, last_name, first_name, status FROM ".tbl::getUserTable(). 
+				" WHERE (SELECT uid FROM " .tbl::getUserTable(). " s WHERE s.username = '$username') = supervisor " .
+				" ORDER BY status DESC, last_name, first_name";
+		} else {
+			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE  " .
+				" WHERE status='ACTIVE' AND (SELECT uid FROM " .tbl::getUserTable(). "  s WHERE s.username = '$username') = supervisor " .
+				" ORDER BY last_name, first_name";
+		}
+
+		$drop_list_string = "<select name=\"uid\" onChange=\"submit()\" ";
+		if (!empty($width))
+			$drop_list_string.= "style=\"width: $width;\" ";
+		if ($disabled == 'true')
+			$drop_list_string .= " disabled";
+		$drop_list_string .= ">\n";
+
+		list($qh, $num) = dbQuery($query);
+		if ($num > 0) {
+
+			if($show_disabled) {
+				$drop_list_string .= "<optgroup label=\"Active Users\">";
+				$found_disabled=0;
+			}
+
+			while ($return = dbResult($qh)) {
+				if($show_disabled && !$found_disabled && $return['status']=='INACTIVE') {
+					$found_disabled=1;
+					$drop_list_string .= "</optgroup><optgroup style=\"color:red\"; label=\"Inactive Users\">";
+				}
+
+				$current_username = stripslashes($return["username"]);
+				$current_name = stripslashes($return["last_name"] . " " . $return["first_name"] );
+				$drop_list_string .= "<option value=\"$current_username\"";
+				if ($current_username == $username)
+					$drop_list_string .= " selected";
+				if ($current_name == " ")
+					$drop_list_string .= ">$current_username</option>\n";
+				else
+					$drop_list_string .= ">$current_name</option>\n";
+			}
+
+			if($show_disabled) {
+				$drop_list_string .= "</optgroup>";
+			}
+		}
+		$drop_list_string .= "</select>";
+		print $drop_list_string;
 	}
 
 	public static function project_select_list($currentClientId, $needsClient, $currentProjectId, $contextUser, $showSelectProject, $showAllProjects, $onChange="", $disabled=false) {
