@@ -25,6 +25,7 @@ $dc = new DailyClass();
 //include("timesheet_menu.inc");
 
 $contextUser = strtolower($_SESSION['contextUser']);
+gbl::setContextUser($contextUser);
 
 if (empty($contextUser))
 	errorPage("Could not determine the context user");
@@ -49,7 +50,7 @@ $post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_
 //<title>Update timesheet for echo $contextUser;</title>
 PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
 ob_start();
-//include("header.inc");
+
 include("client_proj_task_javascript.php");
 ?>
 <script type="text/javascript">

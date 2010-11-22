@@ -69,7 +69,7 @@ elseif ($action == "add") {
 		/*
 		 * Had to add '0.00' to make the query match up to the database
 		 */
-		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1,'0.00')");
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1)");
 		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
 	}
 	if (!$leader_added) {
@@ -77,7 +77,7 @@ elseif ($action == "add") {
 		/*
 		 * Had to add '0.00' to make the query match up to the database
 		 */
-		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$project_leader', 1,'0.00')");
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$project_leader', 1)");
 		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$project_leader')");
 	}
 

@@ -26,8 +26,8 @@ class debug{
 	private static $requestUri       = 0;        //display mini session data
 	private static $contentSession   = 0;        //display sesion data within content pane
 	private static $_files           = 0;
-	private static $_post            = 1;        //display POST data
-	private static $_get             = 1;        //display GET data
+	private static $_post            = 0;        //display POST data
+	private static $_get             = 0;        //display GET data
 	private static $_server          = 0;        //display server data
 	private static $_cookie          = 0;        //display cookie data
 	private static $templateTags     = 0;        //display template tags
@@ -39,7 +39,7 @@ class debug{
 	private static $formDebug        = 0;
 	
 	private static $sqlStatement     = 0;        //display SQL strings
-	private static $sqlError         = 1;        //display SQL errors
+	private static $sqlError         = 0;        //display SQL errors
 	private static $classSubFunction = 0;        //general debug data for a function within a class
 	private static $pageLoadTime     = 0;        //show page processing time
 	private static $destroySession   = 0;        //show destroy session menu option

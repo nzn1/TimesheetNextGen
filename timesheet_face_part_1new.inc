@@ -17,7 +17,7 @@
       <table width="100%" border="0" cellpadding="0" cellspacing="0">				         
         <tr>					           
           <td style="vertical-align:top;width:4px;background-image:url('<?php echo Config::getRelativeRoot();?>/images/timesheet_face_07.gif');background-repeat:y-repeat;">					             
-            <div style="width:4px;background-repeat:no-repeat;background-image:url('<?php echo Config::getRelativeRoot();?>/images/timesheet_face_04.jpg');">
+            <div style="width:4px;background-repeat:no-repeat;background-image:url('<?php echo Config::getRelativeRoot();?>/images/timesheet_face_04.gif');">
             </div>
             <!--table width="4" height="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>

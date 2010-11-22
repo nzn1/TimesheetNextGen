@@ -9,25 +9,25 @@ include("navcalnew/common.inc");
 					<tr>
 						<td>
 						<?php 
-							if($month<7)
-								draw_month_year_navigation($year-1);
+							if(gbl::getMonth()<7)
+								draw_month_year_navigation(gbl::getYear()-1);
 							else
-								draw_month_year_navigation($year);
+								draw_month_year_navigation(gbl::getYear());
 						?>
 						</td><td width="2">&nbsp;</td><td>
-						<?php include("navcal/navcal_core.inc"); ?>
+						<?php include("navcalnew/navcal_core.inc"); ?>
 						</td><td width="2">&nbsp;</td><td>
 						<?php 
-							if($month<7)
-								draw_month_year_navigation($year);
+							if(gbl::getMonth()<7)
+								draw_month_year_navigation(gbl::getYear());
 							else
-								draw_month_year_navigation($year+1);
+								draw_month_year_navigation(gbl::getYear()+1);
 						?>
 						</td>
 					</tr>
 				</table>
 			</td>
-			<?php if($motd) include("navcalnew/motd.inc"); ?>
+			<?php if(Common::getMotd()) include("navcalnew/motd.inc"); ?>
 		</tr>
 	</table>
 <!-- End Navigation Calendars -->

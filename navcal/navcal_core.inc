@@ -1,6 +1,6 @@
 <!-- Daily Navigation Calendar -->
 <?php
-if(class_exists('Site'))die('Error: old file.  please use navcalnew/navcal_core.inc');
+if(class_exists('Site'))die('Error: old file.  please use navcalnew/navcal_core.inc<br />'.getShortDebugTrace(2));
 $todayDate = mktime(0,0,0,$month,$day,$year);
 $startDateCalendar = mktime(0,0,0, $month, 1, $year);
 

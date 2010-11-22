@@ -108,7 +108,7 @@ require_once('form_input.inc');
 																	$minuteInput->create(); ?>
 															</td>
 															<td>
-																<img src="images/clock-green-sml.gif" border="0" alt="" />
+																<img src="<?php echo Config::getRelativeRoot();?>/images/clock-green-sml.gif" border="0" alt="" />
 															</td>
 														</tr>
 														<?php // If the current day is today:
@@ -143,7 +143,7 @@ require_once('form_input.inc');
 																	$minuteInput->create(); ?>
 															</td>
 															<td>
-																<img src="images/clock-red-sml.gif" border="0" alt="" />
+																<img src="<?php echo Config::getRelativeRoot();?>/images/clock-red-sml.gif" border="0" alt="" />
 															</td>
 														</tr>
 														<?php // If the current day is today:

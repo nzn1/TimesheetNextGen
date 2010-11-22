@@ -1,39 +1,27 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/reports.php,v 1.5 2005/03/02 22:22:38 stormer Exp $
 
-// Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclReports'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
+	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
-
 $contextUser = strtolower($_SESSION['contextUser']);
+gbl::setContextUser($contextUser);
 
 //load local vars from superglobals
 $uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']: $contextUser;
 
-$todayDate = mktime(0, 0, 0, $month, $day, $year);
-$ymdStr = "&amp;year=$year&amp;month=$month&amp;day=$day";
+$todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
+$ymdStr = "&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."";
 
-?>
-<html>
-<head><title>Timesheet Reports Page</title>
-<?php include ("header.inc"); ?>
-</head>
-<body <?php include ("body.inc"); ?> >
-<?php 
-include ("banner.inc"); 
-$motd=0;
-include ("navcal/navcalendars.inc");
+
+Common::setMotd(0);
+
+include ("navcalnew/navcalendars.inc");
 ?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -41,7 +29,7 @@ include ("navcal/navcalendars.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1new.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -55,7 +43,7 @@ include ("navcal/navcalendars.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -85,7 +73,7 @@ if(!($val === ''))
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">User report</td>
 						<td class="calendar_cell_right">
-							<a href="report_user.php?<?php print $ymdStr; ?>amp;&mode=monthly">Generate monthly</a> /
+							<a href="report_user.php?<?php print $ymdStr; ?>&amp;&mode=monthly">Generate monthly</a> /
 							<a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
@@ -115,7 +103,7 @@ if(!($val === ''))
 							<a href="report_grid_client_user.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
-<?php if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
+<?php if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">All users & All projects report</td>
 						<td class="calendar_cell_right">
@@ -123,7 +111,7 @@ if(!($val === ''))
 						</td>
 					</tr>
 <?php } ?>
-<?php if ($authenticationManager->hasAccess('aclAbsences')) { ?>
+<?php if (Site::getAuthenticationManager()->hasAccess('aclAbsences')) { ?>
 					<tr class="inner_table_head">
 						<td class="inner_table_column_heading">Attendance Reports</td>
 						<td class="inner_table_column_heading">Actions</td>
@@ -147,17 +135,8 @@ if(!($val === ''))
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>
 </table>
-
-<?php
-include ("footer.inc");
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>

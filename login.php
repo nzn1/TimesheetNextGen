@@ -1,24 +1,25 @@
 <?php
-// Authenticate
-require("class.AuthenticationManager.php");
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
 
 //check that this form has been submitted
 if (isset($_POST["username"]) && isset($_POST["password"])) {
 	//try logging the user in
-	if (!$authenticationManager->login($_POST["username"], $_POST["password"]))
+	if (!Site::getAuthenticationManager()->login($_POST["username"], $_POST["password"]))
 		$loginFailure = true;
 	else {
 		if (!empty($_REQUEST["redirect"]))
 			header("Location: $_REQUEST[redirect]");
 		else
-			gotoStartPage();
+			Common::gotoStartPage();
 
 		exit();
 	}
 }
 else
 	//destroy the session by logging out
-	$authenticationManager->logout();
+	Site::getAuthenticationManager()->logout();
 
 function printMessage($message) {
 	print "<tr>" .
@@ -39,18 +40,12 @@ function printMessage($message) {
 
 $redirect = isset($_REQUEST["redirect"]) ? $_REQUEST["redirect"] : "";
 
+PageElements::setHead("<title>".Config::getMainTitle()." - Login</title>");
+PageElements::setBodyOnLoad("document.loginForm.username.focus();");
 ?>
 
-<html>
-<head>
-<title>Timesheet Login</title>
-<?php
-include ("header.inc");
-?>
-</head>
-<body onLoad="document.loginForm.username.focus();">
 
-<form action="login.php" method="POST" name="loginForm" style="margin: 0px;">
+<form action="<?php echo Config::getRelativeRoot();?>/login" method="POST" name="loginForm" style="margin: 0px;">
 <input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
 
 <table border="0" cellspacing="0" cellpadding="0" align="center">
@@ -67,7 +62,7 @@ include ("header.inc");
 <?php } ?>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
+<?php include("timesheet_face_part_1new.inc"); ?>
 
 				<table border="0">
 					<tr>
@@ -78,7 +73,7 @@ include ("header.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
+<?php include("timesheet_face_part_2new.inc"); ?>
 
 			<table width="300" cellspacing="0" cellpadding="5" class="box">
 				<tr>
@@ -88,23 +83,17 @@ include ("header.inc");
 					<td class="label"><br /><input type="submit" name="Login" value="submit" /></td>
 				</tr>
 				<?php	if (isset($loginFailure))
-							printMessage($authenticationManager->getErrorMessage());
+							printMessage(Site::getAuthenticationManager()->getErrorMessage());
 						else if (isset($_REQUEST["clearanceRequired"]))
 							printMessage("$_REQUEST[clearanceRequired] clearance is required for the page you have tried to access.");
 				?>
 			</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<?php include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-
-</body>
-</html>
-<?php
-// vim:ai:ts=4:sw=4
-?>
