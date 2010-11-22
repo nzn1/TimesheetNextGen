@@ -29,7 +29,7 @@ public function make_daily_link($ymdStr, $proj_id, $string) {
 		$string .  "</a>&nbsp;"; 
 }
 
-public function printInfo($type,$data) {
+public function printInfo($type, $data) {
 
 //	global $debug;
 	

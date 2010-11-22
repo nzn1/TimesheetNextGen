@@ -69,6 +69,8 @@ if(class_exists('Site')){
 		Site::getCommandMenu()->add(new IconTextCommand("Weekly Timesheet", true, Config::getRelativeRoot()."/weekly?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
 		Site::getCommandMenu()->add(new IconTextCommand("Simple Timesheet", true, Config::getRelativeRoot()."/simple.php?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
+	if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
+		Site::getCommandMenu()->add(new IconTextCommand("Submit Times", true, Config::getRelativeRoot()."/submit?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclMonthly'))
 		Site::getCommandMenu()->add(new IconTextCommand("View Month", true, Config::getRelativeRoot()."/monthly?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclAbsences'))
@@ -85,6 +87,7 @@ if(class_exists('Site')){
 		Site::getCommandMenu()->add(new IconTextCommand("Reports", true, Config::getRelativeRoot()."/reports.php?$post", Config::getRelativeRoot()."/images/icon_reports.gif"));
 	if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 		Site::getCommandMenu()->add(new IconTextCommand("Users", true, Config::getRelativeRoot()."/user_maint.php", Config::getRelativeRoot()."/images/icon_users.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Supervisor", true, Config::getRelativeRoot()."/supervisor.php", Config::getRelativeRoot()."/images/icon_users.gif"));
 		if (Site::getAuthenticationManager()->hasAccess('aclRates'))
 			Site::getCommandMenu()->add(new IconTextCommand("User Rates", true, Config::getRelativeRoot()."/rate_maint.php", Config::getRelativeRoot()."/images/icon_rates.gif"));
 		Site::getCommandMenu()->add(new IconTextCommand("Configuration", true, Config::getRelativeRoot()."/config.php", Config::getRelativeRoot()."/images/icon_configuration.gif"));
