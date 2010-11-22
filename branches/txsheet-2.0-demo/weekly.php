@@ -18,6 +18,7 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 //$wc = new WeeklyClass();
 
 $contextUser = strtolower($_SESSION['contextUser']);
+gbl::setContextUser($contextUser);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
@@ -59,6 +60,15 @@ $CfgTimeFormat = Common::getTimeFormat();
 
 //include ("header.inc");
 PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+ob_start();
+
+include("client_proj_task_javascript.php");
+
+PageElements::setHead(PageElements::getHead().ob_get_contents());
+ob_end_clean();
+PageElements::setBodyOnLoad('doOnLoad();');
+
+//WARNING - IF POPUP IS SET THEN doOnLoad() won't be run
 
 if (isset($popup)){
 	$str = "window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
@@ -435,7 +445,7 @@ if (isset($popup)){
 
 			if (!$emptyCell) {
 				//print todays total
-				$todaysTotalStr = formatMinutes($todaysTotal);
+				$todaysTotalStr = Common::formatMinutes($todaysTotal);
 				print "<br /><span class=\"task_time_total_small\">$todaysTotalStr</span>";
 			}
 
@@ -455,7 +465,7 @@ if (isset($popup)){
 		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
 
 		//format the weekly total
-		$weeklyTotalStr = formatMinutes($weeklyTotal);
+		$weeklyTotalStr = Common::formatMinutes($weeklyTotal);
 
 		//print the total column
 		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\">";

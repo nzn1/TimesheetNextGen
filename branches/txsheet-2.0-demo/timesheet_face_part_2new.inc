@@ -2,7 +2,7 @@
 
 					</td>
 					<td style="vertical-align:top;width:10px;background-image:url('<? echo Config::getRelativeRoot()."/";?>images/timesheet_face_08.gif');background-repeat:y-repeat;">
-					<div style="height:7px;width:10px;background-image:url('<? echo Config::getRelativeRoot()."/";?>images/timesheet_face_06.jpg');background-repeat:no-repeat;"></div>
+					<div style="height:7px;width:10px;background-image:url('<? echo Config::getRelativeRoot()."/";?>images/timesheet_face_06.gif');background-repeat:no-repeat;"></div>
 						<!--table width="10" height="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 								<td width="10" height="7">

@@ -3,10 +3,10 @@
 							</tr>
 						</table>
 					</td>
-					<td width="10" height="100%">
+					<td style="vertical-align:top; width:10px; height:100%;">
 						<table width="10" border="0" cellpadding="0" cellspacing="0">
 							<tr>
-								<td width="10" height="19">
+								<td style="vertical-align:top; width:10px; height:19px;">
 									<img src="<?php echo Config::getRelativeRoot();?>/images/timesheet_face_13.gif" width="10" height="19" alt="" /></td>
 							</tr>
 							<tr >

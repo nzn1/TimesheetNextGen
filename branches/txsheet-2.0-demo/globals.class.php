@@ -11,6 +11,7 @@ class gbl{
 	private static $task_id;
 	private static $client_id;
 	private static $post;
+	private static $contextUser;
 	
 	
 	
@@ -57,6 +58,12 @@ class gbl{
 	}
 	public static function getClientId(){
 		return self::$client_id;
+	}
+	public static function getContextUser(){
+		return self::$contextUser;
+	}
+	public static function setContextUser($s){
+		self::$contextUser = $s;
 	}
 }
 ?>

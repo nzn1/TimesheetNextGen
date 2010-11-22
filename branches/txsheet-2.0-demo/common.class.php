@@ -9,6 +9,9 @@ class Common{
   public static function getMotd(){
     return self::$motd;
   }  
+  public static function setMotd($i){
+    self::$motd = $i;
+  }
   public static function getRealTodayDate(){
     return self::$realTodayDate;
   }
