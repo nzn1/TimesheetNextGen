@@ -88,59 +88,43 @@ include ("navcalnew/navcal_monthly.inc");
 <input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
 <input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
 
+<!-- Overall table covering month cells, client and project and date -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
 <?php include("timesheet_face_part_1new.inc"); ?>
-
+				<!-- Table which could be first row covering client and project and date -->
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap="nowrap">
-							<table width="100%" border="0" cellpadding="1" cellspacing="2">
-								<tr>
-									<td>
-										<table width="100%" border="0" cellspacing="0" cellpadding="0">
-											<tr>
-												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><?php 
-												if(!class_exists('Site')){
-													client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
-												} 
-												else{
-													Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
-												}
-												?></td>
-											</tr>
-											<tr>
-												<td height="1"></td>
-												<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
-											</tr>
-										</table>
-									</td>
-									<td>
-										<table width="100%" border="0" cellspacing="0" cellpadding="0">
-											<tr>
-												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><?php 
-												if(!class_exists('Site')){
-													project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
-												} 
-												else{
-													Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
-												}
-												?></td>
-											</tr>
-											<tr>
-												<td height="1"></td>
-												<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
+							Client:
 						</td>
+						<td width="25%">
+						<?php 
+							if(!class_exists('Site')){
+								client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
+							} 
+							else{
+								Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
+							}
+						?>
+						</td>
+						<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" />
+						</td>
+						<td>Project:</td>
+						<td width="25%">
+						<?php 
+							if(!class_exists('Site')){
+								project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
+							} 
+							else{
+								Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
+							}
+						?>
+						</td>
+						<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
 						<td align="center" nowrap="nowrap" class="outer_table_heading">
 							<?php echo date('F Y', $startDate); ?>
 						</td>
@@ -148,23 +132,20 @@ include ("navcalnew/navcal_monthly.inc");
 				</table><!-- end of the client, project select table and the current month -->
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2new.inc"); ?>
-
+<?php //include("timesheet_face_part_2new.inc"); ?>
+	<!-- table encompassing heading, days in month, weekly total and month total -->
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-					<tr class="inner_table_head">
-						<?php
-						//print the days of the week
-						$currentDate = $firstPrintedDate;
-						for ($i=0; $i<7; $i++) {
-							$currentDayStr = strftime("%A", $currentDate);
-							$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 day");
-							print "	<td class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>\n";
-						}
-						?>
-					</tr>
+		<tr class="inner_table_head">
+		<?php
+			//print the days of the week
+			$currentDate = $firstPrintedDate;
+			for ($i=0; $i<7; $i++) {
+				$currentDayStr = strftime("%A", $currentDate);
+				$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 day");
+				print "	<td class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>\n";
+			}
+		?>
+		</tr>
 					<tr>
 <?php
 
@@ -423,7 +404,7 @@ include ("navcalnew/navcal_monthly.inc");
 			}
 
 			if(!class_exists('Site')){
-				print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . formatMinutes($todaysTotal) ."</td></tr>";
+				print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</td></tr>";
 			}
 			else{
 				print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</td></tr>";
@@ -461,7 +442,7 @@ include ("navcalnew/navcal_monthly.inc");
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3new.inc"); ?>
+<?php //include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>
