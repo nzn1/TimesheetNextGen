@@ -24,18 +24,6 @@ if($export_excel){
 } else
 	$time_fmt = "time";
 
-// Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-//require("debuglog.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]amp;clearanceRequired=" . get_acl_level('aclReports'));
-	exit;
-}
-
-// Connect to database.
-$dbh = dbConnect();
-
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");

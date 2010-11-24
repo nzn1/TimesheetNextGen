@@ -20,7 +20,7 @@ class Common{
 
 
 	include("database_credentials.inc");
-	include("mysql.db.inc");
+	include_once("mysql.db.inc");
 	require("timezone.inc");
 
 	//get realToday's values
