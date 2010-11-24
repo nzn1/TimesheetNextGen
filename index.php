@@ -75,13 +75,14 @@ class Site{
 		require('include/templateparser/templateparser.class.php');
 		require("include/rewrite.class.php");
 		require("include/database.class.php");
-
+		
 		ob_start();
 		self::$session = new Session();
 		self::$database = new MySQLDB();
 		self::$session->startSession();
 
-		
+		require_once("common.class.php");
+		new Common();
 		require("class.AuthenticationManager.php");
 		self::$authenticationManager = new AuthenticationManager();
 
