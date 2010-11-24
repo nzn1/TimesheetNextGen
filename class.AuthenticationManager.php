@@ -52,14 +52,10 @@ if( file_exists( $cpath . "/siteclosed")) {
 }
 	
 require("table_names.inc");
-if(class_exists('Site')){
-	require("common.class.php");
-	$common = new Common();
-}
-else{
+if(!class_exists('Site')){
 	require("common.inc");
 }
-require("enum.php");
+require_once("enum.php");
 
 //define constants for error code
 enum(
