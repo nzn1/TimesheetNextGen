@@ -92,22 +92,21 @@ PageElements::setBodyOnLoad('doOnLoad();');
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2new.inc"); ?>
+<?php //include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-					<tr class="inner_table_head">
-						<td class="inner_table_column_heading" align="center">Client</td>
-						<td class="inner_table_column_heading" align="center">Project</td>
-						<td class="inner_table_column_heading" align="center">Task</td>
-						<td class="inner_table_column_heading" align="center">Work Description</td>
-						<td class="inner_table_column_heading" align="center" width="10%">Start</td>
-						<td class="inner_table_column_heading" align="center" width="10%">End</td>
-						<td class="inner_table_column_heading" align="center" width="10%">Total</td>
-						<td class="inner_table_column_heading" align="center" width="15%"><i>Actions</i></td>
-					</tr>
+			<tr class="inner_table_head">
+			<td class="inner_table_column_heading" align="center">Client</td>
+			<td class="inner_table_column_heading" align="center">Project</td>
+			<td class="inner_table_column_heading" align="center">Task</td>
+			<td class="inner_table_column_heading" align="center">Work Description</td>
+			<td class="inner_table_column_heading" align="center" width="10%">Start</td>
+			<td class="inner_table_column_heading" align="center" width="10%">End</td>
+			<td class="inner_table_column_heading" align="center" width="10%">Total</td>
+			<td class="inner_table_column_heading" align="center" width="15%"><i>Actions</i></td>
+		</tr>
 <?php
 
 
@@ -129,7 +128,7 @@ if ($num == 0) {
 	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
 	print "		<td class=\"calendar_cell_disabled_right\" width=\"15%\">&nbsp;</td>\n";
 	print "	</tr>\n";
-	print "</table>\n";
+	//print "</table>\n";
 }
 else {
 	$last_task_id = -1;
@@ -191,8 +190,8 @@ else {
 				echo "</i></font></td>" ;
 
 				$dc->open_cell_middle_td(); //<td....>
-				echo formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " .
-					formatMinutes($data["duration"]) . "</i></font></td>\n";
+				echo Common::formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " .
+					Common::formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} //if end time is not today
 			  elseif ($data["end_stamp"] > $tomorrowDate) {
 				$taskTotal = Common::get_duration($data["start_stamp"],$tomorrowDate);
@@ -220,8 +219,8 @@ else {
 				echo $formattedEndTime . "</td>" ;
 
 				$dc->open_cell_middle_td(); //<td....>
-				echo formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " .
-					formatMinutes($data["duration"]) . "</i></font></td>\n";
+				echo Common::formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " .
+					Common::formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} else {
 				$taskTotal = $data["duration"];
 				$dc->open_cell_middle_td(); //<td....>
@@ -291,7 +290,7 @@ else {
 
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3new.inc"); ?>
+<?php //include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>
