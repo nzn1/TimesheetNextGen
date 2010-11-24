@@ -106,6 +106,11 @@ if($orderby == "project") {
 	$colWid[]="width=\"35%\"";
 	$colAlign[]=""; $colWrap[]="";
 
+// add status field
+	$colVar[]="status";
+	$colWid[]="width=\"5%\"";
+	$colAlign[]=""; $colWrap[]="";
+
 	$colVar[]="duration";
 	$colWid[]="width=\"10%\"";
 	$colAlign[]="align=\"right\"";
@@ -132,7 +137,11 @@ if($orderby == "date") {
 	$colVar[]="log";
 	$colWid[]="width=\"35%\"";
 	$colAlign[]=""; $colWrap[]="";
-
+// add status field
+	$colVar[]="status";
+	$colWid[]="width=\"5%\"";
+	$colAlign[]=""; $colWrap[]="";
+	
 	$colVar[]="duration";
 	$colWid[]="width=\"10%\"";
 	$colAlign[]="align=\"right\"";
@@ -160,9 +169,8 @@ function make_daily_link($ymdStr, $proj_id, $string) {
 		$string .  "</a>&nbsp;"; 
 }
 
-function printInfo($type) {
-	global $data;	
-
+function printInfo($type, $data) {
+	global $time_fmt;
 	if($type == "projectTitle") {
 		jsPopupInfoLink("client_info.php", "client_id", $data["client_id"], "Client_Info");
 		print stripslashes($data["clientName"])."</a> / ";
@@ -181,6 +189,9 @@ function printInfo($type) {
 		make_daily_link($ymdStr,0,$formattedDate); 
 	} else if($type == "log") {
 		if ($data['log_message']) print stripslashes($data['log_message']);
+		else print "&nbsp;";
+	} else if($type == "status") {
+		if ($data['status']) print stripslashes($data['status']);
 		else print "&nbsp;";
 	} else print "&nbsp;";
 }
@@ -234,9 +245,9 @@ if(!$export_excel)
 		include ("banner.inc");
 		$motd = 0;  //don't want the motd printed
 		if($mode=='weekly')
-			include("navcal/navcalendars.inc");
+			include("navcalnew/navcalendars.inc");
 		else
-			include("navcal/navcal_monthly.inc");
+			include("navcalnew/navcal_monthly.inc");
 		echo "</div>";
 	}
 ?>
@@ -335,6 +346,7 @@ else {  //create Excel header
 							<td class="inner_table_column_heading">Task</td>
 						<?php endif; ?>
 						<td class="inner_table_column_heading">Log Entry</td>
+						<td class="inner_table_column_heading">Status</td>
 						<td class="inner_table_column_heading">Duration</td>
 					</tr>
 <?php
@@ -381,7 +393,7 @@ else {  //create Excel header
 				if(isset($subtotal_label[1]) && (($last_colVar[1] != $data[$colVar[1]]) || ($last_colVar[0] != $data[$colVar[0]]))) {
 					if($grand_total_time) {
 						$formatted_time = format_time($level_total[1],$time_fmt);
-						print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
+						print "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 					}
 					$level_total[1]=0;
@@ -389,7 +401,7 @@ else {  //create Excel header
 				if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
 					if($grand_total_time) {
 						$formatted_time = format_time($level_total[0],$time_fmt);
-						print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
+						print "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 					}
 					$level_total[0]=0;
@@ -397,16 +409,16 @@ else {  //create Excel header
 				}
 
 				print "<tr>";
-				for($i=0; $i<5; $i++) {
+				for($i=0; $i<6; $i++) {
 					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
-							printInfo($colVar[$i]);
+							printInfo($colVar[$i], $data);
 							$last_colVar[$i]=$data[$colVar[$i]];
 						} else
 							print "&nbsp;";
 					} else
-							printInfo($colVar[$i]);
+							printInfo($colVar[$i], $data);
 					print "</td>";
 				}
 				print "</tr>";
@@ -419,13 +431,13 @@ else {  //create Excel header
 
 		if (isset($subtotal_label[1]) && $level_total[1]) {
 			$formatted_time = format_time($level_total[1],$time_fmt);
-			print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
+			print "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[1].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 		}
 		if (isset($subtotal_label[0]) && $level_total[0]) {
 			$formatted_time = format_time($level_total[0],$time_fmt);
-			print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
+			print "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[0].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 		}
