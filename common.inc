@@ -28,6 +28,7 @@ if (!defined("COMMON_INC")) {
 					"unix_timestamp(start_time) AS start_stamp, ".
 					"unix_timestamp(end_time) AS end_stamp, ".
 					"duration, ".		//duration is stored in minutes 
+					"$TIMES_TABLE.status AS subStatus, " . 
 					"trans_num, ".
 					"$TIMES_TABLE.uid, " .
 					"$USER_TABLE.first_name, " .
@@ -1368,7 +1369,7 @@ if (!defined("COMMON_INC")) {
 		return mktime(0,0,0,$next_month,1,$next_year);
 	}
 
-	function __put_data_in_array(&$newarray, $index, $data, $curStamp, $duration, $check_log) {
+	function __put_data_in_array(&$newarray, $index, $data, $curStamp, $endStamp, $duration, $check_log) {
 
 		//if we already have time in the indexed box, and the log messages match
 		//add the duration to the existing duration
@@ -1390,11 +1391,13 @@ if (!defined("COMMON_INC")) {
 		if(!$found_matching) {
 			$info=array();
 			$info["start_stamp"]=$curStamp;
+			$info["end_stamp"]=$endStamp;
 			$info["duration"]=$duration;
 			$info["clientName"]=$data["clientName"];
 			$info["projectTitle"]=$data["projectTitle"];
 			$info["taskName"]=$data["taskName"];
 			$info["log_message"]=$data["log_message"];
+			$info["status"]=$data["subStatus"];
 			$info["client_id"]=$data["client_id"];
 			$info["proj_id"]=$data["proj_id"];
 			$info["task_id"]=$data["task_id"];
@@ -1423,20 +1426,27 @@ if (!defined("COMMON_INC")) {
 
 			if ($startsBeforeToday && $endsAfterToday) {
 				$duration = get_duration($curStamp, $tomorrowStamp);
+				$endStamp=$tomorrowStamp;
 			} else if ($startsBeforeToday && $endsToday) {
 				$duration = get_duration($curStamp, $data["end_stamp"]);
+				$endStamp = $data["end_stamp"];
 			} else if ($startsToday && $endsToday) {
 				$duration = $data["duration"];
+				$curStamp = $data["start_stamp"];
+				$endStamp = $data["end_stamp"];
 			} else if ($startsToday && $endsAfterToday) {
 				$duration = get_duration($data["start_stamp"],$tomorrowStamp);
+				$endStamp = $tomorrowStamp;
+				$curStamp = $data["start_stamp"];
 			} else {
-				print "Error: time booleans are in a confused state<br />\n";
+				print "Error: time booleans are in a confused state<br>\n";
 				continue;
 			}
-
-			$data["start_stamp"]=$curStamp;
+			
+			// don't reset the start time of all entries
+			//$data["start_stamp"]=$curStamp;
 			$dndx=make_index($data,$orderby);
-			__put_data_in_array($darray,$dndx,$data,$curStamp,$duration,$check_log);
+			__put_data_in_array($darray,$dndx,$data,$curStamp,$endStamp,$duration,$check_log);
 
 			$curStamp = $tomorrowStamp;
 		}
