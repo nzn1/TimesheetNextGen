@@ -42,6 +42,7 @@ if (gbl::getProjId() != 0) { // id 0 means 'All Projects'
 	gbl::setTaskId(0);
 
 //get the context date
+
 $todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $dateValues = getdate($todayDate);
 
@@ -80,10 +81,11 @@ PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$cont
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
-include ("navcalnew/navcal_monthly.inc");
+//include ("navcalnew/navcal_monthly.inc");
 
 ?>
-<form action="<?php echo Rewrite::getShortUri(); ?>" method="get">
+<script type="text/javascript" src="datetimepicker_css.js"></script>
+<form name="monthForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
 <input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
 <input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
 <input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
@@ -94,7 +96,7 @@ include ("navcalnew/navcal_monthly.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1new.inc"); ?>
+<?php //include("timesheet_face_part_1new.inc"); ?>
 				<!-- Table which could be first row covering client and project and date -->
 				<table width="100%" border="0">
 					<tr>
@@ -126,7 +128,10 @@ include ("navcalnew/navcal_monthly.inc");
 						</td>
 						<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
 						<td align="center" nowrap="nowrap" class="outer_table_heading">
-							<?php echo date('F Y', $startDate); ?>
+						<input id="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" value="<?php echo date('d-M-Y', $startDate); ?>" />
+						</td>
+						<td align="center" nowrap="nowrap" class="outer_table_heading">
+						<input id="sub" type="submit" name="Submit"></input>
 						</td>
 					</tr>
 				</table><!-- end of the client, project select table and the current month -->
