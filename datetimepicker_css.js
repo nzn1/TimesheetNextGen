@@ -544,13 +544,19 @@ function RenderCssCal(bNewCal) {
 	vCalTime+="\n</table>\n</span>";
 
 	//end time picker
-    var funcCalback="function callback(id, datum) {\n";
-    funcCalback+=" var CalId = document.getElementById(id); if (datum== 'undefined') { var d = new Date(); datum = d.getDate() + '/' +(d.getMonth()+1) + '/' + d.getFullYear(); } window.calDatum=datum;CalId.value=datum;\n";
-    funcCalback+=" if (Cal.ShowTime) {\n";
-    funcCalback+=" CalId.value+=' '+Cal.getShowHour()+':'+Cal.Minutes;\n";
-    funcCalback+=" if (Cal.ShowSeconds)\n  CalId.value+=':'+Cal.Seconds;\n";
-    funcCalback+=" if (TimeMode==12)\n  CalId.value+=''+Cal.getShowAMorPM();\n";
-    funcCalback+="}\n winCal.style.visibility='hidden';\n}\n";
+    var funcCalback="function callback(id, datum) {\n" +
+    		" var CalId = document.getElementById(id);" +
+    		"if (datum== 'undefined') { " +
+    		"var d = new Date(); " +
+    		"datum = d.getDate() + '/' +(d.getMonth()+1) + '/' + d.getFullYear(); " +
+    		"} " +
+    		"window.calDatum=datum;" +
+    		"CalId.value=datum;\n" +
+    		"if (Cal.ShowTime) {\n" +
+    " CalId.value+=' '+Cal.getShowHour()+':'+Cal.Minutes;\n" +
+    " if (Cal.ShowSeconds)\n  CalId.value+=':'+Cal.Seconds;\n" +
+    " if (TimeMode==12)\n  CalId.value+=''+Cal.getShowAMorPM();\n" +
+    "}\n winCal.style.visibility='hidden';\n}\n";
 	
 	
 	// determines if there is enough space to open the cal above the position where it is called
@@ -676,8 +682,7 @@ function Calendar(pDate,pCtrl) {
 	this.Month=pDate.getMonth();//selected month number
 	this.Year=pDate.getFullYear();//selected year in 4 digits
 	this.Hours=pDate.getHours();
-	document.monthForm.month=this.Month;
-	document.monthForm.year=this.Year;
+	
 
 	if (pDate.getMinutes()<10)
 		this.Minutes="0"+pDate.getMinutes();
@@ -1026,6 +1031,7 @@ function changeBorder(element, col, oldBgColor) {
 
 
 function pickIt(evt) {
+	//console.log('pickIt');
    // accesses the element that generates the event and retrieves its ID
    if (window.addEventListener) { // w3c
 	  var objectID = evt.target.id;
@@ -1076,6 +1082,7 @@ function pickIt(evt) {
 
 
 function dragIt(evt) {
+	//console.log('dragIt');
    if (domStyle) {
       if (window.event) { //for IE
          domStyle.left = (event.clientX-cnLeft + document.body.scrollLeft)+'px';
