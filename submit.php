@@ -225,7 +225,9 @@ function make_index($data,$order) {
 	return $index;
 }
 ?>
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/datetimepicker_css.js"></script>
 <script type="text/javascript">
+
 <?php if(!$export_excel) { ?>
 <!--
 function popupPrintWindow() {
@@ -276,7 +278,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_1new.inc"); ?>
+<?php //if(!$print) include("timesheet_face_part_1new.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -296,30 +298,14 @@ PageElements::setBodyOnLoad('doOnLoad();');
 								</tr>
 							</table>
 						</td>
-						<th>
-						<a href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$prevYearStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
-				title="<?php echo $prevYear?>">&lt;&lt;</a></th>
-			<th><a href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$prevMonthStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
-				title="<?php echo $prevMonth?>">&lt;</a></th>
-			<th>&nbsp;</th>
 					<td align="center" nowrap class="outer_table_heading">
-						<?php
-							if ($mode == "weekly") {
-								$sdStr = date("M d, Y",$startDate);
-								//just need to go back 1 second most of the time, but DST 
-								//could mess things up, so go back 6 hours...
-								$edStr = date("M d, Y",$endDate - 6*60*60); 
-								echo "Week: $sdStr - $edStr"; 
-							} else
-								echo date('F Y',$startDate);
-						?>
-			<th><a
-				href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$nextMonthStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
-				title="<?php echo $nextMonth?>">&gt;</a></th>
-			<th><a
-				href="<?php echo $_SERVER['PHP_SELF'] . "?uid=$uid$nextYearStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode"?>"
-				title="<?php echo $nextYear?>">&gt;&gt;</a></th>
-										</td>
+					<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+						value="<?php echo date('d-M-Y', $startDate); ?>" />
+					</td>
+					<td align="center" nowrap="nowrap" class="outer_table_heading">
+					<input id="sub" type="submit" name="Change Date" name="Change Date"></input>
+					</td>
+
 						<?php if (!$print): ?>
 							<td  align="center" width="10%" >
 							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
@@ -345,7 +331,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_2new.inc"); ?>
+<?php //if(!$print) include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -520,7 +506,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 <?php if(!$export_excel) { ?>
 <!-- include the timesheet face up until the end -->
-<?php if (!$print) include("timesheet_face_part_3new.inc"); ?>
+<?php //if (!$print) include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>
