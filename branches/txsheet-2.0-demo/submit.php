@@ -303,7 +303,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						value="<?php echo date('d-M-Y', $startDate); ?>" />
 					</td>
 					<td align="center" nowrap="nowrap" class="outer_table_heading">
-					<input id="sub" type="submit" name="Change Date" name="Change Date"></input>
+					<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
 					</td>
 
 						<?php if (!$print): ?>

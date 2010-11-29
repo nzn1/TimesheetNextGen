@@ -133,7 +133,7 @@ if (isset($popup))
 						value="<?php echo date('d-M-Y', $startDate); ?>" />
 						</td>
 						<td align="center" nowrap="nowrap" class="outer_table_heading">
-						<input id="sub" type="submit" name="Submit"></input>
+						<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
 						</td>
 					</tr>
 				</table><!-- end of the client, project select table and the current month -->
