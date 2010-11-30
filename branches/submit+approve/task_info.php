@@ -62,13 +62,13 @@ include ("header.inc");
 					<tr>
 						<td valign="center">
 							<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
-							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br>
+							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br />
 								<?php echo stripslashes($data_task["description"]); ?>
 						</td>
 					</tr>
 					<tr>
 						<td align="left" colspan="2" align="top">
-							<span class="label">Assigned persons:</span><br>
+							<span class="label">Assigned persons:</span><br />
 <?php
 			//get assigned users
 			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id=$data_task[task_id]");
@@ -90,7 +90,7 @@ include ("header.inc");
 <?php
 	}
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

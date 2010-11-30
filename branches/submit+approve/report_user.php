@@ -29,7 +29,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclReports'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]amp;clearanceRequired=" . get_acl_level('aclReports'));
 	exit;
 }
 
@@ -58,7 +58,7 @@ else
 //get the context date
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 $dateValues = getdate($todayDate);
-$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 if ($mode == "all") $mode = "monthly";
 if ($mode == "monthly") {
@@ -159,13 +159,13 @@ function format_time($time) {
 }
 
 function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
-	print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"" . $script .
+	print "<a href=\"javascript:void(0)\" onclick=window.open(\"" . $script .
 		"?$variable=$info\",\"$title\",\"location=0,directories=no,status=no,scrollbar=yes," .
 		"menubar=no,resizable=1,width=500,height=200\")>";
 }
 
 function make_daily_link($ymdStr, $proj_id, $string) {
-	echo "<a href=\"daily.php?" .  $ymdStr .  "&proj_id=$proj_id\">" . 
+	echo "<a href=\"daily.php?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 
@@ -185,7 +185,7 @@ function printInfo($type) {
 		print format_time($data["duration"]);
 	} else if($type == "start_stamp") {
 		$dateValues = getdate($data["start_stamp"]);
-		$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+		$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 		$formattedDate = sprintf("%04d-%02d-%02d",$dateValues["year"],$dateValues["mon"],$dateValues["mday"]); 
 		make_daily_link($ymdStr,0,$formattedDate); 
 	} else if($type == "log") {
@@ -208,8 +208,8 @@ function make_index($data,$order) {
 	return $index;
 }
 
-$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode";
-$post="uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode";
+$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
+$post="uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
 
 if(!$export_excel) 
 	require("report_javascript.inc");
@@ -244,7 +244,7 @@ if(!$export_excel)
 		echo ">\n";
 		echo "<div id=\"header\">";
 		include ("banner.inc");
-		$MOTD = 0;  //don't want the MOTD printed
+		$motd = 0;  //don't want the motd printed
 		if($mode=='weekly')
 			include("navcal/navcalendars.inc");
 		else
@@ -255,11 +255,11 @@ if(!$export_excel)
 
 <?php if(!$export_excel) { ?>
 <form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="get">
-<input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
-<input type="hidden" name="year" value="<?php echo $year; ?>">
-<input type="hidden" name="month" value="<?php echo $month; ?>">
-<input type="hidden" name="day" value="<?php echo $day; ?>">
-<input type="hidden" name="mode" value="<?php echo $mode; ?>">
+<input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
+<input type="hidden" name="year" value="<?php echo $year; ?>" />
+<input type="hidden" name="month" value="<?php echo $month; ?>" />
+<input type="hidden" name="day" value="<?php echo $day; ?>" />
+<input type="hidden" name="mode" value="<?php echo $mode; ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -300,8 +300,8 @@ if(!$export_excel)
 						</td>
 						<?php if (!$print): ?>
 							<td  align="right" width="15%" nowrap >
-								<button name="export_excel" onClick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" ALT="Export to Excel" ALIGN="ABSMIDDLE"></button> &nbsp;
-								<button onClick="popupPrintWindow()"><img src="images/icon_printer.gif" ALT="Print Report" ALIGN="ABSMIDDLE"></button>
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>
 						<?php endif; ?>
 					</tr>
@@ -318,8 +318,8 @@ if(!$export_excel)
 else {  //create Excel header
 	list($fn,$ln) = get_users_name($uid);
 	$cn = get_client_name($client_id);
-	echo "<h4>Report for $ln, $fn<br>";
-	echo "Client = $cn<br>";
+	echo "<h4>Report for $ln, $fn<br />";
+	echo "Client = $cn<br />";
 	if ($mode == "weekly") {
 		$sdStr = date("M d, Y",$startDate);
 		//just need to go back 1 second most of the time, but DST 
@@ -335,8 +335,8 @@ else {  //create Excel header
 					<!-- Table header line -->
 					<tr class="inner_table_head">
 					<?php 
-						$projPost="uid=$uid$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
-						$datePost="uid=$uid$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
+						$projPost="uid=$uid$ymdStr&amp;orderby=project&amp;client_id=$client_id&amp;mode=$mode";
+						$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
 						if($orderby== 'project'): ?>
 							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
 							<td class="inner_table_column_heading">Task</td>
@@ -358,7 +358,7 @@ else {  //create Excel header
 	if ($num == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
-		print "			<i><br>No hours recorded.<br><br></i>\n";
+		print "			<i><br />No hours recorded.<br /><br /></i>\n";
 		print "		</td>\n";
 		print "	</tr>\n";
 	} else {
@@ -488,15 +488,15 @@ else {  //create Excel header
 	<table width="100%" border="1" cellspacing="0" cellpadding="0">
 		<tr>
 			<td width="30%"><table><tr><td>Employee Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 		</tr>
 		<tr>
 			<td width="30%"><table><tr><td>Manager Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 		</tr>
 		<tr>
 			<td width="30%"><table><tr><td>Client Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
+			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 		</tr>
 	</table>		
 <?php } //end if($print) ?>
@@ -509,7 +509,7 @@ else {  //create Excel header
 	}
 } //end if !export_excel 
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

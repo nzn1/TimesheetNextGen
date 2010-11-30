@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclAbsences')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclAbsences'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclAbsences'));
 	exit;
 }
 
@@ -48,7 +48,7 @@ $last_day = get_last_day($month, $year);
 <head>
 <title>Timesheet Absence Entry</title>
 <?php include ("header.inc"); ?>
-<script language="Javascript">
+<script type="text/javascript">
 
 	function onSubmit() {
 		//set the action
@@ -65,16 +65,16 @@ include ("body.inc");
 echo ">\n";
 
 include ("banner.inc");
-$MOTD = 0;  //don't want the MOTD printed
+$motd = 0;  //don't want the motd printed
 include ("navcal/navcal_monthly.inc");
 ?>
 <form name="theForm" id="theForm" action="absences_action.php" method="post">
-<input type="hidden" name="month" value=<?php echo $month; ?>>
-<input type="hidden" name="day" value=<?php echo $day; ?>>
-<input type="hidden" name="year" value=<?php echo $year; ?>>
-<input type="hidden" name="last_day" value=<?php echo $last_day; ?>>
-<input type="hidden" name="action" id="action" value=<?php echo $action; ?>>
-<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>">
+<input type="hidden" name="month" value=<?php echo $month; ?> />
+<input type="hidden" name="day" value=<?php echo $day; ?> />
+<input type="hidden" name="year" value=<?php echo $year; ?> />
+<input type="hidden" name="last_day" value=<?php echo $last_day; ?> />
+<input type="hidden" name="action" id="action" value=<?php echo $action; ?> />
+<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -95,7 +95,7 @@ include ("navcal/navcal_monthly.inc");
 						</td>
 						<td align="right">&nbsp; </td>
 						<td align="right">
-							<input type="button" value="Save Changes" name="save" id="save" onClick="onSubmit();">
+							<input type="button" value="Save Changes" name="save" id="save" onclick="onSubmit();" />
 						</td>
 					</tr>
 				</table>
@@ -183,9 +183,9 @@ include ("navcal/navcal_monthly.inc");
 			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $dow; ?></td>
 			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $i; ?></td>
 			<td align="right" class="<?php echo $AMstyle; ?>"><?php absence_select_droplist($AM_type, $disabled, "AMtype".$i); ?></td>
-			<td align="left" class="<?php echo $AMstyle; ?>"><input type="text" id="<?php echo "AMtext",$i; ?>" name="<?php echo "AMtext",$i; ?>" class="<?php echo $AMstyle; ?>" value="<?php echo $AM_text; ?>" <?php if ($disabled=='true') echo "readonly"; ?>></td>
+			<td align="left" class="<?php echo $AMstyle; ?>"><input type="text" id="<?php echo "AMtext",$i; ?>" name="<?php echo "AMtext",$i; ?>" class="<?php echo $AMstyle; ?>" value="<?php echo $AM_text; ?>" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
 			<td align="right" class="<?php echo $PMstyle; ?>"><?php absence_select_droplist($PM_type, $disabled, "PMtype".$i); ?></td>
-			<td align="left" class="<?php echo $PMstyle; ?>"><input type="text" id="<?php echo $i,"_PMtext"; ?>" name="<?php echo "PMtext",$i; ?>" class="<?php echo $PMstyle; ?>" value="<?php echo $PM_text; ?>" <?php if ($disabled=='true') echo "readonly"; ?>></td>
+			<td align="left" class="<?php echo $PMstyle; ?>"><input type="text" id="<?php echo $i,"_PMtext"; ?>" name="<?php echo "PMtext",$i; ?>" class="<?php echo $PMstyle; ?>" value="<?php echo $PM_text; ?>" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
 		</tr>
 <?php
 	}

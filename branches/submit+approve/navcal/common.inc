@@ -116,10 +116,10 @@
 		if($dti["mon"] == $month && $dti["year"] == $year) {
 			print "\t<font color=\"#CC9900\"><b>".strftime("%b",$entry)."</b></font></td>\n";
 		} else {
-			print "\t<A HREF=\"" . $_SERVER["PHP_SELF"] . "?$post";
-			print 	"&year=".$dti["year"] .	
-					"&month=".$dti["mon"] .
-					"&day=".$dti["mday"] .
+			print "\t<a href=\"" . $_SERVER["PHP_SELF"] . "?$post";
+			print 	"&amp;year=".$dti["year"] .	
+					"&amp;month=".$dti["mon"] .
+					"&amp;day=".$dti["mday"] .
 					"\">" . strftime("%b",$entry) . "</a></td>\n";
 		}
 	}
@@ -168,9 +168,9 @@
 								list($prev_year,$next_year) = getPrevNextYear($curDate,$need_ldom);
 								print "<a href=\"$_SERVER[PHP_SELF]?$post";
 								$dti=getdate($prev_year);
-								print 	"&year=".$dti["year"].	
-										"&month=".$dti["mon"].
-										"&day=".$dti["mday"].
+								print 	"&amp;year=".$dti["year"].	
+										"&amp;month=".$dti["mon"].
+										"&amp;day=".$dti["mday"].
 										"\"><font size=\"+1\">&laquo;</font></a>";
 								?>
 							</td>
@@ -189,9 +189,9 @@
 								<?php
 								print "<a href=\"$_SERVER[PHP_SELF]?$post";
 								$dti=getdate($next_year);
-								print 	"&year=".$dti["year"].	
-										"&month=".$dti["mon"].
-										"&day=".$dti["mday"].
+								print 	"&amp;year=".$dti["year"].	
+										"&amp;month=".$dti["mon"].
+										"&amp;day=".$dti["mday"].
 										"\"><font size=\"+1\">&raquo;</font></a>";
 								?>
 							</td>
@@ -255,13 +255,13 @@
 		if($sdti["mon"] == $cdti["mon"] && $sdti["year"] == $cdti["year"]) {
 			print "\t<font color=\"#CC9900\"><b>".strftime("%b",$start)."</b></font></td>\n";
 		} else {
-			print "\t<A HREF=\"" . $_SERVER["PHP_SELF"] . "?$post";
-			print 	"&start_year=".$sdti["year"] .	
-					"&start_month=".$sdti["mon"] .
-					"&start_day=".$sdti["mday"] .
-				 	"&end_year=".$edti["year"] .	
-					"&end_month=".$edti["mon"] .
-					"&end_day=".$edti["mday"] .
+			print "\t<a href=\"" . $_SERVER["PHP_SELF"] . "?$post";
+			print 	"&amp;start_year=".$sdti["year"] .	
+					"&amp;start_month=".$sdti["mon"] .
+					"&amp;start_day=".$sdti["mday"] .
+				 	"&amp;end_year=".$edti["year"] .	
+					"&amp;end_month=".$edti["mon"] .
+					"&amp;end_day=".$edti["mday"] .
 					"\">" . strftime("%b",$start) . "</a></td>\n";
 		}
 	}
@@ -333,12 +333,12 @@
 								print "<a href=\"$_SERVER[PHP_SELF]?$post";
 								$sdti=getdate($sprev_year);
 								$edti=getdate($eprev_year);
-								print 	"&start_year=".$sdti["year"].	
-										"&start_month=".$sdti["mon"].
-										"&start_day=".$sdti["mday"].
-									 	"&end_year=".$edti["year"].	
-										"&end_month=".$edti["mon"].
-										"&end_day=".$edti["mday"].
+								print 	"&amp;start_year=".$sdti["year"].	
+										"&amp;start_month=".$sdti["mon"].
+										"&amp;start_day=".$sdti["mday"].
+									 	"&amp;end_year=".$edti["year"].	
+										"&amp;end_month=".$edti["mon"].
+										"&amp;end_day=".$edti["mday"].
 										"\"><font size=\"+1\">&laquo;</font></a>";
 								?>
 							</td>
@@ -358,12 +358,12 @@
 								print "<a href=\"$_SERVER[PHP_SELF]?$post";
 								$sdti=getdate($snext_year);
 								$edti=getdate($enext_year);
-								print 	"&start_year=".$sdti["year"].	
-										"&start_month=".$sdti["mon"].
-										"&start_day=".$sdti["mday"].
-									 	"&end_year=".$edti["year"].	
-										"&end_month=".$edti["mon"].
-										"&end_day=".$edti["mday"].
+								print 	"&amp;start_year=".$sdti["year"].	
+										"&amp;start_month=".$sdti["mon"].
+										"&amp;start_day=".$sdti["mday"].
+									 	"&amp;end_year=".$edti["year"].	
+										"&amp;end_month=".$edti["mon"].
+										"&amp;end_day=".$edti["mday"].
 										"\"><font size=\"+1\">&raquo;</font></a>";
 								?>
 							</td>

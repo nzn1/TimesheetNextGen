@@ -88,14 +88,14 @@ include ("header.inc");
 												<td align="right">
 <?php
 			if (isset($data["start_date"]) && $data["start_date"] != '' && $data["deadline"] != '')
-				print "<span class=\"label\">Start:</span> $data[start_date]<br><span class=\"label\">Deadline:</span> $data[deadline]";
+				print "<span class=\"label\">Start:</span> $data[start_date]<br /><span class=\"label\">Deadline:</span> $data[deadline]";
 			else
 				print "&nbsp;";
 ?>
 												</td>
 											</tr>
 											<tr>
-												<td><?php echo $data["description"]; ?><br></td>
+												<td><?php echo $data["description"]; ?><br /></td>
 												<td valign="top" align="right"><span class="label">Client:</span> <?php echo $data["organisation"]; ?></td>
 											</tr>
 											<tr>
@@ -108,7 +108,7 @@ include ("header.inc");
 																		<td>
 																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? formatSeconds($bill_data["total_time"]): "0h 0m"); ?>
 																			<?php if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
-																			<br><span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? $bill_data["billed"]: "0.00"); ?></b>
+																			<br /><span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? $bill_data["billed"]: "0.00"); ?></b>
 																			<?php } ?>
 																		</td>
 																	</tr>
@@ -145,7 +145,7 @@ include ("header.inc");
 															</td>
 															<td width="30%">
 																<div class="project_task_list">
-																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br>
+																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
 <?php
 			//get tasks
 			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]");
@@ -154,7 +154,7 @@ include ("header.inc");
 			if ($num_tasks > 0) {
 				while ($task_data = dbResult($qh3)) {
 					$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
-					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br>";
+					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
 				}
 			}
 			else
@@ -174,7 +174,7 @@ include ("header.inc");
 		}
 ?>
 				</table>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

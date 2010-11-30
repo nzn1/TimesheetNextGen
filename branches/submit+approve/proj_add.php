@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclProjects'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -28,7 +28,7 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 <?php include ("banner.inc"); ?>
 
 <form action="proj_action.php" method="post">
-<input type="hidden" name="action" value="add">
+<input type="hidden" name="action" value="add" />
 
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -54,7 +54,7 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Project Title:</td>
-						<td><input type="text" name="title" size="42" style="width: 100%;" maxlength="200"></td>
+						<td><input type="text" name="title" size="42" style="width: 100%;" maxlength="200" /></td>
 					</tr>
 					<tr>
 						<td align="right">Client:</td>
@@ -78,7 +78,7 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 					</tr>
 					<tr>
 						<td align="right">URL:</td>
-						<td><input type="text" name="url" size="42" style="width: 100%;"></td>
+						<td><input type="text" name="url" size="42" style="width: 100%;" /></td>
 					</tr>
 					<tr>
 						<td align="right" valign="top">Assignments:</td>
@@ -96,7 +96,7 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
 						<td align="center">
-							<input type="submit" name="add" value="Add New Project">
+							<input type="submit" name="add" value="Add New Project" />
 						</td>
 					</tr>
 				</table>

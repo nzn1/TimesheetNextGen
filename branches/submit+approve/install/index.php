@@ -306,13 +306,13 @@ function get_dba_info($db_host, $db_name, $db_prefix, $db_user, $db_pass, $db_pa
 <p class="error"><?php echo $_ERROR; ?></p>
 <?php } ?>
 <form method="post">
-	<input type="hidden" name="db_host" value="<?=$db_host?>"> 
-	<input type="hidden" name="db_name" value="<?=$db_name?>"> 
-	<input type="hidden" name="db_prefix" value="<?=$db_prefix?>"> 
+	<input type="hidden" name="db_host" value="<?php echo$db_host?>"> 
+	<input type="hidden" name="db_name" value="<?php echo$db_name?>"> 
+	<input type="hidden" name="db_prefix" value="<?php echo$db_prefix?>"> 
 	<input type="hidden" name="db_name_exist" value="no"> 
-	<input type="hidden" name="db_user" value="<?=$db_user?>"> 
-	<input type="hidden" name="db_pass" value="<?=$db_pass?>"> 
-	<input type="hidden" name="db_pass_func" value="<?=$db_pass_func?>"> 
+	<input type="hidden" name="db_user" value="<?php echo$db_user?>"> 
+	<input type="hidden" name="db_pass" value="<?php echo$db_pass?>"> 
+	<input type="hidden" name="db_pass_func" value="<?php echo$db_pass_func?>"> 
 	<input type="hidden" name="step" value="two-two" />
 	<p>Please enter your database <b>admin</b> credentials:</p>
 	<table border="0">
@@ -613,17 +613,17 @@ function create_database_one() {
 
 	if($need_validation) {
 	?>
-			<input type="hidden" name="db_host" value="<?=$db_host?>"> 
-			<input type="hidden" name="db_name" value="<?=$db_name?>"> 
-			<input type="hidden" name="db_prefix" value="<?=$db_prefix?>"> 
+			<input type="hidden" name="db_host" value="<?php echo$db_host?>"> 
+			<input type="hidden" name="db_name" value="<?php echo$db_name?>"> 
+			<input type="hidden" name="db_prefix" value="<?php echo$db_prefix?>"> 
 			<input type="hidden" name="db_name_exist" value="no"> 
-			<input type="hidden" name="db_user" value="<?=$db_user?>"> 
-			<input type="hidden" name="db_pass" value="<?=$db_pass?>"> 
-			<input type="hidden" name="db_pass_func" value="<?=$db_pass_func?>"> 
-			<input type="hidden" name="admin_user" value="<?=$admin_user?>"> 
-			<input type="hidden" name="admin_pass" value="<?=$admin_pass?>"> 
-			<input type="hidden" name="step" value="two-two" &nbsp;&nbsp;
-			<br><br><table><tr><td width="20">&nbsp;</td><td><INPUT TYPE=SUBMIT VALUE="continue"></td></tr></table>
+			<input type="hidden" name="db_user" value="<?php echo$db_user?>"> 
+			<input type="hidden" name="db_pass" value="<?php echo$db_pass?>"> 
+			<input type="hidden" name="db_pass_func" value="<?php echo$db_pass_func?>"> 
+			<input type="hidden" name="admin_user" value="<?php echo$admin_user?>"> 
+			<input type="hidden" name="admin_pass" value="<?php echo$admin_pass?>"> 
+			<input type="hidden" name="step" value="two-two" />
+			<br><br><table><tr><td width="20">&nbsp;</td><td><input type="submit" value="continue"></td></tr></table>
 		</form>
 	<?php 
 	} else {

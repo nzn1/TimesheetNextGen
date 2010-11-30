@@ -12,7 +12,7 @@ $proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 $task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 
-if(empty($post)) $post="year=$year&month=$month&day=$day&proj_id=$proj_id&task_id=$task_id&client_id=$client_id";
+if(empty($post)) $post="year=$year&amp;&month=$month&amp;day=$day&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";
 
 if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR))
 	if(isset($_REQUEST["contextuid"]))
@@ -30,9 +30,9 @@ if (!($mode == "all" || $mode == "monthly" || $mode == "weekly"))
 if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	$commandMenu->add(new Command("<form action=\"".$_SERVER['PHP_SELF']."\" method=\"get\">",true,false));
 	$commandMenu->add(new Command(
-		"<input type=\"hidden\" name=\"year\" value=\"$year\">" .
-		"<input type=\"hidden\" name=\"month\" value=\"$month\">" .
-		"<input type=\"hidden\" name=\"day\" value=\"$day\">"
+		"<input type=\"hidden\" name=\"year\" value=\"$year\" />" .
+		"<input type=\"hidden\" name=\"month\" value=\"$month\" />" .
+		"<input type=\"hidden\" name=\"day\" value=\"$day\" />"
 	,true,false));
 }
 
@@ -79,7 +79,9 @@ if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 		$uid=$_SESSION['contextUser'];
 	else
 		$uid='unknown';
-	$commandMenu->add(new Command("&nbsp; &nbsp; &nbsp; <nobr>context user:&nbsp".user_select_droplist_string('contextuid',$uid)."</nobr></form>",true,false));
+	//$commandMenu->add(new Command("&nbsp; &nbsp; &nbsp; <nobr>context user:&nbsp".user_select_droplist_string('contextuid',$uid)."</nobr></form>",true,false));
+	//<NOBR> is not a valid tag.  Removed for now
+	$commandMenu->add(new Command("&nbsp; &nbsp; &nbsp; context user:&nbsp".user_select_droplist_string('contextuid',$uid)."</form>",true,false));
 }
 
 //disable yourself

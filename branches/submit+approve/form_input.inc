@@ -53,7 +53,7 @@
 					$display_time = "$i am";
 
 				if ($i == $selectedIndex)
-					echo "<option value=\"$i\" selected>$display_time</option>";
+					echo "<option value=\"$i\" selected=\"selected\">$display_time</option>";
 				else
 					echo "<option value=\"$i\">$display_time</option>";
 			}
@@ -64,7 +64,7 @@
 				$display_time = "$i";
 
 				if ($i == $selectedIndex)
-					echo "<option value=\"$i\" selected>$display_time</option>";
+					echo "<option value=\"$i\" selected=\"selected\">$display_time</option>";
 				else
 					echo "<option value=\"$i\">$display_time</option>";
 			}
@@ -79,7 +79,7 @@
 			for ($i=0;$i<60;$i+=5) {
 				echo "<option value=\"$i\"";
 					if ($selectedMinute > $i - 2 && $selectedMinute < $i + 3)
-						echo " selected";
+						echo " selected=\"selected\"";
 				printf(">%02d</option>\n", $i);
 			}
 
@@ -94,7 +94,7 @@
 			for ($i=1; $i<=12; $i++) {
 				echo "<option value=\"$i\"";
 				if ($i == $selectedMonth)
-					echo " selected";
+					echo " selected=\"selected\"";
 				echo ">" . date("F", mktime(0,0,0,$i,1,2000)) . "</option>\n";
 			}
 
@@ -110,7 +110,7 @@
 			for ($i=1; $i<=31; $i++) {
 				echo "<option value=\"$i\"";
 				if ($i == $selectedDay)
-					echo " selected";
+					echo " selected=\"selected\"";
 				echo ">$i</option>\n";
 			}
 
@@ -125,27 +125,27 @@
 
 			echo "<option value=\"1\"";
 			if ("" == $selected)
-				echo " selected";
+				echo " selected=\"selected\"";
 			echo "></option>\n";
 			echo "<option value=\"2\"";
 			if ("Holiday" == $selected)
-				echo " selected";
+				echo " selected=\"selected\"";
 			echo ">Holiday</option>\n";
 			echo "<option value=\"3\"";
 			if ("Sick" == $selected)
-				echo " selected";
+				echo " selected=\"selected\"";
 			echo ">Sick</option>\n";
 			echo "<option value=\"4\"";
 			if ("Military/Civil" == $selected)
-				echo " selected";
+				echo " selected=\"selected\"";
 			echo ">Military/Civil</option>\n";
 			echo "<option value=\"5\"";
 			if ("Other Absence" == $selected)
-				echo " selected";
+				echo " selected=\"selected\"";
 			echo ">Other Absence</option>\n";
 			echo "<option value=\"6\"";
 			if ("Apprentice School" == $selected)
-				echo " selected";
+				echo " selected=\"selected\"";
 			echo ">Apprentice School</option>\n";
 
 			$this->printEndSelect();

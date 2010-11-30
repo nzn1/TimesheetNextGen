@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
 	exit;
 }
 
@@ -19,7 +19,7 @@ include("timesheet_menu.inc");
 <?php
 include ("header.inc");
 ?>
-<script language="javascript">
+<script type="text/javascript">
 
 	function deleteUser(uid, username) {
 		//get confirmation
@@ -84,14 +84,14 @@ include ("header.inc");
 	}
 
 </script>
-</HEAD>
-<BODY <?php include ("body.inc"); ?> >
+</head>
+<body <?php include ("body.inc"); ?> >
 <?php
 include ("banner.inc");
 ?>
 <form action="user_action.php" name="userForm" method="post">
-<input type="hidden" name="action" value="">
-<input type="hidden" name="uid" value="">
+<input type="hidden" name="action" value="" />
+<input type="hidden" name="uid" value="" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -106,7 +106,7 @@ include ("banner.inc");
 							Employees/Contractors:
 						</td>
 						<td align="right" nowrap >
-							<A HREF="javascript:goClone()">Copy Projects/Tasks between users</a></td>
+							<a href="javascript:goClone()">Copy Projects/Tasks between users</a></td>
 						</td>
 					</tr>
 				</table>
@@ -155,9 +155,9 @@ while ($data = dbResult($qh)) {
 	print "<td class=\"calendar_cell_middle\">$firstNameField</td>";
 	print "<td class=\"calendar_cell_middle\">$lastNameField</td>";
 	if ($isActive)
-		print "<td align=\"center\" class=\"calendar_cell_middle\"><img src=\"images/green-check-mark.gif\" height=\"12\" border=\"0\"></td>";
+		print "<td align=\"center\" class=\"calendar_cell_middle\"><img src=\"images/green-check-mark.gif\" height=\"12\" border=\"0\" alt=\"\" /></td>";
 	else
-		print "<td align=\"center\" class=\"calendar_cell_middle\"><img src=\"images/red-x.gif\" height=\"12\" border=\"0\"></td>";
+		print "<td align=\"center\" class=\"calendar_cell_middle\"><img src=\"images/red-x.gif\" height=\"12\" border=\"0\" alt=\"\" /></td>";
 
 	if ($isAdministrator)
 		print "<td class=\"calendar_cell_middle\"><span class=\"calendar_total_value_weekly\">Admin</span></td>";
@@ -203,7 +203,7 @@ while ($data = dbResult($qh)) {
 							<a name="AddEdit">	Add/Update Employee/Contractor:</a>
 						</td>
 						<td align="right" nowrap >
-							<A HREF="javascript:goClone()">Copy Projects/Tasks between users</a></td>
+							<a href="javascript:goClone()">Copy Projects/Tasks between users</a></td>
 						</td>
 					</tr>
 				</table>
@@ -218,25 +218,25 @@ while ($data = dbResult($qh)) {
 					<tr>
 						<td>First name:<br><input size="20" name="first_name" style="width: 100%;"></td>
 						<td>Last name:<br><input size="20" name="last_name" style="width: 100%;"></td>
-						<td width="10%">Employee Type:<br><?php emp_button("employee_type", "contractor")?></td>
-						<td>In Rate:<br><input size="15" name="in_rate" style="width: 100%" onKeyUp="numonly(this)"></td>
-						<td width="10%">Supervisor:<br><?php svr_button("supervisor", "none")?></td>
+						<td width="10%">Employee Type:<br /><?php emp_button("employee_type", "contractor")?></td>
+						<td>In Rate:<br /><input size="15" name="in_rate" style="width: 100%" onKeyUp="numonly(this)" /></td>
+						<td width="10%">Supervisor:<br /><?php svr_button("supervisor", "none")?></td>
 						
-						<td>Login username:<br><input size="15" name="username" style="width: 100%;"></td>
-						<td>Email address:<br><input size="35" name="email_address" style="width: 100%;"></td>
-						<td>Password:<br><input type="password" size="20" NAME="password" style="width: 100%;" AUTOCOMPLETE="OFF"></td>
+						<td>Login username:<br /><input size="15" name="username" style="width: 100%; /"></td>
+						<td>Email address:<br /><input size="35" name="email_address" style="width: 100%;" /></td>
+						<td>Password:<br /><input type="password" size="20" name="password" style="width: 100%;" AUTOCOMPLETE="OFF" /></td>
 					</tr>
 					<tr>
 						<td colspan="2" align="left">
-							<input type="checkbox" name="checkAdmin" id="checkAdmin" value="" onClick="onCheckClearance();">This user is an administrator</input>
+							<input type="checkbox" name="checkAdmin" id="checkAdmin" value="" onclick="onCheckClearance();" />This user is an administrator
 							<input type="hidden" name="isAdministrator" id="isAdministrator" value="false" />
 						</td>
 						<td colspan="2" align="left">
-							<input type="checkbox" name="checkManager" id="checkManager" value="" onClick="onCheckClearance();">This user is a project manager</input>
+							<input type="checkbox" name="checkManager" id="checkManager" value="" onclick="onCheckClearance();" />This user is a project manager
 							<input type="hidden" name="isManager" id="isManager" value="false" />
 						</td>
 						<td align="left">
-							<input type="checkbox" name="checkActive" id="checkActive" value="" onClick="onCheckActive();">is Active</input>
+							<input type="checkbox" name="checkActive" id="checkActive" value="" onclick="onCheckActive();" />is Active
 							<input type="hidden" name="isActive" id="isActive" value="false" />
 						</td>
 					</tr>
@@ -248,7 +248,7 @@ while ($data = dbResult($qh)) {
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
 						<td align="center">
-							<input type="button" name="addupdate" value="Add/Update Employee/Contractor" onclick="javascript:addUser()" class="bottom_panel_button">
+							<input type="button" name="addupdate" value="Add/Update Employee/Contractor" onclick="javascript:addUser()" class="bottom_panel_button" />
 						</td>
 					</tr>
 				</table>
@@ -267,7 +267,7 @@ while ($data = dbResult($qh)) {
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

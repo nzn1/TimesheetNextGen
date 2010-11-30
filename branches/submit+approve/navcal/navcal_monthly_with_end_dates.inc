@@ -27,7 +27,7 @@ include("navcal/common.inc");
 					</tr>
 				</table>
 			</td>
-			<?php if($MOTD) include("navcal/motd.inc"); ?>
+			<?php if($motd) include("navcal/motd.inc"); ?>
 		</tr>
 	</table>
 <!-- End Montly Navigation Calendars -->

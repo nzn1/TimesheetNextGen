@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclProjects'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -74,11 +74,7 @@ if ($action == "show_users") {
 		if (empty($rateid) || empty($username)) {
 			continue;
 		}
-		//if (array_key_exists($username, $user_array)) {
-			$query = "update $ASSIGNMENTS_TABLE set rate_id = '$rateid' where proj_id = '$proj_id' and username = '$username'";
-		//} else {
-		//	$query = "insert into $PROJECT_USER_RATE_TABLE (proj_id, username, rate_id) values ('$proj_id', '$username', '$rateid')";
-		//}
+		$query = "update $ASSIGNMENTS_TABLE set rate_id = '$rateid' where proj_id = '$proj_id' and username = '$username'";
 		list($qh,$num) = dbQuery($query);
 
 		$n++;
@@ -115,8 +111,8 @@ include ("banner.inc");
 ?>
 <form action="project_user_rates_action.php" name="userRateForm" method="post">
 
-	<input type="hidden" name="action" value="">
-	<input type="hidden" name="proj_id" value="<?php print $proj_id; ?>">
+	<input type="hidden" name="action" value="" />
+	<input type="hidden" name="proj_id" value="<?php print $proj_id; ?>" />
 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -183,15 +179,15 @@ while ($idx < $len) {
 	}
 
 	print "<tr><td align=\"center\" class=\"calendar_cell_middle\">$count.</td><td class=\"calendar_cell_middle\">&nbsp;$firstname_array[$idx] $lastname_array[$idx] ($username_array[$idx])</td><td class=\"calendar_cell_middle\">" . build_uni_select($rate, $rate_array, $rateid) . "</td></tr>\n";
-	print "<input type=\"hidden\" name=\"$user\" value=\"$username_array[$idx]\">\n";
+	print "<input type=\"hidden\" name=\"$user\" value=\"$username_array[$idx]\" />\n";
 
 	$idx++;
 }
 ?>
 				<tr>
 					<td colspan=3 align="center">
-					<input type="button" name="update" value="Update Rates" onclick="javascript:updateRate()" class="bottom_panel_button">
-					<input type="button" name="back" value="Cancel" onclick="javascript:goBack()" class="bottom_panel_button">
+					<input type="button" name="update" value="Update Rates" onclick="javascript:updateRate()" class="bottom_panel_button" />
+					<input type="button" name="back" value="Cancel" onclick="javascript:goBack()" class="bottom_panel_button" />
 					</td>
 				</tr>
 				</table>
@@ -206,7 +202,7 @@ while ($idx < $len) {
 
 	</tr>
 	</table>
-	<input type="hidden" name="usercount" value="<?php print $len; ?>">
+	<input type="hidden" name="usercount" value="<?php print $len; ?>" />
 </form>
 <?php
 include ("footer.inc");

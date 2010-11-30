@@ -93,15 +93,15 @@ if (!empty($errormsg)) {
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td width="150" align="right" nowrap>Old Password:</td>
-						<td><input type="password" name="old_pass" style="width: 100%;"></td>
+						<td><input type="password" name="old_pass" style="width: 100%;" /></td>
 					</tr>
 					<tr>
 						<td width="150" align="right" nowrap>New Password:</td>
-						<td><input type="password" name="passwd1" style="width: 100%; AUTOCOMPLETE="OFF""></td>
+						<td><input type="password" name="passwd1" style="width: 100%; AUTOCOMPLETE="OFF"" /></td>
 					</tr>
 					<tr>
 						<td width="150" align="right" nowrap>New Password (again):</td>
-						<td><input type="password" name="passwd2" style="width: 100%; AUTOCOMPLETE="OFF""></td>
+						<td><input type="password" name="passwd2" style="width: 100%; AUTOCOMPLETE="OFF"" /></td>
 					</tr>
 				</table>
 			</td>
@@ -111,7 +111,7 @@ if (!empty($errormsg)) {
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
 						<td align="center">
-							<input type="submit" value="Change!">
+							<input type="submit" value="Change!" />
 						</td>
 					</tr>
 				</table>
@@ -131,7 +131,7 @@ if (!empty($errormsg)) {
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

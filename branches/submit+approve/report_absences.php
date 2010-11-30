@@ -36,7 +36,7 @@ else
 //get the context date
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 $dateValues = getdate($todayDate);
-$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 //run the query
 list($qh,$num) = get_absences($month, $year, $uid);
@@ -89,7 +89,7 @@ function popupPrintWindow() {
 		include ("body.inc");
 		echo ">\n";
 		include ("banner.inc");
-		$MOTD = 0;  //don't want the MOTD printed
+		$motd = 0;  //don't want the motd printed
 		include("navcal/navcal_monthly.inc");
 	}
 
@@ -97,9 +97,9 @@ function popupPrintWindow() {
 ?>
 
 <form action="report_absences.php" method="get">
-<input type="hidden" name="month" value="<?php echo $month; ?>">
-<input type="hidden" name="year" value="<?php echo $year; ?>">
-<input type="hidden" name="day" value="<?php echo $day; ?>">
+<input type="hidden" name="month" value="<?php echo $month; ?>" />
+<input type="hidden" name="year" value="<?php echo $year; ?>" />
+<input type="hidden" name="day" value="<?php echo $day; ?>" />
 
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -126,12 +126,12 @@ function popupPrintWindow() {
 					</td>
 					<?php if (!$print): 
 						//<td  align="center" >
-						//<a href="#" onclick="javascript:esporta('user')" ><img src="images/export_data.gif" name="esporta_dati" border=0></a>
+						//<a href="#" onclick="javascript:esporta('user')" ><img src="images/export_data.gif" name="esporta_dati" border="0" alt="" /></a>
 						//</td>
 						?>
 						<td  align="center" >
 						<?php 
-							print "<button onClick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
+							print "<button onclick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
 						?>
 						</td>
 					<?php endif; ?>
@@ -241,27 +241,27 @@ $working_time = count_working_time(1, $month, $year, get_last_day($month, $year)
 $glidetime_remaining = $glidetime_allowance + $worked_time/SECONDS_PER_HOUR -$working_time - $compensation_taken - $glidetime_paid;
 ?>
 				<tr>
-					<td colspan=3><br><br><b>Comments:</b><br><br><br></td>
-					<td><br><br><b>Employee:</b><br>Signature/Date<br><br></td>
+					<td colspan=3><br /><br /><b>Comments:</b><br /><br /><br /></td>
+					<td><br /><br /><b>Employee:</b><br />Signature/Date<br /><br /></td>
 				</tr>
 				<tr>
 					<td colspan=3>
-						Holiday Allowance: <?php echo $holiday_allowance; ?><br>
-						Holiday in Month: <?php echo $holidays_taken; ?><br>
-						Holiday Remaining: <?php echo $holiday_remaining; ?><br><br>
+						Holiday Allowance: <?php echo $holiday_allowance; ?><br />
+						Holiday in Month: <?php echo $holidays_taken; ?><br />
+						Holiday Remaining: <?php echo $holiday_remaining; ?><br /><br />
 					</td>
-					<td><b>Manager:</b><br>Signature/Date<br><br></td>
+					<td><b>Manager:</b><br />Signature/Date<br /><br /></td>
 				</tr>
 				<tr>
 					<td colspan=3>
-						Glidetime Allowance: <?php echo format_hours_minutes($glidetime_allowance*SECONDS_PER_HOUR); ?><br>
-						Worked in Month: <?php echo format_hours_minutes($worked_time); ?><br>
-						Paid-out in Month: <?php echo format_hours_minutes($glidetime_paid*SECONDS_PER_HOUR); ?><br>
-						Compensation Taken: <?php echo format_hours_minutes($compensation_taken*SECONDS_PER_HOUR); ?><br>
-						Working-Time in Month: <?php echo format_hours_minutes($working_time*SECONDS_PER_HOUR); ?><br>
-						Glidetime Remaining: <?php echo format_hours_minutes($glidetime_remaining*SECONDS_PER_HOUR); ?><br>
+						Glidetime Allowance: <?php echo format_hours_minutes($glidetime_allowance*SECONDS_PER_HOUR); ?><br />
+						Worked in Month: <?php echo format_hours_minutes($worked_time); ?><br />
+						Paid-out in Month: <?php echo format_hours_minutes($glidetime_paid*SECONDS_PER_HOUR); ?><br />
+						Compensation Taken: <?php echo format_hours_minutes($compensation_taken*SECONDS_PER_HOUR); ?><br />
+						Working-Time in Month: <?php echo format_hours_minutes($working_time*SECONDS_PER_HOUR); ?><br />
+						Glidetime Remaining: <?php echo format_hours_minutes($glidetime_remaining*SECONDS_PER_HOUR); ?><br />
 					</td>
-					<td><b>Bookkeeping:</b><br>Signature/Date<br><br></td>
+					<td><b>Bookkeeping:</b><br />Signature/Date<br /><br /></td>
 				</tr>
 						</tr>
 					</td>
@@ -279,7 +279,7 @@ $glidetime_remaining = $glidetime_allowance + $worked_time/SECONDS_PER_HOUR -$wo
 
 </form>
 <?php if (!$print) include ("footer.inc"); ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

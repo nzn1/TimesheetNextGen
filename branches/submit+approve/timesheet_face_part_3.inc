@@ -7,11 +7,11 @@
 						<table width="10" height="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr height="7">
 								<td width="10" height="19">
-									<img src="images/timesheet_face_13.gif" width="10" height="19" /></td>
+									<img src="images/timesheet_face_13.gif" width="10" height="19" alt="" /></td>
 							</tr>
 							<tr height="100%">
 								<td width="10" height="100%">
-									<img src="images/timesheet_face_16.gif" width="10" height="100%" /></td>
+									<img src="images/timesheet_face_16.gif" width="10" height="100%" alt="" /></td>
 							</tr>
 							<tr height="6">
 								<td width="10" height="6">
@@ -33,15 +33,15 @@
 						<table width="100%" height="11" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 								<td colspan="3" width="100%" height="1" class="faceBackground">
-									<img src="images/spacer.gif" width="100%" height="1"></td>
+									<img src="images/spacer.gif" width="100%" height="1" alt="" /></td>
 							</tr>
 							<tr>
 								<td width="2" height="10">
-									<img src="images/timesheet_face_22.gif" width="2" height="10" /></td>
+									<img src="images/timesheet_face_22.gif" width="2" height="10" alt="" /></td>
 								<td width="100%" height="10">
-									<img src="images/timesheet_face_23.gif" width="100%" height="10" /></td>
+									<img src="images/timesheet_face_23.gif" width="100%" height="10" alt="" /></td>
 								<td width="2" height="10">
-									<img src="images/timesheet_face_24.gif" width="2" height="10" /></td>
+									<img src="images/timesheet_face_24.gif" width="2" height="10" alt="" /></td>
 							</tr>
 						</table>
 					</td>

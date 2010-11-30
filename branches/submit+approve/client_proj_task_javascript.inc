@@ -1,4 +1,4 @@
-<script language="Javascript">
+<script type="text/javascript">
 	//define the hash table
 	var projectTasksHash = {};
 	var clientProjectsHash = {};
