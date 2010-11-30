@@ -27,9 +27,9 @@ if(!isset($post)) $post ="";
 							list($prev_month,$next_month) = getPrevNextMonth($todayDate);
 							print "<a href=\"$_SERVER[PHP_SELF]?$post";
 							$dti=getdate($prev_month);
-							print 	"&year=".$dti["year"].	
-									"&month=".$dti["mon"].
-									"&day=".$dti["mday"].
+							print 	"&amp;year=".$dti["year"].	
+									"&amp;month=".$dti["mon"].
+									"&amp;day=".$dti["mday"].
 									"\">Prev</a>";
 							?>
 						</td>
@@ -40,9 +40,9 @@ if(!isset($post)) $post ="";
 							<?php
 							print "<a href=\"$_SERVER[PHP_SELF]?$post";
 							$dti=getdate($next_month);
-							print 	"&year=".$dti["year"].	
-									"&month=".$dti["mon"].
-									"&day=".$dti["mday"].
+							print 	"&amp;year=".$dti["year"].	
+									"&amp;month=".$dti["mon"].
+									"&amp;day=".$dti["mday"].
 									"\">Next</a>";
 							?>
 						</td>
@@ -73,7 +73,7 @@ if(!isset($post)) $post ="";
 
 										// Print last months' days spots.
 										for ($i=0; $i<$leadInDays; $i++) {
-											print "<td width=\"25px\" HEIGHT=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
+											print "<td width=\"25px\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 											$dayRow++;
 										}
 
@@ -95,8 +95,8 @@ if(!isset($post)) $post ="";
 											if($navday == $day) 
 												print "<font color=\"#CC9900\"><b>$navday</b></font>";
 											else
-												print "<A HREF=\"".$_SERVER["PHP_SELF"]."?$post".
-													"&year=$year&month=$month&day=$navday\">$navday</a>";
+												print "<a href=\"".$_SERVER["PHP_SELF"]."?$post".
+													"&amp;year=$year&amp;month=$month&amp;day=$navday\">$navday</a>";
 
 											print " </td>\n";
 
@@ -106,9 +106,9 @@ if(!isset($post)) $post ="";
 										// Print the rest of the calendar.
 										while (($dayRow % 7) != 0) {
 											if (($dayRow % 7) == 6)
-												print " <td width=\"25px\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</TD>\n ";
+												print " <td width=\"25px\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</td>\n ";
 											else
-												print " <td width=\"25px\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</TD>\n ";
+												print " <td width=\"25px\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 											$dayRow++;
 										}
 									} ?>

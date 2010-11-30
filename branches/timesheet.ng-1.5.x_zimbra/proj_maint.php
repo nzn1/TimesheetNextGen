@@ -7,7 +7,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclProjects'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -103,7 +103,7 @@ function writePageLinks($page, $results_per_page, $num2)
 <?php
 include ("header.inc");
 ?>
-<script language="Javascript" type="text/javascript">
+<script type="text/javascript" type="text/javascript">
 
 	function delete_project(clientId, projectId) {
 				if (confirm('Deleting a project will also delete all tasks and assignments associated ' +
@@ -132,7 +132,7 @@ include ("banner.inc");
 <!-- include the timesheet face up until the heading start section -->
 <?php include("timesheet_face_part_1.inc"); ?>
 		<form method="post" name="projectFilter" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
-			<input type="hidden" name="page" value="English">
+			<input type="hidden" name="page" value="English" />
 			<table width="100%" border="0">
 				<tr>
 					<td width="40%">
@@ -168,9 +168,9 @@ include ("banner.inc");
 	//are there any results?
 	if ($num == 0) {
 		if ($client_id != 0)
-			print "<tr><td align=\"center\"><br>There are no projects for this client.<br><br></td></tr>";
+			print "<tr><td align=\"center\"><br />There are no projects for this client.<br /><br /></td></tr>";
 		else
-			print "<tr><td align=\"center\"><br>There are no projects.<br><br></td></tr>";
+			print "<tr><td align=\"center\"><br />There are no projects.<br /><br /></td></tr>";
 	}
 	else {
 		//iterate through results
@@ -212,20 +212,20 @@ include ("banner.inc");
 												<td align="right">
 <?php
 			if (isset($data["start_date"]) && $data["start_date"] != '' && $data["deadline"] != '')
-				print "<span class=\"label\">Start:</span> $data[start_date]<br><span class=\"label\">Deadline:</span> $data[deadline]";
+				print "<span class=\"label\">Start:</span> $data[start_date]<br /><span class=\"label\">Deadline:</span> $data[deadline]";
 			else
 				print "&nbsp;";
 ?>
 												</td>
 												<td align="right" valign="top" nowrap>
 													<span class="label">Actions:</span>
-													<a href="proj_edit.php?client_id=<?php echo $client_id; ?>&proj_id=<?php echo $data["proj_id"]; ?>">Edit</a>,
-													<a href="project_user_rates_action.php?proj_id=<?php echo $data["proj_id"]; ?>&action=show_users">Bill Rates</a>,
+													<a href="proj_edit.php?client_id=<?php echo $client_id; ?>&amp;proj_id=<?php echo $data["proj_id"]; ?>">Edit</a>,
+													<a href="project_user_rates_action.php?proj_id=<?php echo $data["proj_id"]; ?>&amp;action=show_users">Bill Rates</a>,
 													<a href="javascript:delete_project(<?php echo $client_id; ?>,<?php echo $data["proj_id"]; ?>);">Delete</a>
 												</td>
 											</tr>
 											<tr>
-												<td colspan="2"><?php echo $data["description"]; ?><br></td>
+												<td colspan="2"><?php echo $data["description"]; ?><br /></td>
 												<td valign="top" align="right"><span class="label">Client:</span> <?php echo $data["organisation"]; ?></td>
 											</tr>
 											<tr>
@@ -236,7 +236,7 @@ include ("banner.inc");
 																<table border="0" cellpadding="0" cellspacing="0">
 																	<tr>
 																		<td>
-																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? formatSeconds($bill_data["total_time"]): "0h 0m"); ?><br>
+																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? formatSeconds($bill_data["total_time"]): "0h 0m"); ?><br />
 																			<span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? sprintf("%01.2f",$bill_data["billed"]): "0.00"); ?></b>
 																		</td>
 																	</tr>
@@ -273,7 +273,7 @@ include ("banner.inc");
 															</td>
 															<td width="30%">
 																<div class="project_task_list">
-																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br>
+																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
 <?php
 			//get tasks
 			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]");
@@ -282,7 +282,7 @@ include ("banner.inc");
 			if ($num_tasks > 0) {
 				while ($task_data = dbResult($qh3)) {
 					$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
-					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br>";
+					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
 				}
 			}
 			else
@@ -325,6 +325,8 @@ include ("banner.inc");
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
-
+<?php
+// vim:ai:ts=4:sw=4
+?>

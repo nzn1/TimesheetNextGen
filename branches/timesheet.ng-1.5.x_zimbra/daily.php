@@ -5,7 +5,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclDaily')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclDaily'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclDaily'));
 	exit;
 }
 
@@ -36,8 +36,6 @@ $CfgTimeFormat = getTimeFormat();
 //include date input classes
 include "form_input.inc";
 
-$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";
-
 ?>
 <html>
 <head>
@@ -46,7 +44,7 @@ $post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";
 include("header.inc");
 include("client_proj_task_javascript.inc");
 ?>
-<script language="Javascript">
+<script type="text/javascript">
 
 	function delete_entry(transNum) {
 		if (confirm('Are you sure you want to delete this time entry?'))
@@ -54,8 +52,8 @@ include("client_proj_task_javascript.inc");
 	}
 
 </script>
-</HEAD>
-<BODY <?php include ("body.inc"); ?> onload="doOnLoad();">
+</head>
+<body <?php include ("body.inc"); ?> onload="doOnLoad();">
 <?php
 	include ("banner.inc");
 
@@ -143,9 +141,9 @@ else {
 		fixStartEndDuration($data);
 
 		$dateValues = getdate($data["start_stamp"]);
-		$ymdStrSd = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+		$ymdStrSd = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 		$dateValues = getdate($data["end_stamp"]);
-		$ymdStrEd = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+		$ymdStrEd = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 		//get the project title and task name
 		$projectTitle = stripslashes($data["projectTitle"]);
@@ -256,9 +254,9 @@ else {
 			 * $realTodayDate is defined in common.inc
 			 */
 			if ($data["start_stamp"] == $realTodayDate) {
-				$stop_link = '<a href="clock_action.php?client_id='.$data['client_id'].'&proj_id='.
-						$data['proj_id'].'&task_id='.$data['task_id'].
-						'&clock_off_check=on&clock_off_radio=now" class="action_link\">Clock Off</a>, ';
+				$stop_link = '<a href="clock_action.php?client_id='.$data['client_id'].'&amp;proj_id='.
+						$data['proj_id'].'&amp;task_id='.$data['task_id'].
+						'&amp;clock_off_check=on&amp;clock_off_radio=now" class="action_link\">Clock Off</a>, ';
 				print $stop_link;
 			}
 			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
@@ -294,7 +292,7 @@ else {
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

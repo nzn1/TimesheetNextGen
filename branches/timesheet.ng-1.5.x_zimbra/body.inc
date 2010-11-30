@@ -3,4 +3,6 @@
 list($qhq, $numq) = dbQuery("SELECT bodyhtml FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $configdata = dbResult($qhq);
 echo stripslashes($configdata["bodyhtml"]);
+
+// vim:ai:ts=4:sw=4:filetype=php
 ?>

@@ -95,7 +95,7 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 <?php
 include ("header.inc");
 ?>
-<script language="Javascript">
+<script type="text/javascript">
 
 	function delete_task(projectId, taskId) {
 		if (confirm('Deleting a task which has been used in the past will make those timesheet ' +
@@ -117,7 +117,7 @@ include ("banner.inc");
 ?>
 
 <form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
-<input type="hidden" name="page">
+<input type="hidden" name="page" />
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
@@ -138,7 +138,7 @@ include ("banner.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 											</tr>
 										</table>
 									</td>
@@ -150,7 +150,7 @@ include ("banner.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 											</tr>
 										</table>
 									</td>
@@ -169,7 +169,7 @@ include ("banner.inc");
 							<?php } else { ?>
 								<span class="disabledLink">Add new task</span>
 							<?php } ?>
-							<br><br>
+							<br /><br />
 							<a href="assign-proj-mbrs-to-all-tasks.php">Assign Mbrs all tasks</a>
 						</td>
 					</tr>
@@ -191,14 +191,14 @@ include ("banner.inc");
 		if ($proj_id == 0) {
 			print "	<tr>\n";
 			print "		<td align=\"center\">\n";
-			print "			<i><br>Please select a client with projects, or 'All Clients'.<br><br></i>\n";
+			print "			<i><br />Please select a client with projects, or 'All Clients'.<br /><br /></i>\n";
 			print "		</td>\n";
 			print "	</tr>\n";
 		}
 		else {
 			print "	<tr>\n";
 			print "		<td align=\"center\">\n";
-			print "			<i><br>There are no tasks for this project.<br><br></i>\n";
+			print "			<i><br />There are no tasks for this project.<br /><br /></i>\n";
 			print "		</td>\n";
 			print "	</tr>\n";
 		}
@@ -215,7 +215,7 @@ include ("banner.inc");
 					<tr>
 						<td valign="center">
 							<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
-							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br>
+							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br />
 								<?php echo stripslashes($data_task["description"]); ?>
 						</td>
 						<td align="right" valign="top" nowrap>
@@ -226,7 +226,7 @@ include ("banner.inc");
 					</tr>
 					<tr>
 						<td align="left" colspan="2" align="top">
-							<span class="label">Assigned persons:</span><br>
+							<span class="label">Assigned persons:</span><br />
 <?php
 			//get assigned users
 			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id=$data_task[task_id]");
@@ -270,6 +270,8 @@ include ("banner.inc");
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
-
+<?php
+// vim:ai:ts=4:sw=4
+?>

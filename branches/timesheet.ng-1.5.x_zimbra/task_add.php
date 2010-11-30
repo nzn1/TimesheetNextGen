@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclTasks'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclTasks'));
 	exit;
 }
 
@@ -33,8 +33,8 @@ list($stdtasks, $numtasks) = dbQuery($query);
 <?php include ("banner.inc"); ?>
 
 <form action="task_action.php" method="post">
-<input type="hidden" name="action" value="add">
-<input type="hidden" name="proj_id" value="<?php echo $proj_id ?>">
+<input type="hidden" name="action" value="add" />
+<input type="hidden" name="proj_id" value="<?php echo $proj_id ?>" />
 
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -60,7 +60,7 @@ list($stdtasks, $numtasks) = dbQuery($query);
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Task Name:</td>
-						<td><input type="text" name="name" size="42" style="width: 100%"></td>
+						<td><input type="text" name="name" size="42" style="width: 100%" /></td>
 					</tr>
 					<tr>
 						<td align="right" valign="top">Description:</td>
@@ -101,7 +101,7 @@ list($stdtasks, $numtasks) = dbQuery($query);
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
 						<td align="center">
-							<input type="submit" value="Add New Task">
+							<input type="submit" value="Add New Task" />
 						</td>
 					</tr>
 				</table>
@@ -121,3 +121,6 @@ list($stdtasks, $numtasks) = dbQuery($query);
 <?php include("footer.inc"); ?>
 </body>
 </html>
+<?php
+// vim:ai:ts=4:sw=4
+?>

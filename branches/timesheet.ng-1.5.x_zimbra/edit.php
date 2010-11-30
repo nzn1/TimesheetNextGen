@@ -57,7 +57,7 @@ if ($action == "saveChanges") {
 
 	list($qh,$num) = dbQuery($queryString);
 
-	Header("Location: daily.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day");
+	Header("Location: daily.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;month=$month&amp;year=$year&amp;day=$day");
 	exit;
 }
 
@@ -86,8 +86,8 @@ include("form_input.inc");
 include("header.inc");
 include("client_proj_task_javascript.inc");
 ?>
-</HEAD>
-<BODY <?php include ("body.inc"); ?> onload="doOnLoad();">
+</head>
+<body <?php include ("body.inc"); ?> onload="doOnLoad();">
 <?php include ("banner.inc"); ?>
 
 <table width="500" align="center" border="0" cellspacing="0" cellpadding="0">
@@ -111,13 +111,13 @@ include("client_proj_task_javascript.inc");
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
 		<form name="editForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" id="theForm">
-		<input type="hidden" name="year" value="<?php echo $year; ?>">
-		<input type="hidden" name="month" value="<?php echo $month; ?>">
-		<input type="hidden" name="day" value="<?php echo $day; ?>">
-		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>">
-		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>">
-		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>">
-		<input type="hidden" name="trans_num" value="<?php echo $trans_num; ?>">
+		<input type="hidden" name="year" value="<?php echo $year; ?>" />
+		<input type="hidden" name="month" value="<?php echo $month; ?>" />
+		<input type="hidden" name="day" value="<?php echo $day; ?>" />
+		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>" />
+		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>" />
+		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>" />
+		<input type="hidden" name="trans_num" value="<?php echo $trans_num; ?>" />
 		<input type="hidden" name="action" value="saveChanges" />
 
 		<tr>
@@ -188,10 +188,10 @@ include("client_proj_task_javascript.inc");
 													<?php $dayInput= new DayInput("clock_on_date_day");
 														$dayInput->create(date("d", $trans_info["start_stamp"])); ?>
 													&nbsp;
-													<input type="text" name="clock_on_date_year" size="4" value="<?php echo date("Y", $trans_info["start_stamp"]); ?>">
+													<input type="text" name="clock_on_date_year" size="4" value="<?php echo date("Y", $trans_info["start_stamp"]); ?>" />
 												</td>
 												<td align="left">
-													<img src="images/clock-green-sml.gif">
+													<img src="images/clock-green-sml.gif" alt="" >
 												</td>
 											</tr>
 											<tr>
@@ -211,10 +211,10 @@ include("client_proj_task_javascript.inc");
 													<?php $dayInput= new DayInput("clock_off_date_day");
 														$dayInput->create(date("d", $trans_info["end_stamp"])); ?>
 													&nbsp;
-													<input type="text" name="clock_off_date_year" size="4" value="<?php echo date("Y", $trans_info["end_stamp"]); ?>">
+													<input type="text" name="clock_off_date_year" size="4" value="<?php echo date("Y", $trans_info["end_stamp"]); ?>" />
 												</td>
 												<td align="left">
-													<img src="images/clock-red-sml.gif">
+													<img src="images/clock-red-sml.gif" alt="" >
 												</td>
 											</tr>
 										</table>
@@ -235,7 +235,7 @@ include("client_proj_task_javascript.inc");
 										<table width="100%" border="0" class="table_bottom_panel">
 											<tr>
 												<td align="center">
-													<input type="button" value="Save Changes" name="submitButton" id="submitButton" onClick="onSubmit();">
+													<input type="button" value="Save Changes" name="submitButton" id="submitButton" onclick="onSubmit();" />
 												</td>
 										</tr>
 										</table>

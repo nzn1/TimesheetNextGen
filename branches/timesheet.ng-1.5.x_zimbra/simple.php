@@ -8,7 +8,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 require("class.Pair.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclSimple')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclSimple'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclSimple'));
 	exit;
 }
 
@@ -60,7 +60,7 @@ $post="";
 <?php
 include ("header.inc");
 ?>
-<script language="Javascript">
+<script type="text/javascript">
 	//define the hash table
 	var projectTasksHash = {};
 <?php
@@ -547,10 +547,10 @@ include("navcal/navcalendars.inc");
 ?>
 
 <form name="theForm" action="simple_action.php" method="post">
-<input type="hidden" name="year" value=<?php echo $year; ?>>
-<input type="hidden" name="month" value=<?php echo $month; ?>>
-<input type="hidden" name="day" value=<?php echo $day; ?>>
-<input type="hidden" name="startStamp" value=<?php echo $startDate; ?>>
+<input type="hidden" name="year" value=<?php echo $year; ?> />
+<input type="hidden" name="month" value=<?php echo $month; ?> />
+<input type="hidden" name="day" value=<?php echo $day; ?> />
+<input type="hidden" name="startStamp" value=<?php echo $startDate; ?> />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -603,12 +603,12 @@ include("navcal/navcalendars.inc");
 							$dst_adjustment = get_dst_adjustment($currentDayDate);
 							$dstadj[]=$dst_adjustment;
 							$minsinday = ((24*60*60) - $dst_adjustment)/60;
-							print "<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\">";
+							print "<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\" />";
 							print
 								"<td align=\"center\" width=\"65\">" .
 								"<table width=\"65\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr>" .
 								"<td class=\"inner_table_column_heading\" align=\"center\">" .
-								"$currentDayStr<br>" .
+								"$currentDayStr<br />" .
 								//Output the numerical date in the form of day of the month
 								date("d", $currentDayDate) .
 								"</td></tr></table></td>\n";
@@ -738,7 +738,7 @@ include("navcal/navcalendars.inc");
 		$weeklyTotal = 0;
 		$isEmptyRow = ($daysArray == null);
 
-		//print_r($daysArray); print "<br>";
+		//print_r($daysArray); print "<br />";
 
 		//print hours and minutes input field for each day
 
@@ -770,10 +770,10 @@ include("navcal/navcalendars.inc");
 
 			//create a string to be used in form input names
 			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay+1);
-			$disabled = $isEmptyRow?'disabled="true" ':'';
+			$disabled = $isEmptyRow?'disabled="disabled" ':'';
 
-			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>h</span>";
-			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled/>m</span>";
+			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled />h</span>";
+			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled />m</span>";
 
 			//close the times class
 			print "</span>";

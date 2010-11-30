@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-        Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclTasks'));
+        Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclTasks'));
         exit;
 }
 
@@ -36,7 +36,7 @@ function do_query($sql) {
 <?php
 include ("header.inc");
 ?>
-<script language="Javascript">
+<script type="text/javascript">
 
 	function delete_task(projectId, taskId) {
 		if (confirm('Deleting a task which has been used in the past will make those timesheet ' +
@@ -77,15 +77,15 @@ include ("banner.inc");
 					<td width="40">&nbsp;</td>
 					<td>
 <?php if($assignTasks!='checked') { ?>
-<h2><font color="red"><b>Attention!</b></font> &nbsp;<font color="red">Read this carefully</font><br></h2>
+<h2><font color="red"><b>Attention!</b></font> &nbsp;<font color="red">Read this carefully</font><br /></h2>
 <h3>Clicking on the checkbox below and submitting this form will:
 <ol><li> clear the entire task assignment database table</li>
 <li> iterate through the users and project tables</li>
 <li> and assign each user to all the tasks for every project of which they are a member</li>
 </ol>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="explain-assign-all-tasks.php">Click here if you don't understand</a><br><br>
-If this is what you want to do, check this box <input type="checkbox" name="assignTasks" value="checked" <?php if($assignTasks) echo " checked" ?>>  and hit submit, or return. <br>
-<img src="images/spacer.gif" width="50" height="1" /><INPUT type="submit" value="Submit"></h3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="explain-assign-all-tasks.php">Click here if you don't understand</a><br /><br />
+If this is what you want to do, check this box <input type="checkbox" name="assignTasks" value="checked" <?php if($assignTasks) echo " checked=\"checked\"" ?> />  and hit submit, or return. <br />
+<img src="images/spacer.gif" alt="" width="50" height="1" /><input type="submit" value="Submit" /></h3>
 <?php } else { 
 	$task_array=array();
 
@@ -102,7 +102,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 
 	$sql = "DELETE from $TASK_ASSIGNMENTS_TABLE";
 	$rslt = do_query($sql);
-	print "All task assignments removed<br>\n";
+	print "All task assignments removed<br />\n";
 
 	$lastuser="";
 	$userprojcnt=0;
@@ -117,7 +117,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 
 			if($lastuser=='') $lastuser=$username;
 			if($lastuser != $username) {
-				print "$lastuser assigned to $usertaskcnt tasks in $userprojcnt projects<br>\n";
+				print "$lastuser assigned to $usertaskcnt tasks in $userprojcnt projects<br />\n";
 				$lastuser=$username;
 				$userprojcnt=0;
 				$usertaskcnt=0;
@@ -130,7 +130,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 				$usertaskcnt++;
 			}
 		}
-		print "$lastuser assigned to $usertaskcnt tasks in $userprojcnt projects<br>\n";
+		print "$lastuser assigned to $usertaskcnt tasks in $userprojcnt projects<br />\n";
 	}
 }
 
@@ -150,5 +150,8 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
+<?php
+// vim:ai:ts=4:sw=4
+?>

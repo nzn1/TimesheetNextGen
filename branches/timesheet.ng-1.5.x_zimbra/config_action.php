@@ -5,7 +5,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
 	exit;
 }
 
@@ -184,4 +184,5 @@ elseif ($action == "edit") {
 //return to the config.php page
 Header("Location: config.php");
 
+// vim:ai:ts=4:sw=4
 ?>

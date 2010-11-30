@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclProjects'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -17,13 +17,31 @@ $proj_id = $_REQUEST['proj_id'];
 
 //define the command menu
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
+$commandMenu->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
+$commandMenu->add(new TextCommand("Copy Projects/Tasks between users", true, "user_clone.php"));
 
 $dbh = dbConnect();
-list($qh, $num) = dbQuery("SELECT proj_id, title, client_id, description, DATE_FORMAT(start_date, '%m') as start_month, ".
-					"date_format(start_date, '%d') as start_day, date_format(start_date, '%Y') as start_year, ".
-					"DATE_FORMAT(deadline, '%m') as end_month, date_format(deadline, '%d') as end_day, date_format(deadline, '%Y') as end_year, ".
-					"http_link, proj_status, proj_leader FROM $PROJECT_TABLE WHERE proj_id = $proj_id ORDER BY proj_id");
+list($qh, $num) = dbQuery("SELECT proj_id, " .
+								"title, " .
+								"client_id, " .
+								"description, " .
+								"unix_timestamp(start_date) AS start_stamp, ".
+								"unix_timestamp(deadline) AS end_stamp, ".
+								"http_link, " .
+								"proj_status, " .
+								"proj_leader " .
+							"FROM $PROJECT_TABLE " .
+							"WHERE proj_id = $proj_id " .
+							"ORDER BY proj_id");
 $data = dbResult($qh);
+
+$dti=getdate($data["start_stamp"]);
+$start_month = $dti["mon"];
+$start_year = $dti["year"];
+
+$dti=getdate($data["end_stamp"]);
+$end_month = $dti["mon"];
+$end_year = $dti["year"];
 
 list($qh, $num) = dbQuery("SELECT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
 $selected_array = array();
@@ -43,8 +61,8 @@ while ($datanext = dbResult($qh)) {
 <?php include ("banner.inc"); ?>
 
 <form action="proj_action.php" method="post">
-<input type="hidden" name="action" value="edit">
-<input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>">
+<input type="hidden" name="action" value="edit" />
+<input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -70,7 +88,7 @@ while ($datanext = dbResult($qh)) {
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
 					<tr>
 						<td align="right">Project Title:</td>
-						<td><input type="text" name="title" size="42" value="<?php echo stripslashes($data["title"]); ?>" style="width: 100%;" maxlength="200"></td>
+						<td><input type="text" name="title" size="42" value="<?php echo stripslashes($data["title"]); ?>" style="width: 100%;" maxlength="200" /></td>
 					</tr>
 					<tr>
 						<td align="right">Client:</td>
@@ -82,11 +100,11 @@ while ($datanext = dbResult($qh)) {
 					</tr>
 					<tr>
 						<td align="right">Start Date:</td>
-						<td><?php day_button("start_day",$data["start_day"]); month_button("start_month",$data["start_month"]); year_button("start_year",$data["start_year"]); ?></td>
+						<td><?php day_button("start_day",$data["start_stamp"],0); month_button("start_month",$start_month); year_button("start_year",$start_year); ?></td>
 					</tr>
 					<tr>
 						<td align="right">Deadline:</td>
-						<td><?php day_button("end_day",$data["end_day"]); month_button("end_month",$data["end_month"]); year_button("end_year",$data["end_year"]); ?></td>
+						<td><?php day_button("end_day",$data["end_stamp"],0); month_button("end_month",$end_month); year_button("end_year",$end_year); ?></td>
 					</tr>
 					<tr>
 						<td align="right">Status:</td>
@@ -94,7 +112,7 @@ while ($datanext = dbResult($qh)) {
 					</tr>
 					<tr>
 						<td align="right">URL:</td>
-						<td><input type="text" name="url" size="42" value="<?php echo $data["http_link"]; ?>" style="width: 100%;"></td>
+						<td><input type="text" name="url" size="42" value="<?php echo $data["http_link"]; ?>" style="width: 100%;" /></td>
 					</tr>
 					<tr>
 						<td align="right" valign="top">Assignments:</td>
@@ -112,7 +130,7 @@ while ($datanext = dbResult($qh)) {
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
 						<td align="center">
-							<input type="submit" value="Update">
+							<input type="submit" value="Update" />
 						</td>
 					</tr>
 				</table>
@@ -130,4 +148,8 @@ while ($datanext = dbResult($qh)) {
 </form>
 
 <?php include ("footer.inc"); ?>
-</BODY>
+</body>
+</HTML>
+<?php
+// vim:ai:ts=4:sw=4
+?>

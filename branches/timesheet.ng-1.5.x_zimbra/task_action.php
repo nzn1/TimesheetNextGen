@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclTasks'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclTasks'));
 	exit;
 }
 
@@ -84,8 +84,7 @@ elseif ($action == "add") {
 
 	// redirect to the task management page (we're done)
 	Header("Location: task_maint.php?proj_id=$proj_id");
-}
-elseif ($action == "edit") {
+} elseif ($action == "edit") {
 	$name = addslashes($name);
 	$description = addslashes($description);
 
@@ -106,14 +105,11 @@ elseif ($action == "edit") {
 
 	// we're done so redirect to the task management page
 	Header("Location: task_maint.php?proj_id=$proj_id");
-}
-elseif ($action == 'delete') {
+} elseif ($action == 'delete') {
 	dbQuery("DELETE FROM $TASK_TABLE WHERE task_id = $task_id");
 	dbQuery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id = $task_id");
 	Header("Location: task_maint.php?proj_id=$proj_id");
 }
+
+// vim:ai:ts=4:sw=4
 ?>
-
-
-
-

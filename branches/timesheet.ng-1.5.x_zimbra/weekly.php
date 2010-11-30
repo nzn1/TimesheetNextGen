@@ -8,7 +8,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 require("class.Pair.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclWeekly')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclWeekly'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclWeekly'));
 	exit;
 }
 
@@ -39,12 +39,11 @@ if ($proj_id != 0 && $client_id != 0) { // id 0 means 'All Projects'
 else
 	$task_id = 0;
 
+//get the passed date (context date)
+$todayStamp = mktime(0, 0, 0,$month, $day, $year);
+$todayValues = getdate($todayStamp);
 
-//get the context date
-$todayDate = mktime(0, 0, 0,$month, $day, $year);
-$dateValues = getdate($todayDate);
-
-list($startDate,$endDate) = getWeeklyStartEndDates($todayDate);
+list($startDate,$endDate) = getWeeklyStartEndDates($todayStamp);
 
 $startStr = date("Y-m-d H:i:s",$startDate);
 $endStr = date("Y-m-d H:i:s",$endDate);
@@ -52,7 +51,7 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //get the timeformat
 $CfgTimeFormat = getTimeFormat();
 
-$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";
+$post="proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";
 ?>
 <html>
 <head>
@@ -65,21 +64,23 @@ include ("header.inc");
 echo "<body width=\"100%\" height=\"100%\"";
 include ("body.inc");
 if (isset($popup))
-	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
+	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&amp;task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
 echo ">\n";
 
 include ("banner.inc");
 include("navcal/navcalendars.inc");
 ?>
+
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
-<input type="hidden" name="month" value=<?php echo $month; ?>>
-<input type="hidden" name="year" value=<?php echo $year; ?>>
-<input type="hidden" name="day" value=<?php echo $day; ?>>
-<input type="hidden" name="task_id" value=<?php echo $task_id; ?>>
+<input type="hidden" name="month" value=<?php echo $month; ?> />
+<input type="hidden" name="year" value=<?php echo $year; ?> />
+<input type="hidden" name="day" value=<?php echo $day; ?> />
+<input type="hidden" name="task_id" value=<?php echo $task_id; ?> />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
+
 <!-- include the timesheet face up until the heading start section -->
 <?php include("timesheet_face_part_1.inc"); ?>
 
@@ -96,7 +97,7 @@ include("navcal/navcalendars.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 											</tr>
 										</table>
 									</td>
@@ -108,7 +109,7 @@ include("navcal/navcalendars.inc");
 											</tr>
 											<tr>
 												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" /></td>
+												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 											</tr>
 										</table>
 									</td>
@@ -147,11 +148,11 @@ include("navcal/navcalendars.inc");
 						<td align="center">&nbsp;</td>
 						<?php
 						//print the days of the week
-						$currentDate = $startDate;
+						$currentDayDate = $startDate;
 						for ($i=0; $i<7; $i++) {
-							$currentDayStr = strftime("%A %d", $currentDate);
+							$currentDayStr = strftime("%A %d", $currentDayDate);
 							print "	<td class=\"inner_table_column_heading\" align=\"center\" width=\"10%\">$currentDayStr</td>";
-							$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 days");
+							$currentDayDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
 						}
 						?>
 						<td align="center">&nbsp;</td>
@@ -165,30 +166,27 @@ include("navcal/navcalendars.inc");
 	//$endDateStr = strftime("%D", $endDate);
 	//print "<p>WEEK start: $startDateStr WEEK end: $endDateStr</p>";
 
+
 	class TaskInfo extends Pair {
+		var $clientName;
+		var $clientId;
 		var $projectId;
 		var $projectTitle;
 		var $taskName;
-		var $clientName;
-		var $clientId;
 
 		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName, $clientId) {
 			parent::Pair($value1, $value2);
+			$this->clientName = $clientName;
+			$this->clientId = $clientId;
 			$this->projectId = $projectId;
 			$this->projectTitle = $projectTitle;
 			$this->taskName = $taskName;
-			$this->clientName = $clientName;
-			$this->clientId = $clientId;
 		}
 	}
 
-	// Get the Weekly data.
+	// Get the Weekly user data.
 	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
 	list($num3, $qh3) = get_time_records($startStr, $endStr, $contextUser, $proj_id, $client_id, $order_by_str);
-
-	//print "<p>Query: $query </p>";
-	//print "<p>there were $num3 results</p>";
-
 
 	//we're going to put the data into an array of
 	//different (unique) TASKS
@@ -265,13 +263,11 @@ include("navcal/navcalendars.inc");
 			}
 
 			//create a new pair
-			$matchedPair = new TaskInfo($currentTaskId,
-											$daysArray,
-											$currentProjectId,
-											$currentProjectTitle,
+			$matchedPair = new TaskInfo($currentTaskId, $daysArray,
+											$currentProjectId, $currentProjectTitle,
 											$currentTaskName,
-											$currentClientName,
-											$currentClientId);
+											$currentClientName, $currentClientId
+											);
 
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
@@ -283,14 +279,14 @@ include("navcal/navcalendars.inc");
 		}
 
 		//iterate through the days array
-		$currentDate = $startDate;
+		$currentDayDate = $startDate;
 		for ($k=0; $k<7; $k++) {
-			$tomorrowDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 days");
+			$tomorrowDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
 
 			//work out some booleans
-			$startsToday = (($currentTaskStartDate >= $currentDate ) && ( $currentTaskStartDate < $tomorrowDate ));
-			$endsToday =   (($currentTaskEndDate > $currentDate) && ($currentTaskEndDate <= $tomorrowDate));
-			$startsBeforeToday = ($currentTaskStartDate < $currentDate);
+			$startsToday = (($currentTaskStartDate >= $currentDayDate ) && ( $currentTaskStartDate < $tomorrowDate ));
+			$endsToday =   (($currentTaskEndDate > $currentDayDate) && ($currentTaskEndDate <= $tomorrowDate));
+			$startsBeforeToday = ($currentTaskStartDate < $currentDayDate);
 			$endsAfterToday = ($currentTaskEndDate > $tomorrowDate);
 
 			if ($startsBeforeToday && $endsAfterToday)
@@ -302,7 +298,7 @@ include("navcal/navcalendars.inc");
 			else if ($startsToday && $endsAfterToday)
 				$matchedPair->value2[$k][3][] = $data;
 
-			$currentDate = $tomorrowDate;
+			$currentDayDate = $tomorrowDate;
 		}
 	}
 
@@ -316,6 +312,7 @@ include("navcal/navcalendars.inc");
 	$thisTaskId = -1;
 	$columnDay = -1;
 	$columnStartDate = $startDate;*/
+
 
 	//iterate through the structured array
 	$count = count($structuredArray);
@@ -348,9 +345,9 @@ include("navcal/navcalendars.inc");
 		$dayIndex = 0;
 		$weeklyTotal = 0;
 
-		$currentDate = $startDate;
+		$currentDayDate = $startDate;
 		foreach ($matchedPair->value2 as $currentDayArray) {
-			$tomorrowDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 days");
+			$tomorrowDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
 
 			//open the column
 			print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"right\">";
@@ -378,7 +375,7 @@ include("navcal/navcalendars.inc");
 						$emptyCell = false;
 					else
 						//print a break for the next entry
-						print "&nbsp;"; //"<br>";
+						print "&nbsp;"; //"<br />";
 
 					//format printable times
 					if ($CfgTimeFormat == "12") {
@@ -393,11 +390,11 @@ include("navcal/navcalendars.inc");
 					switch($j) {
 					case 0: //tasks which started on a previous day and finish on a following day
 						print "...-...";
-						$todaysTotal += get_duration($currentDate, $tomorrowDate);
+						$todaysTotal += get_duration($currentDayDate, $tomorrowDate);
 						break;
 					case 1: //tasks which started on a previous day and finish today
 						print "...-" . $formattedEndTime;
-						$todaysTotal += get_duration($currentDate, $currentTaskEntry["end_stamp"]);
+						$todaysTotal += get_duration($currentDayDate, $currentTaskEntry["end_stamp"]);
 						break;
 					case 2: //tasks which started and finished today
 						print $formattedStartTime . "-" . $formattedEndTime;
@@ -414,18 +411,18 @@ include("navcal/navcalendars.inc");
 			}
 
 			//Put a popup link in the cell
-			$dateValues = getdate($currentDate);
+			$todayValues = getdate($currentDayDate);
 			$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
 				"?client_id=$matchedPair->clientId".
-				"&proj_id=$matchedPair->projectId".
-				"&task_id=$matchedPair->value1".
-				"&year=".$dateValues["year"].
-				"&month=".$dateValues["mon"].
-				"&day=".$dateValues["mday"].
-				"&destination=$_SERVER[PHP_SELF]".
+				"&amp;proj_id=$matchedPair->projectId".
+				"&amp;task_id=$matchedPair->value1".
+				"&amp;year=".$todayValues["year"].
+				"&amp;month=".$todayValues["mon"].
+				"&amp;day=".$todayValues["mday"].
+				"&amp;destination=$_SERVER[PHP_SELF]".
 				"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 			print "<a href=\"$popup_href\" class=\"action_link\">".
-				"<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\">".
+				"<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\" alt=\"\" />".
 				"</a>";
 
 			//close the times class
@@ -434,7 +431,7 @@ include("navcal/navcalendars.inc");
 			if (!$emptyCell) {
 				//print todays total
 				$todaysTotalStr = formatMinutes($todaysTotal);
-				print "<br><span class=\"task_time_total_small\">$todaysTotalStr</span>";
+				print "<br /><span class=\"task_time_total_small\">$todaysTotalStr</span>";
 			}
 
 			//end the column
@@ -446,7 +443,7 @@ include("navcal/navcalendars.inc");
 			//add this days total to the all tasks total for this day
 			$allTasksDayTotals[$dayIndex] += $todaysTotal;
 			$dayIndex++;
-			$currentDate=$tomorrowDate;
+			$currentDayDate=$tomorrowDate;
 		}
 
 		//print the spacer column
@@ -471,47 +468,49 @@ include("navcal/navcalendars.inc");
 	print "<tr>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">Actions:</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
-	$currentDate = $startDate;
+	$currentDayDate = $startDate;
 	for ($i=0; $i<7; $i++) {
-		$dateValues = getdate($currentDate);
-		$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+		$todayValues = getdate($currentDayDate);
+		$ymdStr = "&amp;year=".$todayValues["year"] . "&amp;month=".$todayValues["mon"] . "&amp;day=".$todayValues["mday"];
 		$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
 											"?client_id=$client_id".
-											"&proj_id=$proj_id".
-											"&task_id=$task_id".
+											"&amp;proj_id=$proj_id".
+											"&amp;task_id=$task_id".
 											"$ymdStr".
-											"&destination=$_SERVER[PHP_SELF]".
+											"&amp;destination=$_SERVER[PHP_SELF]".
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 		print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
 		print "<a href=\"$popup_href\" class=\"action_link\">Add</a>,";
 		print "<a href=\"daily.php?$ymdStr\">Edit</a></td>\n";
-		$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 days");
+		$currentDayDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
 	}
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	print "<td class=\"calendar_cell_disabled_right\">&nbsp;</td>\n";
 	print "</tr>";
 
+	////////////////////////////////////////////////////
 
 	//create a new totals row
-	print "<tr>\n";
+	print "<tr id=\"totalsRow\">\n";
 	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">Total Hours:</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 
 	//iterate through day totals for all tasks
 	$grandTotal = 0;
+	$col = 0;
 	foreach ($allTasksDayTotals as $currentAllTasksDayTotal) {
+		$col++;
 		$grandTotal += $currentAllTasksDayTotal;
 		$formattedTotal = formatMinutes($currentAllTasksDayTotal);
 		print "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
-		//print "<td class=\"calendar_totals_line_weekly\" align=\"right\">\n";
-		print "<span class=\"calendar_total_value_weekly\">$formattedTotal</span></td>";
+		print "<span class=\"calendar_total_value_weekly\" id=\"subtotal_col" . $col . "\">$formattedTotal</span></td>";
 	}
 
 	//print grand total
 	$formattedGrandTotal = formatMinutes($grandTotal);
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	print "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
-	print "<span class=\"calendar_total_value_monthly\">$formattedGrandTotal</span></td>";
+	print "<span class=\"calendar_total_value_monthly\" id=\"grand_total\">$formattedGrandTotal</span></td>";
 	print "</tr>";
 
 ?>

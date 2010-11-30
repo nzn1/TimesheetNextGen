@@ -48,6 +48,11 @@ if($fromPopupWindow == 'false')
 //$debug->write("destination = \"$destination\"\n");
 //$debug->write("fromPopupWindow = \"$fromPopupWindow\"\n");
 
+/**
+ * @todo the &var= stuff needs to be changed to &amp;var= BUT 
+ * if the link is used in javascript then this must be carefully checked
+ * as I think javascript doesn't like &amp;  
+ */ 
 //set the return location
 $Location = "$destination?month=$month&year=$year&day=$day&destination=$destination";
 if ($destination == "stopwatch.php" || $destination == "daily.php")

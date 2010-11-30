@@ -5,7 +5,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclReports'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclReports'));
 	exit;
 }
 
@@ -22,7 +22,7 @@ $contextUser = strtolower($_SESSION['contextUser']);
 $uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']: $contextUser;
 
 $todayDate = mktime(0, 0, 0, $month, $day, $year);
-$ymdStr = "&year=$year&month=$month&day=$day";
+$ymdStr = "&amp;year=$year&amp;month=$month&amp;day=$day";
 
 ?>
 <html>
@@ -32,7 +32,7 @@ $ymdStr = "&year=$year&month=$month&day=$day";
 <body <?php include ("body.inc"); ?> >
 <?php 
 include ("banner.inc"); 
-$MOTD=0;
+$motd=0;
 include ("navcal/navcalendars.inc");
 ?>
 
@@ -65,44 +65,61 @@ include ("navcal/navcalendars.inc");
 						<td class="inner_table_column_heading">Report Description</td>
 						<td class="inner_table_column_heading">Actions</td>
 					</tr>
-					<tr>
+
+<?php
+function echo_TR_Class($val='') {
+//if you want "highlighting" on the first row, make this zero instead of one
+static $row = 1;
+
+if(!($val === ''))
+	$row=$val;
+
+	if($row%3)
+		echo "<tr>";
+	else
+		echo "<tr class=\"diff\">";
+
+	$row++;
+}
+?>
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">User report</td>
 						<td class="calendar_cell_right">
-							<a href="report_user.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a> /
-							<a href="report_user.php?<?php print $ymdStr; ?>&mode=weekly">Generate weekly</a>
+							<a href="report_user.php?<?php print $ymdStr; ?>amp;&mode=monthly">Generate monthly</a> /
+							<a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
-					<tr class="diff">
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">User summary</td>
 						<td class="calendar_cell_right">
 							<a href="report_user_summ.php?<?php print $ymdStr; ?>">Bi-monthly</a>
 						</td>
 					</tr>
-					<tr>
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Project report</td>
 						<td class="calendar_cell_right">
-							<a href="report_project.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a> /
-							<a href="report_project.php?<?php print $ymdStr; ?>&mode=weekly">Generate weekly</a>
+							<a href="report_project.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
+							<a href="report_project.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
-					<tr class="diff">
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Client report</td>
 						<td class="calendar_cell_right">
-							<a href="report_client.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a> /
-							<a href="report_client.php?<?php print $ymdStr; ?>&mode=weekly">Generate weekly</a>
+							<a href="report_client.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
+							<a href="report_client.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
-					<tr>
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Client / User - grid report</td>
 						<td class="calendar_cell_right">
-							<a href="report_grid_client_user.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a>
+							<a href="report_grid_client_user.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
 <?php if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
-					<tr class="diff">
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">All users & All projects report</td>
 						<td class="calendar_cell_right">
-							<a href="report_all.php?<?php print $ymdStr; ?>&mode=monthly">Generate monthly</a>
+							<a href="report_all.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
 <?php } ?>
@@ -111,13 +128,13 @@ include ("navcal/navcalendars.inc");
 						<td class="inner_table_column_heading">Attendance Reports</td>
 						<td class="inner_table_column_heading">Actions</td>
 					</tr>
-					<tr>
+					<?php echo_TR_Class(1);?>
 						<td class="calendar_cell_middle">Absence Report</td>
 						<td class="calendar_cell_right">
 							<a href="report_absences.php?<?php print $ymdStr; ?>">Generate monthly</a>
 						</td>
 					</tr>
-					<tr class="diff">
+					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Yearly User Report</td>
 						<td class="calendar_cell_right">
 							<a href="report_hours.php?<?php print $ymdStr; ?>">Generate yearly</a>
@@ -139,5 +156,8 @@ include ("navcal/navcalendars.inc");
 <?php
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
+<?php
+// vim:ai:ts=4:sw=4
+?>

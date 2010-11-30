@@ -16,17 +16,20 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:back()"));
 
 ?>
 <HTML>
-	<HEAD>
+	<head>
 	<title>Error, <?php echo $loggedInUser; ?></title>
 <?php
 include ("header.inc");
 ?>
-</HEAD>
-<BODY <?php include ("body.inc"); ?> >
+</head>
+<body <?php include ("body.inc"); ?> >
 <?php
 include ("banner.inc");
 include ("error.inc");
 include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
+<?php
+// vim:ai:ts=4:sw=4
+?>

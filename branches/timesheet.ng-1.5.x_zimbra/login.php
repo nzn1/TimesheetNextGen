@@ -51,7 +51,7 @@ include ("header.inc");
 <body onLoad="document.loginForm.username.focus();">
 
 <form action="login.php" method="POST" name="loginForm" style="margin: 0px;">
-<input type="hidden" name="redirect" value="<?php echo $redirect; ?>"></input>
+<input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
 
 <table border="0" cellspacing="0" cellpadding="0" align="center">
 	<tr>
@@ -82,10 +82,10 @@ include ("header.inc");
 
 			<table width="300" cellspacing="0" cellpadding="5" class="box">
 				<tr>
-					<td><img class="login_image" src="images/spacer.gif"></td>
-					<td class="label">Username:<br><input type="text" name="username" size="25" maxlength="25"></td>
-					<td class="label">Password:<br><input type="password" name="password" size="25" maxlength="25"></td>
-					<td class="label"><br><input type="submit" name="Login" value="submit"></td>
+					<td><img class="login_image" src="images/spacer.gif" alt="" ></td>
+					<td class="label">Username:<br /><input type="text" name="username" size="25" maxlength="25" /></td>
+					<td class="label">Password:<br /><input type="password" name="password" size="25" maxlength="25" /></td>
+					<td class="label"><br /><input type="submit" name="Login" value="submit" /></td>
 				</tr>
 				<?php	if (isset($loginFailure))
 							printMessage($authenticationManager->getErrorMessage());
@@ -105,3 +105,6 @@ include ("header.inc");
 
 </body>
 </html>
+<?php
+// vim:ai:ts=4:sw=4
+?>

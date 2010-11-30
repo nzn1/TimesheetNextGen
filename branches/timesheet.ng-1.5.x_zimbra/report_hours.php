@@ -1,4 +1,29 @@
 <?php
+// NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
+//        or the export to excel won't work in IE
+session_cache_limiter('public');
+
+//export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
+$export_excel=false;
+if (isset($_GET["export_excel"]))
+	if($_GET["export_excel"] == "1")
+		$export_excel=true;
+
+//Create the excel headers now, if needed
+if($export_excel){
+	header('Expires: 0');
+	header('Cache-control: public');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Content-Description: File Transfer');
+	header('Content-Type: application/vnd.ms-excel');
+	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+
+	// When exporting data to excel, ensure the numbers written in the spreadsheet 
+	// are in H.F format rather than HH:MI  
+	$time_fmt = "decimal";
+} else
+	$time_fmt = "time";
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
@@ -38,7 +63,7 @@ else
 //get the context date
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 $dateValues = getdate($todayDate);
-$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 $startDate = mktime(0,0,0, $month, 1, $year);
 $startStr = date("Y-m-d H:i:s",$startDate);
@@ -46,8 +71,8 @@ $startStr = date("Y-m-d H:i:s",$startDate);
 $endDate = getMonthlyEndDate($dateValues);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
-$Location="$_SERVER[PHP_SELF]?&uid=$uid$ymdStr";
-//$post="&uid=$uid";
+$Location="$_SERVER[PHP_SELF]?&amp;uid=$uid$ymdStr";
+//$post="&amp;uid=$uid";
 
 $orderby="date";
 
@@ -115,8 +140,8 @@ function make_index($data,$order) {
 ?>
 
 <form action="report_hours.php" method="get">
-<input type="hidden" name="month" value="<?php echo $month; ?>">
-<input type="hidden" name="day" value="<?php echo $day; ?>">
+<input type="hidden" name="month" value="<?php echo $month; ?>" />
+<input type="hidden" name="day" value="<?php echo $day; ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -142,7 +167,7 @@ function make_index($data,$order) {
 					</td>
 					<?php if(!$print): ?>
 						<td  align="center" width="15%">
-							<button onClick="popupPrintWindow()">Print Report</button>
+							<button onclick="popupPrintWindow()">Print Report</button>
 						</td> 
 						<td align="right" nowrap width="20%">select year:&nbsp;
 							<?php
@@ -401,7 +426,7 @@ function make_index($data,$order) {
 <?php
 if(!$print) include ("footer.inc");
 ?>
-</BODY>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

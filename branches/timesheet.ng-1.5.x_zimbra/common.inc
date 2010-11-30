@@ -11,7 +11,7 @@ if (!defined("COMMON_INC")) {
 	$realToday = getdate(time());
 	$realTodayDate = mktime(0, 0, 0, $realToday['mon'], $realToday['mday'], $realToday['year']);
 
-	$MOTD = 1;
+	$motd = 1;
 	//Useful constants
 	define("A_DAY", 24 * 60 * 60);  //seconds per day
 	define("WORK_DAY", 8); //hours per day
@@ -377,7 +377,7 @@ if (!defined("COMMON_INC")) {
 	//Expects start and end to be in "Unix Timestamp" format, returns answer in minutes
 	function get_duration($start, $end, $wdst=0) {
 		$diff_in_seconds = $end - $start;
-		//print "  get_duration: $end - $start = $diff_in_seconds<br>\n";
+		//print "  get_duration: $end - $start = $diff_in_seconds<br />\n";
 
 		//If we're called from simple.php, and we want to check for DST adjustments, and if the end time and 
 		//start time are not both in the same Daylight Savings Time state, and the start time is midnight, 
@@ -388,7 +388,7 @@ if (!defined("COMMON_INC")) {
 		//and converting them into unix timestamps, the duration is automatically adjusted to take DST into 
 		//account.  Therefore we need to remove that adjustment.
 
-		//print "  get_duration: $wdst  $end_dst  $start_dst<br>\n";
+		//print "  get_duration: $wdst  $end_dst  $start_dst<br />\n";
 		if( $wdst==1 ) {
 			$start_dst = date('I', $start);
 			$end_dst = date('I', $end);
@@ -401,11 +401,11 @@ if (!defined("COMMON_INC")) {
 				if($stdt["hours"] == 0 && $stdt["minutes"] == 0 && $stdt["seconds"] == 0) {
 					$dst_adjustment = get_dst_adjustment($start);
 					$diff_in_seconds += $dst_adjustment;
-					//print "  get_duration: adjustment $dst_adjustment<br>\n";
+					//print "  get_duration: adjustment $dst_adjustment<br />\n";
 				}
 			}
 		}
-		//print "  get_duration: returning ".($diff_in_seconds/60)."<br>\n";
+		//print "  get_duration: returning ".($diff_in_seconds/60)."<br />\n";
 		return ($diff_in_seconds/60);
 	}
 
@@ -417,7 +417,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function fix_entry_duration($entry) {
-		//print "  fix_entry_duration<br>\n";
+		//print "  fix_entry_duration<br />\n";
 		include("table_names.inc");
 		$duration = $entry["duration"];
 		$trans_num = $entry["trans_num"];
@@ -425,17 +425,37 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function fix_entry_endstamp($entry) {
-		//print "  fix_entry_endstamp ". $entry["trans_num"].") ".strftime("%Y-%m-%d %H:%M:%S", $entry["start_stamp"])." - ".strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"])."<br>\n";
+		//print "  fix_entry_endstamp ". $entry["trans_num"].") ".strftime("%Y-%m-%d %H:%M:%S", $entry["start_stamp"])." - ".strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"])."<br />\n";
 		include("table_names.inc");
 		$etsStr = strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"]);
 		$trans_num = $entry["trans_num"];
 		tryDbQuery("UPDATE $TIMES_TABLE set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
 	}
 
+	function get_user_empid($username) {
+		include("table_names.inc");
+
+		// Retreives user's payroll Employee ID
+		$sql = "SELECT EmpId FROM $USER_TABLE WHERE username='$username'";
+		list($my_qh, $num) = dbQuery($sql);
+		$result = dbResult($my_qh);
+		return $result['EmpId'];
+	}
+
+	function get_project_name($proj_id) {
+		include("table_names.inc");
+
+		// Retreives project title (name)
+		$sql = "SELECT title FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
+		list($my_qh, $num) = dbQuery($sql);
+		$result = dbResult($my_qh);
+		return $result['title'];
+	}
+
 	function get_project_info($proj_id) {
 		include("table_names.inc");
 
-		// Retreives title, $CLIENT_TABLE, description, deadline and link from database for a given proj_id
+		// Retreives title, client_id, description, deadline and link from database for a given proj_id
 		$result = array();
 		if ($proj_id > 0) {
 			$sql = "SELECT * FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
@@ -474,23 +494,26 @@ if (!defined("COMMON_INC")) {
 		return $configData[$page];
 	}
 
-	function day_button($name, $timeStamp=0) {
+	function day_button($name, $timeStamp=0, $limit=1) {
 		global $realToday, $month, $year;
 		if (!$timeStamp)
 			$timeStamp = $realToday[0];
 
 		$dti=getdate($timeStamp);
-		$last_day = get_last_day($dti["mon"], $dti["year"]);
+		if($limit)
+			$last_day = get_last_day($dti["mon"], $dti["year"]);
+		else
+			$last_day = 31;
 
 		$i = 0;
 		echo "<select name=\"$name\">\n";
 		//I'm failing to understand why we would offer a "none" value for dates. -SLM
-		//print "<option value=0>None</A>";
+		//print "<option value=0>None</a>";
 
 		for($i=1; $i <= $last_day; $i++) {
 			switch($i) {
 			case $dti["mday"]:
-				echo "<option value=\"$i\" selected>$i\n";
+				echo "<option value=\"$i\" selected=\"selected\" >$i\n";
 				break;
 			default:
 				echo "<option value=\"$i\">$i\n";
@@ -507,11 +530,11 @@ if (!defined("COMMON_INC")) {
 		$i = 1;
 		echo "<select name=\"$name\">\n";
 		//I'm failing to understand why we would offer a "none" value for dates. -SLM
-		//print "<option value=0>None</A>";
+		//print "<option value=0>None</a>";
 		while ($i <= 12) {
 			switch($i) {
 			case $month:
-				echo "<option value=\"$i\" selected>" . date("M",mktime(0,0,0,$i,1,1999)) . "\n";
+				echo "<option value=\"$i\" selected=\"selected\" >" . date("M",mktime(0,0,0,$i,1,1999)) . "\n";
 			break;
 			default:
 				echo "<option value=\"$i\">". date("M",mktime(0,0,0,$i,1,1999)) . "\n";
@@ -530,11 +553,11 @@ if (!defined("COMMON_INC")) {
 		$i = $year-5;
 		echo "<select name=\"$name\">\n";
 		//I'm failing to understand why we would offer a "none" value for dates. -SLM
-		//print "<option value=0>None</A>";
+		//print "<option value=0>None</a>";
 		while ($i <= $year+5) {
 			switch($i) {
 			case $year:
-				echo "<option value=\"$i\" selected>$i\n";
+				echo "<option value=\"$i\" selected=\"selected\" >$i\n";
 				break;
 			default:
 				echo "<option value=\"$i\">$i\n";
@@ -544,17 +567,67 @@ if (!defined("COMMON_INC")) {
 		echo "</select>";
 	}
 
-	function single_user_select_list($name, $default='') {
+	function single_user_select_list($varname, $username='', $extra='', $showSelect='false') {
 		include("table_names.inc");
 
-		list($qh,$num) = dbQuery("SELECT username FROM $USER_TABLE ORDER BY username");
-		print "<SELECT NAME=\"$name\">";
-		while ($data = dbResult($qh)) {
-				print "<OPTION NAME=\"$data[username]\"";
-				if ($default == $data["username"]) print " SELECTED ";
-				print ">$data[username]</OPTION>\n";
+		global $authenticationManager;
+	
+		$show_disabled=0;
+		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
+			//show disabled users at bottom of list
+			$show_disabled=1;
+			$query = "SELECT uid, username, last_name, first_name, status FROM $USER_TABLE ORDER BY status DESC, last_name, first_name";
+		} else {
+			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
 		}
-		print "</SELECT>";
+
+		print "<select name=\"$varname\"";
+		if (!empty($extra)) {
+			print " $extra "; 
+		}
+		print ">\n";
+
+		list($qh, $num) = dbQuery($query);
+		if ($num > 0) {
+			if ($showSelect)
+				print "<option value=\"0\">Select User</option>\n";
+
+			if($show_disabled) {
+				print "<optgroup label=\"Active Users\">";
+				$found_disabled=0;
+			}
+
+			while ($return = dbResult($qh)) {
+				if($show_disabled && !$found_disabled && $return['status']=='INACTIVE') {
+					$found_disabled=1;
+					print "</optgroup><optgroup style=\"color:red\"; label=\"Inactive Users\">";
+				}
+
+				$current_username = stripslashes($return["username"]);
+				$current_name = stripslashes($return["last_name"] . " " . $return["first_name"] );
+				print "<option value=\"$current_username\"";
+				if ($current_username == $username)
+					print " selected=\"selected\"";
+				if ($current_name == " ")
+					print ">$current_username</option>\n";
+				else
+					print ">$current_name</option>\n";
+			}
+
+			if($show_disabled) {
+				print "</optgroup>";
+			}
+		}
+		print "</select>";
+	}
+
+
+	function get_users_name($uid) {
+		include("table_names.inc");
+		$query = "SELECT last_name, first_name, status FROM $USER_TABLE where username='$uid'";
+		list($qh, $num) = dbQuery($query);
+		$data = dbResult($qh);
+		return array($data['first_name'], $data['last_name'], $data['status']);
 	}
 
 	function multi_user_select_list($name, $selected_array=array()) {
@@ -571,7 +644,7 @@ if (!defined("COMMON_INC")) {
 			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 		list($qh, $num) = dbQuery($query);
-		print "<SELECT NAME=\"$name\" multiple size=\"11\">\n";
+		print "<select name=\"$name\" multiple size=\"11\">\n";
 		if($show_disabled) {
 			print "<optgroup label=\"Active Users\">";
 			$found_disabled=0;
@@ -586,12 +659,21 @@ if (!defined("COMMON_INC")) {
 				$current_username = stripslashes($data["username"]);
 				$current_name = stripslashes($data["last_name"] . " " . $data["first_name"] );
 				if ($current_name == " ") $current_name = $current_username;
-				print "<OPTION value=\"$current_username\"";
+				print "<option value=\"$current_username\"";
 				if (in_array($current_username, $selected_array))
-					print " SELECTED ";
-				print ">$current_name</OPTION>\n";
+					print " selected=\"selected\" ";
+				print ">$current_name</option>\n";
 		}
-		print "</SELECT>";
+		print "</select>";
+	}
+
+	function get_client_name($clientId) {
+		include("table_names.inc");
+		if($clientId == 0) return "All Clients";
+		$query = "SELECT organisation FROM $CLIENT_TABLE where client_id='$clientId'";
+		list($qh, $num) = dbQuery($query);
+		$data = dbResult($qh);
+		return $data['organisation'];
 	}
 
 	function client_select_list($currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange="", $restrictedList=true) {
@@ -632,14 +714,14 @@ if (!defined("COMMON_INC")) {
 		if ($showNoClient) {
 			print "<option value=\"1\"";
 			if ($currentClientId == 1)
-				print " selected";
+				print " selected=\"selected\"";
 			print ">No Client</option>\n";
 		}
 
 		while ($result = dbResult($qh)) {
 			print "<option value=\"$result[client_id]\"";
 			if ($currentClientId == $result["client_id"])
-				echo " selected";
+				echo " selected=\"selected\"";
 			print ">";
 			/*$printComma = false;
 			$printSpace = false;
@@ -665,7 +747,7 @@ if (!defined("COMMON_INC")) {
 		include("table_names.inc");
 
 		if ($currentClientId == 0 && $needsClient) {
-			print "<select name=\"dummy\" disabled=\"true\" style=\"width: 100%;\">\n";
+			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
 			print "  <option>Please select a client</option>\n";
 			print "</select>\n";
 			return;
@@ -692,12 +774,12 @@ if (!defined("COMMON_INC")) {
 		list($qh, $num) = dbQuery($query);
 		if ($num == 0) {
 			if (!empty($contextUser)) {
-				print "<select name=\"dummy\" disabled=\"true\" style=\"width: 100%;\">\n";
+				print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
 				print "  <option>There are no projects assigned to you</option>\n";
 				print "</select>\n";
 				return;
 			}
-			print "<select name=\"dummy\" disabled=\"true\" style=\"width: 100%;\">\n";
+			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
 			print "  <option>There are no projects for this client</option>\n";
 			print "</select>\n";
 			return;
@@ -705,7 +787,7 @@ if (!defined("COMMON_INC")) {
 
 		print "<select name=\"proj_id\" onChange=\"$onChange\" style=\"width:100%;\"";
 		if ($disabled == 'true')
-			print " disabled";
+			print " disabled=\"disabled\"";
 		print ">\n";
 
 		//should we show the 'Select Project' option
@@ -715,7 +797,7 @@ if (!defined("COMMON_INC")) {
 		if ($showAllProjects) {
 			print "<option value=\"0\"";
 			if ($currentProjectId == 0)
-				print " selected";
+				print " selected=\"selected\"";
 			print ">All Projects</option>\n";
 		}
 
@@ -724,7 +806,7 @@ if (!defined("COMMON_INC")) {
 				$title = stripslashes($return["title"]);
 				print "<option value=\"$return[proj_id]\"";
 				if ($currentProjectId == $return["proj_id"])
-					print " selected";
+					print " selected=\"selected\"";
 				print ">$title</option>\n";
 			}
 		}
@@ -735,7 +817,7 @@ if (!defined("COMMON_INC")) {
 		include("table_names.inc");
 
 		if ($currentProjectId == 0) {
-			print "<select name=\"dummy\" disabled=\"true\" style=\"width: 100%;\">\n";
+			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
 			print "  <option>Please select a project</option>\n";
 			print "</select>\n";
 			return;
@@ -762,13 +844,13 @@ if (!defined("COMMON_INC")) {
 			while ($return = dbResult($qh)) {
 				print "<option value=\"$return[task_id]\"";
 				if ($currentTaskId == $return["task_id"])
-					print " selected";
+					print " selected=\"selected\"";
 				print ">$return[name]</option>\n";
 			}
 			print "</select>";
 		}
 		else {
-			print "<select name=\"dummy\" disabled=\"true\" style=\"width: 100%;\">\n";
+			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
 			print "  <option>There are no tasks assigned</option>\n";
 			print "</select>\n";
 		}
@@ -801,7 +883,7 @@ if (!defined("COMMON_INC")) {
 		while ($idx < $len) {
 			$val = explode(':', $values[$idx], 2);
 			if (!(empty($selected)) && ($val[0] == $selected)) {
-				$ret .= "<option value=\"$val[0]\" selected>$val[1]</option>\n";
+				$ret .= "<option value=\"$val[0]\" selected=\"selected\" >$val[1]</option>\n";
 			} else {
 				$ret .= "<option value=\"$val[0]\">$val[1]</option>\n";
 			}
@@ -829,7 +911,7 @@ if (!defined("COMMON_INC")) {
 		if (!empty($width))
 			$drop_list_string.= "style=\"width: $width;\" ";
 		if ($disabled == 'true')
-			$drop_list_string .= " disabled";
+			$drop_list_string .= " disabled=\"disabled\"";
 		$drop_list_string .= ">\n";
 
 		list($qh, $num) = dbQuery($query);
@@ -850,7 +932,7 @@ if (!defined("COMMON_INC")) {
 				$current_name = stripslashes($return["last_name"] . " " . $return["first_name"] );
 				$drop_list_string .= "<option value=\"$current_username\"";
 				if ($current_username == $username)
-					$drop_list_string .= " selected";
+					$drop_list_string .= " selected=\"selected\"";
 				if ($current_name == " ")
 					$drop_list_string .= ">$current_username</option>\n";
 				else
@@ -873,38 +955,38 @@ if (!defined("COMMON_INC")) {
 	function acl_select_droplist($id, $selected='', $disabled='false') {
 ?>
 	<select name="<?php echo $id; ?>" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
-	<option value="Admin" <?php if ($selected== 'Admin') echo 'selected'?>>Admin</option>
-	<option value="Mgr" <?php if ($selected== 'Mgr') echo 'selected'?>>Mgr</option>
-	<option value="Basic" <?php if ($selected== 'Basic') echo 'selected'?>>Basic</option>
-	<option value="None" <?php if ($selected== 'None') echo 'selected'?>>None</option>
+	<option value="Admin" <?php if ($selected== 'Admin') echo "selected=\"selected\"";?>>Admin</option>
+	<option value="Mgr" <?php if ($selected== 'Mgr') echo "selected=\"selected\"";?>>Mgr</option>
+	<option value="Basic" <?php if ($selected== 'Basic') echo "selected=\"selected\"";?>>Basic</option>
+	<option value="None" <?php if ($selected== 'None') echo "selected=\"selected\"";?>>None</option>
 	</select>
 <?php
 	}
 
 	function absence_select_droplist($selected='', $disabled='false', $id) {
 ?>
-	<SELECT NAME="<?php echo $id; ?>" onChange="OnChange()" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
-	<OPTION VALUE="" <?php if ($selected == '') echo 'SELECTED'?>></OPTION>
-	<OPTION VALUE="Holiday" <?php if ($selected== 'Holiday') echo 'SELECTED'?>>Holiday</OPTION>
-	<OPTION VALUE="Sick" <?php if ($selected== 'Sick') echo 'SELECTED'?>>Sick</OPTION>
-	<OPTION VALUE="Military" <?php if ($selected== 'Military') echo 'SELECTED'?>>Mil/Civ</OPTION>
-	<OPTION VALUE="Training" <?php if ($selected== 'Training') echo 'SELECTED'?>>Training</OPTION>
-	<OPTION VALUE="Compensation" <?php if ($selected== 'Compensation') echo 'SELECTED'?>>Compensation</OPTION>
-	<OPTION VALUE="Other" <?php if ($selected== 'Other') echo 'SELECTED'?>>Other</OPTION>
-	<OPTION VALUE="Public" <?php if ($selected== 'Public') echo 'SELECTED'?>>Public</OPTION>
-	</SELECT>
+	<select name="<?php echo $id; ?>" onChange="OnChange()" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
+	<option value="" <?php if ($selected == '') echo "selected=\"selected\"";?>></option>
+	<option value="Holiday" <?php if ($selected== 'Holiday') echo "selected=\"selected\"";?>>Holiday</option>
+	<option value="Sick" <?php if ($selected== 'Sick') echo "selected=\"selected\"";?>>Sick</option>
+	<option value="Military" <?php if ($selected== 'Military') echo "selected=\"selected\"";?>>Mil/Civ</option>
+	<option value="Training" <?php if ($selected== 'Training') echo "selected=\"selected\"";?>>Training</option>
+	<option value="Compensation" <?php if ($selected== 'Compensation') echo "selected=\"selected\"";?>>Compensation</option>
+	<option value="Other" <?php if ($selected== 'Other') echo "selected=\"selected\"";?>>Other</option>
+	<option value="Public" <?php if ($selected== 'Public') echo "selected=\"selected\"";?>>Public</option>
+	</select>
 <?php
 	}
 
-	function client_select_droplist($client_id=1, $disabled='false') {
+	function client_select_droplist($client_id=1, $disabled=false, $info=true) {
 		include("table_names.inc");
 
 			$query = "SELECT client_id, organisation FROM $CLIENT_TABLE ORDER BY organisation";
 
 		//print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"client_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
-		if ($disabled == 'true')
-			print " disabled";
+		if ($disabled)
+			print " disabled=\"disabled\"";
 		print ">\n";
 
 		list($qh, $num) = dbQuery($query);
@@ -914,14 +996,17 @@ if (!defined("COMMON_INC")) {
 				$current_organisation = stripslashes($return["organisation"]);
 				print "<option value=\"$return[client_id]\"";
 				if ($return["client_id"] == $client_id)
-					print " selected";
+					print " selected=\"selected\"";
 				print ">$current_organisation</option>\n";
 			}
-			print "</select></td><td width=\"0\">";
-			print "<input type=\"button\" name=\"info\" value=\"Info\"";
-			print "onclick=window.open(\"client_info.php?client_id=$client_id\",";
-			print "\"Client_Info\",";
-			print "\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\")>";
+			print "</select>";
+			if($info) {
+				print "</td><td width=\"0\">";
+				print "<input type=\"button\" name=\"info\" value=\"Info\"";
+				print "onclick=window.open(\"client_info.php?client_id=$client_id\",";
+				print "\"Client_Info\",";
+				print "\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\") />";
+			}
 			//print "</td></tr></table>";
 		}
 		else
@@ -943,7 +1028,7 @@ if (!defined("COMMON_INC")) {
 		print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
 		print "<select name=\"proj_id\" Onchange=\"submit()\" style=\"width: 100%;\"";
 		if ($disabled == 'true')
-			print " disabled";
+			print " disabled=\"disabled\"";
 		print ">\n";
 
 		list($qh, $num) = dbQuery($query);
@@ -959,7 +1044,7 @@ if (!defined("COMMON_INC")) {
 				$current_title = $return['title'];
 				print "<option value=\"$return[proj_id]\"";
 				if ($return["proj_id"] == $proj_id)
-					print " selected";
+					print " selected=\"selected\"";
 				print ">$current_title</option>\n";
 			}
 			print "</optgroup>\n";
@@ -976,64 +1061,64 @@ if (!defined("COMMON_INC")) {
 		$month, $day, $proj_id, $task_id, $destination;
 	?>
 <HTML>
-<BODY BGCOLOR="#FFFFFF" >
+<body BGCOLOR="#FFFFFF" >
 <FORM ACTION="clock_action.php" METHOD=POST>
-<TABLE BORDER=1 ALIGN=CENTER>
+<table BORDER=1 align=CENTER>
 	<?php {
 	if ($destination)
-		print "<INPUT TYPE=HIDDEN NAME=destination VALUE=$destination>\n";
-		print "<INPUT TYPE=HIDDEN NAME=check_in_time_hour VALUE=\"$check_in_time_hour\">\n";
-		print "<INPUT TYPE=HIDDEN NAME=check_out_time_hour VALUE=\"$check_out_time_hour\">\n";
-		print "<INPUT TYPE=HIDDEN NAME=check_in_time_min VALUE=\"$check_in_time_min\">\n";
-		print "<INPUT TYPE=HIDDEN NAME=check_out_time_min VALUE=\"$check_out_time_min\">\n";
-		print "<INPUT TYPE=HIDDEN NAME=year VALUE=\"$year\">\n";
-		print "<INPUT TYPE=HIDDEN NAME=month VALUE=\"$month\">\n";
-		print "<INPUT TYPE=HIDDEN NAME=day VALUE=\"$day\">\n";
-		print "<INPUT TYPE=HIDDEN NAME=proj_id VALUE=\"$proj_id\">\n";
-		print "<INPUT TYPE=HIDDEN NAME=task_id VALUE=\"$task_id\">\n";
+		print "<input type=HIDDEN name=destination value=$destination />\n";
+		print "<input type=HIDDEN name=check_in_time_hour value=\"$check_in_time_hour\" />\n";
+		print "<input type=HIDDEN name=check_out_time_hour value=\"$check_out_time_hour\" />\n";
+		print "<input type=HIDDEN name=check_in_time_min value=\"$check_in_time_min\" />\n";
+		print "<input type=HIDDEN name=check_out_time_min value=\"$check_out_time_min\" />\n";
+		print "<input type=HIDDEN name=year value=\"$year\" />\n";
+		print "<input type=HIDDEN name=month value=\"$month\" />\n";
+		print "<input type=HIDDEN name=day value=\"$day\" />\n";
+		print "<input type=HIDDEN name=proj_id value=\"$proj_id\" />\n";
+		print "<input type=HIDDEN name=task_id value=\"$task_id\" />\n";
 		switch($action) {
 		case "inout":
-			print "<INPUT TYPE=HIDDEN NAME=check_in_out_x VALUE=1>\n";
+			print "<input type=HIDDEN name=check_in_out_x value=1 />\n";
 			break;
 		case "at":
-			print "<INPUT TYPE=HIDDEN NAME=check_out_at_x VALUE=1>\n";
+			print "<input type=HIDDEN name=check_out_at_x value=1 />\n";
 			break;
 		case "now":
-			print "<INPUT TYPE=HIDDEN NAME=check_out_now_x VALUE=1>\n";
+			print "<input type=HIDDEN name=check_out_now_x value=1 />\n";
 		}
-		print "<INPUT TYPE=HIDDEN NAME=log_message_presented VALUE=1>\n";
+		print "<input type=HIDDEN name=log_message_presented value=1 />\n";
 }?>
 
-	<TR><TD>Please Enter Log message: (max 255 characters)</TD></TR>
-	<TR><TD><TEXTAREA NAME=log_message COLS=60 ROWS=4></TEXTAREA></TD></TR>
-	<TR><TD><INPUT TYPE=SUBMIT VALUE="Done"></TD></TR>
-</TABLE>
+	<tr><td>Please Enter Log message: (max 255 characters)</td></tr>
+	<tr><td><TEXTAREA name=log_message COLS=60 ROWS=4></TEXTAREA></td></tr>
+	<tr><td><input type="submit" value="Done" /></td></tr>
+</table>
 </FORM>
-</BODY>
+</body>
 </HTML>
 <?php
 	}
 
 	function proj_status_list($name, $status='') {
 ?>
-	<SELECT NAME=<?php echo $name ?>>
-	<OPTION VALUE="Pending" <?php if ($status == 'Pending') echo 'SELECTED'?>>Pending</OPTION>
-	<OPTION VALUE="Started" <?php if ($status == 'Started') echo 'SELECTED'?>>Started</OPTION>
-	<OPTION VALUE="Suspended" <?php if ($status == 'Suspended') echo 'SELECTED'?>>Suspended</OPTION>
-	<OPTION VALUE="Complete" <?php if ($status == 'Complete') echo 'SELECTED'?>>Complete</OPTION>
-	</SELECT>
+	<select name=<?php echo $name ?>>
+	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>>Pending</option>
+	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>>Started</option>
+	<option value="Suspended" <?php if ($status == 'Suspended') echo "selected=\"selected\"";?>>Suspended</option>
+	<option value="Complete" <?php if ($status == 'Complete') echo "selected=\"selected\"";?>>Complete</option>
+	</select>
 <?php
 	}	
 	
 	function proj_status_list_filter($name, $status='', $onChange='submit();') {
 ?>
-	<SELECT NAME=<?php echo $name ?> onChange="<?php echo $onChange?>" >
-	<OPTION VALUE="All" <?php if ($status == 'All') echo 'SELECTED'?>>All</OPTION>
-	<OPTION VALUE="Pending" <?php if ($status == 'Pending') echo 'SELECTED'?>>Pending</OPTION>
-	<OPTION VALUE="Started" <?php if ($status == 'Started') echo 'SELECTED'?>>Started</OPTION>
-	<OPTION VALUE="Suspended" <?php if ($status == 'Suspended') echo 'SELECTED'?>>Suspended</OPTION>
-	<OPTION VALUE="Complete" <?php if ($status == 'Complete') echo 'SELECTED'?>>Complete</OPTION>
-	</SELECT>
+	<select name=<?php echo $name ?> onChange="<?php echo $onChange?>" >
+	<option value="All" <?php if ($status == 'All') echo "selected=\"selected\"";?>>All</option>
+	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>>Pending</option>
+	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>>Started</option>
+	<option value="Suspended" <?php if ($status == 'Suspended') echo "selected=\"selected\"";?>>Suspended</option>
+	<option value="Complete" <?php if ($status == 'Complete') echo "selected=\"selected\"";?>>Complete</option>
+	</select>
 <?php
 	}
 
@@ -1098,7 +1183,7 @@ if (!defined("COMMON_INC")) {
 		?>
 			<html>
 				<head>
-					<script language="javascript">
+					<script type="text/javascript">
 						function loadAndClose() {
 							if (window.opener.closed) {
 								//create a new window
@@ -1344,7 +1429,7 @@ if (!defined("COMMON_INC")) {
 			} else if ($startsToday && $endsAfterToday) {
 				$duration = get_duration($data["start_stamp"],$tomorrowStamp);
 			} else {
-				print "Error: time booleans are in a confused state<br>\n";
+				print "Error: time booleans are in a confused state<br />\n";
 				continue;
 			}
 
@@ -1397,7 +1482,7 @@ if (!defined("COMMON_INC")) {
 		exit();
 	}
 	} // end if
-}?>
-<?php
-// vim:ai:ts=4:sw=4
+}
+
+// vim:ai:ts=4:sw=4:filetype=php
 ?>

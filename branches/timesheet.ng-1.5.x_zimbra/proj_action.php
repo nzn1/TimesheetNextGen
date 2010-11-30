@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclProjects'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -66,12 +66,18 @@ elseif ($action == "add") {
 	while (list(,$username) = each($assigned)) {
 		if ($username == $project_leader)
 			$leader_added = true;
-		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1)");
+		/*
+		 * Had to add '0.00' to make the query match up to the database
+		 */
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1,'0.00')");
 		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
 	}
 	if (!$leader_added) {
 		// Add the project leader.
-		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$project_leader', 1)");
+		/*
+		 * Had to add '0.00' to make the query match up to the database
+		 */
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$project_leader', 1,'0.00')");
 		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$project_leader')");
 	}
 
@@ -115,8 +121,5 @@ elseif ($action == 'delete') {
 	Header("Location: proj_maint.php?client_id=$client_id");
 }
 
+// vim:ai:ts=4:sw=4
 ?>
-
-
-
-

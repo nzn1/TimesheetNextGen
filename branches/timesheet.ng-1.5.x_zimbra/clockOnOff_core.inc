@@ -4,16 +4,16 @@
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<form action="clock_action.php" method="post" name="mainForm" id="theForm">
-		<input type="hidden" name="year" value="<?php echo $year; ?>">
-		<input type="hidden" name="month" value="<?php echo $month; ?>">
-		<input type="hidden" name="day" value="<?php echo $day; ?>">
-		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>">
-		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>">
-		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>">
-		<input type="hidden" name="clockonoff" value="">
-		<input type="hidden" name="fromPopupWindow" value="<?php echo $fromPopup; ?>">
-		<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>">
-		<input type="hidden" name="destination" value="<?php echo $destination; ?>">
+		<input type="hidden" name="year" value="<?php echo $year; ?>" />
+		<input type="hidden" name="month" value="<?php echo $month; ?>" />
+		<input type="hidden" name="day" value="<?php echo $day; ?>" />
+		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>" />
+		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>" />
+		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>" />
+		<input type="hidden" name="clockonoff" value="" />
+		<input type="hidden" name="fromPopupWindow" value="<?php echo $fromPopup; ?>" />
+		<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>" />
+		<input type="hidden" name="destination" value="<?php echo $destination; ?>" />
 
 		<tr>
 			<td>
@@ -66,13 +66,13 @@
 													<table width="100%" height="100%" border="0" cellpadding="0" cellaspacing="0">
 														<tr height="100%">
 															<td align="right">
-																<a href="javascript:doClockonoff('clockonnow')"><img src="images/clock-green.gif" width="48" height="48" border="0" align="absmiddle"></a>
+																<a href="javascript:doClockonoff('clockonnow')"><img src="images/clock-green.gif" alt="" width="48" height="48" border="0" align="absmiddle" /></a>
 															</td>
 															<td nowrap>
 																<a href="javascript:doClockonoff('clockonnow')"><font size="4" color="#0DB400" face="Arial">Clock on now</font></a>
 															</td>
 															<td align="right">
-																<a href="javascript:doClockonoff('clockoffnow')"><img src="images/clock-red.gif" width="48" height="48" border="0" align="absmiddle"></a>
+																<a href="javascript:doClockonoff('clockoffnow')"><img src="images/clock-red.gif" width="48" height="48" border="0" align="absmiddle" alt="" /></a>
 															</td>
 															<td nowrap>
 																<a href="javascript:doClockonoff('clockoffnow')"><font size="4" color="#E81500" face="Arial">Clock off now</font></a>
@@ -89,12 +89,12 @@
 													<table width="300" border="0" class="clock_on_box">
 														<tr>
 															<td valign="top" align="left" class="clock_on_text">
-																<input type="checkbox" name="clock_on_check" id="clock_on_check" onclick="enableClockOn();">Clock on at:
+																<input type="checkbox" name="clock_on_check" id="clock_on_check" onclick="enableClockOn();" />Clock on at:
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
 																if ($currentDate == $realTodayDate): ?>
-																	<input type="radio" name="clock_on_radio" id="clock_on_radio_date" value="date" onclick="enableClockOn();" checked>
+																	<input type="radio" name="clock_on_radio" id="clock_on_radio_date" value="date" onclick="enableClockOn();" checked="checked"  />
 																<?php endif; ?>
 																<?php $hourInput = new HourInput("clock_on_time_hour");
 																	$hourInput->create(10); ?>
@@ -103,7 +103,7 @@
 																	$minuteInput->create(); ?>
 															</td>
 															<td>
-																<img src="images/clock-green-sml.gif" border="0">
+																<img src="images/clock-green-sml.gif" border="0" alt="" />
 															</td>
 														</tr>
 														<?php // If the current day is today:
@@ -111,7 +111,7 @@
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_on_text">
-																<input type="radio" name="clock_on_radio" id="clock_on_radio_now" value="now" onclick="enableClockOn();">	now
+																<input type="radio" name="clock_on_radio" id="clock_on_radio_now" value="now" onclick="enableClockOn();" />	now
 															</td>
 															<td>&nbsp;</td>
 														</tr>
@@ -124,12 +124,12 @@
 													<table width="300" border="0" class="clock_off_box">
 														<tr>
 															<td valign="top" align="left" class="clock_off_text">
-																<input type="checkbox" name="clock_off_check" id="clock_off_check" onclick="enableClockOff();">Clock off at:
+																<input type="checkbox" name="clock_off_check" id="clock_off_check" onclick="enableClockOff();" />Clock off at:
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
 																if ($currentDate == $realTodayDate): ?>
-																	<input type="radio" name="clock_off_radio" id="clock_off_radio_date" value="date" onclick="enableClockOff();">
+																	<input type="radio" name="clock_off_radio" id="clock_off_radio_date" value="date" onclick="enableClockOff();" />
 																<?php endif; ?>
 																<?php $hourInput = new HourInput("clock_off_time_hour");
 																	$hourInput->create(17); ?>
@@ -138,7 +138,7 @@
 																	$minuteInput->create(); ?>
 															</td>
 															<td>
-																<img src="images/clock-red-sml.gif" border="0">
+																<img src="images/clock-red-sml.gif" border="0" alt="" />
 															</td>
 														</tr>
 														<?php // If the current day is today:
@@ -146,7 +146,7 @@
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_off_text">
-																<input type="radio" name="clock_off_radio" id="clock_off_radio_now" value="now" onclick="enableClockOff();" checked>now
+																<input type="radio" name="clock_off_radio" id="clock_off_radio_now" value="now" onclick="enableClockOff();" checked="checked"  />now
 															</td>
 															<td>&nbsp;</td>
 														</tr>
@@ -156,7 +156,7 @@
 											</tr>
 											<tr>
 												<td align="center">
-													<input type="button" value="Clock on and/or off" name="submitButton" id="submitButton" onClick="onSubmit();">
+													<input type="button" value="Clock on and/or off" name="submitButton" id="submitButton" onclick="onSubmit();" />
 												</td>
 											</tr>
 										</table>

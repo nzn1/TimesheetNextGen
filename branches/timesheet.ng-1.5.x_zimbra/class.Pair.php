@@ -8,4 +8,6 @@ class Pair {
 		$this->value2 = $value2;
 	}
 }
+
+// vim:ai:ts=4:sw=4
 ?>

@@ -1,10 +1,35 @@
 <?php
+// NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
+//        or the export to excel won't work in IE
+session_cache_limiter('public');
+
+//export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
+$export_excel=false;
+if (isset($_GET["export_excel"]))
+	if($_GET["export_excel"] == "1")
+		$export_excel=true;
+
+//Create the excel headers now, if needed
+if($export_excel){
+	header('Expires: 0');
+	header('Cache-control: public');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Content-Description: File Transfer');
+	header('Content-Type: application/vnd.ms-excel');
+	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+
+	// When exporting data to excel, ensure the numbers written in the spreadsheet 
+	// are in H.F format rather than HH:MI  
+	$time_fmt = "decimal";
+} else
+	$time_fmt = "time";
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=Administrator");
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
 	exit;
 }
 
@@ -30,7 +55,7 @@ $uid=''; $proj_id=0; $client_id=0;
 //get the context date
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 $dateValues = getdate($todayDate);
-$ymdStr = "&year=".$dateValues["year"] . "&month=".$dateValues["mon"] . "&day=".$dateValues["mday"];
+$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 $startDate = mktime(0,0,0, $month, 1, $year);
 $startStr = date("Y-m-d H:i:s",$startDate);
@@ -39,21 +64,6 @@ $endDate = getMonthlyEndDate($dateValues);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 //$debug = new logfile();
-
-//export data to excel (or not)
-$export_excel = isset($_GET["export_excel"]) ? (bool)$_GET["export_excel"] : false;
-
-// if exporting data to excel, print appropriate headers. Ensure the numbers written in the spreadsheet
-// are in H.F format rather than HH:MI
-if($export_excel){
-	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	header("Cache-Control: public");
-	header("Content-type: application/vnd.ms-excel");
-	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
-	header("Pragma: no-cache"); 
-	$time_fmt = 'decimal';
-} else
-	$time_fmt = 'time';
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
@@ -146,14 +156,14 @@ function format_time($time) {
 }
 
 function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
-	print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"" . $script .
+	print "<a href=\"javascript:void(0)\" onclick=window.open(\"" . $script .
 		"?$variable=$info\",\"$title\",\"location=0,directories=no,status=no,scrollbar=yes," .
 		"menubar=no,resizable=1,width=500,height=200\")>";
 }
 
 function make_user_link($uid, $string) {
 	global $ymdStr;
-	echo "<a href=\"report_user.php?" . $ymdStr . "&uid=$uid&mode=&monthly\">" . 
+	echo "<a href=\"report_user.php?" . $ymdStr . "&amp;uid=$uid&amp;mode=&monthly\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 
@@ -207,20 +217,12 @@ function make_index($data,$order) {
 	return $index;
 }
 
-$Location="$_SERVER[PHP_SELF]?$ymdStr&orderby=$orderby";
-$post="&orderby=$orderby";
+$Location="$_SERVER[PHP_SELF]?$ymdStr&amp;orderby=$orderby";
+$post="&amp;orderby=$orderby";
 
+if(!$export_excel) 
+	require("report_javascript.inc");
 ?>
-
-<?php if(!$export_excel) { ?>
-<script type="text/javascript">
-<!--
-function popupPrintWindow() {
-	window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
-}
-//-->
-</script>
-<?php } //end if !export_excel ?>
 
 <html>
 <head>
@@ -249,13 +251,16 @@ function popupPrintWindow() {
 		echo "<body ";
 		include ("body.inc");
 		echo ">\n";
+		echo "<div id=\"header\">";
 		include ("banner.inc");
-		$MOTD = 0;  //don't want the MOTD printed
+		$motd = 0;  //don't want the motd printed
 		include("navcal/navcal_monthly.inc");
+		echo "</div>";
 	}
 ?>
 
 <?php if(!$export_excel) { ?>
+<form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="get">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
@@ -265,21 +270,16 @@ function popupPrintWindow() {
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" width="34%" nowrap class="outer_table_heading">
+						<td width="15%">&nbsp;</td>
+						<td align="left" nowrap class="outer_table_heading">
 						<?php echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						</td>
 						<?php if (!$print): ?>
-							<td  align="center" width="10%" >
-							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
-							</td>
-							<td  align="center" width="33%">
-							<?php 
-								print "<button onClick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
-							?>
+							<td  align="right" width="15%" nowrap >
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>
 						<?php endif; ?>
-						<td align="right" width="33%" nowrap>&nbsp;
-						</td>
 					</tr>
 				</table>
 
@@ -290,13 +290,20 @@ function popupPrintWindow() {
 		<tr>
 			<td>
 
-<?php } // end if !export_excel ?>
+<?php } // end if !export_excel
+else {  //create Excel header
+	echo "<h4>Report Everything<br />";
+	echo "Month of " . date("F, Y", $startDate);
+	echo "</h4>";
+}
+?>
+
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 					<tr class="inner_table_head">
 					<?php
-						$userPost="$ymdStr&orderby=username";
-						$projPost="$ymdStr&orderby=project";
-						$taskPost="$ymdStr&orderby=task";
+						$userPost="$ymdStr&amp;orderby=username";
+						$projPost="$ymdStr&amp;orderby=project";
+						$taskPost="$ymdStr&amp;orderby=task";
 						if($orderby=='username'): ?>
 							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
 							<td class="inner_table_column_heading">First Name</td>
@@ -373,7 +380,7 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 	if ($num == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
-		print "			<i><br>No hours recorded.<br><br></i>\n";
+		print "			<i><br />No hours recorded.<br /><br /></i>\n";
 		print "		</td>\n";
 		print "	</tr>\n";
 	} else {
@@ -516,9 +523,15 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 	</tr>
 </table>
 
-<?php if (!$print) include ("footer.inc"); ?>
-<?php } //end if !export_excel ?>
-</BODY>
+</form>
+<?php if (!$print) {
+		echo "<div id=\"footer\">"; 
+		include ("footer.inc"); 
+		echo "</div>";
+	}
+} //end if !export_excel 
+?>
+</body>
 </HTML>
 <?php
 // vim:ai:ts=4:sw=4

@@ -27,7 +27,7 @@ $clock_off_time_min = $_REQUEST['clock_off_time_min'];
 $clockonoff = $_REQUEST['clockonoff'];
 
 // create the command menu cancel option
-$commandMenu->add(new TextCommand("Cancel", true, "$destination?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&year=$year&month=$month&day=$day"));
+$commandMenu->add(new TextCommand("Cancel", true, "$destination?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;year=$year&amp;month=$month&amp;day=$day"));
 
 ?>
 <html>
@@ -42,20 +42,20 @@ include ("header.inc");
 include ("banner.inc");
 ?>
 <form action="clock_action.php" method="post">
-	<input type="hidden" name="origin" value="<?php echo $origin; ?>">
-	<input type="hidden" name="destination" value="<?php echo $destination; ?>">
-	<input type="hidden" name="clock_on_time_hour" value="<?php echo $clock_on_time_hour; ?>">
-	<input type="hidden" name="clock_off_time_hour" value="<?php echo $clock_off_time_hour; ?>">
-	<input type="hidden" name="clock_on_time_min" value="<?php echo $clock_on_time_min; ?>">
-	<input type="hidden" name="clock_off_time_min" value="<?php echo $clock_off_time_min; ?>">
-	<input type="hidden" name="year" value="<?php echo $year ?>">
-	<input type="hidden" name="month" value="<?php echo $month; ?>">
-	<input type="hidden" name="day" value="<?php echo $day; ?>">
-	<input type="hidden" name="client_id" value="<?php echo $client_id; ?>">
-	<input type="hidden" name="proj_id" value="<?php echo $proj_id; ?>">
-	<input type="hidden" name="task_id" value="<?php echo $task_id; ?>">
-	<input type="hidden" name="clockonoff" value="<?php echo $clockonoff; ?>">
-	<input type="hidden" name="log_message_presented" value="1">
+	<input type="hidden" name="origin" value="<?php echo $origin; ?>" />
+	<input type="hidden" name="destination" value="<?php echo $destination; ?>" />
+	<input type="hidden" name="clock_on_time_hour" value="<?php echo $clock_on_time_hour; ?>" />
+	<input type="hidden" name="clock_off_time_hour" value="<?php echo $clock_off_time_hour; ?>" />
+	<input type="hidden" name="clock_on_time_min" value="<?php echo $clock_on_time_min; ?>" />
+	<input type="hidden" name="clock_off_time_min" value="<?php echo $clock_off_time_min; ?>" />
+	<input type="hidden" name="year" value="<?php echo $year ?>" />
+	<input type="hidden" name="month" value="<?php echo $month; ?>" />
+	<input type="hidden" name="day" value="<?php echo $day; ?>" />
+	<input type="hidden" name="client_id" value="<?php echo $client_id; ?>" />
+	<input type="hidden" name="proj_id" value="<?php echo $proj_id; ?>" />
+	<input type="hidden" name="task_id" value="<?php echo $task_id; ?>" />
+	<input type="hidden" name="clockonoff" value="<?php echo $clockonoff; ?>" />
+	<input type="hidden" name="log_message_presented" value="1" />
 
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -95,7 +95,7 @@ include ("banner.inc");
 				<table width="100%" border="0" class="table_bottom_panel">
 					<tr>
 						<td align="center">
-							<input type="submit" value="Done">
+							<input type="submit" value="Done" />
 						</td>
 					</tr>
 				</table>
@@ -115,5 +115,8 @@ include ("banner.inc");
 <?php
 include ("footer.inc");
 ?>
-	</body>
+</body>
 </html>
+<?php
+// vim:ai:ts=4:sw=4
+?>

@@ -1,4 +1,4 @@
-<script language="Javascript">
+<script type="text/javascript">
 	//define the hash table
 	var projectTasksHash = {};
 	var clientProjectsHash = {};
@@ -428,4 +428,5 @@ for ($i=0; $i<$num4; $i++) {
 		return suggestedTaskId;
 	}
 
+// vim:ai:ts=4:sw=4:filetype=javascript
 </script>

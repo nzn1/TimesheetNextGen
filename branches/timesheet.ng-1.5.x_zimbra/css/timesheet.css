@@ -62,7 +62,7 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 
 .inner_table_head { border-bottom: 1px solid #5271CC; background-color: #433B94; }
 
-.inner_table_column_heading { font-weight: bold; color: font-family: Verdana, Arial, sans-serif; cursor:default; color: #A4A4C7; }
+.inner_table_column_heading { font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #A4A4C7; }
 .inner_table_column_heading a:link { font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #FFFFFF; }
 .inner_table_column_heading a:visited { font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #FFFFFF; }
 .inner_table_column_heading a:hover { font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #E9AD4D; }
