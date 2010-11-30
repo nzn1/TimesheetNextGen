@@ -36,8 +36,6 @@ $CfgTimeFormat = getTimeFormat();
 //include date input classes
 include "form_input.inc";
 
-$post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";   //THIS LINE ISN'T USED!!
-
 ?>
 <html>
 <head>

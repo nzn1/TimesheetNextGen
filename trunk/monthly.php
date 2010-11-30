@@ -430,8 +430,12 @@ include ("navcal/navcal_monthly.inc");
 					print "<tr><td valign=\"top\" class=\"project_name_small\">&nbsp;$projectName</td></tr>";
 					foreach($projectArray as $taskName => $taskArray) {
 						print "<tr><td valign=\"top\" class=\"task_name_small\">&nbsp;&nbsp;$taskName</td></tr>";
-						foreach($taskArray as $taskStr) {
-							print "<tr><td valign=\"top\" class=\"task_time_small\">&nbsp;&nbsp;&nbsp;$taskStr</td></tr>";
+						if (count($taskArray) == 2)  // Special case for exactly two entries
+							print "<tr><td valign=\"top\" class=\"task_time_small\">&nbsp;&nbsp;&nbsp;$taskArray[0]&nbsp;$taskArray[1]</td></tr>";
+						else {
+							foreach($taskArray as $taskStr) {
+								print "<tr><td valign=\"top\" class=\"task_time_small\">&nbsp;&nbsp;&nbsp;$taskStr</td></tr>";
+							}
 						}
 					}
 				}

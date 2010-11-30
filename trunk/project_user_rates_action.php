@@ -74,11 +74,7 @@ if ($action == "show_users") {
 		if (empty($rateid) || empty($username)) {
 			continue;
 		}
-		//if (array_key_exists($username, $user_array)) {
-			$query = "update $ASSIGNMENTS_TABLE set rate_id = '$rateid' where proj_id = '$proj_id' and username = '$username'";
-		//} else {
-		//	$query = "insert into $PROJECT_USER_RATE_table (proj_id, username, rate_id) values ('$proj_id', '$username', '$rateid')";
-		//}
+		$query = "update $ASSIGNMENTS_TABLE set rate_id = '$rateid' where proj_id = '$proj_id' and username = '$username'";
 		list($qh,$num) = dbQuery($query);
 
 		$n++;

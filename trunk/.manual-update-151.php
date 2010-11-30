@@ -66,8 +66,8 @@ function add_column_if_not_exist($table, $column, $column_attr ){
 
 function update_the_database() {
 /*
-DELETE __table_PREFIX__config WHERE config_set_id=0;
-INSERT INTO __table_PREFIX__config (config_set_id, version, headerhtml, bodyhtml, footerhtml, errorhtml, bannerhtml, tablehtml, locale, timezone, timeformat, weekstartday, useLDAP, LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, LDAPBindUsername, LDAPBindPassword, LDAPBindByUser, aclStopwatch, aclDaily, aclWeekly, aclMonthly, aclSimple, aclClients, aclProjects, aclTasks, aclReports, aclRates, aclAbsences) 
+DELETE __TABLE_PREFIX__config WHERE config_set_id=0;
+INSERT INTO __TABLE_PREFIX__config (config_set_id, version, headerhtml, bodyhtml, footerhtml, errorhtml, bannerhtml, tablehtml, locale, timezone, timeformat, weekstartday, useLDAP, LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, LDAPBindUsername, LDAPBindPassword, LDAPBindByUser, aclStopwatch, aclDaily, aclWeekly, aclMonthly, aclSimple, aclClients, aclProjects, aclTasks, aclReports, aclRates, aclAbsences) 
 VALUES (0, '1.5.1', '<meta name=\"description\" content=\"Timesheet Next Gen\">\n<link href=\"css/timesheet.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"shortcut icon\" href=\"images/favicon.ico\">', 'link=\"#004E8A\" vlink=\"#171A42\"', '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n<tr><td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">\nTimesheetNextGen\n<br /><span style=\"font-size: 9px;\"><b>Page generated %time% %date% (%timezone% time)</b></span>\n</td></tr></table>', '<table border=\"0\" cellpadding=5 width=\"100%\">\n<tr>\n  <td><font size=\"+2\" color=\"red\">%errormsg%</font></td>\n</tr></table>\n<p>Please go <a href=\"javascript:history.back()\">Back</a> and try again.</p>', '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>\n<td colspan=\"2\" background=\"images/timesheet_background_pattern.gif\"><img src=\"images/timesheet_banner.gif\" alt="Timesheet Banner"/></td>\n</tr><tr>\n<td style=\"background-color: #F2F3FF; padding: 3;\">%commandmenu%</td>\n<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">You are logged in as %username%</td>\n</tr><tr>\n<td colspan=\"2\" height=\"1\" style=\"background-color: #758DD6;\"><img src=\"images/spacer.gif\" alt="" width=\"1\" height=\"1\" /></td>\n</tr></table>', '', '', 'Europe/Zurich', '12', 1, 0, 'ldap', 'watson', 389, 'dc=watson', 'cn', 'base', '', '3', '', '', '0', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic', 'Basic');
 */
 	global $TIMESHEET_VERSION, $DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS;
@@ -122,7 +122,7 @@ function run_sql_script($sqlfile) {
 
 	$contents = file_get_contents($sqlfile);
 	// finalise the script
-	$key_words = array("__TIMESHEET_VERSION__", "__table_PREFIX__", "__DBPASSWORDFUNCTION__");
+	$key_words = array("__TIMESHEET_VERSION__", "__TABLE_PREFIX__", "__DBPASSWORDFUNCTION__");
 	$key_values = array(INSTALLER_VERSION, $db_prefix, $DATABASE_PASSWORD_FUNCTION);
 	$contents = str_replace($key_words, $key_values, $contents);
 
