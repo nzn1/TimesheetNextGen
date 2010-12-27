@@ -1,16 +1,29 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', true);
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclClients')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclClients'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
+$loggedInUser = strtolower($_SESSION['loggedInUser']);
+
+if (empty($loggedInUser))
+	errorPage("Could not determine the logged in user");
+
+if (empty($contextUser))
+	errorPage("Could not determine the context user");
 
 //load local vars from superglobals
 $client_id = $_REQUEST['client_id'];
@@ -18,6 +31,7 @@ $client_id = $_REQUEST['client_id'];
 //define the command menu
 $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 
+$CLIENT_TABLE = tbl::getClientTable();
 //build the query
 $query = "SELECT client_id, organisation, description, address1, address2,".
 			"city, country, postal_code, contact_first_name, contact_last_name,".
@@ -34,10 +48,8 @@ $data = dbResult($qh);
 <html>
 <head>
 <title>Modify client information</title>
-<?php include ("header.inc");?>
+
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php include ("banner.inc"); ?>
 
 <form action="client_action.php" method="post">
 <input type="hidden" name="action" value="edit" />
@@ -46,10 +58,6 @@ $data = dbResult($qh);
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
@@ -57,9 +65,6 @@ $data = dbResult($qh);
 						</td>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -143,18 +148,8 @@ $data = dbResult($qh);
 		</tr>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
 		</td>
 	</tr>
 </table>
 
 </form>
-
-<?php include("footer.inc"); ?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>

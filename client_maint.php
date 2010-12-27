@@ -1,23 +1,34 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclClients')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclClients'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
-
 $contextUser = strtolower($_SESSION['contextUser']);
+$loggedInUser = strtolower($_SESSION['loggedInUser']);
+
+if (empty($loggedInUser))
+	errorPage("Could not determine the logged in user");
+
+if (empty($contextUser))
+	errorPage("Could not determine the context user");
 
 //make sure "No Client exists with client_id of 1
 //execute the query
+$CLIENT_TABLE = tbl::getClientTable();
 tryDbQuery("INSERT INTO $CLIENT_TABLE VALUES (1,'No Client', 'This is required, do not edit or delete this client record', '', '', '', '', '', '', '', '', '', '', '', '', '', '');");
 tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1'");
 
@@ -26,9 +37,7 @@ tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1
 <HTML>
 <head>
 <title>Client Management Page</title>
-<?php
-include ("header.inc");
-?>
+
 <script type="text/javascript">
 
 	function delete_client(clientId) {
@@ -38,39 +47,21 @@ include ("header.inc");
 
 </script>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php
-include ("banner.inc");
-?>
 <form action="client_action.php" method="post">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td width="100%" class="face_padding_cell">
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap class="outer_table_heading">
-							Clients
-						</td>
-						<td align="right">
-							<a href="client_add.php" class="outer_table_action">Add new client</a>
-						</td>
-					</tr>
-				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc");
-
-?>
+	<table width="100%" border="0">
+		<tr>
+		<td align="left" nowrap class="outer_table_heading">
+			Clients
+		</td>
+		<td align="right">
+			<a href="client_add.php" class="outer_table_action">Add new client</a>
+		</td>
+		</tr>
+	</table>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
+		<!--  table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body" -->
 <?php
 
 //execute the query
@@ -83,13 +74,13 @@ if ($num == 0) {
 else {
 
 ?>
-					<tr class="inner_table_head">
-						<td class="inner_table_column_heading">Organisation</td>
-						<td class="inner_table_column_heading">Contact Name</td>
-						<td class="inner_table_column_heading">Phone</td>
-						<td class="inner_table_column_heading">Contact Email</td>
-						<td class="inner_table_column_heading"><i>Actions</i></td>
-					</tr>
+			<tr class="inner_table_head">
+				<td class="inner_table_column_heading">Organisation</td>
+				<td class="inner_table_column_heading">Contact Name</td>
+				<td class="inner_table_column_heading">Phone</td>
+				<td class="inner_table_column_heading">Contact Email</td>
+				<td class="inner_table_column_heading"><i>Actions</i></td>
+			</tr>
 <?php
 $count = 0;
 	while ($data = dbResult($qh)) {
@@ -119,24 +110,14 @@ $count = 0;
 	}
 }
 ?>
-				</table>
+				
 			</td>
 		</tr>
 	</table>
-
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
-include ("footer.inc");
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>
+

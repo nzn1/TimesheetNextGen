@@ -1,22 +1,49 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
 
+
+$contextUser = strtolower($_SESSION['contextUser']);
+$loggedInUser = strtolower($_SESSION['loggedInUser']);
+
+if (empty($loggedInUser))
+	errorPage("Could not determine the logged in user");
+
+if (empty($contextUser))
+	errorPage("Could not determine the context user");
+
 // Connect to database.
-$dbh = dbConnect();
+//$dbh = dbConnect();
 
 //define the command menu
-include("timesheet_menu.inc");
+//include("timesheet_menu.inc");
 
 ?>
 <head><title>Rates Management Page</title>
 <?php
-include ("header.inc");
+$layout = Common::getLayout();
+
+//$post="";
+PageElements::setHead("<title>".Config::getMainTitle()." - Simple Weekly Timesheet for ".$contextUser."</title>");
+
+if (isset($popup))
+	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+
 ?>
 <script type="text/javascript" type="text/javascript">
 
@@ -40,10 +67,7 @@ include ("header.inc");
 	}
 </script>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php
-include ("banner.inc");
-?>
+
 <form action="rate_action.php" name="rateForm" method="post">
 <input type="hidden" name="action" value="" />
 <input type="hidden" name="rate_id" value="" />
@@ -51,32 +75,17 @@ include ("banner.inc");
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap class="outer_table_heading">
-								Rates:
-						</td>
-					</tr>
-				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
-
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-					<tr class="inner_table_head">
-						<td class="inner_table_column_heading">&nbsp;Rate Id</td>
-						<td class="inner_table_column_heading">&nbsp;Bill Rate(per hour)</td>
-						<td class="inner_table_column_heading">&nbsp;<i>Actions</i></td>
-					</tr>
+			<h1>Rates:</h1>
+		</td>
+	</tr>
+	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
+	<tr class="inner_table_head">
+		<td class="inner_table_column_heading">&nbsp;Rate Id</td>
+		<td class="inner_table_column_heading">&nbsp;Bill Rate(per hour)</td>
+		<td class="inner_table_column_heading">&nbsp;<i>Actions</i></td>
+	</tr>
 <?php
-
+$RATE_TABLE = tbl::getRateTable();
 list($qh,$num) = dbQuery("select * from $RATE_TABLE where rate_id != 1 order by rate_id");
 
 $count = 0;
@@ -96,68 +105,29 @@ while ($data = dbResult($qh)) {
 	$count++;
 }
 ?>
-				</table>
-			</td>
-		</tr>
-	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
-		</td>
 	</tr>
 </table>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap class="outer_table_heading">
-							<a name="AddEdit">	Add/Update Rates:</a>
-						</td>
-					</tr>
-				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
-
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-				<table width="100%" border="0" class="table_body">
-					<tr>
-						<td>Bill rate(per hour):&nbsp;<input size="5" name="bill_rate" style="width: 25%;" />
-							<input type="button" name="addupdate" value="Add/Update Rates" onclick="javascript:addRate()" class="bottom_panel_button" /></td>
-					</tr>
-					<tr>
-					<td align="left">
-					    <a href="project_user_rates.php">Rate Selection</a>
-					</td>
-					</tr>
-				</table>
-			</td>
-
-		</tr>
-	</table>
-
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
+		<!--  td width="100%" class="face_padding_cell" -->
+		<td align="left" nowrap class="outer_table_heading">
+			<a name="AddEdit">	Add/Update Rates:</a>
 		</td>
 	</tr>
+
+	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
+	<tr>
+		<td>Bill rate(per hour):&nbsp;<input size="5" name="bill_rate" style="width: 25%;" />
+				<input type="button" name="addupdate" value="Add/Update Rates" onclick="javascript:addRate()" class="bottom_panel_button" /></td>
+	</tr>
+	<tr>
+		<td align="left">
+		    <a href="project_user_rates.php">Rate Selection</a>
+		</td>
+	</tr>
+
 </table>
 
 </form>
-<?php
-include ("footer.inc");
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>
