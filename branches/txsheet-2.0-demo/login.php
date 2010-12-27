@@ -50,48 +50,30 @@ PageElements::setBodyOnLoad("document.loginForm.username.focus();");
 
 <table border="0" cellspacing="0" cellpadding="0" align="center">
 	<tr>
-<?php if($siteclosed) { ?>
+<?php if(isset($siteclosed)) { 
+		if ($siteclosed) {?>
 		<td style="padding-top: 40;">
 			<font face="Verdana, Arial, Helvetica, sans-serif">
 			<p align="center"><font color="red"><strong>The Site is temporarily closed.</strong></font></p>
 			<p align="center">The timesheet system is temporarily closed for maintenance.</p>
 			<p align="center">If you are not an Administrator, you will not be allowed to login; please check back later.</p>
 			</font>
-<?php } else { ?>
+<?php 	}
+	} else { ?>
 		<td style="padding-top: 100;">
 <?php } ?>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1new.inc"); ?>
-
-				<table border="0">
-					<tr>
-						<td align="left" nowrap class="outer_table_heading" nowrap>
-							Timesheet Login
-						</td>
-					</tr>
-				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2new.inc"); ?>
-
-			<table width="300" cellspacing="0" cellpadding="5" class="box">
-				<tr>
-					<td><img class="login_image" src="images/spacer.gif" alt="" ></td>
-					<td class="label">Username:<br /><input type="text" name="username" size="25" maxlength="25" /></td>
-					<td class="label">Password:<br /><input type="password" name="password" size="25" maxlength="25" /></td>
-					<td class="label"><br /><input type="submit" name="Login" value="submit" /></td>
-				</tr>
-				<?php	if (isset($loginFailure))
-							printMessage(Site::getAuthenticationManager()->getErrorMessage());
-						else if (isset($_REQUEST["clearanceRequired"]))
-							printMessage("$_REQUEST[clearanceRequired] clearance is required for the page you have tried to access.");
-				?>
-			</table>
-
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3new.inc"); ?>
-
+			<h1> Timesheet Login</h1>
+			<tr>
+				<td class="label">Username:<br /><input type="text" name="username" size="25" maxlength="25" /></td>
+				<td class="label">Password:<br /><input type="password" name="password" size="25" maxlength="25" /></td>
+				<td class="label"><br /><input type="submit" name="Login" value="Login" /></td>
+			</tr>
+			<?php	if (isset($loginFailure))
+						printMessage(Site::getAuthenticationManager()->getErrorMessage());
+					else if (isset($_REQUEST["clearanceRequired"]))
+						printMessage("$_REQUEST[clearanceRequired] clearance is required for the page you have tried to access.");
+			?>
 		</td>
 	</tr>
 </table>
