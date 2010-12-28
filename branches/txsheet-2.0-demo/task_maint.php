@@ -1,19 +1,19 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/task_maint.php,v 1.11 2005/05/17 03:38:37 vexil Exp $
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclMonthly')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclMonthly'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
 
 $contextUser = strtolower($_SESSION['contextUser']);
 
@@ -21,14 +21,19 @@ if (empty($proj_id))
 	$proj_id = 1;
 
 //make sure the selected project is valid for this client
+$client_id = gbl::getClientId();
 if ($client_id != 0) {
 	if (!isValidProjectForClient($proj_id, $client_id))
-		$proj_id = getValidProjectForClient($client_id);
+		$proj_id = Common::getValidProjectForClient($client_id);
 }
 
 if (isset($_REQUEST['page']) && $_REQUEST['page'] != 0) { $page  = $_REQUEST['page']; } else { $page=1; };
-$results_per_page = getTaskItemsPerPage();
+$results_per_page = Common::getTaskItemsPerPage();
 $start_from = ($page-1) * $results_per_page;
+
+$PROJECT_TABLE = tbl::getProjectTable();
+$TASK_TABLE = tbl::getTaskTable();
+$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
 
 //set up the required queries
 $query_task = "SELECT DISTINCT task_id, name, description,status, ".
@@ -92,9 +97,7 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 <html>
 <head>
 	<title>Tasks</title>
-<?php
-include ("header.inc");
-?>
+
 <script type="text/javascript">
 
 	function delete_task(projectId, taskId) {
@@ -111,19 +114,12 @@ include ("header.inc");
 	}
 </script>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php
-include ("banner.inc");
-?>
 
 <form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
 <input type="hidden" name="page" />
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -134,7 +130,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><?php client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
+												<td width="100%"><?php Common::client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -146,7 +142,7 @@ include ("banner.inc");
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
 												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><?php project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false); ?></td>
+												<td width="100%"><?php Common::project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false); ?></td>
 											</tr>
 											<tr>
 												<td height="1"></td>
@@ -174,9 +170,6 @@ include ("banner.inc");
 						</td>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 			<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 				<tr>
@@ -259,19 +252,8 @@ include ("banner.inc");
 		</tr>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
-include ("footer.inc");
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>
