@@ -1,27 +1,43 @@
 <?php
-/**
- * Simple function to replicate PHP 5 behaviour
- */
-//$Header: /cvsroot/tsheet/timesheet.php/proj_maint.php,v 1.10 2005/05/17 03:38:37 vexil Exp $
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
-
 $contextUser = strtolower($_SESSION['contextUser']);
+$loggedInUser = strtolower($_SESSION['loggedInUser']);
+
+if (empty($loggedInUser))
+	errorPage("Could not determine the logged in user");
+
+if (empty($contextUser))
+	errorPage("Could not determine the context user");
+	
+$contextUser = strtolower($_SESSION['contextUser']);
+$client_id = gbl::getClientId();
 
 //set seleced project status to started when nothing is chosen in the dropdown list
 $proj_status = isset($_REQUEST['proj_status']) ? $_REQUEST['proj_status'] : "Started";
+
+$PROJECT_TABLE = tbl::getProjectTable();
+$CLIENT_TABLE = tbl::getClientTable();
+$USER_TABLE = tbl::getUserTable();
+$TIMES_TABLE = tbl::getTimesTable();
+$ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
+$RATE_TABLE = tbl::getRateTable();
+$TASK_TABLE = tbl::getTaskTable();
 
 //set up query
 $query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, ".
@@ -42,10 +58,10 @@ $query .= "$PROJECT_TABLE.proj_id > 0 AND $CLIENT_TABLE.client_id = $PROJECT_TAB
 						"ORDER BY $PROJECT_TABLE.title";
 
 if (isset($_POST['page']) && $_POST['page'] != 0) { $page  = $_POST['page']; } else { $page=1; }; 
-$results_per_page = getProjectItemsPerPage();
+$results_per_page = Common::getProjectItemsPerPage();
 $start_from = ($page-1) * $results_per_page; 
 $query .= " LIMIT $start_from, $results_per_page";
-//$sql = “SELECT * FROM students ORDER BY name ASC LIMIT $start_from, 20”; 
+//$sql = ï¿½SELECT * FROM students ORDER BY name ASC LIMIT $start_from, 20ï¿½; 
 //$rs_result = mysql_query ($sql, $connection);  
 //execute the query
 list($qh, $num) = dbQuery($query);
@@ -100,9 +116,7 @@ function writePageLinks($page, $results_per_page, $num2)
 <html>
 <head>
 <title>Projects</title>
-<?php
-include ("header.inc");
-?>
+
 <script type="text/javascript" type="text/javascript">
 
 	function delete_project(clientId, projectId) {
@@ -120,17 +134,11 @@ include ("header.inc");
 	}
 </script>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php
-include ("banner.inc");
-?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
 		<form method="post" name="projectFilter" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
 			<input type="hidden" name="page" value="English" />
 			<table width="100%" border="0">
@@ -139,8 +147,8 @@ include ("banner.inc");
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td><table width="50"><tr><td>Client:</td></tr></table></td>
-								<td width="100%"><?php client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
-								<td>&nbsp;Status:&nbsp;</td><td><?php proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>
+								<td width="100%"><?php Common::client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
+								<td>&nbsp;Status:&nbsp;</td><td><?php Common::proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>
 							</tr>
 						</table>
 					</td>
@@ -156,8 +164,6 @@ include ("banner.inc");
 				</tr>
 			</table>
 		</form>
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 			<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 				<tr>
@@ -236,7 +242,7 @@ include ("banner.inc");
 																<table border="0" cellpadding="0" cellspacing="0">
 																	<tr>
 																		<td>
-																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? formatSeconds($bill_data["total_time"]): "0h 0m"); ?><br />
+																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? Common::formatSeconds($bill_data["total_time"]): "0h 0m"); ?><br />
 																			<span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? sprintf("%01.2f",$bill_data["billed"]): "0.00"); ?></b>
 																		</td>
 																	</tr>
@@ -316,17 +322,5 @@ include ("banner.inc");
 	</tr>
 			</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
 		</td>
 </table>
-
-<?php
-include ("footer.inc");
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>

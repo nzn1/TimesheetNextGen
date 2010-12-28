@@ -1,24 +1,26 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/user_maint.php,v 1.7 2005/02/03 09:15:44 vexil Exp $
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu
-include("timesheet_menu.inc");
-
 ?>
 <head><title>User Management Page</title>
-<?php
-include ("header.inc");
-?>
+
 <script type="text/javascript">
 
 	function deleteUser(uid, username) {
@@ -82,49 +84,37 @@ include ("header.inc");
 
 </script>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php
-include ("banner.inc");
-?>
+
 <form action="user_action.php" name="userForm" method="post">
 <input type="hidden" name="action" value="" />
 <input type="hidden" name="uid" value="" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap class="outer_table_heading">
-							Employees/Contractors:
-						</td>
-						<td align="right" nowrap >
-							<a href="javascript:goClone()">Copy Projects/Tasks between users</a></td>
-						</td>
-					</tr>
-				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
-
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-					<tr class="inner_table_head">
-						<td class="inner_table_column_heading">First Name</td>
-						<td class="inner_table_column_heading">Last Name</td>
-						<td align="center" class="inner_table_column_heading">Active</td>
-						<td class="inner_table_column_heading">Access</td>
-						<td class="inner_table_column_heading">Login Username</td>
-						<td class="inner_table_column_heading">Email Address</td>
-						<td class="inner_table_column_heading"><i>Actions</i></td>
-					</tr>
+		<!--  td width="100%" class="face_padding_cell" -->
+		<td align="left" nowrap class="outer_table_heading">
+			Employees/Contractors:
+		</td>
+		<td align="right" nowrap >
+			<a href="javascript:goClone()">Copy Projects/Tasks between users</a></td>
+		</td>
+	</tr>
+		<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
+				<!--  table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body" -->
+	<tr class="inner_table_head">
+		<td class="inner_table_column_heading">First Name</td>
+		<td class="inner_table_column_heading">Last Name</td>
+		<td align="center" class="inner_table_column_heading">Active</td>
+		<td class="inner_table_column_heading">Access</td>
+		<td class="inner_table_column_heading">Login Username</td>
+		<td class="inner_table_column_heading">Email Address</td>
+		<td class="inner_table_column_heading"><i>Actions</i></td>
+	</tr>
 <?php
+$PROJECT_TABLE = tbl::getProjectTable();
+$TASK_TABLE = tbl::getTaskTable();
+$USER_TABLE = tbl::getUserTable();
+$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
 
 list($qh,$num) = dbQuery("SELECT * FROM $USER_TABLE WHERE username!='guest' ORDER BY status desc, last_name, first_name");
 
@@ -161,93 +151,50 @@ while ($data = dbResult($qh)) {
 	print "</tr>\n";
 }
 ?>
-				</table>
-			</td>
-		</tr>
-	</table>
-
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
 		</td>
 	</tr>
-</table>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+<!--  table width="100%" border="0" cellspacing="0" cellpadding="0" -->
 	<tr>
-		<td width="100%" class="face_padding_cell">
+		<td align="left" nowrap class="outer_table_heading">
+			<a name="AddEdit">	Add/Update Employee/Contractor:</a>
+		</td>
+		<td align="right" nowrap >
+			<a href="javascript:goClone()">Copy Projects/Tasks between users</a></td>
+		</td>
+	</tr>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap class="outer_table_heading">
-							<a name="AddEdit">	Add/Update Employee/Contractor:</a>
-						</td>
-						<td align="right" nowrap >
-							<a href="javascript:goClone()">Copy Projects/Tasks between users</a></td>
-						</td>
-					</tr>
-				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
-
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-				<table width="100%" border="0" class="table_body">
-					<tr>
-						<td>First name:<br><input size="20" name="first_name" style="width: 100%;"></td>
-						<td>Last name:<br><input size="20" name="last_name" style="width: 100%;"></td>
-						<td>Login username:<br /><input size="15" name="username" style="width: 100%;" /></td>
-						<td>Email address:<br /><input size="35" name="email_address" style="width: 100%;" /></td>
-						<td>Password:<br /><input type="password" size="20" name="password" style="width: 100%;" AUTOCOMPLETE="OFF" /></td>
-					</tr>
-					<tr>
-						<td colspan="2" align="left">
-							<input type="checkbox" name="checkAdmin" id="checkAdmin" value="" onclick="onCheckClearance();" />This user is an administrator
-							<input type="hidden" name="isAdministrator" id="isAdministrator" value="false" />
-						</td>
-						<td colspan="2" align="left">
-							<input type="checkbox" name="checkManager" id="checkManager" value="" onclick="onCheckClearance();" />This user is a project manager
-							<input type="hidden" name="isManager" id="isManager" value="false" />
-						</td>
-						<td align="left">
-							<input type="checkbox" name="checkActive" id="checkActive" value="" onclick="onCheckActive();" />is Active
-							<input type="hidden" name="isActive" id="isActive" value="false" />
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<table width="100%" border="0" class="table_bottom_panel">
-					<tr>
-						<td align="center">
-							<input type="button" name="addupdate" value="Add/Update Employee/Contractor" onclick="javascript:addUser()" class="bottom_panel_button" />
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-	</table>
-
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
+	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
+	<tr>
+		<!-- table width="100%" border="0" class="table_body" -->
+	<tr>
+		<td>First name:<br><input size="20" name="first_name" style="width: 100%;"></td>
+		<td>Last name:<br><input size="20" name="last_name" style="width: 100%;"></td>
+		<td>Login username:<br /><input size="15" name="username" style="width: 100%;" /></td>
+		<td>Email address:<br /><input size="35" name="email_address" style="width: 100%;" /></td>
+		<td>Password:<br /><input type="password" size="20" name="password" style="width: 100%;" AUTOCOMPLETE="OFF" /></td>
+	</tr>
+	<tr>
+		<td colspan="2" align="left">
+			<input type="checkbox" name="checkAdmin" id="checkAdmin" value="" onclick="onCheckClearance();" />This user is an administrator
+			<input type="hidden" name="isAdministrator" id="isAdministrator" value="false" />
+		</td>
+		<td colspan="2" align="left">
+			<input type="checkbox" name="checkManager" id="checkManager" value="" onclick="onCheckClearance();" />This user is a project manager
+			<input type="hidden" name="isManager" id="isManager" value="false" />
+		</td>
+		<td align="left">
+			<input type="checkbox" name="checkActive" id="checkActive" value="" onclick="onCheckActive();" />is Active
+			<input type="hidden" name="isActive" id="isActive" value="false" />
+		</td>
+	</tr>
+				<!--  table width="100%" border="0" class="table_bottom_panel" -->
+	<tr>
+		<td align="center">
+			<input type="button" name="addupdate" value="Add/Update Employee/Contractor" onclick="javascript:addUser()" class="bottom_panel_button" />
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
-include ("footer.inc");
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>
