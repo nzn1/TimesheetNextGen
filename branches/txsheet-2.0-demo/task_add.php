@@ -35,10 +35,10 @@ Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.ba
 <form action="task_action.php" method="post">
 <input type="hidden" name="action" value="add" />
 <input type="hidden" name="proj_id" value="<?php echo $proj_id ?>" />
-
+<div id="inputArea">
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading" nowrap>
+		<td class="outer_table_heading">
 			<h1>Add New Task:</h1>
 		</td>
 	</tr>
@@ -65,5 +65,5 @@ Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.ba
 	</tr>
 
 </table>
-
+</div>
 </form>

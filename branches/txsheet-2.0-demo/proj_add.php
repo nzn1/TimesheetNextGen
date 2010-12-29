@@ -38,11 +38,11 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 
 <form action="proj_action.php" method="post">
 <input type="hidden" name="action" value="add" />
-
+<div id="inputArea">
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading" nowrap>
-			<h1>Add New Project</h1>
+		<td class="outer_table_heading">
+		<td>	<h1>Add New Project</h1>
 		</td>
 	</tr>
 	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
@@ -90,5 +90,5 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 		</td>
 	</tr>
 </table>
-
+</div>
 </form>
