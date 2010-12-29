@@ -79,10 +79,11 @@ PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$cont
 <form action="proj_action.php" method="post">
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
-
-<table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
+<div id="inputArea">
+<!--  table width="600" align="center" border="0" cellspacing="0" cellpadding="0" -->
+<table>
 	<tr>
-		<td align="left" nowrap class="outer_table_heading" nowrap>
+		<td class="outer_table_heading">
 			<h1>Edit Project: <?php echo stripslashes($data["title"]); ?> </h1>
 		</td>
 	</tr>
@@ -131,5 +132,5 @@ PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$cont
 		</td>
 	</tr>
 </table>
-
+</div>
 </form>

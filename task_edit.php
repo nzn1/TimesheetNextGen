@@ -63,10 +63,10 @@ while ($datanext = dbResult($qh)) {
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 <input type="hidden" name="task_id" value="<?php echo $data["task_id"]; ?>" />
-
+<div id="inputArea">
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading" nowrap>
+		<td class="outer_table_heading">
 			<h1>Edit Task: <?php echo $data["name"]; ?> </h1>
 		</td>
 	</tr>
@@ -94,5 +94,5 @@ while ($datanext = dbResult($qh)) {
 		</td>
 	</tr>
 </table>
-
+</div>
 </form>
