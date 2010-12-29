@@ -17,12 +17,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 include('submit.class.php');
 $sc = new SubmitClass();
 
-// Connect to database.
-//$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-//include("timesheet_menu.inc");
 
 $contextUser = strtolower($_SESSION['contextUser']);
 
@@ -298,8 +292,6 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_1new.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -367,8 +359,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					</tr>
 				</table>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_2new.inc"); ?>
+
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -543,8 +534,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	</table>
 
 <?php if(!$export_excel) { ?>
-<!-- include the timesheet face up until the end -->
-<?php if (!$print) include("timesheet_face_part_3new.inc"); ?>
+
 
 		</td>
 	</tr>
@@ -567,10 +557,5 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <?php endif; //end if($print) ?>
 
 </form>
-<?php if (!$print) include ("footer.inc"); ?>
+
 <?php } //end if !export_excel ?>
-</BODY>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>

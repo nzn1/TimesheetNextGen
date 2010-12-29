@@ -26,7 +26,7 @@ if (empty($contextUser))
 	errorPage("Could not determine the context user");
 
 //load local vars from superglobals
-$client_id = $_REQUEST['client_id'];
+$client_id = gbl::getClientId();
 
 //define the command menu
 Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
@@ -50,7 +50,7 @@ $data = dbResult($qh);
 <title>Modify client information</title>
 
 </head>
-
+<div id="inputArea">
 <form action="client_action.php" method="post">
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="client_id" value="<?php echo $client_id ?>" />
@@ -61,9 +61,7 @@ $data = dbResult($qh);
 				<h1>Edit Client: <?php echo $data["organisation"]; ?> </h1>
 		</td>
 	</tr>
-	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
 	<tr>
-				<!--  table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body" -->
 		<td align="right">Organisation:</td>
 			<td><input size="60" name="organisation" value="<?php echo $data["organisation"]; ?>" style="width: 100%;" maxlength="64" /></td>
 		</tr>
@@ -134,3 +132,4 @@ $data = dbResult($qh);
 	</table>
 
 </form>
+</div>

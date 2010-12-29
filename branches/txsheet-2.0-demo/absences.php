@@ -1,19 +1,21 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', true);
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclAbsences')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclAbsences'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
 
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
@@ -47,7 +49,7 @@ $last_day = get_last_day($month, $year);
 <html>
 <head>
 <title>Timesheet Absence Entry</title>
-<?php include ("header.inc"); ?>
+
 <script type="text/javascript">
 
 	function onSubmit() {
@@ -60,11 +62,8 @@ $last_day = get_last_day($month, $year);
 </script>
 </head>
 <?php
-echo "<body width=\"100%\" height=\"100%\"";
-include ("body.inc");
-echo ">\n";
 
-include ("banner.inc");
+
 $motd = 0;  //don't want the motd printed
 include ("navcal/navcal_monthly.inc");
 ?>
@@ -79,9 +78,6 @@ include ("navcal/navcal_monthly.inc");
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -99,9 +95,6 @@ include ("navcal/navcal_monthly.inc");
 						</td>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -197,16 +190,8 @@ include ("navcal/navcal_monthly.inc");
 		</tr>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
-include ("footer.inc");
-?>
-</body>
-</html>

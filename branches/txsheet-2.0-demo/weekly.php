@@ -405,11 +405,11 @@ if (isset($popup)){
 					switch($j) {
 					case 0: //tasks which started on a previous day and finish on a following day
 						print "...-...";
-						$todaysTotal += get_duration($currentDate, $tomorrowDate);
+						$todaysTotal += Common::get_duration($currentDate, $tomorrowDate);
 						break;
 					case 1: //tasks which started on a previous day and finish today
 						print "...-" . $formattedEndTime;
-						$todaysTotal += get_duration($currentDate, $currentTaskEntry["end_stamp"]);
+						$todaysTotal += Common::get_duration($currentDate, $currentTaskEntry["end_stamp"]);
 						break;
 					case 2: //tasks which started and finished today
 						print $formattedStartTime . "-" . $formattedEndTime;
@@ -417,7 +417,7 @@ if (isset($popup)){
 						break;
 					case 3: //tasks which started today and finish on a following day
 						print $formattedStartTime . "-...";
-						$todaysTotal += get_duration($currentTaskEntry["start_stamp"],$tomorrowDate);
+						$todaysTotal += Common::get_duration($currentTaskEntry["start_stamp"],$tomorrowDate);
 						break;
 					default:
 						print "error";

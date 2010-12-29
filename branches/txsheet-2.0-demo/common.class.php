@@ -242,7 +242,7 @@ class Common{
 
 	public static function get_holidays($month, $year, $day=0) {
 
-		$last_day = get_last_day($month, $year);
+		$last_day = self::get_last_day($month, $year);
 		$query = "SELECT date_format(date,'%d') AS day_of_month, ".
 			"unix_timestamp(date) AS date, ".
 			"date AS date_str, ".
@@ -295,7 +295,7 @@ class Common{
 
 	public static function get_allowance($day, $month, $year, $user, $type='Holiday') {
 
-		$user_start_date = get_start_date($user);
+		$user_start_date = self::get_start_date($user);
 		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
 			return 0;
 
@@ -312,10 +312,10 @@ class Common{
 
 	public static function get_balance($day, $month, $year, $user, $type='Holiday') {
 
-		$user_start_date = get_start_date($user);
+		$user_start_date = self::get_start_date($user);
 		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
 			return 0;
-		$current_allowance = get_allowance($day, $month, $year, $user, $type);
+		$current_allowance = self::get_allowance($day, $month, $year, $user, $type);
 		if($user_start_date) {
 			$user_start_date_parts = explode('-',$user_start_date);
 			$user_start_day = $user_start_date_parts[2];
@@ -331,13 +331,13 @@ class Common{
 		
 		if ($type!='glidetime') {
 			//Holidays are easy
-			$count = $current_allowance - count_absences($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user, $type);
+			$count = $current_allowance - self::count_absences($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user, $type);
 		} else {
 			//glidetime takes some work
 			//First count the attendance
-			$worked_sec = count_worked_secs($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user);
+			$worked_sec = self::count_worked_secs($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user);
 			//Then calculate the expected working time
-			$working_time = count_working_time($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user);
+			$working_time = self::count_working_time($user_start_day, $user_start_month, $user_start_year, $day, $month, $year, $user);
 			// handle times and seconds
 			$count = ($current_allowance*60*60 + $worked_sec - $working_time*60*60)/(60*60);
 		}
@@ -354,14 +354,14 @@ class Common{
 			}
 			$the_day += A_DAY;
 		}
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, '', 'Public');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, '', 'Other');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Sick');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Holiday');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Training');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Military');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Other');
-		$working_time -= count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Compensation');
+		$working_time -= self::count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, '', 'Public');
+		$working_time -= self::count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, '', 'Other');
+		$working_time -= self::count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Sick');
+		$working_time -= self::count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Holiday');
+		$working_time -= self::count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Training');
+		$working_time -= self::count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Military');
+		$working_time -= self::count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Other');
+		$working_time -= self::count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, 'Compensation');
 
 		return $working_time;
 	}
@@ -385,8 +385,8 @@ class Common{
 	}
 
 	public static function count_absences_in_month($month, $year, $user, $type='Holiday') {
-		$day = get_last_day($month, $year);
-		return count_absences(1, $month, $year, $day, $month, $year, $user, $type);
+		$day = self::get_last_day($month, $year);
+		return self::count_absences(1, $month, $year, $day, $month, $year, $user, $type);
 	}
 
 	public static function get_last_day($month, $year) {
@@ -535,7 +535,7 @@ class Common{
 
 		$dti=getdate($timeStamp);
 		if($limit)
-			$last_day = get_last_day($dti["mon"], $dti["year"]);
+			$last_day = self::get_last_day($dti["mon"], $dti["year"]);
 		else
 			$last_day = 31;
 
@@ -1410,7 +1410,13 @@ class Common{
 			$configData = dbResult($qhq);
 			return $configData["timeformat"];
 	}
-
+	
+	public static function getLayout() {
+		list($qhq, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
+			$configData = dbResult($qhq);
+			return $configData["simpleTimesheetLayout"];
+	}
+	
 	public static function getVersion() {
 
 		list($qh, $num) = dbQuery("SELECT version FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
