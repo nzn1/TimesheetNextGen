@@ -676,7 +676,7 @@ class Common{
 			$query = "SELECT uid, username, last_name, first_name FROM ".tbl::getUserTable()." where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 		list($qh, $num) = dbQuery($query);
-		print "<select name=\"$name\" multiple size=\"11\">\n";
+		print "<select name=\"$name\" multiple=\"multiple\" size=\"11\">\n";
 		if($show_disabled) {
 			print "<optgroup label=\"Active Users\">";
 			$found_disabled=0;
@@ -1149,30 +1149,30 @@ class Common{
 <HTML>
 <body BGCOLOR="#FFFFFF" >
 <FORM ACTION="clock_action.php" METHOD=POST>
-<table BORDER=1 align=CENTER>
+<table BORDER=1 align="center">
 	<?php {
 	if ($destination)
-		print "<input type=HIDDEN name=destination value=$destination />\n";
-		print "<input type=HIDDEN name=check_in_time_hour value=\"$check_in_time_hour\" />\n";
-		print "<input type=HIDDEN name=check_out_time_hour value=\"$check_out_time_hour\" />\n";
-		print "<input type=HIDDEN name=check_in_time_min value=\"$check_in_time_min\" />\n";
-		print "<input type=HIDDEN name=check_out_time_min value=\"$check_out_time_min\" />\n";
-		print "<input type=HIDDEN name=year value=\"$year\" />\n";
-		print "<input type=HIDDEN name=month value=\"$month\" />\n";
-		print "<input type=HIDDEN name=day value=\"$day\" />\n";
-		print "<input type=HIDDEN name=proj_id value=\"$proj_id\" />\n";
-		print "<input type=HIDDEN name=task_id value=\"$task_id\" />\n";
+		print "<input type=\"hidden\" name=destination value=$destination />\n";
+		print "<input type=\"hidden\" name=check_in_time_hour value=\"$check_in_time_hour\" />\n";
+		print "<input type=\"hidden\" name=check_out_time_hour value=\"$check_out_time_hour\" />\n";
+		print "<input type=\"hidden\" name=check_in_time_min value=\"$check_in_time_min\" />\n";
+		print "<input type=\"hidden\" name=check_out_time_min value=\"$check_out_time_min\" />\n";
+		print "<input type=\"hidden\" name=year value=\"$year\" />\n";
+		print "<input type=\"hidden\" name=month value=\"$month\" />\n";
+		print "<input type=\"hidden\" name=day value=\"$day\" />\n";
+		print "<input type=\"hidden\" name=proj_id value=\"$proj_id\" />\n";
+		print "<input type=\"hidden\" name=task_id value=\"$task_id\" />\n";
 		switch($action) {
 		case "inout":
-			print "<input type=HIDDEN name=check_in_out_x value=1 />\n";
+			print "<input type=\"hidden\" name=\"check_in_out_x\" value=\"1\" />\n";
 			break;
 		case "at":
-			print "<input type=HIDDEN name=check_out_at_x value=1 />\n";
+			print "<input type=\"hidden\" name=\"check_out_at_x\" value=\"1\" />\n";
 			break;
 		case "now":
-			print "<input type=HIDDEN name=check_out_now_x value=1 />\n";
+			print "<input type=\"hidden\" name=\"check_out_now_x\" value=\"1\" />\n";
 		}
-		print "<input type=HIDDEN name=log_message_presented value=1 />\n";
+		print "<input type=\"hidden\" name=\"log_message_presented\" value=\"1\" />\n";
 }?>
 
 	<tr><td>Please Enter Log message: (max 255 characters)</td></tr>
@@ -1187,7 +1187,7 @@ class Common{
 
 	public static function proj_status_list($name, $status='') {
 ?>
-	<select name=<?php echo $name ?>>
+	<select name="<?php echo $name ?>">
 	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>>Pending</option>
 	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>>Started</option>
 	<option value="Suspended" <?php if ($status == 'Suspended') echo "selected=\"selected\"";?>>Suspended</option>
@@ -1198,7 +1198,7 @@ class Common{
 	
 	public static function proj_status_list_filter($name, $status='', $onChange='submit();') {
 ?>
-	<select name=<?php echo $name ?> onchange="<?php echo $onChange?>" >
+	<select name="<?php echo $name ?>" onchange="<?php echo $onChange?>" >
 	<option value="All" <?php if ($status == 'All') echo "selected=\"selected\"";?>>All</option>
 	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>>Pending</option>
 	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>>Started</option>
@@ -1258,7 +1258,7 @@ class Common{
 		if (!$from_popup)
 			Header("Location: $targetWindowLocation");
 		else
-			loadMainPageAndCloseWindow($targetWindowLocation);
+			Common::loadMainPageAndCloseWindow($targetWindowLocation);
 		exit;
 	}
 
