@@ -23,7 +23,7 @@ if (empty($proj_id))
 //make sure the selected project is valid for this client
 $client_id = gbl::getClientId();
 if ($client_id != 0) {
-	if (!isValidProjectForClient($proj_id, $client_id))
+	if (!Common::isValidProjectForClient($proj_id, $client_id))
 		$proj_id = Common::getValidProjectForClient($client_id);
 }
 
