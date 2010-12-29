@@ -3,6 +3,14 @@
 //        or the export to excel won't work in IE
 session_cache_limiter('public');
 
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
+	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
+	exit;
+}
 //export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
 $export_excel=false;
 if (isset($_GET["export_excel"]))
@@ -23,21 +31,6 @@ if($export_excel){
 } else
 	$time_fmt = "time";
 
-// Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclReports'));
-	exit;
-}
-
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
-
 $contextUser = strtolower($_SESSION['contextUser']);
 
 if (isset($_REQUEST['print']))
@@ -47,25 +40,34 @@ else
 
 $uid=''; $client_id=0;
 
+$proj_id = gbl::getProjId();
 if ($proj_id == 0)
 	//get the first project
-	$proj_id = getFirstProject();
+	$proj_id = Common::getFirstProject();
 
 //get the context date
+
+$client_id =  gbl::getClientId();
+$year = gbl::getYear();
+$month = gbl::getMonth();
+$day = gbl::getDay();
+
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 $dateValues = getdate($todayDate);
 $ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
-if ($mode == "all") $mode = "monthly";
+
+if (gbl::getMode() == "all" || gbl::getMode() == "monthly") $mode = "monthly";
+	else $mode = "weekly";
 if ($mode == "monthly") {
-	$startDate = mktime(0,0,0, $month, 1, $year);
+	$startDate = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
 	$startStr = date("Y-m-d H:i:s",$startDate);
 
-	$endDate = getMonthlyEndDate($dateValues);
+	$endDate = Common::getMonthlyEndDate($dateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
 }
 if ($mode == "weekly") {
-	list($startDate,$endDate) = getWeeklyStartEndDates($todayDate);
+	list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
@@ -76,7 +78,7 @@ $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "username";
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
-list($num, $qh) = get_time_records($startStr, $endStr, $uid, $proj_id, $client_id);
+list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, $proj_id, $client_id);
 
 if($orderby == "username") {
 	$subtotal_label[]="User total";
@@ -135,9 +137,9 @@ if($orderby == "date") {
 function format_time($time,$time_fmt) {
 	if($time > 0) {
 		if($time_fmt == "decimal")
-			return minutes_to_hours($time);
+			return Common::minutes_to_hours($time);
 		else 
-			return format_minutes($time);
+			return Common::format_minutes($time);
 	} else 
 		return "-";
 }
@@ -153,8 +155,7 @@ function make_daily_link($ymdStr, $proj_id, $string) {
 		$string .  "</a>&nbsp;"; 
 }
 
-function printInfo($type) {
-	global $data;	
+function printInfo($type, $data, $time_fmt) {
 
 	if($type == "uid") {
 		print stripslashes($data["uid"])."</a>&nbsp;\n";
@@ -197,7 +198,7 @@ if(!$export_excel)
 <head>
 <title>Project Report</title>
 <?php 
-	if(!$export_excel) include ("header.inc");
+	if(!$export_excel) ; //include ("header.inc");
 	else {
 		print "<style type=\"text/css\"> ";
 		include ("css/timesheet.css");
@@ -208,25 +209,25 @@ if(!$export_excel)
 <?php
 	if($print) {
 		echo "<body width=\"100%\" height=\"100%\"";
-		include ("body.inc");
+		//include ("body.inc");
 
 		echo "onLoad=window.print();";
 		echo ">\n";
 	} else if($export_excel) {
 		echo "<body ";
-		include ("body.inc");
+		//include ("body.inc");
 		echo ">\n";
 	} else {
 		echo "<body ";
-		include ("body.inc");
+		//include ("body.inc");
 		echo ">\n";
 		echo "<div id=\"header\">";
-		include ("banner.inc");
+		//include ("banner.inc");
 		$motd = 0;  //don't want the motd printed
 		if($mode=='weekly')
-			include("navcal/navcalendars.inc");
+			include("navcalnew/navcalendars.inc");
 		else
-			include("navcal/navcal_monthly.inc");
+			include("navcalnew/navcal_monthly.inc");
 		echo "</div>";
 	}
 ?>
@@ -244,7 +245,7 @@ if(!$export_excel)
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_1.inc"); ?>
+
 
 				<table width="100%" border="0">
 					<tr>
@@ -253,12 +254,12 @@ if(!$export_excel)
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">Client:</td>
 									<td align="left" width="100%" class="outer_table_heading">
-										<?php print stripslashes(getClientNameFromProject($proj_id)); ?>
+										<?php print stripslashes(Common::getClientNameFromProject($proj_id)); ?>
 									</b></td>
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">Project:</td>
 									<td align="left" width="100%">
-											<?php project_select_droplist($proj_id); ?>
+											<?php Common::project_select_droplist($proj_id); ?>
 									</td>
 								</tr>
 							</table>
@@ -284,8 +285,6 @@ if(!$export_excel)
 					</tr>
 				</table>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -293,8 +292,8 @@ if(!$export_excel)
 
 <?php } // end if !export_excel
 else {  //create Excel header
-	$cn = stripslashes(getClientNameFromProject($proj_id));
-	$pn = stripslashes(get_project_name($proj_id));
+	$cn = stripslashes(Common::getClientNameFromProject($proj_id));
+	$pn = stripslashes(Common::get_project_name($proj_id));
 	echo "<h4>Report for $cn / $pn<br />";
 	if ($mode == "weekly") {
 		$sdStr = date("M d, Y",$startDate);
@@ -347,14 +346,14 @@ else {  //create Excel header
 		while ($data = dbResult($qh)) {
 			//if entry doesn't have an end time or duration, it's an incomplete entry
 			//fixStartEndDuration returns a 0 if the entry is incomplete.
-			if(!fixStartEndDuration($data)) continue;
+			if(!Common::fixStartEndDuration($data)) continue;
 
 			//Since we're allowing entries that may span date boundaries, this complicates
 			//our life quite a lot.  We need to "pre-process" the results to split those
 			//entries that do span date boundaries into multiple entries that stop and then
 			//re-start on date boundaries.
 			//NOTE: there must be a make_index() function defined in this file for the following function to, well, function
-			split_data_into_discrete_days($data,$orderby,$darray,1);
+			Common::split_data_into_discrete_days($data,$orderby,$darray,1);
 		}
 
 		ksort($darray);
@@ -389,12 +388,12 @@ else {  //create Excel header
 					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
-							printInfo($colVar[$i]);
+							printInfo($colVar[$i], $data, $time_fmt);
 							$last_colVar[$i]=$data[$colVar[$i]];
 						} else
 							print "&nbsp;";
 					} else
-							printInfo($colVar[$i]);
+							printInfo($colVar[$i], $data, $time_fmt);
 					print "</td>";
 				}
 				print "</tr>";
@@ -453,8 +452,7 @@ else {  //create Excel header
 	</table>
 
 <?php if(!$export_excel) { ?>
-<!-- include the timesheet face up until the end -->
-<?php if (!$print) include("timesheet_face_part_3.inc"); ?>
+
 
 		</td>
 	</tr>
@@ -474,13 +472,8 @@ else {  //create Excel header
 </form>
 <?php if (!$print) {
 		echo "<div id=\"footer\">"; 
-		include ("footer.inc"); 
+		//include ("footer.inc"); 
 		echo "</div>";
 	}
 } //end if !export_excel 
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
 ?>

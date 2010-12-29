@@ -32,7 +32,7 @@ Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.ba
 <html>
 <head>
 <title>Add a new Client</title>
-
+<div id="inputArea">
 <form action="client_action.php" method="post">
 <input type="hidden" name="action" value="add" />
 
@@ -42,9 +42,7 @@ Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.ba
 			<h1>Add New Client</h1>
 		</td>
 	</tr>
-	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
 	<tr>
-				<!--  table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body" -->
 		<td align="right">Organisation:</td>
 		<td><input size="60" name="organisation" style="width: 100%;" maxlength="64"/></td>
 	</tr>
@@ -105,11 +103,10 @@ Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.ba
 		<td><input size="60" name="http_url" style="width: 100%;" /></td>
 	</tr>
 	<tr>
-				<!--  table width="100%" border="0" class="table_bottom_panel" -->
 		<td align="center">
 			<input type="submit" name="add" value="Add New Client" />
 		</td>
 	</tr>
 </table>
-
 </form>
+</div>

@@ -21,7 +21,7 @@ $ymdStr = "&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".
 
 Common::setMotd(0);
 
-include ("navcalnew/navcalendars.inc");
+//include ("navcalnew/navcalendars.inc");
 ?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -29,7 +29,7 @@ include ("navcalnew/navcalendars.inc");
 		<td width="100%" class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1new.inc"); ?>
+<?php //include("timesheet_face_part_1new.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -43,7 +43,7 @@ include ("navcalnew/navcalendars.inc");
 				</table>
 
 <!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2new.inc"); ?>
+<?php //include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -135,7 +135,7 @@ if(!($val === ''))
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3new.inc"); ?>
+<?php //include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>

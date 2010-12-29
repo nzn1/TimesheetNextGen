@@ -4,20 +4,19 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-require("class.Pair.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclSimple')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclSimple'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
 
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
@@ -33,12 +32,15 @@ $proj_id = 0;
 $task_id = 0;
 
 //get the passed date (context date)
-$todayStamp = mktime(0, 0, 0,$month, $day, $year);
+$month = gbl::getMonth();
+$day = gbl::getDay(); 
+$year = gbl::getYear();
+$todayStamp = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $todayValues = getdate($todayStamp);
 $curDayOfWeek = $todayValues["wday"];
 
 //the day the week should start on: 0=Sunday, 1=Monday
-$startDayOfWeek = getWeekStartDay();
+$startDayOfWeek = Common::getWeekStartDay();
 
 $daysToMinus = $curDayOfWeek - $startDayOfWeek;
 if ($daysToMinus < 0)
@@ -48,31 +50,36 @@ $startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
 $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 
 //get the configuration of timeformat and layout
-list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-$configData = dbResult($qh2);
-$layout = $configData['simpleTimesheetLayout'];
+//list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+//$configData = dbResult($qh2);
+$layout = Common::getLayout();
 
-$post="";
+//$post="";
+PageElements::setHead("<title>".Config::getMainTitle()." - Simple Weekly Timesheet for ".$contextUser."</title>");
+
+if (isset($popup))
+	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+
 ?>
-<html>
-<head>
-<title>Simple Weekly Timesheet for <?php echo "$contextUser" ?></title>
-<?php
-include ("header.inc");
-?>
+
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/datetimepicker_css.js"></script>
 <script type="text/javascript">
 	//define the hash table
 	var projectTasksHash = {};
+	
 <?php
+$PROJECT_TABLE = tbl::getProjectTable();
+$CLIENT_TABLE = tbl::getClientTable();
+$TASK_TABLE = tbl::getTaskTable();
 //get all of the projects and put them into the hashtable
 $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
 							"$PROJECT_TABLE.title, " .
 							"$PROJECT_TABLE.client_id, " .
 							"$CLIENT_TABLE.client_id, " .
 							"$CLIENT_TABLE.organisation " .
-						"FROM $PROJECT_TABLE, $ASSIGNMENTS_TABLE, $CLIENT_TABLE " .
-						"WHERE $PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
-							"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
+						"FROM $PROJECT_TABLE, " .tbl::getAssignmentsTable(). ", $CLIENT_TABLE " .
+						"WHERE $PROJECT_TABLE.proj_id=" .tbl::getAssignmentsTable().".proj_id AND ".
+							"" .tbl::getAssignmentsTable(). ".username='$contextUser' AND ".
 							"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
 						"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
@@ -93,9 +100,9 @@ for ($i=0; $i<$num3; $i++) {
 $getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
 						"$TASK_TABLE.task_id, " .
 						"$TASK_TABLE.name " .
-					"FROM $TASK_TABLE, $TASK_ASSIGNMENTS_TABLE " .
-					"WHERE $TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
-						"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
+					"FROM $TASK_TABLE, " .tbl::getTaskAssignmentsTable(). " ".
+					"WHERE $TASK_TABLE.task_id = " .tbl::getTaskAssignmentsTable().".task_id AND ".
+						"".tbl::getTaskAssignmentsTable().".username='$contextUser' ".
 					"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);
@@ -535,17 +542,8 @@ for ($i=0; $i<$num4; $i++) {
 
 </script>
 </head>
-<?php
-echo "<body width=\"100%\" height=\"100%\" onLoad=\"populateExistingSelects();\"";
-include ("body.inc");
-if (isset($popup))
-	echo "onLoad=window.open(\"clock_popup.php?proj_id=$proj_id&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
-echo ">\n";
 
-include ("banner.inc");
-include("navcal/navcalendars.inc");
-?>
-
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/datetimepicker_css.js"></script>
 <form name="theForm" action="simple_action.php" method="post">
 <input type="hidden" name="year" value=<?php echo $year; ?> />
 <input type="hidden" name="month" value=<?php echo $month; ?> />
@@ -555,9 +553,6 @@ include("navcal/navcalendars.inc");
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -570,8 +565,15 @@ include("navcal/navcalendars.inc");
 								//just need to go back 1 second most of the time, but DST 
 								//could mess things up, so go back 6 hours...
 								$edStr = date("M d, Y",$endDate - 6*60*60); 
-								echo "Week: $sdStr - $edStr"; 
+								//echo "Week: $sdStr - $edStr"; 
 							?>
+								<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+								value="<?php echo $sdStr; ?>" />
+								</td>
+								<td align="center" nowrap="nowrap" class="outer_table_heading">
+								<input id="sub" type="submit" name="Change Date"></input>
+								</td>
+							
 						</td>
 						<td align="right" nowrap>
 							<!--prev / next buttons used to be here -->
@@ -581,9 +583,6 @@ include("navcal/navcalendars.inc");
 						</td>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -600,7 +599,7 @@ include("navcal/navcalendars.inc");
 						$dstadj=array();
 						for ($i=0; $i<7; $i++) {
 							$currentDayStr = strftime("%a", $currentDayDate);
-							$dst_adjustment = get_dst_adjustment($currentDayDate);
+							$dst_adjustment = Common::get_dst_adjustment($currentDayDate);
 							$dstadj[]=$dst_adjustment;
 							$minsinday = ((24*60*60) - $dst_adjustment)/60;
 							print "<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\" />";
@@ -627,7 +626,7 @@ include("navcal/navcalendars.inc");
 	//$startDateStr = strftime("%D", $startDate);
 	//$endDateStr = strftime("%D", $endDate);
 	//print "<p>WEEK start: $startDateStr WEEK end: $endDateStr</p>";
-
+ require("class.Pair.php");
 
 	class TaskInfo extends Pair {
 		var $clientId;
@@ -794,7 +793,7 @@ include("navcal/navcalendars.inc");
 		printSpaceColumn();
 
 		//format the weekly total
-		$weeklyTotalStr = formatMinutes($weeklyTotal);
+		$weeklyTotalStr = Common::formatMinutes($weeklyTotal);
 
 		//print the total column
 		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\">";
@@ -818,7 +817,7 @@ include("navcal/navcalendars.inc");
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
 	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
-	list($num5, $qh5) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
+	list($num5, $qh5) = Common::get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
 
 	//we're going to put the data into an array of
 	//different (unique) TASKS
@@ -838,7 +837,7 @@ include("navcal/navcalendars.inc");
 		//because this application hasn't taken care to cast the time data into a consistent TZ.
 		//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
 		//So, we handle it as best we can for now...
-		fixStartEndDuration($data);
+		Common::fixStartEndDuration($data);
 
 		//get the current task properties
 		$currentTaskId = $data["task_id"];
@@ -920,11 +919,11 @@ include("navcal/navcalendars.inc");
 			if($startsToday && $endsToday ) {
 				$matchedPair->value2[$k][] = $duration;
 			} else if($startsToday && $endsAfterToday) {
-				$matchedPair->value2[$k][] = get_duration($currentTaskStartDate, $tomorrowDate);
+				$matchedPair->value2[$k][] = Common::get_duration($currentTaskStartDate, $tomorrowDate);
 			} else if( $startsBeforeToday && $endsToday ) {
-				$matchedPair->value2[$k][] = get_duration($currentDayDate, $currentTaskEndDate);
+				$matchedPair->value2[$k][] = Common::get_duration($currentDayDate, $currentTaskEndDate);
 			} else if( $startsBeforeToday && $endsAfterToday ) {
-				$matchedPair->value2[$k][] = get_duration($currentDayDate, $tomorrowDate);
+				$matchedPair->value2[$k][] = Common::get_duration($currentDayDate, $tomorrowDate);
 			}
 
 			$currentDayDate = $tomorrowDate;
@@ -993,13 +992,13 @@ include("navcal/navcalendars.inc");
 	foreach ($allTasksDayTotals as $currentAllTasksDayTotal) {
 		$col++;
 		$grandTotal += $currentAllTasksDayTotal;
-		$formattedTotal = formatMinutes($currentAllTasksDayTotal);
+		$formattedTotal = Common::formatMinutes($currentAllTasksDayTotal);
 		print "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
 		print "<span class=\"calendar_total_value_weekly\" id=\"subtotal_col" . $col . "\">$formattedTotal</span></td>";
 	}
 
 	//print grand total
-	$formattedGrandTotal = formatMinutes($grandTotal);
+	$formattedGrandTotal = Common::formatMinutes($grandTotal);
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	print "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
 	print "<span class=\"calendar_total_value_monthly\" id=\"grand_total\">$formattedGrandTotal</span></td>";
@@ -1013,18 +1012,10 @@ include("navcal/navcalendars.inc");
 	</table>
 
 <!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
+<?php //include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php
-include ("footer.inc");
-?>
-</body>
-</html>
-<?php
-// vim:ai:ts=4:sw=4
-?>

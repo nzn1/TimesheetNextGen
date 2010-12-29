@@ -1,29 +1,33 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
 //load local vars from superglobals
 $client_id = $_REQUEST['client_id'];
 
-// Connect to database.
-$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
 ?>
 <HTML>
 <head>
 <title>Client Info</title>
+
 <?php
-include ("header.inc");
-?>
-</head>
-<body <?php include ("body.inc"); ?> >
-<?php
+$CLIENT_TABLE = tbl::getClientTable();
 	$query = "SELECT organisation, description, address1, address2,".
 				"city, country, postal_code, contact_first_name, contact_last_name,".
 				"username, contact_email, phone_number, fax_number, gsm_number, ".
@@ -31,32 +35,58 @@ include ("header.inc");
 			"FROM $CLIENT_TABLE ".
 			"WHERE $CLIENT_TABLE.client_id=$client_id";
 
-	print "<center><table border=\"0\" ";
-	include("table.inc");
-	print " width=\"100%\">\n";
+
 
 	list($qh, $num) = dbQuery($query);
 	if ($num > 0) {
 
 		$data = dbResult($qh);
-		print "<tr><td COLSPAN=3><font SIZE=+1><B>$data[organisation]</B></font></td></tr>\n";
-		print "<tr><td COLSPAN=3><I>$data[description]</I></td></tr>\n";
-		print "<tr><td>Address1:</td><td COLSPAN=2 WIDTH=80%> $data[address1]</td></tr>\n";
-		print "<tr><td>Address2:</td><td COLSPAN=2> $data[address2]</td></tr>\n";
-		print "<tr><td>ZIP, City:</td><td COLSPAN=2> $data[postal_code] $data[city]</td></tr>\n";
-		print "<tr><td>Country:</td><td COLSPAN=2> $data[country]</td></tr>\n";
-		print "<tr><td>Contract:</td><td COLSPAN=2> $data[contact_first_name] $data[contact_last_name]</td></tr>\n";
-		print "<tr><td>Phone:</td><td COLSPAN=2> $data[phone_number]</td></tr>\n";
-		print "<tr><td>Fax::</td><td COLSPAN=2> $data[fax_number]</td></tr>\n";
-		print "<tr><td>GSM:</td><td COLSPAN=2> $data[gsm_number]</td></tr>\n";
-	} else {
+?>
+	<center>
+		
+			<font SIZE=+1><b><?php echo $data['organisation']; ?></b></font>
+		
+		<table border="1" width="100%">
+		
+		<tr>
+			<td align="right">Description:</td>
+			<td COLSPAN=3><i><?php echo $data['description'] ?></i>
+		</td></tr>
+		<tr>
+			<td align="right">Address1:</td>
+			<td COLSPAN=2 WIDTH=80%> <?php echo $data['address1']; ?>
+		</td></tr>
+		<tr>
+			<td align="right">Address2:</td>
+			<td COLSPAN=2><?php echo  $data['address2']; ?>
+		</td></tr>
+		<tr>
+			<td align="right">ZIP, City:</td>
+			<td COLSPAN=2> <?php echo $data['postal_code']; echo  $data['city']; ?>
+		</td></tr>
+		<tr>
+			<td align="right">Country:</td>
+			<td COLSPAN=2><?php echo  $data['country']; ?>
+		</td></tr>
+		<tr>
+			<td align="right">Contact:</td>
+			<td COLSPAN=2><?php echo  $data['contact_first_name']; echo $data['contact_last_name']; ?>
+		</td></tr>
+		<tr>
+			<td align="right">Phone:</td>
+			<td COLSPAN=2><?php echo  $data['phone_number']; ?>
+		</td></tr>
+		<tr>
+			<td align="right">Fax::</td>
+			<td COLSPAN=2><?php echo  $data['fax_number']; ?>
+		</td></tr>
+		<tr>
+			<td align="right">GSM:</td>
+			<td COLSPAN=2><?php echo  $data['gsm_number']; ?>
+		</td></tr>
+<?php 	} else {
 		print "None.";
 	}
-	print "</td></tr>";
-	print "</table></center>\n";
 ?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>
+
+	</table></center>

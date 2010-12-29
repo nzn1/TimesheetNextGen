@@ -1,57 +1,43 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu
-include("timesheet_menu.inc");
-
 ?>
 <head><title>Rates Management Page</title>
-<?php
-include ("header.inc");
-?>
-</head>
-<body <?php include ("body.inc"); ?> >
 
-<?php
-include ("banner.inc");
-?>
+</head>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-	<td width="100%" class="face_padding_cell">
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-		<table width="100%" border="0">
-		<tr>
-			<td align="left" nowrap class="outer_table_heading">
+		<td align="left" nowrap class="outer_table_heading">
 				All Projects:
-			</td>
-		</tr>
-		</table>
+		</td>
+	</tr>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
-		<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-				<tr class="inner_table_head">
-				<td class="inner_table_column_heading">&nbsp;Title</td>
-				<td class="inner_table_column_heading">&nbsp;Client</td>
-				<td class="inner_table_column_heading">&nbsp;<i>Actions</i></td>
-				</tr>
+	<tr class="inner_table_head">
+		<td class="inner_table_column_heading">&nbsp;Title</td>
+		<td class="inner_table_column_heading">&nbsp;Client</td>
+		<td class="inner_table_column_heading">&nbsp;<i>Actions</i></td>
+	</tr>
 <?php
 
+$PROJECT_TABLE = tbl::getProjectTable();
+$CLIENT_TABLE = tbl::getClientTable();
 list($qh,$num) = dbQuery(
 					"SELECT p.proj_id, p.title, c.organisation ".
 					"FROM $PROJECT_TABLE p, $CLIENT_TABLE c ".
@@ -75,23 +61,8 @@ while ($data = dbResult($qh)) {
 	$n++;
 }
 ?>
-			</table>
-			</td>
-		</tr>
-		</table>
-
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
 
 	</td>
 	</tr>
 </table>
 
-<?php
-include ("footer.inc");
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>

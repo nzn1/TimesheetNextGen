@@ -1,23 +1,27 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/config.php,v 1.8 2005/02/03 08:06:10 vexil Exp $
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
-
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //Get the result set for the config set 1
+
+$CONFIG_TABLE = tbl::getConfigTable();
 list($qh, $num) = dbQuery("SELECT * FROM $CONFIG_TABLE WHERE config_set_id = '1'");
 $resultset = dbResult($qh);
 
@@ -25,9 +29,7 @@ $resultset = dbResult($qh);
 <html>
 <head>
 <title>Timesheet Configuration Parameters</title>
-<?php
-include ("header.inc");
-?>
+
 </head>
 <script type="text/javascript">
 
@@ -214,52 +216,34 @@ function onSubmit() {
 }
 
 </script>
-<body <?php include ("body.inc"); ?> onload="enableLDAP(<?php echo $resultset["useLDAP"]?>);">
-<?php
-include ("banner.inc");
-?>
+<body  onload="enableLDAP(<?php echo $resultset["useLDAP"]?>);">
+<div id="inputArea">
 <form action="config_action.php" name="configurationForm" method="post">
 <input type="hidden" name="action" value="edit" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
+		<td align="left" nowrap class="outer_table_heading" nowrap>
+				Configuration Parameters:
+		</td>
+		<td align="right">
+			<input type="button" value="Save Changes" name="submitButton" id="submitButton" onclick="onSubmit();" />
+		</td>
+	</tr>
+	<tr>
+		<td>
+			This form allows you to change the basic operating parameters of TimesheetNextGen.
+			Please be careful here, as errors may cause pages not to display properly.
+			Somewhere in one of these, you should include the placeholder %commandMenu%.
+			This is where TimesheetNextGen will place the menu options.
+		</td>
+	</tr>
+	</table>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap class="outer_table_heading" nowrap>
-							Configuration Parameters:
-						</td>
-						<td align="right">
-							<input type="button" value="Save Changes" name="submitButton" id="submitButton" onclick="onSubmit();" />
-						</td>
-					</tr>
-					<tr>
-						<td>
-						This form allows you to change the basic operating parameters of TimesheetNextGen.
-						Please be careful here, as errors may cause pages not to display properly.
-						Somewhere in one of these, you should include the placeholder %commandMenu%.
-						This is where TimesheetNextGen will place the menu options.
-						</td>
-					</tr>
-				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-					<tr>
-						<td>
-
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
-
-
+			<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 			<!-- LDAP configurationForm -->
 			<tr>
 				<td align="left" valign="top">
@@ -275,7 +259,7 @@ include ("banner.inc");
 				<td align="left" width="100%">
 					<fieldset>
 						<legend>Connection Details</legend>
-						<table width="100%">
+						<table width="100%" >
 							<tr>
 								<td>
 									<b>&nbsp;Data entry style:</b>
@@ -287,7 +271,6 @@ include ("banner.inc");
 							</tr>
 							<tr>
 								<td>
-									<div id="normalLDAPEntry">
 										<table width="100%" cellpadding="2">
 											<tr>
 												<td colspan="3">
@@ -512,17 +495,17 @@ include ("banner.inc");
     		  *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
     		  */       	        
         ?>
-					<div class="nobr left"><span class="label" nowrap>Stopwatch:</span><?php acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Daily:</span><?php acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Weekly:</span><?php acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Monthly:</span><?php acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Simple:</span><?php acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Clients:</span><?php acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Projects:</span><?php acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Tasks:</span><?php acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Reports:</span><?php acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Rates:</span><?php acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Absences:</span><?php acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Stopwatch:</span><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Daily:</span><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Weekly:</span><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Monthly:</span><?php Common::acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Simple:</span><?php Common::acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Clients:</span><?php Common::acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Projects:</span><?php Common::acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Tasks:</span><?php Common::acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Reports:</span><?php Common::acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Rates:</span><?php Common::acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label" nowrap>Absences:</span><?php Common::acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</div>
 				</td>
 			</tr>
 
@@ -867,28 +850,16 @@ include ("banner.inc");
 				</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_bottom_panel">
-
+			
 		</table>
 
 			</td>
 		</tr>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
 		</td>
 	</tr>
 </table>
 
 </form>
-
-<?php
-include ("footer.inc");
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>
+</div>

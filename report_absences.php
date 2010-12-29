@@ -1,17 +1,21 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu
-include("timesheet_menu.inc");
 
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
@@ -34,16 +38,21 @@ else
 	$print = false;
 
 //get the context date
+$todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
+$todayDateValues = getdate($todayDate);
+$year = $todayDateValues["year"];
+$month = $todayDateValues["mon"];
+$day = $todayDateValues["mday"];
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 $dateValues = getdate($todayDate);
 $ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 //run the query
-list($qh,$num) = get_absences($month, $year, $uid);
+list($qh,$num) = Common::get_absences($month, $year, $uid);
 $ihol = 0;
 
 //define working variables
-$last_day = get_last_day($month, $year);
+$last_day = Common::get_last_day($month, $year);
 $AM_text = "&nbsp";
 $PM_text = "&nbsp";
 $public_hol = 'N';
@@ -75,22 +84,21 @@ function popupPrintWindow() {
 <html>
 <head>
 <title>Report: Monthly Absences</title>
-<?php include ("header.inc"); ?>
+
 </head>
 <?php
 	if($print) {
 		echo "<body width=\"100%\" height=\"100%\"";
-		include ("body.inc");
-
+		
 		echo "onLoad=window.print();";
 		echo ">\n";
 	} else {
 		echo "<body ";
-		include ("body.inc");
+		
 		echo ">\n";
-		include ("banner.inc");
+		
 		$motd = 0;  //don't want the motd printed
-		include("navcal/navcal_monthly.inc");
+		include("navcalnew/navcal_monthly.inc");
 	}
 
 
@@ -104,55 +112,39 @@ function popupPrintWindow() {
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
+		<!--  td align="left" nowrap width="200" -->
+				<!--  table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2" -->
+			<td align="right" width="0" class="outer_table_heading">User:</td>
+			<td align="left" width="100%"> <?php Common::user_select_droplist($uid, false); ?>
+			</td>
+			<td align="center" nowrap class="outer_table_heading">
+				<?php echo date('F Y',$todayDate); ?>
+			</td>
+			<?php if (!$print): 
+				//<td  align="center" >
+				//<a href="#" onclick="javascript:esporta('user')" ><img src="images/export_data.gif" name="esporta_dati" border="0" alt="" /></a>
+				//</td>
+			?>
+			<td  align="center" >
+			<?php 
+				print "<button onclick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
+			?>
+			</td>
+			<?php endif; ?>
+			<td align="right" nowrap>
+			</td>
+	</tr>
+	</table>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_1.inc"); ?>
+	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
 
-			<table width="100%" border="0">
-				<tr>
-					<td align="left" nowrap width="200">
-						<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
-							<tr>
-								<td align="right" width="0" class="outer_table_heading">User:</td>
-								<td align="left" width="100%">
-									<?php user_select_droplist($uid, false); ?>
-								</td>
-							</tr>
-						</table>
-					</td>
-					<td align="center" nowrap class="outer_table_heading">
-						<?php echo date('F Y',$todayDate); ?>
-					</td>
-					<?php if (!$print): 
-						//<td  align="center" >
-						//<a href="#" onclick="javascript:esporta('user')" ><img src="images/export_data.gif" name="esporta_dati" border="0" alt="" /></a>
-						//</td>
-						?>
-						<td  align="center" >
-						<?php 
-							print "<button onclick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
-						?>
-						</td>
-					<?php endif; ?>
-					<td align="right" nowrap>
-					</td>
-				</tr>
-			</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_2.inc"); ?>
-
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-				<tr>
-					<td class="calendar_cell_disabled_right">&nbsp</td>
-					<td align="center" class="calendar_cell_disabled_right"><b>Day</b></td>
-					<td align="center" class="calendar_cell_disabled_right"><b>Morning</b></td>
-					<td align="center" class="calendar_cell_disabled_right"><b>Afternoon</b></td>
-				</tr>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
+		<tr class="table_body">
+			<td class="calendar_cell_disabled_right">&nbsp</td>
+			<td align="center" class="calendar_cell_disabled_right"><b>Day</b></td>
+			<td align="center" class="calendar_cell_disabled_right"><b>Morning</b></td>
+			<td align="center" class="calendar_cell_disabled_right"><b>Afternoon</b></td>
+		</tr>
 <?php
 	for ($i=1;$i<=$last_day;$i++) {
 		$day = mktime(0,0,0,$month,$i,$year);
@@ -229,58 +221,44 @@ if (!checkdate($last_month, 1, $last_year)) {
 	$last_month += 12;
 	$last_year --;
 }
-$holidays_taken = count_absences_in_month($month, $year, $uid);
-$holiday_remaining = get_balance(get_last_day($month, $year), $month, $year, $uid);
+$holidays_taken = Common::count_absences_in_month($month, $year, $uid);
+$holiday_remaining = Common::get_balance(Common::get_last_day($month, $year), $month, $year, $uid);
 $holiday_allowance = $holiday_remaining + $holidays_taken;
-$glidetime_allowance = get_balance(get_last_day($last_month, $last_year), $last_month, $last_year, $uid, 'glidetime');
-$glidetime_paid = get_allowance(get_last_day($month, $year), $month, $year, $uid, 'glidetime') 
-					- get_allowance(get_last_day($last_month, $last_year), $last_month, $last_year, $uid, 'glidetime');
-$compensation_taken = count_absences_in_month($month, $year, $uid, 'Compensation');
-$worked_time = count_worked_secs(1, $month, $year, get_last_day($month, $year), $month, $year, $uid);
-$working_time = count_working_time(1, $month, $year, get_last_day($month, $year), $month, $year, $uid);
+$glidetime_allowance = Common::get_balance(Common::get_last_day($last_month, $last_year), $last_month, $last_year, $uid, 'glidetime');
+$glidetime_paid = Common::get_allowance(Common::get_last_day($month, $year), $month, $year, $uid, 'glidetime') 
+					- Common::get_allowance(Common::get_last_day($last_month, $last_year), $last_month, $last_year, $uid, 'glidetime');
+$compensation_taken = Common::count_absences_in_month($month, $year, $uid, 'Compensation');
+$worked_time = Common::count_worked_secs(1, $month, $year, Common::get_last_day($month, $year), $month, $year, $uid);
+$working_time = Common::count_working_time(1, $month, $year, Common::get_last_day($month, $year), $month, $year, $uid);
 $glidetime_remaining = $glidetime_allowance + $worked_time/SECONDS_PER_HOUR -$working_time - $compensation_taken - $glidetime_paid;
 ?>
-				<tr>
-					<td colspan=3><br /><br /><b>Comments:</b><br /><br /><br /></td>
-					<td><br /><br /><b>Employee:</b><br />Signature/Date<br /><br /></td>
-				</tr>
-				<tr>
-					<td colspan=3>
-						Holiday Allowance: <?php echo $holiday_allowance; ?><br />
-						Holiday in Month: <?php echo $holidays_taken; ?><br />
-						Holiday Remaining: <?php echo $holiday_remaining; ?><br /><br />
-					</td>
-					<td><b>Manager:</b><br />Signature/Date<br /><br /></td>
-				</tr>
-				<tr>
-					<td colspan=3>
-						Glidetime Allowance: <?php echo format_hours_minutes($glidetime_allowance*SECONDS_PER_HOUR); ?><br />
-						Worked in Month: <?php echo format_hours_minutes($worked_time); ?><br />
-						Paid-out in Month: <?php echo format_hours_minutes($glidetime_paid*SECONDS_PER_HOUR); ?><br />
-						Compensation Taken: <?php echo format_hours_minutes($compensation_taken*SECONDS_PER_HOUR); ?><br />
-						Working-Time in Month: <?php echo format_hours_minutes($working_time*SECONDS_PER_HOUR); ?><br />
-						Glidetime Remaining: <?php echo format_hours_minutes($glidetime_remaining*SECONDS_PER_HOUR); ?><br />
-					</td>
-					<td><b>Bookkeeping:</b><br />Signature/Date<br /><br /></td>
-				</tr>
-						</tr>
-					</td>
-				</table>
+		<tr>
+			<td colspan=3><br /><br /><b>Comments:</b><br /><br /><br /></td>
+			<td><br /><br /><b>Employee:</b><br />Signature/Date<br /><br /></td>
+		</tr>
+		<tr>
+			<td colspan=3>
+				Holiday Allowance: <?php echo $holiday_allowance; ?><br />
+				Holiday in Month: <?php echo $holidays_taken; ?><br />
+				Holiday Remaining: <?php echo $holiday_remaining; ?><br /><br />
 			</td>
+			<td><b>Manager:</b><br />Signature/Date<br /><br /></td>
+		</tr>
+		<tr>
+			<td colspan=3>
+				Glidetime Allowance: <?php echo Common::format_hours_minutes($glidetime_allowance*SECONDS_PER_HOUR); ?><br />
+				Worked in Month: <?php echo Common::format_hours_minutes($worked_time); ?><br />
+				Paid-out in Month: <?php echo Common::format_hours_minutes($glidetime_paid*SECONDS_PER_HOUR); ?><br />
+				Compensation Taken: <?php echo Common::format_hours_minutes($compensation_taken*SECONDS_PER_HOUR); ?><br />
+				Working-Time in Month: <?php echo Common::format_hours_minutes($working_time*SECONDS_PER_HOUR); ?><br />
+				Glidetime Remaining: <?php echo Common::format_hours_minutes($glidetime_remaining*SECONDS_PER_HOUR); ?><br />
+			</td>
+			<td><b>Bookkeeping:</b><br />Signature/Date<br /><br /></td>
 		</tr>
 	</table>
-
-<!-- include the timesheet face up until the end -->
-<?php if (!$print) include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php if (!$print) include ("footer.inc"); ?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>

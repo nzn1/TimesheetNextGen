@@ -44,7 +44,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." - Login</title>");
 PageElements::setBodyOnLoad("document.loginForm.username.focus();");
 ?>
 
-
+<div id="inputArea">
 <form action="<?php echo Config::getRelativeRoot();?>/login" method="POST" name="loginForm" style="margin: 0px;">
 <input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
 
@@ -79,3 +79,4 @@ PageElements::setBodyOnLoad("document.loginForm.username.focus();");
 </table>
 
 </form>
+</div>
