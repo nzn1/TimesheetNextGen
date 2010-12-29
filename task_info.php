@@ -1,19 +1,26 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/task_info.php,v 1.5 2004/07/02 14:15:56 vexil Exp $
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
+$loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 //load local vars from superglobals
 $task_id = $_REQUEST['task_id'];
+
+$PROJECT_TABLE = tbl::getProjectTable();
+$TASK_TABLE = tbl::getTaskTable();
+$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
 
 //build query
 $query_task = "SELECT DISTINCT task_id, name, description,status, ".
@@ -43,11 +50,9 @@ $query_project = "SELECT DISTINCT title, description,".
 <html>
 <head>
 <title>Task Info</title>
-<?php
-include ("header.inc");
-?>
+
 </head>
-<body width="100%" height="100%" style="margin: 0px;" <?php include ("body.inc"); ?> >
+
 <table border="0" width="100%" height="100%" align="center" valign="center">
 <?php
 
@@ -89,9 +94,4 @@ include ("header.inc");
 
 <?php
 	}
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
 ?>

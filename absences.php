@@ -8,7 +8,7 @@ if(!class_exists('Site')){
 }
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
 	}
 	else{
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
@@ -39,11 +39,11 @@ else
 $action = 0;
 
 //run the query
-list($qh,$num) = get_absences($month, $year, $uid);
+list($qh,$num) = Common::get_absences($month, $year, $uid);
 $ihol = 0;
 
 //define working variables
-$last_day = get_last_day($month, $year);
+$last_day = Common::get_last_day($month, $year);
 
 ?>
 <html>
@@ -65,7 +65,7 @@ $last_day = get_last_day($month, $year);
 
 
 $motd = 0;  //don't want the motd printed
-include ("navcal/navcal_monthly.inc");
+include ("navcalnew/navcal_monthly.inc");
 ?>
 <form name="theForm" id="theForm" action="absences_action.php" method="post">
 <input type="hidden" name="month" value=<?php echo $month; ?> />

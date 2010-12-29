@@ -68,33 +68,33 @@ if(class_exists('Site')){
 	if (Site::getAuthenticationManager()->hasAccess('aclWeekly'))
 		Site::getCommandMenu()->add(new IconTextCommand("Weekly Timesheet", true, Config::getRelativeRoot()."/weekly?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
-		Site::getCommandMenu()->add(new IconTextCommand("Simple Timesheet", true, Config::getRelativeRoot()."/simple.php?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Simple Timesheet", true, Config::getRelativeRoot()."/simple?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
 		Site::getCommandMenu()->add(new IconTextCommand("Submit Times", true, Config::getRelativeRoot()."/submit?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclMonthly'))
 		Site::getCommandMenu()->add(new IconTextCommand("View Month", true, Config::getRelativeRoot()."/monthly?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclAbsences'))
-		Site::getCommandMenu()->add(new IconTextCommand("Absences", true, Config::getRelativeRoot()."/absences.php?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Absences", true, Config::getRelativeRoot()."/absences?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclClients'))
-		Site::getCommandMenu()->add(new IconTextCommand("Clients", true, Config::getRelativeRoot()."/client_maint.php", Config::getRelativeRoot()."/images/icon_clients.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Clients", true, Config::getRelativeRoot()."/client_maint", Config::getRelativeRoot()."/images/icon_clients.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclProjects'))
-		Site::getCommandMenu()->add(new IconTextCommand("Projects", true, Config::getRelativeRoot()."/proj_maint.php", Config::getRelativeRoot()."/images/icon_projects.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Projects", true, Config::getRelativeRoot()."/proj_maint", Config::getRelativeRoot()."/images/icon_projects.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclRates'))
-		Site::getCommandMenu()->add(new IconTextCommand("Project Rates", true, Config::getRelativeRoot()."/project_user_rates.php", Config::getRelativeRoot()."/images/icon_rates.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Project Rates", true, Config::getRelativeRoot()."/project_user_rates", Config::getRelativeRoot()."/images/icon_rates.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclTasks'))
-		Site::getCommandMenu()->add(new IconTextCommand("Tasks", true, Config::getRelativeRoot()."/task_maint.php", Config::getRelativeRoot()."/images/icon_tasks.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Tasks", true, Config::getRelativeRoot()."/task_maint", Config::getRelativeRoot()."/images/icon_tasks.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclReports'))
 		Site::getCommandMenu()->add(new IconTextCommand("Reports", true, Config::getRelativeRoot()."/reports?$post", Config::getRelativeRoot()."/images/icon_reports.gif"));
 	if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-		Site::getCommandMenu()->add(new IconTextCommand("Users", true, Config::getRelativeRoot()."/user_maint.php", Config::getRelativeRoot()."/images/icon_users.gif"));
-		Site::getCommandMenu()->add(new IconTextCommand("Supervisor", true, Config::getRelativeRoot()."/supervisor.php", Config::getRelativeRoot()."/images/icon_users.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Users", true, Config::getRelativeRoot()."/user_maint", Config::getRelativeRoot()."/images/icon_users.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Supervisor", true, Config::getRelativeRoot()."/supervisor", Config::getRelativeRoot()."/images/icon_users.gif"));
 		if (Site::getAuthenticationManager()->hasAccess('aclRates'))
-			Site::getCommandMenu()->add(new IconTextCommand("User Rates", true, Config::getRelativeRoot()."/rate_maint.php", Config::getRelativeRoot()."/images/icon_rates.gif"));
-		Site::getCommandMenu()->add(new IconTextCommand("Configuration", true, Config::getRelativeRoot()."/config.php", Config::getRelativeRoot()."/images/icon_configuration.gif"));
+			Site::getCommandMenu()->add(new IconTextCommand("User Rates", true, Config::getRelativeRoot()."/rate_maint", Config::getRelativeRoot()."/images/icon_rates.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Configuration", true, Config::getRelativeRoot()."/config", Config::getRelativeRoot()."/images/icon_configuration.gif"));
 	}
 	if (!Site::getAuthenticationManager()->usingLDAP())
-		Site::getCommandMenu()->add(new IconTextCommand("Change Password", true, Config::getRelativeRoot()."/changepwd.php", Config::getRelativeRoot()."/images/icon_key.gif"));
-	Site::getCommandMenu()->add(new IconTextCommand("Logout", true, Config::getRelativeRoot()."/logout.php?logout=true", Config::getRelativeRoot()."/images/icon_logout.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Change Password", true, Config::getRelativeRoot()."/changepwd", Config::getRelativeRoot()."/images/icon_key.gif"));
+	Site::getCommandMenu()->add(new IconTextCommand("Logout", true, Config::getRelativeRoot()."/logout?logout=true", Config::getRelativeRoot()."/images/icon_logout.gif"));
 	if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 		if (isset($_SESSION['contextUser'])) 
 			$uid=$_SESSION['contextUser'];
@@ -114,34 +114,34 @@ else{
 	if ($authenticationManager->hasAccess('aclStopwatch'))
 		$commandMenu->add(new IconTextCommand("Stopwatch", true, $popup_href, "images/icon_stopwatch.gif"));
 	if ($authenticationManager->hasAccess('aclDaily'))
-		$commandMenu->add(new IconTextCommand("Daily Timesheet", true, "daily.php?$post", "images/icon_daily.gif"));
+		$commandMenu->add(new IconTextCommand("Daily Timesheet", true, "daily?$post", "images/icon_daily.gif"));
 	if ($authenticationManager->hasAccess('aclWeekly'))
-		$commandMenu->add(new IconTextCommand("Weekly Timesheet", true, "weekly.php?$post", "images/icon_daily.gif"));
+		$commandMenu->add(new IconTextCommand("Weekly Timesheet", true, "weekly?$post", "images/icon_daily.gif"));
 	if ($authenticationManager->hasAccess('aclSimple'))
-		$commandMenu->add(new IconTextCommand("Simple Timesheet", true, "simple.php?$post", "images/icon_daily.gif"));
+		$commandMenu->add(new IconTextCommand("Simple Timesheet", true, "simple?$post", "images/icon_daily.gif"));
 	if ($authenticationManager->hasAccess('aclMonthly'))
-		$commandMenu->add(new IconTextCommand("View Month", true, "monthly.php?$post", "images/icon_calendar.gif"));
+		$commandMenu->add(new IconTextCommand("View Month", true, "monthly?$post", "images/icon_calendar.gif"));
 	if ($authenticationManager->hasAccess('aclAbsences'))
-		$commandMenu->add(new IconTextCommand("Absences", true, "absences.php?$post", "images/icon_calendar.gif"));
+		$commandMenu->add(new IconTextCommand("Absences", true, "absences?$post", "images/icon_calendar.gif"));
 	if ($authenticationManager->hasAccess('aclClients'))
-		$commandMenu->add(new IconTextCommand("Clients", true, "client_maint.php", "images/icon_clients.gif"));
+		$commandMenu->add(new IconTextCommand("Clients", true, "client_maint", "images/icon_clients.gif"));
 	if ($authenticationManager->hasAccess('aclProjects'))
-		$commandMenu->add(new IconTextCommand("Projects", true, "proj_maint.php", "images/icon_projects.gif"));
+		$commandMenu->add(new IconTextCommand("Projects", true, "proj_maint", "images/icon_projects.gif"));
 	if ($authenticationManager->hasAccess('aclRates'))
-		$commandMenu->add(new IconTextCommand("Project Rates", true, "project_user_rates.php", "images/icon_rates.gif"));
+		$commandMenu->add(new IconTextCommand("Project Rates", true, "project_user_rates", "images/icon_rates.gif"));
 	if ($authenticationManager->hasAccess('aclTasks'))
-		$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint.php", "images/icon_tasks.gif"));
+		$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint", "images/icon_tasks.gif"));
 	if ($authenticationManager->hasAccess('aclReports'))
-		$commandMenu->add(new IconTextCommand("Reports", true, "reports.php?$post", "images/icon_reports.gif"));
+		$commandMenu->add(new IconTextCommand("Reports", true, "reports?$post", "images/icon_reports.gif"));
 	if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-		$commandMenu->add(new IconTextCommand("Users", true, "user_maint.php", "images/icon_users.gif"));
+		$commandMenu->add(new IconTextCommand("Users", true, "user_maint", "images/icon_users.gif"));
 		if ($authenticationManager->hasAccess('aclRates'))
-			$commandMenu->add(new IconTextCommand("User Rates", true, "rate_maint.php", "images/icon_rates.gif"));
-		$commandMenu->add(new IconTextCommand("Configuration", true, "config.php", "images/icon_configuration.gif"));
+			$commandMenu->add(new IconTextCommand("User Rates", true, "rate_maint", "images/icon_rates.gif"));
+		$commandMenu->add(new IconTextCommand("Configuration", true, "config", "images/icon_configuration.gif"));
 	}
 	if (!$authenticationManager->usingLDAP())
-		$commandMenu->add(new IconTextCommand("Change Password", true, "changepwd.php", "images/icon_key.gif"));
-	$commandMenu->add(new IconTextCommand("Logout", true, "logout.php?logout=true", "images/icon_logout.gif"));
+		$commandMenu->add(new IconTextCommand("Change Password", true, "changepwd", "images/icon_key.gif"));
+	$commandMenu->add(new IconTextCommand("Logout", true, "logout?logout=true", "images/icon_logout.gif"));
 	if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 		if (isset($_SESSION['contextUser'])) 
 			$uid=$_SESSION['contextUser'];

@@ -1,8 +1,6 @@
 <?php
 
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
 	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
@@ -73,41 +71,41 @@ if(!($val === ''))
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">User report</td>
 						<td class="calendar_cell_right">
-							<a href="report_user.php?<?php print $ymdStr; ?>&amp;&mode=monthly">Generate monthly</a> /
-							<a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
+							<a href="report_user?<?php print $ymdStr; ?>&amp;&mode=monthly">Generate monthly</a> /
+							<a href="report_user?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">User summary</td>
 						<td class="calendar_cell_right">
-							<a href="report_user_summ.php?<?php print $ymdStr; ?>">Bi-monthly</a>
+							<a href="report_user_summ?<?php print $ymdStr; ?>">Bi-monthly</a>
 						</td>
 					</tr>
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Project report</td>
 						<td class="calendar_cell_right">
-							<a href="report_project.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
-							<a href="report_project.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
+							<a href="report_project?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
+							<a href="report_project?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Client report</td>
 						<td class="calendar_cell_right">
-							<a href="report_client.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
-							<a href="report_client.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
+							<a href="report_client?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
+							<a href="report_client?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Client / User - grid report</td>
 						<td class="calendar_cell_right">
-							<a href="report_grid_client_user.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a>
+							<a href="report_grid_client_user?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
 <?php if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">All users & All projects report</td>
 						<td class="calendar_cell_right">
-							<a href="report_all.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a>
+							<a href="report_all?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a>
 						</td>
 					</tr>
 <?php } ?>
@@ -119,13 +117,13 @@ if(!($val === ''))
 					<?php echo_TR_Class(1);?>
 						<td class="calendar_cell_middle">Absence Report</td>
 						<td class="calendar_cell_right">
-							<a href="report_absences.php?<?php print $ymdStr; ?>">Generate monthly</a>
+							<a href="report_absences?<?php print $ymdStr; ?>">Generate monthly</a>
 						</td>
 					</tr>
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Yearly User Report</td>
 						<td class="calendar_cell_right">
-							<a href="report_hours.php?<?php print $ymdStr; ?>">Generate yearly</a>
+							<a href="report_hours?<?php print $ymdStr; ?>">Generate yearly</a>
 						</td>
 					</tr>
 <?php } ?>

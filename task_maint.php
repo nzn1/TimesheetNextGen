@@ -1,9 +1,7 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/task_maint.php,v 1.11 2005/05/17 03:38:37 vexil Exp $
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclMonthly')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclMonthly'));	
@@ -104,7 +102,7 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 		if (confirm('Deleting a task which has been used in the past will make those timesheet ' +
 				'entries invalid, and may cause errors. This action is not recommended. ' +
 				'Are you sure you want to delete this task?'))
-			location.href = 'task_action.php?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
+			location.href = 'task_action?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
 	}
 
 	function change_page(newPageValue)
@@ -161,12 +159,12 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 						</td>
 						<td align="right" nowrap>
 							<?php if ($proj_id != 0) { ?>
-							<a href="task_add.php?proj_id=<?php echo $proj_id; ?>">Add new task</a>
+							<a href="task_add?proj_id=<?php echo $proj_id; ?>">Add new task</a>
 							<?php } else { ?>
 								<span class="disabledLink">Add new task</span>
 							<?php } ?>
 							<br /><br />
-							<a href="assign-proj-mbrs-to-all-tasks.php">Assign Mbrs all tasks</a>
+							<a href="assign-proj-mbrs-to-all-tasks">Assign Mbrs all tasks</a>
 						</td>
 					</tr>
 				</table>
@@ -213,7 +211,7 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 						</td>
 						<td align="right" valign="top" nowrap>
 							<span class="label">Actions:</span>
-							<a href="task_edit.php?task_id=<?php echo $data_task["task_id"]; ?>">Edit</a>,
+							<a href="task_edit?task_id=<?php echo $data_task["task_id"]; ?>">Edit</a>,
 							<a href="javascript:delete_task(<?php echo $proj_id; ?>,<?php echo $data_task["task_id"]; ?>);">Delete</a>
 						</td>
 					</tr>

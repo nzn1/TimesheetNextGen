@@ -3,9 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
@@ -55,7 +53,7 @@ while ($data = dbResult($qh)) {
 	print "<td class=\"calendar_cell_middle\">&nbsp;$titleField</td>";
 	print "<td class=\"calendar_cell_middle\">&nbsp;$organisationField</td>";
 	print "<td class=\"calendar_cell_disabled_right\">";
-	print "	<a href=\"project_user_rates_action.php?proj_id=$data[proj_id]&amp;action=show_users\">&nbsp;Edit Rates</a>\n";
+	print "	<a href=\"project_user_rates_action?proj_id=$data[proj_id]&amp;action=show_users\">&nbsp;Edit Rates</a>\n";
 	print "</td>\n";
 	print "</tr>\n";
 	$n++;

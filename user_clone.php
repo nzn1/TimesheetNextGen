@@ -1,18 +1,16 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/user_action.php,v 1.7 2005/04/17 12:19:31 vexil Exp $
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-//require("debuglog.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
-
-//$debug = new logfile();
 
 //load local vars from superglobals
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : "";
@@ -34,20 +32,18 @@ else
 	$cts = $cloneTo; 
 
 if($action!='performCopy') {
-	include("timesheet_menu.inc");
+	//include("timesheet_menu.inc");
 } else {
 	$commandMenu->add(new TextCommand("Back", true, "$_SERVER[PHP_SELF]?cloneFrom=$cloneFrom&amp;cloneTo=$cloneTo"));
 }
 
 //$debug->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
 
-include("table_names.inc");
-
 ?>
 <div id="header">
 <head>
 	<title>Copy Project and Task Assignments</title> 
-	<?php include ("header.inc"); ?>
+
 
 	<script type="text/javascript">
 	<!--
@@ -115,10 +111,10 @@ include("table_names.inc");
 	</script>
 </head>
 
-<body <?php include ("body.inc"); ?> >
+
 <?php
 print "</div>";
-include ("banner.inc");
+
 //print "Action: $action<br />";
 //print_r($projary);
 
@@ -134,19 +130,17 @@ if($action!='performCopy') {
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
 								Copy Project and Task Assignments &nbsp; &nbsp;From: 
 						<?php
-							single_user_select_list('cloneFrom',$cloneFrom,'',true);
+							Common::single_user_select_list('cloneFrom',$cloneFrom,'',true);
 						?>
 								&nbsp; &nbsp; &nbsp;To: 
 						<?php
-							single_user_select_list('cloneTo',$cloneTo,'',true);
+							Common::single_user_select_list('cloneTo',$cloneTo,'',true);
 						?>
 						</td>
 						<td align="right" nowrap class="outer_table_heading">
@@ -156,9 +150,6 @@ if($action!='performCopy') {
 						</td>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -173,8 +164,9 @@ if($action!='performCopy') {
 					</tr>
 <?php
 	function get_task_name($task_id) {
-		include("table_names.inc");
-
+		$TASK_TABLE = tbl::getTaskTable();
+		$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
+		$ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
 		$sql = "SELECT name FROM $TASK_TABLE WHERE task_id=$task_id";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
@@ -182,7 +174,10 @@ if($action!='performCopy') {
 	}
 
 	$proj_list = array();
-	global $TASK_ASSIGNMENTS_TABLE, $ASSIGNMENTS_TABLE;
+	$TASK_TABLE = tbl::getTaskTable();
+	$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
+	$ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
+	//global $TASK_ASSIGNMENTS_TABLE, $ASSIGNMENTS_TABLE;
 	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_TABLE WHERE username = '$cloneFrom' AND  proj_id!=1");
 	while ($data = dbResult($qh)) {
 		$p_id=$data['proj_id'];
@@ -219,8 +214,6 @@ if($action!='performCopy') {
 		</tr>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -237,9 +230,6 @@ if($action!='performCopy') {
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
@@ -250,9 +240,6 @@ if($action!='performCopy') {
 						</td>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -268,7 +255,8 @@ if($action!='performCopy') {
 					</tr>
 <?php
 	function get_task_name($task_id) {
-		include("table_names.inc");
+		$TASK_TABLE = tbl::getTaskTable();
+		$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
 
 		$sql = "SELECT name FROM $TASK_TABLE WHERE task_id=$task_id";
 		list($my_qh, $num) = dbQuery($sql);
@@ -277,7 +265,7 @@ if($action!='performCopy') {
 	}
 
 	$proj_list = array();
-	global $TASK_ASSIGNMENTS_TABLE, $ASSIGNMENTS_TABLE;
+	//global $TASK_ASSIGNMENTS_TABLE, $ASSIGNMENTS_TABLE;
 	list($qh,$num) = dbQuery(" SELECT * FROM $ASSIGNMENTS_TABLE WHERE username = '$cloneTo' AND  proj_id!=1");
 	while ($data = dbResult($qh)) {
 		$p_id=$data['proj_id'];
@@ -337,8 +325,6 @@ if($action!='performCopy') {
 		</tr>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
@@ -350,12 +336,4 @@ if($action!='performCopy') {
 //  End of form or perform copy if statement
 //==========================================================================================
 
-echo "<div id=\"footer\">"; 
-include ("footer.inc"); 
-echo "</div>";
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
 ?>

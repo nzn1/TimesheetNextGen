@@ -1,18 +1,16 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/project_user_rates_action.php,v 1.1 2006/03/15 13:53:59 raghuprasad Exp $
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu
-include("timesheet_menu.inc");
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
@@ -95,9 +93,7 @@ if ($action == "show_users") {
 
 ?>
 <head><title>Project-User-Rates Management Page</title>
-<?php
-include ("header.inc");
-?>
+
 <script>
 	function updateRate() {
 		document.userRateForm.action.value = "update_rates";
@@ -109,10 +105,7 @@ include ("header.inc");
 	}
 </script>
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php
-include ("banner.inc");
-?>
+
 <form action="project_user_rates_action.php" name="userRateForm" method="post">
 
 	<input type="hidden" name="action" value="" />
@@ -122,8 +115,6 @@ include ("banner.inc");
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
 
 		<table width="100%" border="0">
 			<tr>
@@ -132,9 +123,6 @@ include ("banner.inc");
 			</td>
 			</tr>
 		</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 		<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 			<tr>
@@ -182,7 +170,7 @@ while ($idx < $len) {
 		$rateid = "";
 	}
 
-	print "<tr><td align=\"center\" class=\"calendar_cell_middle\">$count.</td><td class=\"calendar_cell_middle\">&nbsp;$firstname_array[$idx] $lastname_array[$idx] ($username_array[$idx])</td><td class=\"calendar_cell_middle\">" . build_uni_select($rate, $rate_array, $rateid) . "</td></tr>\n";
+	print "<tr><td align=\"center\" class=\"calendar_cell_middle\">$count.</td><td class=\"calendar_cell_middle\">&nbsp;$firstname_array[$idx] $lastname_array[$idx] ($username_array[$idx])</td><td class=\"calendar_cell_middle\">" . Common::build_uni_select($rate, $rate_array, $rateid) . "</td></tr>\n";
 	print "<input type=\"hidden\" name=\"$user\" value=\"$username_array[$idx]\" />\n";
 
 	$idx++;
@@ -199,20 +187,9 @@ while ($idx < $len) {
 			</tr>
 		</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
-
 		</td>
 
 	</tr>
 	</table>
 	<input type="hidden" name="usercount" value="<?php print $len; ?>" />
 </form>
-<?php
-include ("footer.inc");
-?>
-</body>
-</html>
-<?php
-// vim:ai:ts=4:sw=4
-?>
