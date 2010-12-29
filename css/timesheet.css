@@ -166,20 +166,16 @@ tr.diff td { background:#C4C4C4; }
 
 #inputArea
 {
-    font-family: Arial, Sans-Serif;
-    font-size: 13px;
-    background-color: #d6e5f4;
     padding: 10px;
+    width:50%;
 }
 #inputArea input[type="text"], #inputArea textarea
 {
-    font-family: Arial, Sans-Serif;
-    font-size: 13px;
     margin-bottom: 5px;
     display: block;
     padding: 4px;
     border: solid 1px #85b1de;
-    width: 300px;
+    /*width: 300px;*/
 	background-color: #EDF2F7;
 }
 
