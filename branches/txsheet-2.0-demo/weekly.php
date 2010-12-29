@@ -90,8 +90,7 @@ if (isset($popup)){
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1new.inc"); ?>
+
 
 				<table width="100%" border="0">
 					<tr>
@@ -134,8 +133,6 @@ if (isset($popup)){
 					</tr>
 				</table>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -496,7 +493,7 @@ if (isset($popup)){
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 		print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
 		print "<a href=\"$popup_href\" class=\"action_link\">Add</a>,";
-		print "<a href=\"daily.php?$ymdStr\">Edit</a></td>\n";
+		print "<a href=\"daily?$ymdStr\">Edit</a></td>\n";
 		$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 days");
 	}
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
@@ -533,8 +530,6 @@ if (isset($popup)){
 		</tr>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>

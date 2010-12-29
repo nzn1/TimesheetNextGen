@@ -3,9 +3,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
@@ -124,7 +121,7 @@ function writePageLinks($page, $results_per_page, $num2)
 												'with that project. If any of these tasks have timesheet entries ' +
 												'they will become invalid and may cause errors. This action is not recommended. ' +
 												'Are you sure you want to delete this project?'))
-					location.href = 'proj_action.php?client_id=' + clientId + '&proj_id=' + projectId + '&action=delete';
+					location.href = 'proj_action?client_id=' + clientId + '&proj_id=' + projectId + '&action=delete';
 	}
 	
 	function change_page(newPageValue) 
@@ -159,7 +156,7 @@ function writePageLinks($page, $results_per_page, $num2)
 						<?php writePageLinks($page, $results_per_page, $num2);?>
 					</td>
 					<td align="right" nowrap>
-						<a href="proj_add.php?client_id=<?php echo $client_id; ?>">Add new project</a>
+						<a href="proj_add?client_id=<?php echo $client_id; ?>">Add new project</a>
 					</td>
 				</tr>
 			</table>
@@ -225,8 +222,8 @@ function writePageLinks($page, $results_per_page, $num2)
 												</td>
 												<td align="right" valign="top" nowrap>
 													<span class="label">Actions:</span>
-													<a href="proj_edit.php?client_id=<?php echo $client_id; ?>&amp;proj_id=<?php echo $data["proj_id"]; ?>">Edit</a>,
-													<a href="project_user_rates_action.php?proj_id=<?php echo $data["proj_id"]; ?>&amp;action=show_users">Bill Rates</a>,
+													<a href="proj_edit?client_id=<?php echo $client_id; ?>&amp;proj_id=<?php echo $data["proj_id"]; ?>">Edit</a>,
+													<a href="project_user_rates_action?proj_id=<?php echo $data["proj_id"]; ?>&amp;action=show_users">Bill Rates</a>,
 													<a href="javascript:delete_project(<?php echo $client_id; ?>,<?php echo $data["proj_id"]; ?>);">Delete</a>
 												</td>
 											</tr>
@@ -279,7 +276,7 @@ function writePageLinks($page, $results_per_page, $num2)
 															</td>
 															<td width="30%">
 																<div class="project_task_list">
-																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
+																	<a href="task_maint?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
 <?php
 			//get tasks
 			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]");
@@ -288,7 +285,7 @@ function writePageLinks($page, $results_per_page, $num2)
 			if ($num_tasks > 0) {
 				while ($task_data = dbResult($qh3)) {
 					$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
-					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
+					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
 				}
 			}
 			else

@@ -1,7 +1,5 @@
 <?php
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 
 //check that this form has been submitted
 if (isset($_POST["username"]) && isset($_POST["password"])) {

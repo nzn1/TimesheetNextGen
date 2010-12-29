@@ -1,21 +1,26 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/edit.php,v 1.9 2005/02/03 08:06:10 vexil Exp $
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+if(!class_exists('Site')){
+	die('remove .php from the url to access this page');
+}
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
-
 $contextUser = strtolower($_SESSION['contextUser']);
+gbl::setContextUser($contextUser);
+$loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 //load local vars from superglobals
 $save_changes = isset($_REQUEST['save_changes']) ? $_REQUEST['save_changes']: false;
@@ -62,13 +67,13 @@ if ($action == "saveChanges") {
 }
 
 //get trans info
-$trans_info = get_trans_info($trans_num);
+$trans_info = Common::get_trans_info($trans_num);
 
 //There are several potential problems with the date/time data comming from the database
 //because this application hasn't taken care to cast the time data into a consistent TZ.
 //See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
 //So, we handle it as best we can for now...
-fixStartEndDuration($trans_info);
+Common::fixStartEndDuration($trans_info);
 
 if ($action != "saveChanges") {
 	$proj_id = $trans_info["proj_id"];
@@ -83,19 +88,16 @@ include("form_input.inc");
 <head>
 <title>Edit Work Log Record for <?php echo $contextUser; ?></title>
 <?php
-include("header.inc");
-include("client_proj_task_javascript.inc");
+include("client_proj_task_javascript.php");
 ?>
 </head>
-<body <?php include ("body.inc"); ?> onload="doOnLoad();">
-<?php include ("banner.inc"); ?>
+<body  onload="doOnLoad();">
+
 
 <table width="500" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
 
 				<table width="100%" border="0" class="table_head">
 					<tr>
@@ -105,8 +107,6 @@ include("client_proj_task_javascript.inc");
 					</tr>
 				</table>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
@@ -250,17 +250,8 @@ include("client_proj_task_javascript.inc");
 		</form>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
-
-<?php include ("footer.inc"); ?>
-</body>
-</html>
-<?php
-// vim:ai:ts=4:sw=4
-?>

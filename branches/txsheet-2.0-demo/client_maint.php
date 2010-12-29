@@ -3,9 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
@@ -55,7 +53,7 @@ tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1
 			Clients
 		</td>
 		<td align="right">
-			<a href="client_add.php" class="outer_table_action">Add new client</a>
+			<a href="client_add" class="outer_table_action">Add new client</a>
 		</td>
 		</tr>
 	</table>
@@ -98,12 +96,12 @@ $count = 0;
 			print "<tr class=\"diff\">";
 		else
 			print "<tr>";
-		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=window.open(\"client_info.php?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=240\")>$organisationField</a></td>";
+		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=window.open(\"client_info?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=240\")>$organisationField</a></td>";
 		print "<td class=\"calendar_cell_middle\">$contactNameField</td>";
 		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
 		print "<td class=\"calendar_cell_middle\">$emailField</td>";
 		print "<td class=\"calendar_cell_disabled_right\">\n";
-		print "	<a href=\"client_edit.php?client_id=$data[client_id]\">Edit</a>,&nbsp;\n";
+		print "	<a href=\"client_edit?client_id=$data[client_id]\">Edit</a>,&nbsp;\n";
 		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>\n";
 		print "</td>\n";
 		$count++;

@@ -4,9 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
@@ -64,7 +62,7 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 
 	function goClone() {
 		var cloneTo = document.userForm.username.value;
-		var location = "user_clone.php";
+		var location = "user_clone";
 		if(cloneTo.length > 0)
 			location+="?cloneTo=" + cloneTo;
 		window.location.href=location;
