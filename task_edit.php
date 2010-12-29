@@ -1,9 +1,4 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/task_edit.php,v 1.6 2004/07/02 14:15:56 vexil Exp $
-error_reporting(E_ALL);
-ini_set('display_errors', true);
-
-// Authenticate
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');
 }
@@ -29,7 +24,7 @@ if (empty($contextUser))
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
-$task_id = $_REQUEST['task_id'];
+$task_id = gbl::getTaskId();
 
 //define the command menu
 Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
@@ -52,33 +47,29 @@ while ($datanext = dbResult($qh)) {
 	$i++;
 }
 
+PageElements::setHead("<title>".Config::getMainTitle()." | Edit Task | ".$data["name"]."</title>");
 ?>
-<html>
-<head>
-	<title>Edit Task</title>
-</head>
-
 
 <form action="task_action.php" method="post">
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 <input type="hidden" name="task_id" value="<?php echo $data["task_id"]; ?>" />
 <div id="inputArea">
-<table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
+<table align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td class="outer_table_heading">
+		<td colspan="2" class="outer_table_heading">
 			<h1>Edit Task: <?php echo $data["name"]; ?> </h1>
 		</td>
 	</tr>
 	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
 	<tr>
 				<!--  table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body" -->
-		<td align="right">Task Name:</td>
-		<td><input type="text" name="name" size="42" value="<?php echo $data["name"]; ?>" style="width: 100%" /></td>
+		<td align="right"><label for="name">Task Name:</label></td>
+		<td><input type="text" name="name" id="name" size="42" value="<?php echo $data["name"]; ?>" style="width: 100%" /></td>
 	</tr>
 	<tr>
 		<td align="right" valign="top">Description:</td>
-		<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%"><?php $data["description"] = stripslashes($data["description"]); echo $data["description"]; ?></textarea></td>
+		<td><textarea name="description" rows="4" cols="40" style="width: 100%"><?php $data["description"] = stripslashes($data["description"]); echo $data["description"]; ?></textarea></td>
 	</tr>
 	<tr>
 		<td align="right">Status:</td>
@@ -89,7 +80,8 @@ while ($datanext = dbResult($qh)) {
 		<td><?php Common::multi_user_select_list("assigned[]",$selected_array); ?></td>
 	</tr>
 	<tr>
-		<td align="center">
+		<td></td>
+		<td>
 			<input type="submit" value="Update" />
 		</td>
 	</tr>
