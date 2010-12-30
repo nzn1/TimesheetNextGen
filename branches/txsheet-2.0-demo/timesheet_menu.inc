@@ -84,7 +84,7 @@ if(class_exists('Site')){
 	if (Site::getAuthenticationManager()->hasAccess('aclTasks'))
 		Site::getCommandMenu()->add(new IconTextCommand("Tasks", true, Config::getRelativeRoot()."/task_maint", Config::getRelativeRoot()."/images/icon_tasks.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclReports'))
-		Site::getCommandMenu()->add(new IconTextCommand("Reports", true, Config::getRelativeRoot()."/reports?$post", Config::getRelativeRoot()."/images/icon_reports.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Reports", true, Config::getRelativeRoot()."/reports/reports?$post", Config::getRelativeRoot()."/images/icon_reports.gif"));
 	if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 		Site::getCommandMenu()->add(new IconTextCommand("Users", true, Config::getRelativeRoot()."/user_maint", Config::getRelativeRoot()."/images/icon_users.gif"));
 		Site::getCommandMenu()->add(new IconTextCommand("Supervisor", true, Config::getRelativeRoot()."/supervisor", Config::getRelativeRoot()."/images/icon_users.gif"));
