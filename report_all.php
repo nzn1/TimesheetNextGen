@@ -1,10 +1,5 @@
 <?php
 
-
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
-
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
 	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
@@ -279,9 +274,6 @@ PageElements::setHead("<title>".Config::getMainTitle()." - User Report for ".$co
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) ; // include("timesheet_face_part_1.inc"); ?>
-
 				<table width="100%" border="0">
 					<tr>
 						<td width="15%">&nbsp;</td>
@@ -296,9 +288,6 @@ PageElements::setHead("<title>".Config::getMainTitle()." - User Report for ".$co
 						<?php endif; ?>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) ; //include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -530,8 +519,6 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 	</table>
 
 <?php if(!$export_excel) { ?>
-<!-- include the timesheet face up until the end -->
-<?php if(!$print) ; //include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>

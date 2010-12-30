@@ -1011,9 +1011,6 @@ for ($i=0; $i<$num4; $i++) {
 		</tr>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php //include("timesheet_face_part_3.inc"); ?>
-
 		</td>
 	</tr>
 </table>

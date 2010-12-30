@@ -26,9 +26,6 @@ Common::setMotd(0);
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php //include("timesheet_face_part_1new.inc"); ?>
-
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
@@ -39,9 +36,6 @@ Common::setMotd(0);
 						</td>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php //include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -131,9 +125,6 @@ if(!($val === ''))
 			</td>
 		</tr>
 	</table>
-
-<!-- include the timesheet face up until the end -->
-<?php //include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>

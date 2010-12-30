@@ -1,18 +1,13 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/user_action.php,v 1.7 2005/04/17 12:19:31 vexil Exp $
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-//require("debuglog.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
+
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
+	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
-//$debug = new logfile();
+include("database_credentials.inc");
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
@@ -30,8 +25,10 @@ $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIV
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
 
-include("table_names.inc");
-
+$USER_TABLE = tbl::getUserTable();
+$ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
+$TASK_TABLE = tbl::getTaskTable();
+$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
 if ($action == "delete") {
 	dbquery("DELETE FROM $USER_TABLE WHERE uid='$uid'");
 	dbquery("DELETE FROM $ASSIGNMENTS_TABLE WHERE username='$username'");

@@ -1,14 +1,10 @@
 <?php
-// Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+// Authenticateif (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
+	
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
+	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
@@ -27,20 +23,15 @@ $clock_off_time_min = $_REQUEST['clock_off_time_min'];
 $clockonoff = $_REQUEST['clockonoff'];
 
 // create the command menu cancel option
-$commandMenu->add(new TextCommand("Cancel", true, "$destination?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;year=$year&amp;month=$month&amp;day=$day"));
+Site::getCommandMenu()->add(new TextCommand("Cancel", true, "$destination?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;year=$year&amp;month=$month&amp;day=$day"));
 
 ?>
 <html>
 <head>
 	<title>Clock off - Enter log message</title>
-<?php
-include ("header.inc");
-?>
+<
 </head>
-<body <?php include ("body.inc"); ?> >
-<?php
-include ("banner.inc");
-?>
+
 <form action="clock_action.php" method="post">
 	<input type="hidden" name="origin" value="<?php echo $origin; ?>" />
 	<input type="hidden" name="destination" value="<?php echo $destination; ?>" />
@@ -61,9 +52,6 @@ include ("banner.inc");
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1.inc"); ?>
-
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
@@ -71,9 +59,6 @@ include ("banner.inc");
 						</td>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_2.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -103,20 +88,9 @@ include ("banner.inc");
 		</tr>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-
-<?php
-include ("footer.inc");
-?>
-</body>
-</html>
-<?php
-// vim:ai:ts=4:sw=4
-?>

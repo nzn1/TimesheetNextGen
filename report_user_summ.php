@@ -20,23 +20,17 @@ if($export_excel){
 }
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-//require("debuglog.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclReports'));
+
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
+	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
-//define the command menu & we get these variables from $_REQUEST:
-//  $month $day $year $client_id $proj_id $task_id
-include("timesheet_menu.inc");
-
 $contextUser = strtolower($_SESSION['contextUser']);
-
+$client_id =  gbl::getClientId();
+$year = gbl::getYear();
+$month = gbl::getMonth();
+$day = gbl::getDay();
 //load local vars from superglobals
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
@@ -101,9 +95,9 @@ function make_index($data,$order) {
 function format_time($time,$time_fmt) {
 	if($time > 0) {
 		if($time_fmt == "decimal")
-			return minutes_to_hours($time);
+			return Common::minutes_to_hours($time);
 		else 
-			return format_minutes($time);
+			return Common::format_minutes($time);
 	} else 
 		return "-";
 }
@@ -148,7 +142,7 @@ function init(){
 <head>
 <title>User Summary Report</title>
 <?php 
-	if(!$export_excel) include ("header.inc");
+	if(!$export_excel) ;
 	else {
 		print "<style type=\"text/css\"> ";
 		include ("css/timesheet.css");
@@ -159,21 +153,21 @@ function init(){
 <?php
 	if($print) {
 		echo "<body width=\"100%\" height=\"100%\"";
-		include ("body.inc");
+		//include ("body.inc");
 			echo "onLoad=window.print();";
 		echo ">\n";
 	} else if($export_excel) {
 		echo "<body ";
-		include ("body.inc");
+		//include ("body.inc");
 		echo ">\n";
 	} else {
 		echo "<body ";
-		include ("body.inc");
+		//include ("body.inc");
 		echo ">\n";
 		echo "<div id=\"header\">";
-		include ("banner.inc");
+		//include ("banner.inc");
 		$motd = 0;  //don't want the motd printed
-		include("navcal/navcal_monthly_with_end_dates.inc");
+		include("navcalnew/navcal_monthly_with_end_dates.inc");
 		echo "</div>";
 	}
 ?>
@@ -189,21 +183,18 @@ function init(){
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_1.inc"); ?>
-
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap>
 							<b>User:</b>&nbsp;
-							<?php user_select_droplist($uid, false); ?>
+							<?php Common::user_select_droplist($uid, false); ?>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
 						<?php
 							echo date("F", $start_time)." ";
-							day_button("start_day",$start_time);
+							Common::day_button("start_day",$start_time);
 							echo "&nbsp;&nbsp;to&nbsp;&nbsp;";
-							day_button("end_day",$end_time);
+							Common::day_button("end_day",$end_time);
 							echo ", $end_year";
 						?> 
 						</td>
@@ -230,9 +221,6 @@ function init(){
 					</tr>
 				</table>
 
-<!-- include the timesheet face up until the heading start section -->
-<?php if(!$print) include("timesheet_face_part_2.inc"); ?>
-
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
@@ -252,7 +240,7 @@ else {  //create Excel header
 
 // ==============================================================================================
 // Fetch data records
-list($num, $qh) = get_time_records($startStr, $endStr, $uid, 0, $client_id);
+list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, 0, $client_id);
 
 if ($num == 0) {
 	print "	<tr>\n";
@@ -265,14 +253,14 @@ if ($num == 0) {
 	while ($data = dbResult($qh)) {
 		//if entry doesn't have an end time or duration, it's an incomplete entry
 		//fixStartEndDuration returns a 0 if the entry is incomplete.
-		if(!fixStartEndDuration($data)) continue;
+		if(!Common::fixStartEndDuration($data)) continue;
 
 		//Since we're allowing entries that may span date boundaries, this complicates
 		//our life quite a lot.  We need to "pre-process" the results to split those
 		//entries that do span date boundaries into multiple entries that stop and then
 		//re-start on date boundaries.
 		//NOTE: there must be a make_index() function defined in this file for the following function to, well, function
-		split_data_into_discrete_days($data,$orderby,$darray,0);
+		Common::split_data_into_discrete_days($data,$orderby,$darray,0);
 	}
 
 	ksort($darray);
@@ -366,23 +354,12 @@ if ($num == 0) {
 	</table>
 
 <?php if(!$export_excel) { ?>
-<!-- include the timesheet face up until the end -->
-<?php if(!$print) include("timesheet_face_part_3.inc"); ?>
 
 		</td>
 	</tr>
 </table>
 
 </form>
-<?php if (!$print) {
-		echo "<div id=\"footer\">"; 
-		include ("footer.inc"); 
-		echo "</div>";
-	}
+<?php 
 } //end if !export_excel 
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
 ?>
