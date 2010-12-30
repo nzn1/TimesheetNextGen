@@ -1581,7 +1581,7 @@ class Common{
 		list($result, $count) = dbQuery("SELECT startPage FROM ".tbl::getConfigTable()." WHERE config_set_id = '1';");
 		list($startPage) = dbResult($result);
 		
-		header("Location: $startPage.php");
+		header("Location: $startPage");
 		exit();
 	}
 }
