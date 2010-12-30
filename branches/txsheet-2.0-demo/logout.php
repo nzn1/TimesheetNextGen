@@ -1,10 +1,10 @@
 <?php
 
-require("class.AuthenticationManager.php");
+
 //log the user out
-$authenticationManager->logout();
+Site::getAuthenticationManager()->logout();
 //go to the login page
-Header("Location: login.php");
+Header("Location: login");
 
 // vim:ai:ts=4:sw=4
 ?>

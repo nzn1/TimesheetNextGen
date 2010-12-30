@@ -133,7 +133,7 @@ function getLogMessage() {
 	global $log_message, $log_message_presented, $fromPopupWindow;
 
 	if ($log_message_presented == false) {
-		$targetWindowLocation = "log_message.php".
+		$targetWindowLocation = "log_message".
 					"?origin=$origin&destination=$destination".
 					"&clock_on_time_hour=$clock_on_time_hour".
 					"&clock_off_time_hour=$clock_off_time_hour".

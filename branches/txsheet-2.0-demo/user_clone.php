@@ -34,7 +34,7 @@ else
 if($action!='performCopy') {
 	//include("timesheet_menu.inc");
 } else {
-	$commandMenu->add(new TextCommand("Back", true, "$_SERVER[PHP_SELF]?cloneFrom=$cloneFrom&amp;cloneTo=$cloneTo"));
+	Site::getCommandMenu()->add(new TextCommand("Back", true, "$_SERVER[PHP_SELF]?cloneFrom=$cloneFrom&amp;cloneTo=$cloneTo"));
 }
 
 //$debug->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");

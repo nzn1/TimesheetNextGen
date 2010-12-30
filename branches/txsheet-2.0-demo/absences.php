@@ -3,9 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
@@ -26,7 +24,7 @@ if (empty($loggedInUser))
 if (empty($contextUser))
 	errorPage("Could not determine the context user");
 
-if ($authenticationManager->hasClearance(CLEARANCE_MANAGER))
+if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_MANAGER))
 	$canChangeUser = true;
 else
 	$canChangeUser = false;
@@ -82,7 +80,7 @@ include ("navcalnew/navcal_monthly.inc");
 				<table width="100%" border="0">
 					<tr>
 					<?php if($canChangeUser) : ?>
-						<td align="left" width="38%" nowrap>User: &nbsp; <?php user_select_droplist($uid); ?></td>
+						<td align="left" width="38%" nowrap>User: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
 					<?php else : ?>
 						<td width="38%" nowrap>User: &nbsp;<?php echo "<b>$uid</b>"; ?></td>
 					<?php endif; ?>
@@ -175,9 +173,9 @@ include ("navcalnew/navcal_monthly.inc");
 ?>
 			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $dow; ?></td>
 			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $i; ?></td>
-			<td align="right" class="<?php echo $AMstyle; ?>"><?php absence_select_droplist($AM_type, $disabled, "AMtype".$i); ?></td>
+			<td align="right" class="<?php echo $AMstyle; ?>"><?php Common::absence_select_droplist($AM_type, $disabled, "AMtype".$i); ?></td>
 			<td align="left" class="<?php echo $AMstyle; ?>"><input type="text" id="<?php echo "AMtext",$i; ?>" name="<?php echo "AMtext",$i; ?>" class="<?php echo $AMstyle; ?>" value="<?php echo $AM_text; ?>" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
-			<td align="right" class="<?php echo $PMstyle; ?>"><?php absence_select_droplist($PM_type, $disabled, "PMtype".$i); ?></td>
+			<td align="right" class="<?php echo $PMstyle; ?>"><?php Common::absence_select_droplist($PM_type, $disabled, "PMtype".$i); ?></td>
 			<td align="left" class="<?php echo $PMstyle; ?>"><input type="text" id="<?php echo $i,"_PMtext"; ?>" name="<?php echo "PMtext",$i; ?>" class="<?php echo $PMstyle; ?>" value="<?php echo $PM_text; ?>" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
 		</tr>
 <?php

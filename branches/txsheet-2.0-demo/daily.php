@@ -1,8 +1,6 @@
 <?php
 // $Header: /cvsroot/tsheet/timesheet.php/daily.php,v 1.7 2005/05/10 11:42:53 vexil Exp $
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
@@ -75,8 +73,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-<!-- include the timesheet face up until the heading start section -->
-<?php include("timesheet_face_part_1new.inc"); ?>
+
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
@@ -90,9 +87,6 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</td>
 					</tr>
 				</table>
-
-<!-- include the timesheet face up until the heading start section -->
-<?php //include("timesheet_face_part_2new.inc"); ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -287,10 +281,6 @@ else {
 			</td>
 		</tr>
 	</table>
-
-
-<!-- include the timesheet face up until the end -->
-<?php //include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>

@@ -96,8 +96,6 @@ if (isset($popup))
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php //include("timesheet_face_part_1new.inc"); ?>
 				<!-- Table which could be first row covering client and project and date -->
 				<table width="100%" border="0">
 					<tr>
@@ -138,8 +136,6 @@ if (isset($popup))
 					</tr>
 				</table><!-- end of the client, project select table and the current month -->
 
-<!-- include the timesheet face up until the heading start section -->
-<?php //include("timesheet_face_part_2new.inc"); ?>
 	<!-- table encompassing heading, days in month, weekly total and month total -->
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr class="inner_table_head">
@@ -447,9 +443,6 @@ if (isset($popup))
 			</td>
 		</tr>
 	</table>
-
-<!-- include the timesheet face up until the end -->
-<?php //include("timesheet_face_part_3new.inc"); ?>
 
 		</td>
 	</tr>

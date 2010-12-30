@@ -83,7 +83,7 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 </script>
 </head>
 
-<form action="user_action.php" name="userForm" method="post">
+<form action="user_action" name="userForm" method="post">
 <input type="hidden" name="action" value="" />
 <input type="hidden" name="uid" value="" />
 
