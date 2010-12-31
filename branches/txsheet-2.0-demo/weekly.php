@@ -1,8 +1,6 @@
 <?php
 //$Header: /cvsroot/tsheet/timesheet.php/weekly.php,v 1.6 2005/05/23 05:39:39 vexil Exp $
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclWeekly')) {
 	if(!class_exists('Site')){
 		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . get_acl_level('aclWeekly'));	
@@ -41,7 +39,6 @@ if (gbl::getProjId() != 0 && gbl::getClientId() != 0) { // id 0 means 'All Proje
 else
 	gbl::setTaskId(0);
 
-
 //get the context date
 $startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
 $todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
@@ -59,7 +56,7 @@ $CfgTimeFormat = Common::getTimeFormat();
 
 
 //include ("header.inc");
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - Weekly Timesheet for ".$contextUser."</title>");
 ob_start();
 
 include("client_proj_task_javascript.php");
@@ -75,12 +72,11 @@ if (isset($popup)){
 	PageElements::setBodyOnLoad($str);
 }	
 
-//include ("banner.inc");
-//include("navcal/navcalendars.inc");
 	$currentDate = $todayDate;
 	$fromPopup = "false";
-	include("navcalnew/navcal+clockOnOff.inc"); 
+	//include("navcalnew/navcal+clockOnOff.inc"); 
 ?>
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/datetimepicker_css.js"></script>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 <input type="hidden" name="month" value=<?php echo gbl::getMonth(); ?> />
 <input type="hidden" name="year" value=<?php echo gbl::getYear(); ?> />
@@ -90,7 +86,6 @@ if (isset($popup)){
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
-
 
 				<table width="100%" border="0">
 					<tr>
@@ -124,12 +119,24 @@ if (isset($popup)){
 								</tr>
 							</table>
 						</td>
-						<td align="center" nowrap class="outer_table_heading">
-							Week Start: <?php echo date('D F j, Y',$startDate); ?>
+						</tr>
+							<td align="center" nowrap class="outer_table_heading">
+							Week Start: <?php echo date('l F j, Y',$startDate); ?>
+							</td>
+						
+					<td align="center" nowrap="nowrap" class="outer_table_heading">
+						<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+						value="<?php echo date('d-M-Y', $startDate); ?>" />
 						</td>
-						<td align="right" nowrap>
+						<td align="center" nowrap="nowrap" class="outer_table_heading">
+						<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+						</td>
+					
+					<td align="right" nowrap>
 							<!--prev / next buttons used to be here -->
 						</td>
+					
+					
 					</tr>
 				</table>
 
