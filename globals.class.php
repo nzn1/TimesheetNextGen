@@ -24,13 +24,13 @@ class gbl{
 		self::$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: self::$realToday["mon"];
 		self::$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: self::$realToday["mday"];
 
-	if(isset($_GET['date1'])){
+	if(isset($_REQUEST['date1'])){
 //if the date variable exists
 
 		/* @TODO - add validation to this!!!*/
-$d = explode('-',$_GET['date1']);
+	$d = explode('-',$_REQUEST['date1']);
 
-	gbl::setYear($d[2]);
+	gbl::setYear(intval($d[2]));
 	switch($d[1]){
 		case 'Jan':
 			self::$month = 1;
