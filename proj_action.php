@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
+	Header("Location: login?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -82,7 +82,7 @@ elseif ($action == "add") {
 	}
 
 	// we're done adding the project so redirect to the maintenance page
-	Header("Location: proj_maint.php?client_id=$client_id");
+	Header("Location: proj_maint?client_id=$client_id");
 
 }
 elseif ($action == "edit") {
@@ -111,14 +111,14 @@ elseif ($action == "edit") {
 	}
 
 	//we're done editing, so redirect back to the maintenance page
-	Header("Location: proj_maint.php?client_id=$client_id");
+	Header("Location: proj_maint?client_id=$client_id");
 }
 elseif ($action == 'delete') {
 	dbQuery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
 	dbQuery("DELETE FROM $TASK_TABLE WHERE proj_id = $proj_id");
 	dbQuery("DELETE FROM $PROJECT_TABLE WHERE proj_id=$proj_id");
 	dbQuery("DELETE FROM $ASSIGNMENTS_TABLE WHERE proj_id=$proj_id");
-	Header("Location: proj_maint.php?client_id=$client_id");
+	Header("Location: proj_maint?client_id=$client_id");
 }
 
 // vim:ai:ts=4:sw=4
