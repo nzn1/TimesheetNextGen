@@ -6,10 +6,10 @@ ini_set('display_errors', true);
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
 	}
 	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	}
 	
 	exit;
@@ -37,11 +37,15 @@ else
 $action = 0;
 
 //run the query
+$day = gbl::getDay();
+$month = gbl::getMonth();
+$year = gbl::getYear();
 list($qh,$num) = Common::get_absences($month, $year, $uid);
 $ihol = 0;
 
 //define working variables
 $last_day = Common::get_last_day($month, $year);
+$startDate = mktime(0,0,0, $month, 1, $year);
 
 ?>
 <html>
@@ -58,14 +62,10 @@ $last_day = Common::get_last_day($month, $year);
 
 
 </script>
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/datetimepicker_css.js"></script>
 </head>
-<?php
 
-
-$motd = 0;  //don't want the motd printed
-include ("navcalnew/navcal_monthly.inc");
-?>
-<form name="theForm" id="theForm" action="absences_action.php" method="post">
+<form name="theForm" id="theForm" action="absences_action" method="post">
 <input type="hidden" name="month" value=<?php echo $month; ?> />
 <input type="hidden" name="day" value=<?php echo $day; ?> />
 <input type="hidden" name="year" value=<?php echo $year; ?> />
@@ -75,24 +75,29 @@ include ("navcalnew/navcal_monthly.inc");
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
-
-				<table width="100%" border="0">
-					<tr>
-					<?php if($canChangeUser) : ?>
-						<td align="left" width="38%" nowrap>User: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
-					<?php else : ?>
-						<td width="38%" nowrap>User: &nbsp;<?php echo "<b>$uid</b>"; ?></td>
-					<?php endif; ?>
-						<td align="center" nowrap class="outer_table_heading">
-							<?php echo date('F Y',mktime(0,0,0,$month, 1, $year)); ?>
-						</td>
-						<td align="right">&nbsp; </td>
-						<td align="right">
-							<input type="button" value="Save Changes" name="save" id="save" onclick="onSubmit();" />
-						</td>
-					</tr>
-				</table>
+			<?php print "$day $month $year"; ?>
+		<?php if($canChangeUser) : ?>
+			<td align="left" width="38%" nowrap>User: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
+		<?php else : ?>
+			<td width="38%" nowrap>User: &nbsp;<?php echo "<b>$uid</b>"; ?></td>
+		<?php endif; ?>
+		<td align="center" nowrap class="outer_table_heading">
+			<?php echo date('F Y',mktime(0,0,0,$month, 1, $year)); ?>
+		</td>
+		<td align="right">&nbsp; </td>
+				<td align="center" nowrap="nowrap" class="outer_table_heading">
+				<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+				value="<?php echo date('d-M-Y', $startDate); ?>" />
+		</td>
+		<td align="center" nowrap="nowrap" class="outer_table_heading">
+			<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+		</td>
+		
+		<td align="right">
+			<input type="button" value="Save Changes" name="save" id="save" onclick="onSubmit();" />
+		</td>
+	</tr>
+</table>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>

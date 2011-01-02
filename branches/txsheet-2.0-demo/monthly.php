@@ -7,10 +7,10 @@ if(!class_exists('Site')){
 }
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclMonthly')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclMonthly'));	
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclMonthly'));	
 	}
 	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
 	}
 	
 	exit;
@@ -22,7 +22,6 @@ $mc = new MonthlyClass();
 //define the command menu & we get these variables from $_REQUEST:
 //  $month gbl::getDay() ".gbl::getYear()." gbl::getClientId() gbl::getProjId() ".gbl::getTaskId()."
 //include("timesheet_menu.inc");
-
 
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
@@ -64,24 +63,18 @@ if ($leadInDays < 0)
 //get the first printed date
 $firstPrintedDate = strtotime(date("d M Y H:i:s",$startDate) . " -$leadInDays days");
 
-
 $endDate = Common::getMonthlyEndDate($dateValues);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
-
 $post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId();       //this isn't used anywhere
-
-
 
 PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
 
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
-
-//include ("navcalnew/navcal_monthly.inc");
 
 ?>
 
@@ -94,47 +87,47 @@ if (isset($popup))
 <!-- Overall table covering month cells, client and project and date -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
-
-				<!-- Table which could be first row covering client and project and date -->
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap="nowrap">
-							Client:
-						</td>
-						<td width="25%">
-						<?php 
-							if(!class_exists('Site')){
-								client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
-							} 
-							else{
-								Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
-							}
-						?>
-						</td>
-						<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" />
-						</td>
-						<td>Project:</td>
-						<td width="25%">
-						<?php 
-							if(!class_exists('Site')){
-								project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
-							} 
-							else{
-								Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
-							}
-						?>
-						</td>
-						<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
-						<td align="center" nowrap="nowrap" class="outer_table_heading">
-						<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-						value="<?php echo date('d-M-Y', $startDate); ?>" />
-						</td>
-						<td align="center" nowrap="nowrap" class="outer_table_heading">
-						<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
-						</td>
-					</tr>
-				</table><!-- end of the client, project select table and the current month -->
+		<td align="left" nowrap="nowrap">
+			Client:
+		</td>
+		<td width="25%">
+			<?php 
+				if(!class_exists('Site')){
+					Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
+				} 
+				else{
+					Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
+				}
+			?>
+		</td>
+		<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" />
+		</td>
+		<td>Project:</td>
+		<td width="25%">
+			<?php 
+				if(!class_exists('Site')){
+					Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
+				} 
+				else{
+					Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
+				}
+			?>
+		</td>
+	</tr>
+	<tr>
+		<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
+		<td align="center" nowrap="nowrap" class="outer_table_heading">
+			<span><?php echo date('F Y', $startDate); ?></span>
+		</td>
+		<td align="center" nowrap="nowrap" class="outer_table_heading">
+			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+				value="<?php echo date('d-M-Y', $startDate); ?>" />
+		</td>
+		<td align="center" nowrap="nowrap" class="outer_table_heading">
+			<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+		</td>
+	</tr>
+</table><!-- end of the client, project select table and the current month -->
 
 	<!-- table encompassing heading, days in month, weekly total and month total -->
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
@@ -149,7 +142,7 @@ if (isset($popup))
 			}
 		?>
 		</tr>
-					<tr>
+		<tr>
 <?php
 
 	//define the variable dayCol
