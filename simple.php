@@ -4,15 +4,13 @@ error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
 	}
 	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	}
 	
 	exit;
@@ -544,7 +542,7 @@ for ($i=0; $i<$num4; $i++) {
 </head>
 
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/datetimepicker_css.js"></script>
-<form name="theForm" action="simple_action.php" method="post">
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 <input type="hidden" name="year" value=<?php echo $year; ?> />
 <input type="hidden" name="month" value=<?php echo $month; ?> />
 <input type="hidden" name="day" value=<?php echo $day; ?> />
@@ -565,13 +563,15 @@ for ($i=0; $i<$num4; $i++) {
 								//just need to go back 1 second most of the time, but DST 
 								//could mess things up, so go back 6 hours...
 								$edStr = date("M d, Y",$endDate - 6*60*60); 
-								//echo "Week: $sdStr - $edStr"; 
+								echo "Week: $sdStr - $edStr"; 
 							?>
+						</td>
+						<td>
 								<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-								value="<?php echo $sdStr; ?>" />
+								value="<?php echo date("d-M-Y",$startDate); ?>" />
 								</td>
 								<td align="center" nowrap="nowrap" class="outer_table_heading">
-								<input id="sub" type="submit" name="Change Date"></input>
+								<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
 								</td>
 							
 						</td>

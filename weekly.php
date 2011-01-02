@@ -3,17 +3,14 @@
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclWeekly')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . get_acl_level('aclWeekly'));	
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . get_acl_level('aclWeekly'));	
 	}
 	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . Common::get_acl_level('aclWeekly'));
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . Common::get_acl_level('aclWeekly'));
 	}
 	
 	exit;
 }
-
-//include('weekly.class.php');
-//$wc = new WeeklyClass();
 
 $contextUser = strtolower($_SESSION['contextUser']);
 gbl::setContextUser($contextUser);
@@ -83,79 +80,47 @@ if (isset($popup)){
 <input type="hidden" name="day" value=<?php echo gbl::getDay(); ?> />
 <input type="hidden" name="task_id" value=<?php echo gbl::getTaskId(); ?> />
 
+<!-- date selection table -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
+		<td width="10%">&nbsp;</td>
+		<td width="10%" align="right">Client: </td>
+		<td width="25%" align="left"><?php Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();"); ?></td>
+		<td width="10%"align="right">Project: </td>
+		<td width="25%"align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); ?></td>
+		<td width="10%">&nbsp;</td>
+	</tr>
+	</tr>
+		<td align="center" nowrap class="outer_table_heading">
+			Week Start: <?php echo date('l F j, Y',$startDate); ?>
+		</td>
+		<td width="10%">&nbsp;</td>
+		<td align="center" nowrap="nowrap" class="outer_table_heading">
+				<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+				value="<?php echo date('d-M-Y', $startDate); ?>" />
+		</td>
+		<td align="center" nowrap="nowrap" class="outer_table_heading">
+			<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+		</td>
+		<td align="right" nowrap>
+		</td>
+	</tr>
+</table>
 
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap>
-							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
-								<tr>
-									<td>
-										<table width="100%" border="0" cellspacing="0" cellpadding="0">
-											<tr>
-												<td><table width="50"><tr><td>Client:</td></tr></table></td>
-												<td width="100%"><?php Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();"); ?></td>
-											</tr>
-											<tr>
-												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-											</tr>
-										</table>
-									</td>
-									<td>
-										<table width="100%" border="0" cellspacing="0" cellpadding="0">
-											<tr>
-												<td><table width="50"><tr><td>Project:</td></tr></table></td>
-												<td width="100%"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); ?></td>
-											</tr>
-											<tr>
-												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-						</td>
-						</tr>
-							<td align="center" nowrap class="outer_table_heading">
-							Week Start: <?php echo date('l F j, Y',$startDate); ?>
-							</td>
-						
-					<td align="center" nowrap="nowrap" class="outer_table_heading">
-						<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-						value="<?php echo date('d-M-Y', $startDate); ?>" />
-						</td>
-						<td align="center" nowrap="nowrap" class="outer_table_heading">
-						<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
-						</td>
-					
-					<td align="right" nowrap>
-							<!--prev / next buttons used to be here -->
-						</td>
-					
-					
-					</tr>
-				</table>
-
-
+ <!--  data table -->
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
-			<td>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-					<tr class="inner_table_head">
-						<td class="inner_table_column_heading" align="left" width="22%">
+			<td class="inner_table_column_heading" align="left" width="22%">
 <?php
+// print heading row including days of week
 
-						if (gbl::getClientId() == 0)
-							print "Client / ";
+			if (gbl::getClientId() == 0)
+				print "Client / ";
 
-						if (gbl::getProjId() == 0)
-							print "Project / ";
+			if (gbl::getProjId() == 0)
+				print "Project / ";
 
-						print "Task";
+			print "Task";
 ?>
 						</td>
 						<td align="center">&nbsp;</td>
@@ -165,7 +130,7 @@ if (isset($popup)){
 						for ($i=0; $i<7; $i++) {
 							$currentDayStr = strftime("%A %d", $currentDate);
 							print "	<td class=\"inner_table_column_heading\" align=\"center\" width=\"10%\">$currentDayStr</td>";
-							$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 days");
+							$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 days"); // increment date to next day
 						}
 						?>
 						<td align="center">&nbsp;</td>

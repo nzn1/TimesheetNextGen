@@ -1,15 +1,19 @@
 <?php
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclAbsences')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclAbsences'));
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
 
 // Connect to database.
-$dbh = dbConnect();
+
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -26,14 +30,14 @@ else
 	$uid = $contextUser;
 
 //load local vars from superglobals
-$month = $_REQUEST['month'];
-$day = $_REQUEST['day'];
-$year = $_REQUEST['year'];
+$month = gbl::getMonth();
+$day = gbl::getDay(); 
+$year = gbl::getYear();
 $last_day = isset($_REQUEST['last_day']) ? $_REQUEST['last_day']: "31";
 $action = isset($_REQUEST['action']) ? $_REQUEST['action']: 0;
 
 //set the return location
-$Location = "absences.php?month=$month&amp;year=$year&amp;day=$day&amp;uid=$uid";
+$Location = "absences?month=$month&year=$year&day=$day&uid=$uid";
 
 if ($action!=0) {
 	$endMonth = $month + 1;
@@ -43,6 +47,7 @@ if ($action!=0) {
 		$endYear++;
 
 	}
+	$ABSENCE_TABLE = tbl::getAbsenceTable();
 	//clear the absences for this user in the month
 	dbQuery("DELETE FROM $ABSENCE_TABLE WHERE user='$uid' AND ".
 				"date >= '$year-$month-01 00:00:00' AND ".

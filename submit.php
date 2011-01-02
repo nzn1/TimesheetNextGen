@@ -6,10 +6,10 @@ if(!class_exists('Site')){
 }
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
 	}
 	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
 	}
 	
 	exit;

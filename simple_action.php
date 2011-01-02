@@ -29,28 +29,49 @@
 //       and save and update the extra day's times as needed.
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-//require("debuglog.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclSimple')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclSimple'));
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
+// Authenticate
+
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+	if(!class_exists('Site')){
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
+	}
+	else{
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+	}
+	
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //$debug = new logfile();
 
+//get the passed date (context date)
+$month = gbl::getMonth();
+$day = gbl::getDay(); 
+$year = gbl::getYear();
+$todayStamp = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
+$todayValues = getdate($todayStamp);
+$curDayOfWeek = $todayValues["wday"];
+
+//the day the week should start on: 0=Sunday, 1=Monday
+$startDayOfWeek = Common::getWeekStartDay();
+
+$daysToMinus = $curDayOfWeek - $startDayOfWeek;
+if ($daysToMinus < 0)
+	$daysToMinus += 7;
+
+$startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
+$endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
+
 $totalRows = $_POST["totalRows"];
-$year = $_POST["year"];
-$month = $_POST["month"];
-$day = $_POST["day"];
-$startDate = $_POST["startStamp"];
+
+//$startDate = $_POST["startStamp"];
 $startStr = date("Y-m-d H:i:s",$startDate);
 
-$endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
+//$endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 //$debug->write("startStr = \"$startStr\"");
@@ -61,6 +82,7 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //$debug->write("  existingRows = \"".$_POST["existingRows"]."\"\n");
 
 //clear the tasks which start on this week
+$TIMES_TABLE = tbl::getTimesTable();
 $queryString = "DELETE FROM $TIMES_TABLE " . 
 					"WHERE uid='$contextUser' AND " .
 							"start_time >= '$startStr' AND ".
@@ -127,7 +149,7 @@ for ($i=0; $i<$totalRows; $i++) {
 	}
 }
 
-$Location = "simple.php?year=$year&amp;month=$month&amp;day=$day";
+$Location = "simple?year=$year&amp;month=$month&amp;day=$day";
 
 Header("Location: $Location");
 exit;

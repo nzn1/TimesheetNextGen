@@ -3,10 +3,10 @@
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
 	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
 	}
 	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
+		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
 	}
 	
 	exit;
@@ -32,6 +32,9 @@ if (empty($contextUser))
 if (gbl::getProjId() == 0)
 	gbl::setTaskId(0);
 
+$month = gbl::getMonth();
+$day = gbl::getDay(); 
+$year = gbl::getYear();
 $startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
 $todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
 
@@ -42,10 +45,6 @@ $CfgTimeFormat = Common::getTimeFormat();
 
 $post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()."";   //THIS LINE ISN'T USED!!
 
-
-//<html>
-//<head>
-//<title>Update timesheet for echo $contextUser;</title>
 PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
 ob_start();
 
@@ -59,34 +58,37 @@ include("client_proj_task_javascript.php");
 	}
 
 </script>
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/datetimepicker_css.js"></script>
+<form name="dayForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
+<!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
+<!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
+<input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
 <?php PageElements::setHead(PageElements::getHead().ob_get_contents());
 ob_end_clean();
 PageElements::setBodyOnLoad('doOnLoad();');
 
-//	include ("banner.inc");
-
 	$currentDate = $todayDate;
 	$fromPopup = "false";
-	include("navcalnew/navcal+clockOnOff.inc"); 
+	include("clockOnOff.inc"); 
 ?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
-
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap class="outer_table_heading" nowrap>
-							Daily Timesheet
-						</td>
-						<td align="left" nowrap class="outer_table_heading">
-							<?php echo strftime("%A %B %d, %Y", $todayDate); ?>
-						</td>
-						<td align="right" nowrap>
-						<!-- prev / next links were here -->
-						</td>
-					</tr>
-				</table>
+		<td align="left" nowrap class="outer_table_heading" nowrap>
+			Daily Timesheet
+		</td>
+		<td align="left" nowrap class="outer_table_heading">
+			<?php echo strftime("%A %B %d, %Y", $todayDate); ?>
+		</td>
+		<td align="right" nowrap>
+			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+				value="<?php echo date('d-M-Y', $todayDate);  ?>" />
+		</td>
+		<td align="center" nowrap="nowrap" class="outer_table_heading">
+			<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+		</td>
+	</tr>
+</table>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -102,8 +104,6 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			<td class="inner_table_column_heading" align="center" width="15%"><i>Actions</i></td>
 		</tr>
 <?php
-
-
 
 //Get the data
 $startStr = date("Y-m-d H:i:s",$todayDate);
@@ -281,7 +281,7 @@ else {
 			</td>
 		</tr>
 	</table>
-
+</form>
 		</td>
 	</tr>
 </table>
