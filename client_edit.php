@@ -62,65 +62,65 @@ $data = dbResult($qh);
 		</td>
 	</tr>
 	<tr>
-		<td align="right">Organisation:</td>
+		<td align="right"><label for="organisation">Organisation:</label></td>
 			<td><input size="60" name="organisation" value="<?php echo $data["organisation"]; ?>" style="width: 100%;" maxlength="64" /></td>
 		</tr>
 		<tr>
-			<td valign="top" align="right">Description:</td>
+			<td valign="top" align="right"><label for="description">Description:</label></td>
 			<td>
 				<textarea name="description" rows="4" cols="58" style="width: 100%;"><?php echo trim($data["description"]); ?></textarea>
 			</td>
 		</tr>
 		<tr>
-			<td align="right">Address1:</td>
+			<td align="right"><label for="address1">Address1:</label></td>
 			<td><input size="60" name="address1" value="<?php echo $data["address1"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Address2:</td>
+			<td align="right"><label for="address2">Address2:</label></td>
 			<td><input size="60" name="address2" value="<?php echo $data["address2"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">City:</td>
+			<td align="right"><label for="city">City:</label></td>
 			<td><input size="60" name="city"  value="<?php echo $data["city"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Country:</td>
+			<td align="right"><label for="country">Country:</label></td>
 			<td><input size="60" name="country" value="<?php echo $data["country"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Postal Code:</td>
+			<td align="right"><label for="postal_code">Postal Code:</label></td>
 			<td><input size="13" name="postal_code" value="<?php echo $data["postal_code"]; ?>" /></td>
 		</tr>
 		<tr>
-			<td align="right">Contact Firstname:</td>
+			<td align="right"><label for="organisation">Contact Firstname:</label></td>
 			<td><input size="60" name="contact_first_name" value="<?php echo $data["contact_first_name"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Contact Lastname:</td>
+			<td align="right"><label for="contact_last_name">Contact Lastname:</label></td>
 			<td><input size="60" name="contact_last_name" value="<?php echo $data["contact_last_name"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Username:</td>
+			<td align="right"><label for="username">Username:</label></td>
 			<td><input size="32" name="username" value="<?php echo $data["username"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Contact email:</td>
+			<td align="right"><label for="contact_email">Contact email:</td>
 			<td><input size="60" name="contact_email" value="<?php echo $data["contact_email"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Phone Number:</td>
+			<td align="right"><label for="phone_number">Phone Number:</label></td>
 			<td><input size="20" name="phone_number" value="<?php echo $data["phone_number"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Fax Number:</td>
+			<td align="right"><label for="fax_number">Fax Number:</label></td>
 			<td><input size="20" name="fax_number" value="<?php echo $data["fax_number"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Mobile Number:</td>
+			<td align="right"><label for="gsm_number">Mobile Number:</label></td>
 			<td><input size="20" name="gsm_number" value="<?php echo $data["gsm_number"]; ?>" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td align="right">Website:</td>
+			<td align="right"><label for="http_url">Website:</label></td>
 			<td><input size="60" name="http_url" value="<?php echo $data["http_url"]; ?>" style="width: 100%;" /></td>
 		</tr>
 				<!--   table width="100%" border="0" class="table_bottom_panel" -->
