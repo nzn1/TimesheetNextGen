@@ -1,11 +1,9 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/clock_action.php,v 1.10 2005/06/17 01:42:51 vexil Exp $
+if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
 //require("debuglog.php");
-if (!$authenticationManager->isLoggedIn()) {
+if (!Site::getAuthenticationManager()->isLoggedIn()) {
 	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
 	exit;
 }
@@ -73,11 +71,11 @@ if (empty($clockonoff)) {
 		else
 			$clockonoff = "clockoffat";
 	} else
-		errorPage("You must select at least one checkbox to indicate your action: clock on, clock off, or both.", $fromPopupWindow);
+		Common::errorPage("You must select at least one checkbox to indicate your action: clock on, clock off, or both.", $fromPopupWindow);
 }
 
 if ($clock_on_radio == "now" && $clock_off_radio == "now")
-	errorPage("You cannot clock on and off at with the same clock-on and clock-off time.", $fromPopupWindow);
+	Common::errorPage("You cannot clock on and off at with the same clock-on and clock-off time.", $fromPopupWindow);
 
 //get the clock on/off "now" dates and times
 //We're forced to recalculate the date as well as the time because the dialog
@@ -121,7 +119,7 @@ else if ($clockonoff == "clockonat") {
 } else if ($clockonoff == "clockoffnow") {
 	clockoff();
 } else	 //redirects to a page where the user can enter the log message. Then returns here.
-	errorPage("Could not determine the clock on/off action. Please report this as a bug", $fromPopupWindow);
+	Common::errorPage("Could not determine the clock on/off action. Please report this as a bug", $fromPopupWindow);
 
 //This is functionally the end of this file...
 
@@ -165,7 +163,7 @@ function clockon() {
 	global $contextUser, $onStamp, $task_id, $proj_id, $Location, $fromPopupWindow;
 
 	if (empty($Location))
-		errorPage("failed sanity check, location empty");
+		Common::errorPage("failed sanity check, location empty");
 
 	//check that we are not already clocked on
 	$querystring = "SELECT $TIMES_TABLE.start_time, $TASK_TABLE.name FROM ".
@@ -183,7 +181,7 @@ function clockon() {
 	$resultset = dbResult($qh);
 
 	if ($num > 0)
-		errorPage("You have already clocked on for task '$resultset[name]' at $resultset[start_time].  Please clock off first.", $fromPopupWindow);
+		Common::errorPage("You have already clocked on for task '$resultset[name]' at $resultset[start_time].  Please clock off first.", $fromPopupWindow);
 
 	$onStr = strftime("%Y-%m-%d %H:%M:%S", $onStamp);
 
@@ -233,10 +231,10 @@ function clockoff() {
 	$data = dbResult($qh);
 
 	if ($num == 0)
-		errorPage("You are not currently clocked on. You must clock on before you can clock off. If you have just clocked on please wait at least one minute before clocking off", $fromPopupWindow);	
+		Common::errorPage("You are not currently clocked on. You must clock on before you can clock off. If you have just clocked on please wait at least one minute before clocking off", $fromPopupWindow);	
 	//also check that the clockoff time is after the clockon time
 	else if ($data["valid"] == 0)
-		errorPage("You must clock off <i>after</i> you clock on.", $fromPopupWindow);
+		Common::errorPage("You must clock off <i>after</i> you clock on.", $fromPopupWindow);
 
 	$onStamp = strtotime($data["start_time"]);
 	$duration = ($offStamp-$onStamp)/60;
@@ -269,11 +267,11 @@ function clockonandoff() {
 
 	//make sure we're not clocking on after clocking off
 	if ($offStamp < $onStamp)
-		errorPage("You cannot have your clock on time ($clock_on_time_hour:$clock_on_time_min) ".
+		Common::errorPage("You cannot have your clock on time ($clock_on_time_hour:$clock_on_time_min) ".
 			"later than your clock off time ($clock_off_time_hour:$clock_off_time_min)", $fromPopupWindow);
 	else if ($onStamp == $offStamp)
 		//errorPage("You cannot clock on and off with the same time. ($clock_on_time_hour:$clock_on_time_min = $clock_off_time_hour:$clock_off_time_min)", $fromPopupWindow);
-		errorPage("You cannot clock on and off with the same time. ($onStamp == $offStamp)", $fromPopupWindow);
+		Common::errorPage("You cannot clock on and off with the same time. ($onStamp == $offStamp)", $fromPopupWindow);
 
 	if ($log_message_presented == false)
 		getLogMessage();
