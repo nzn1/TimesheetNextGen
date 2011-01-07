@@ -466,3 +466,5 @@ else {  //create Excel header
 	</table>		
 <?php } //end if($print) ?>
 </form>
+
+<?php } //end if($export_excel) ?>
