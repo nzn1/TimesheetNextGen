@@ -12,7 +12,7 @@ class gbl{
 	private static $client_id;
 	private static $post;
 	private static $contextUser;
-	
+	private static $loggedInUser;	
 	
 	
 	public static function initialize(){
@@ -81,6 +81,11 @@ class gbl{
 		self::$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 		self::$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 		
+		if (isset($_SESSION['contextUser']))
+			self::$contextUser = strtolower($_SESSION['contextUser']);
+		if (isset($_SESSION['loggedInUser']))
+		self::$loggedInUser = strtolower($_SESSION['loggedInUser']);
+		
 		
 	}
 	
@@ -123,6 +128,9 @@ class gbl{
 	}
 	public static function setContextUser($s){
 		self::$contextUser = $s;
+	}
+	public static function getLoggedInUser(){
+		return self::$loggedInUser;
 	}
 }
 ?>

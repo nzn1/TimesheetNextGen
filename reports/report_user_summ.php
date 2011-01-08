@@ -29,7 +29,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
 $client_id =  gbl::getClientId();
 $year = gbl::getYear();
 $month = gbl::getMonth();
@@ -38,7 +37,7 @@ $day = gbl::getDay();
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
-	$uid = $contextUser;
+	$uid = gbl::getContextUser();
 	//get the first user from the database
 	//$uid = getFirstUser();
 

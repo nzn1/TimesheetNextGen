@@ -10,20 +10,17 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 
 // Connect to database.
 
-$contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
         errorPage("Could not determine the logged in user");
 
-if (empty($contextUser))
-        errorPage("Could not determine the context user");
 
 //load local vars from superglobals
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
-	$uid = $contextUser;
+	$uid = gbl::getContextUser();
 
 //load local vars from superglobals
 $month = gbl::getMonth();

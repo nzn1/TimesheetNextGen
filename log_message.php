@@ -5,7 +5,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
-$contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
 $month = $_REQUEST['month'];

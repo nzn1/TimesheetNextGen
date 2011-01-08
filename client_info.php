@@ -2,9 +2,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
 		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	  exit;
@@ -12,10 +10,7 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 //load local vars from superglobals
 $client_id = $_REQUEST['client_id'];
 
-$contextUser = strtolower($_SESSION['contextUser']);
-
 ?>
-<HTML>
 <head>
 <title>Client Info</title>
 

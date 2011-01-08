@@ -18,15 +18,13 @@ $subcl = new SubmitClass();
 //  $month $day $year $client_id $proj_id $task_id
 //include("timesheet_menu.inc");
 
-$contextUser = strtolower($_SESSION['contextUser']);
-
 //$debug = new logfile();
 
 //load local vars from superglobals
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
-	$uid = $contextUser;
+	$uid = gbl::getContextUser();
 
 if (isset($_REQUEST['print']))
 	$print = true;
@@ -245,7 +243,7 @@ function submitAll (chk) {
 }
 </script>
 
-<?php PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+<?php PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
 ob_start();
 	//if(!$export_excel) include ("header.inc");
 	//else {

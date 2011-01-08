@@ -11,17 +11,10 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 }
 
 
-$contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
-
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
-
-// Connect to database.
-//$dbh = dbConnect();
 
 //define the command menu
 //include("timesheet_menu.inc");
@@ -32,7 +25,7 @@ if (empty($contextUser))
 $layout = Common::getLayout();
 
 //$post="";
-PageElements::setHead("<title>".Config::getMainTitle()." - Simple Weekly Timesheet for ".$contextUser."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - Simple Weekly Timesheet for ".gbl::getContextUser()."</title>");
 
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");

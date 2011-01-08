@@ -37,7 +37,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
-$contextUser = strtolower($_SESSION['contextUser']);
 
 //$debug = new logfile();
 
@@ -77,12 +76,12 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //clear the tasks which start on this week
 $TIMES_TABLE = tbl::getTimesTable();
 $queryString = "DELETE FROM $TIMES_TABLE " . 
-					"WHERE uid='$contextUser' AND " .
+					"WHERE uid='".gbl::getContextUser()."' AND " .
 							"start_time >= '$startStr' AND ".
 							"start_time < '$endStr'";
 
 // to prevent deleteion when nothing is to be inserted
-if (isset($_POST["totalRows"]) && $contextUser != "") {
+if (isset($_POST["totalRows"]) && gbl::getContextUser() != "") {
 	dbQuery($queryString);
 	//$debug->write("   Query = \"$queryString\"\n");
 }
@@ -131,7 +130,7 @@ for ($i=0; $i<$totalRows; $i++) {
 			
 			//add to database
 			$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
-									"VALUES ('$contextUser','$stsStr', ".
+									"VALUES ('".gbl::getContextUser()."','$stsStr', ".
 									"'$etsStr', ".
 									"'$minutes', ".
 									"$projectId, $taskId, '$workDescription')";

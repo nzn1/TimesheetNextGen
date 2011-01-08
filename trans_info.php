@@ -10,7 +10,6 @@ if (!$authenticationManager->isLoggedIn()) {
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
 $trans_num = $_REQUEST['trans_num'];

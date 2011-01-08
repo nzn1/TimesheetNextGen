@@ -9,7 +9,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	  exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 $passwd1 = "";
@@ -34,13 +33,13 @@ if ($passwd1 != $passwd2)
 	$errormsg = "Passwords do not match, please try again";
 
 if (empty($errormsg) && !empty($old_pass)) {
-	$qh = mysql_query("SELECT password, $DATABASE_PASSWORD_FUNCTION('$old_pass') FROM $USER_TABLE WHERE username='$contextUser'") or die("Unable to select ". mysql_error());
+	$qh = mysql_query("SELECT password, $DATABASE_PASSWORD_FUNCTION('$old_pass') FROM $USER_TABLE WHERE username='".gbl::getContextUser()."'") or die("Unable to select ". mysql_error());
 	list($check1, $check2) = mysql_fetch_row($qh);
 	if ($check1 != $check2) {
 		$errormsg = "Wrong password, sorry!";
 	}
 	else {
-		$qh = mysql_query("UPDATE $USER_TABLE SET password=$DATABASE_PASSWORD_FUNCTION('$passwd1') WHERE username='$contextUser'");
+		$qh = mysql_query("UPDATE $USER_TABLE SET password=$DATABASE_PASSWORD_FUNCTION('$passwd1') WHERE username='".gbl::getContextUser()."'");
 		gotoStartPage();
 		exit;
 	}
@@ -55,7 +54,7 @@ if (!empty($errormsg)) {
 ?>
 <html>
 <head>
-<title>Change Password for user <?php echo $contextUser; ?></title>
+<title>Change Password for user <?php echo gbl::getContextUser(); ?></title>
 
 </head>
 

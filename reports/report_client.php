@@ -15,9 +15,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
-gbl::setContextUser($contextUser);
-
 //export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
 $export_excel=false;
 if (isset($_GET["export_excel"]))
@@ -45,7 +42,7 @@ if (isset($_REQUEST['uid']))
 else
 	//get the first user from the database
 	//$uid = getFirstUser();
-	$uid = $contextUser;
+	$uid = gbl::getContextUser();
 
 if (isset($_REQUEST['print']))
 	$print = true;

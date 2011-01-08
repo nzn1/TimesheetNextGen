@@ -8,8 +8,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
-
 //load local vars from superglobals
 $proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 $task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
@@ -27,7 +25,7 @@ if ($proj_id == 0)
 ?>
 <html>
 <head>
-	<title><?php echo $contextUser; ?> Stopwatch</title>
+	<title><?php echo gbl::getContextUser(); ?> Stopwatch</title>
 <?php
 include("client_proj_task_javascript.php");
 ?>

@@ -13,7 +13,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];

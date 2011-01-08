@@ -15,7 +15,7 @@
 <?php 
 	$fromPopup="false";
 	$destination=$_SERVER["PHP_SELF"];
-	
+	include('clockOnOff_core_new.inc')
 ?>
 
 			</td>

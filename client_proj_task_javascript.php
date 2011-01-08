@@ -10,7 +10,7 @@ if(!class_exists('Site'))die('Error: not accessed through the class structure.  
 <?php
 
 if(gbl::getContextUser() == ''){
-	ErrorHandler::fatalError("context user hasn't been set properly.".getShortDebugTrace(2));
+	ErrorHandler::fatalError("context user hasn't been set properly.".getShortDebugTrace(2).ppr($_SESSION,'',true));
 }
 include('client_proj_task_javascript.class.php');
 $js = new ClientProjTaskJavascript();

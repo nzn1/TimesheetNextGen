@@ -9,8 +9,7 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
-gbl::setContextUser($contextUser);
+
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 //load local vars from superglobals
@@ -77,7 +76,7 @@ include("form_input.inc");
 ?>
 <html>
 <head>
-<title>Edit Work Log Record for <?php echo $contextUser; ?></title>
+<title>Edit Work Log Record for <?php echo gbl::getContextUser(); ?></title>
 <?php
 include("client_proj_task_javascript.php");
 ?>

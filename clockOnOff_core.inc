@@ -2,7 +2,7 @@
 
 <?php 
 if(class_exists('Site'))die('Error: please use clockOnOff_core_new.inc instead');
-
+?>
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<form action="clock_action.php" method="post" name="mainForm" id="theForm">
 		<input type="hidden" name="year" value="<?php echo $year; ?>" />

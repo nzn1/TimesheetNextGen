@@ -7,16 +7,10 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
-$contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
-
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
-	
-$contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
 $proj_id = $_REQUEST['proj_id'];
@@ -59,13 +53,8 @@ while ($datanext = dbResult($qh)) {
 	$i++;
 }
 
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
 ?>
-
-<html>
-<head>
-<title>Edit Project</title>
-</head>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/proj_action" method="post">
 <input type="hidden" name="action" value="edit" />
