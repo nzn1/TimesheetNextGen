@@ -76,20 +76,20 @@ if(class_exists('Site')){
 	if (Site::getAuthenticationManager()->hasAccess('aclAbsences'))
 		Site::getCommandMenu()->add(new IconTextCommand("Absences", true, Config::getRelativeRoot()."/absences?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclClients'))
-		Site::getCommandMenu()->add(new IconTextCommand("Clients", true, Config::getRelativeRoot()."/client_maint", Config::getRelativeRoot()."/images/icon_clients.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Clients", true, Config::getRelativeRoot()."/clients/client_maint", Config::getRelativeRoot()."/images/icon_clients.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclProjects'))
-		Site::getCommandMenu()->add(new IconTextCommand("Projects", true, Config::getRelativeRoot()."/proj_maint", Config::getRelativeRoot()."/images/icon_projects.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Projects", true, Config::getRelativeRoot()."/projects/proj_maint", Config::getRelativeRoot()."/images/icon_projects.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclRates'))
-		Site::getCommandMenu()->add(new IconTextCommand("Project Rates", true, Config::getRelativeRoot()."/project_user_rates", Config::getRelativeRoot()."/images/icon_rates.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Project Rates", true, Config::getRelativeRoot()."/projects/project_user_rates", Config::getRelativeRoot()."/images/icon_rates.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclTasks'))
-		Site::getCommandMenu()->add(new IconTextCommand("Tasks", true, Config::getRelativeRoot()."/task_maint", Config::getRelativeRoot()."/images/icon_tasks.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Tasks", true, Config::getRelativeRoot()."/tasks/task_maint", Config::getRelativeRoot()."/images/icon_tasks.gif"));
 	if (Site::getAuthenticationManager()->hasAccess('aclReports'))
 		Site::getCommandMenu()->add(new IconTextCommand("Reports", true, Config::getRelativeRoot()."/reports/reports?$post", Config::getRelativeRoot()."/images/icon_reports.gif"));
 	if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-		Site::getCommandMenu()->add(new IconTextCommand("Users", true, Config::getRelativeRoot()."/user_maint", Config::getRelativeRoot()."/images/icon_users.gif"));
+		Site::getCommandMenu()->add(new IconTextCommand("Users", true, Config::getRelativeRoot()."/users/user_maint", Config::getRelativeRoot()."/images/icon_users.gif"));
 		Site::getCommandMenu()->add(new IconTextCommand("Supervisor", true, Config::getRelativeRoot()."/supervisor", Config::getRelativeRoot()."/images/icon_users.gif"));
 		if (Site::getAuthenticationManager()->hasAccess('aclRates'))
-			Site::getCommandMenu()->add(new IconTextCommand("User Rates", true, Config::getRelativeRoot()."/rate_maint", Config::getRelativeRoot()."/images/icon_rates.gif"));
+			Site::getCommandMenu()->add(new IconTextCommand("User Rates", true, Config::getRelativeRoot()."/users/rate_maint", Config::getRelativeRoot()."/images/icon_rates.gif"));
 		Site::getCommandMenu()->add(new IconTextCommand("Configuration", true, Config::getRelativeRoot()."/config", Config::getRelativeRoot()."/images/icon_configuration.gif"));
 	}
 	if (!Site::getAuthenticationManager()->usingLDAP())
@@ -124,19 +124,19 @@ else{
 	if ($authenticationManager->hasAccess('aclAbsences'))
 		$commandMenu->add(new IconTextCommand("Absences", true, "absences?$post", "images/icon_calendar.gif"));
 	if ($authenticationManager->hasAccess('aclClients'))
-		$commandMenu->add(new IconTextCommand("Clients", true, "client_maint", "images/icon_clients.gif"));
+		$commandMenu->add(new IconTextCommand("Clients", true, "clients/client_maint", "images/icon_clients.gif"));
 	if ($authenticationManager->hasAccess('aclProjects'))
-		$commandMenu->add(new IconTextCommand("Projects", true, "proj_maint", "images/icon_projects.gif"));
+		$commandMenu->add(new IconTextCommand("Projects", true, "projects/proj_maint", "images/icon_projects.gif"));
 	if ($authenticationManager->hasAccess('aclRates'))
-		$commandMenu->add(new IconTextCommand("Project Rates", true, "project_user_rates", "images/icon_rates.gif"));
+		$commandMenu->add(new IconTextCommand("Project Rates", true, "projects/project_user_rates", "images/icon_rates.gif"));
 	if ($authenticationManager->hasAccess('aclTasks'))
-		$commandMenu->add(new IconTextCommand("Tasks", true, "task_maint", "images/icon_tasks.gif"));
+		$commandMenu->add(new IconTextCommand("Tasks", true, "tasks/task_maint", "images/icon_tasks.gif"));
 	if ($authenticationManager->hasAccess('aclReports'))
-		$commandMenu->add(new IconTextCommand("Reports", true, "reports?$post", "images/icon_reports.gif"));
+		$commandMenu->add(new IconTextCommand("Reports", true, "reports/reports?$post", "images/icon_reports.gif"));
 	if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-		$commandMenu->add(new IconTextCommand("Users", true, "user_maint", "images/icon_users.gif"));
+		$commandMenu->add(new IconTextCommand("Users", true, "users/user_maint", "images/icon_users.gif"));
 		if ($authenticationManager->hasAccess('aclRates'))
-			$commandMenu->add(new IconTextCommand("User Rates", true, "rate_maint", "images/icon_rates.gif"));
+			$commandMenu->add(new IconTextCommand("User Rates", true, "users/rate_maint", "images/icon_rates.gif"));
 		$commandMenu->add(new IconTextCommand("Configuration", true, "config", "images/icon_configuration.gif"));
 	}
 	if (!$authenticationManager->usingLDAP())
