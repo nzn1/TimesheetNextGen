@@ -3,11 +3,6 @@
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-<?php 
-if(class_exists('Site'))include("timesheet_face_part_1new.inc"); 
-else include("timesheet_face_part_1.inc");
-?>
 
 				<table width="100%" border="0">
 					<tr>
@@ -21,8 +16,6 @@ else include("timesheet_face_part_1.inc");
 	$fromPopup="false";
 	$destination=$_SERVER["PHP_SELF"];
 	
-	if(class_exists('Site'))include("clockOnOff_core_new.inc"); 
-	else include("clockOnOff_core.inc");
 ?>
 
 			</td>

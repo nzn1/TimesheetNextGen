@@ -1,18 +1,12 @@
 <?php
 
-die('NOT CONVERTED TO OO YET');
 if(!class_exists('Site'))die('Restricted Access');
-
-// Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI']));
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclWeekly')) {
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclWeekly'));
 	exit;
 }
-
 // Connect to database.
-$dbh = dbConnect();
+
 $contextUser = strtolower($_SESSION['contextUser']);
 
 if (empty($contextUser))
@@ -31,8 +25,8 @@ $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 $currentDate = mktime(0, 0, 0, $month, $day, $year);
 
 //get todays values
-$todayDate = mktime(0, 0, 0, $realToday['mon'], $realToday['mday'], $realToday['year']);
 
+$todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
 //check that the client id is valid
 //if ($client_id == 0 || empty($client_id))
 //	$client_id = getFirstClient();
@@ -40,8 +34,6 @@ $todayDate = mktime(0, 0, 0, $realToday['mon'], $realToday['mday'], $realToday['
 //check that project id is valid
 if ($proj_id == 0)
 	$task_id = 0;
-
-include("table_names.inc");
 
 //include date input classes
 include "form_input.inc";
@@ -51,8 +43,8 @@ include "form_input.inc";
 <head>
 <title>Update timesheet for <?php echo $contextUser; ?></title>
 <?php
-include("header.inc");
-include("client_proj_task_javascript.inc");
+//include("header.inc");
+include("client_proj_task_javascript.php");
 ?>
 <script type="text/javascript">
 
