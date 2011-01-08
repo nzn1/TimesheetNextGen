@@ -786,7 +786,7 @@ class Common{
 				" WHERE (SELECT uid FROM " .tbl::getUserTable(). " s WHERE s.username = '$username') = supervisor " .
 				" ORDER BY status DESC, last_name, first_name";
 		} else {
-			$query = "SELECT uid, username, last_name, first_name FROM $USER_TABLE  " .
+			$query = "SELECT uid, username, last_name, first_name FROM ".tbl::getuserTable()."  " .
 				" WHERE status='ACTIVE' AND (SELECT uid FROM " .tbl::getUserTable(). "  s WHERE s.username = '$username') = supervisor " .
 				" ORDER BY last_name, first_name";
 		}

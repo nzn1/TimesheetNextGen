@@ -5,7 +5,7 @@ ErrorHandler::fatalError('Error: This file ('.__FILE__.'has been deprecated.  Pl
 
 //THERE IS NO REAL NEED FOR THIS.  Its function can now be completed in the applied theme
 if(!class_exists('Site')){
-	list($qhq, $numq) = dbQuery("SELECT bodyhtml FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+	list($qhq, $numq) = dbQuery("SELECT bodyhtml FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 	$configdata = dbResult($qhq);
 	echo stripslashes($configdata["bodyhtml"]);
 }

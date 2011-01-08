@@ -21,7 +21,6 @@ $proj_status = isset($_REQUEST['proj_status']) ? $_REQUEST['proj_status'] : "Sta
 
 $PROJECT_TABLE = tbl::getProjectTable();
 $CLIENT_TABLE = tbl::getClientTable();
-$USER_TABLE = tbl::getUserTable();
 $TIMES_TABLE = tbl::getTimesTable();
 $ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
 $RATE_TABLE = tbl::getRateTable();
@@ -33,7 +32,7 @@ $query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 						"$PROJECT_TABLE.proj_status, http_link, proj_leader ".
-					"FROM $PROJECT_TABLE, $CLIENT_TABLE, $USER_TABLE ".
+					"FROM $PROJECT_TABLE, $CLIENT_TABLE, ".tbl::getuserTable()." ".
 					"WHERE ";
 if ($client_id != 0)
 	$query .= "$PROJECT_TABLE.client_id = $client_id AND ";
@@ -60,7 +59,7 @@ $query2 = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJEC
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 						"$PROJECT_TABLE.proj_status, http_link, proj_leader ".
-					"FROM $PROJECT_TABLE, $CLIENT_TABLE, $USER_TABLE ".
+					"FROM $PROJECT_TABLE, $CLIENT_TABLE, ".tbl::getuserTable()." ".
 					"WHERE ";
 if ($client_id != 0)
 	$query2 .= "$PROJECT_TABLE.client_id = $client_id AND ";

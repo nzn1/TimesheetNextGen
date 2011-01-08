@@ -326,17 +326,17 @@ else {  //create Excel header
 
 /*$query =	"select distinct first_name, ".
 			"last_name, ".
-			"$USER_TABLE.username, ".
+			"".tbl::getuserTable().".username, ".
 			"$PROJECT_TABLE.title, ".
 			"$PROJECT_TABLE.proj_id, ".
 			"$TASK_TABLE.name, ".
 			"$TASK_TABLE.task_id ".
-		"FROM $USER_TABLE, $PROJECT_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE, $TASK_ASSIGNMENTS_TABLE ".
+		"FROM ".tbl::getuserTable().", $PROJECT_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE, $TASK_ASSIGNMENTS_TABLE ".
 		"WHERE $ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
 			"$TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id AND ".
 			"$PROJECT_TABLE.proj_id = $TASK_TABLE.proj_id AND ".
-			"$ASSIGNMENTS_TABLE.username = $USER_TABLE.username AND ".
-			"$USER_TABLE.username NOT IN ('admin','guest') ".
+			"$ASSIGNMENTS_TABLE.username = ".tbl::getuserTable().".username AND ".
+			"".tbl::getuserTable().".username NOT IN ('admin','guest') ".
 		"ORDER BY $orderby";
 
 
@@ -354,8 +354,8 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 		"$TIMES_TABLE.uid as username, ".
 		"date_format(start_time, '%Y/%m/%d') as start_date, ".
 		"trans_num ".
-	"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
-	"WHERE $TIMES_TABLE.uid=$USER_TABLE.username AND ".
+	"FROM ".tbl::getuserTable().", $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
+	"WHERE $TIMES_TABLE.uid= ".tbl::getuserTable().".username AND ".
 		"end_time > 0 AND ".
 		//"$TIMES_TABLE.uid='$uid' AND ".
 		"start_time >= '$year-$month-1' AND ".

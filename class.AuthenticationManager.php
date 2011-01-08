@@ -171,7 +171,7 @@ class AuthenticationManager {
 
 		//get the access level
 		list($qh,$num) = dbQuery("SELECT level ".
-									"FROM $USER_TABLE WHERE username='$username'");
+									"FROM ".tbl::getUserTable()." WHERE username='$username'");
 		$data = dbResult($qh);
 
 		if($siteclosed && ($data["level"] < CLEARANCE_ADMINISTRATOR))
@@ -199,7 +199,7 @@ class AuthenticationManager {
 		$_SESSION["accessLevel"] = $data["level"];
 		$_SESSION["contextUser"] = $username;
 
-		dbquery("UPDATE $USER_TABLE SET session='$session_id' WHERE username='$username'");
+		dbquery("UPDATE ".tbl::getUserTable()." SET session='$session_id' WHERE username='$username'");
 
 		$this->errorCode = AUTH_SUCCESS;
 		$this->errorText = "Authentication succeeded";
@@ -236,7 +236,7 @@ class AuthenticationManager {
 		require( "table_names.inc" );
 		require( "database_credentials.inc" );
 		// query the user table for authentication details
-		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2, status " . "FROM $USER_TABLE WHERE username='$username'" );
+		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2, status " . "FROM ".tbl::getuserTable()." WHERE username='$username'" );
 		$data = dbResult( $qh );
 		// is the password correct?
 		if ( $num == 0 || $data["passwd1"] != $data["passwd2"] ){
@@ -270,7 +270,7 @@ class AuthenticationManager {
 
 		if($this->isLoggedIn()) {
 			$username=$_SESSION['loggedInUser'];
-			dbquery("UPDATE $USER_TABLE SET session='logged out' WHERE username='$username'");
+			dbquery("UPDATE ".tbl::getuserTable()." SET session='logged out' WHERE username='$username'");
 		}
 
 		//unset all the variables
@@ -298,7 +298,7 @@ class AuthenticationManager {
 		if(empty($_SESSION['loggedInUser'])) return false;
 		$username=$_SESSION['loggedInUser'];
 
-		list( $qh, $num ) = dbQuery( "SELECT session FROM $USER_TABLE WHERE username='$username'" );
+		list( $qh, $num ) = dbQuery( "SELECT session FROM ".tbl::getuserTable()." WHERE username='$username'" );
 		if($num != 1) return false;
 		$data = dbResult( $qh );
 		if($data['session'] != $session_id) return false;
@@ -535,7 +535,7 @@ class AuthenticationManager {
 				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
 			else 
 				$pwdstr = "";
-			dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, last_name, " .
+			dbquery("INSERT INTO ".tbl::getuserTable()." (username, level, password, first_name, last_name, " .
 						"email_address, time_stamp, status) " .
 						"VALUES ('$username',1,$pwdstr,'$firstName',".
 						"'$lastName','$emailAddress',0,'ACTIVE')");
@@ -544,7 +544,7 @@ class AuthenticationManager {
 		} else {
 			//get the existing user details
 			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address, status " .
-							"FROM $USER_TABLE WHERE username='$username'");
+							"FROM ".tbl::getuserTable()." WHERE username='$username'");
 			$existingUserDetails = dbResult($qh);
 
 			if($existingUserDetails['status'] == 'INACTIVE') {
@@ -566,7 +566,7 @@ class AuthenticationManager {
 				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
 			else 
 				$pwdstr = "''";
-			dbquery("UPDATE $USER_TABLE SET first_name='$firstName', last_name='$lastName', ".
+			dbquery("UPDATE ".tbl::getuserTable()." SET first_name='$firstName', last_name='$lastName', ".
 								"email_address='$emailAddress', password=$pwdstr ".
 								"WHERE username='$username'");
 		}
@@ -582,7 +582,7 @@ class AuthenticationManager {
 		require("table_names.inc");
 
 		//check whether the user exists
-		list($qh,$num) = dbQuery("SELECT username FROM $USER_TABLE WHERE username='$username'");
+		list($qh,$num) = dbQuery("SELECT username FROM ".tbl::getUserTable()." WHERE username='$username'");
 
 		//if there is a match
 		return ($data = dbResult($qh));

@@ -25,12 +25,12 @@ $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIV
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
 
-$USER_TABLE = tbl::getUserTable();
+
 $ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
 $TASK_TABLE = tbl::getTaskTable();
 $TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
 if ($action == "delete") {
-	dbquery("DELETE FROM $USER_TABLE WHERE uid='$uid'");
+	dbquery("DELETE FROM ".tbl::getuserTable()." WHERE uid='$uid'");
 	dbquery("DELETE FROM $ASSIGNMENTS_TABLE WHERE username='$username'");
 	dbquery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE username='$username'");
 }
@@ -44,7 +44,7 @@ else if ($action == "addupdate") {
 		$level = 1;
 
 	//check whether the user exists, and get his encrypted password.
-	list($qh,$num) = dbQuery("SELECT username, password FROM $USER_TABLE WHERE uid='$uid'");
+	list($qh,$num) = dbQuery("SELECT username, password FROM ".tbl::getuserTable()." WHERE uid='$uid'");
 
 	//if there is a match
 	if ($data = dbResult($qh)) {
@@ -60,7 +60,7 @@ else if ($action == "addupdate") {
 
 		if ($data["password"] == $password) {
 			//then we are not updating the password
-			dbquery("UPDATE $USER_TABLE SET first_name='$first_name', last_name='$last_name', ".
+			dbquery("UPDATE ".tbl::getuserTable()." SET first_name='$first_name', last_name='$last_name', ".
 								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
@@ -68,7 +68,7 @@ else if ($action == "addupdate") {
 								"WHERE uid='$uid'");
 		} else {
 			//set the password as well
-			dbquery("UPDATE $USER_TABLE SET first_name='$first_name', last_name='$last_name', ".
+			dbquery("UPDATE ".tbl::getuserTable()." SET first_name='$first_name', last_name='$last_name', ".
 								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
@@ -78,7 +78,7 @@ else if ($action == "addupdate") {
 		}
 	} else {
 		// a new user
-		dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, ".
+		dbquery("INSERT INTO ".tbl::getuserTable()." (username, level, password, first_name, ".
 							"last_name, email_address, time_stamp, status) " .
 						"VALUES ('$username',$level,$DATABASE_PASSWORD_FUNCTION('$password'),'$first_name',".
 							"'$last_name','$email_address',0,'$status')");

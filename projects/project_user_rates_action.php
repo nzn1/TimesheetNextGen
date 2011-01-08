@@ -31,7 +31,7 @@ if ($action == "show_users") {
 
 		// Get the list of users who are assigned on this project
 		list($qh,$num) = dbQuery("SELECT u.username, u.first_name, u.last_name " .
-									"FROM $USER_TABLE u, $ASSIGNMENTS_TABLE a, $PROJECT_TABLE p " .
+									"FROM ".tbl::getuserTable()." u, $ASSIGNMENTS_TABLE a, $PROJECT_TABLE p " .
 									"WHERE p.proj_id='$proj_id' " .
 									"AND a.proj_id = p.proj_id " .
 									"AND a.username = u.username");
@@ -139,7 +139,7 @@ while ($data = dbResult($qh)) {
 	$count++;
 }
 
-list($qh,$num) = dbQuery("SELECT u.username, r.rate_id FROM $USER_TABLE u, $ASSIGNMENTS_TABLE a, $RATE_TABLE r ".
+list($qh,$num) = dbQuery("SELECT u.username, r.rate_id FROM ".tbl::getuserTable()." u, $ASSIGNMENTS_TABLE a, $RATE_TABLE r ".
 							"WHERE a.proj_id=$proj_id " .
 							"AND a.username = u.username " .
 							"AND a.rate_id = r.rate_id " .
