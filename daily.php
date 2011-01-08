@@ -16,11 +16,12 @@ $dc = new DailyClass();
 //  gbl::getMonth() gbl::getDay() gbl::getYear() gbl::getClientId() gbl::getProjId() gbl::getTaskId()
 //include("timesheet_menu.inc");
 
-$contextUser = strtolower($_SESSION['contextUser']);
-gbl::setContextUser($contextUser);
+if (isset($_SESSION['contextUser']))
+	$contextUser = strtolower($_SESSION['contextUser']);
+gbl::setContextUser($contextUser);        
 
 if (empty($contextUser))
-	errorPage("Could not determine the context user");
+	Common::errorPage("Could not determine the context user");
 
 //check that project id is valid
 if (gbl::getProjId() == 0)
@@ -110,6 +111,7 @@ $order_by_str = "start_stamp, ".tbl::getClientTable().".organisation, ".tbl::get
 list($num, $qh) = Common::get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
 
 if ($num == 0) {
+	$ymdStrSd = "&amp;year=".$year . "&amp;month=".$month . "&amp;day=".$day;
 	print "	<tr>\n";
 	print "		<td class=\"calendar_cell_middle\"><i>No hours recorded.</i></td>\n";
 	print "		<td class=\"calendar_cell_middle\">&nbsp;</td>\n";
@@ -118,6 +120,15 @@ if ($num == 0) {
 	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
 	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
 	print "		<td class=\"calendar_cell_disabled_right\" width=\"15%\">&nbsp;</td>\n";
+	$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
+								"?client_id=".gbl::getClientId()."".
+								"&amp;proj_id=".gbl::getProjId()."".
+								"&amp;task_id=".gbl::getTaskId()."".
+								"$ymdStrSd".
+								"&amp;destination=$_SERVER[PHP_SELF]".
+								"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+	print "	<td class=\"calendar_cell_disabled_right\" width=\"15%\"><a href=\"$popup_href\" class=\"action_link\">Add</a>&nbsp;</td>\n";
+	
 	print "	</tr>\n";
 	//print "</table>\n";
 }
@@ -138,7 +149,7 @@ else {
 		$ymdStrSd = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 		$dateValues = getdate($data["end_stamp"]);
 		$ymdStrEd = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
-
+		
 		//get the project title and task name
 		$projectTitle = stripslashes($data["projectTitle"]);
 		$taskName = stripslashes($data["taskName"]);
@@ -225,12 +236,20 @@ else {
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
 			if ($data['subStatus'] == "Open") {
 				print "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">Edit</a>,&nbsp;\n";
-				//print "	<a href=\"".Config::getRelativeRoot()."/delete?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
-				print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
+				//print "	<a href=\"".Config::getRelativeRoot()."/delete?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete, </a>\n";
+				print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete, </a>\n";
 			} else {
 				// submitted or approved times cannot be edited
 				print  $data['subStatus'] . "&nbsp;\n";
 			}
+			$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
+											"?client_id=".gbl::getClientId()."".
+											"&amp;proj_id=".gbl::getProjId()."".
+											"&amp;task_id=".gbl::getTaskId()."".
+											"$ymdStrSd".
+											"&amp;destination=$_SERVER[PHP_SELF]".
+											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+			print "	<a href=\"$popup_href\" class=\"action_link\">Add</a>&nbsp;\n";
 			print "</td>";
 
 			//add to todays total

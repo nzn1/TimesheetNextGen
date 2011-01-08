@@ -17,6 +17,23 @@ form { margin: 0px; }
 /*	FILTER: DropShadow(Color=#000000, OffX=2, OffY=2, Positive=1);*/
 	font-size: 14px; font-family: Arial, sans-serif; font-weight: bold; color:#E2ECFF; text-transform: uppercase; }
 
+div.dates { }
+div.dates table {width: 100%;
+					border: 0px; 
+					border-spacing: 0px;
+					}
+					
+div.weektable {}
+.weekhead {font-weight: bold;
+			font-family: Verdana, Arial, sans-serif; 
+			cursor:default; 
+			color: #A4A4C7; 
+			text-align: left;
+			 }
+
+.spacer td {
+	width: 1%;	
+}
 
 .box { background-color:#FFFFFF; }
 
@@ -43,7 +60,9 @@ iframe { border:2px inset #98C2F7; }
 
 .section_body { border-bottom: 1px solid #5271CC; }
 
-.outer_table_heading { font-size: 14px; font-family: Verdana, Arial, sans-serif; cursor:default; font-weight: bold; color: #000000; text-align: left; white-space: nowrap}
+.outer_table_heading { font-size: 14px; font-family: Verdana, Arial, sans-serif; 
+			cursor:default; font-weight: bold; color: #000000; 
+			text-align: left; white-space: nowrap}
 
 .calendar_date_simple { font-size: 14px; font-family: Verdana, Arial, sans-serif; cursor:default; font-weight: bold; color: #FFFFFF; }
 .navcal_header { font-size: 14px; font-family: Verdana, Arial, sans-serif; cursor:default; font-weight: bold; color: #FFFFFF; padding: 0px;}
@@ -60,6 +79,7 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 .inner_table_head { border-bottom: 1px solid #5271CC; background-color: #433B94; }
 
 .inner_table_column_heading { font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #A4A4C7; }
+.inner_table_column_heading_centre { font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #A4A4C7; text_align: center; width: 10%; }
 .inner_table_column_heading a:link { font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #FFFFFF; }
 .inner_table_column_heading a:visited { font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #FFFFFF; }
 .inner_table_column_heading a:hover { font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #E9AD4D; }
@@ -82,9 +102,12 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 .calendar_cell_holiday_right { border-bottom: 1px solid #5271CC; background-color: #C4DDC4; }
 
 .calendar_cell_disabled_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; }
-.calendar_cell_disabled_right { border-bottom: 1px solid #5271CC; background-color: #C4C4C4; }
+.calendar_cell_disabled_middle_2 { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; width: 2px; }
+.calendar_cell_disabled_middle_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; text-align: right;}
+.calendar_cell_disabled_right { border-bottom: 1px solid #5271CC; background-color: #C4C4C4; text-align: right;}
 
 .calendar_cell_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; }
+.calendar_cell_middle_2 { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; width: 2px }
 .calendar_cell_right { border-bottom: 1px solid #5271CC; background-color: #F2F3FF; }
 
 .calendar_totals_line_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: black; background-color: #fff0f0; }
