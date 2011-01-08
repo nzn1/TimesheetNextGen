@@ -1,8 +1,8 @@
 <?php
-// Authenticateif (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
+if(!class_exists('Site'))die('Restricted Access');
 	
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
-	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
 $contextUser = strtolower($_SESSION['contextUser']);
@@ -32,7 +32,7 @@ Site::getCommandMenu()->add(new TextCommand("Cancel", true, "$destination?client
 <
 </head>
 
-<form action="clock_action.php" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/clock_action" method="post">
 	<input type="hidden" name="origin" value="<?php echo $origin; ?>" />
 	<input type="hidden" name="destination" value="<?php echo $destination; ?>" />
 	<input type="hidden" name="clock_on_time_hour" value="<?php echo $clock_on_time_hour; ?>" />

@@ -1,14 +1,7 @@
 <?php
-//$Header: /cvsroot/tsheet/timesheet.php/weekly.php,v 1.6 2005/05/23 05:39:39 vexil Exp $
-
+if(!class_exists('Site'))die('Restricted Access');
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclWeekly')) {
-	if(!class_exists('Site')){
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . get_acl_level('aclWeekly'));	
-	}
-	else{
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&amp;clearanceRequired=" . Common::get_acl_level('aclWeekly'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclWeekly'));
 	exit;
 }
 
@@ -65,7 +58,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 //WARNING - IF POPUP IS SET THEN doOnLoad() won't be run
 
 if (isset($popup)){
-	$str = "window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
+	$str = "window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
 	PageElements::setBodyOnLoad($str);
 }	
 
@@ -396,7 +389,7 @@ if (isset($popup)){
 
 			//Put a popup link in the cell
 			$dateValues = getdate($currentDate);
-			$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
+			$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
 				"?client_id=$matchedPair->clientId".
 				"&amp;proj_id=$matchedPair->projectId".
 				"&amp;task_id=$matchedPair->value1".
@@ -456,7 +449,7 @@ if (isset($popup)){
 	for ($i=0; $i<7; $i++) {
 		$dateValues = getdate($currentDate);
 		$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
-		$popup_href = "javascript:void(0)\" onclick=window.open(\"clock_popup.php".
+		$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".

@@ -1,17 +1,10 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+if(!class_exists('Site'))die('Restricted Access');
+PageElements::setPageAuth('aclDaily');
 
 // Authenticate
-
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 
@@ -40,12 +33,12 @@ tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1
 
 	function delete_client(clientId) {
 				if (confirm('Are you sure you want to delete this client?'))
-					location.href = 'client_action.php?client_id=' + clientId + '&action=delete';
+					location.href = '<?php echo Config::getRelativeRoot(); ?>/client_action?client_id=' + clientId + '&action=delete';
 	}
 
 </script>
 </head>
-<form action="client_action.php" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/client_action" method="post">
 
 	<table width="100%" border="0">
 		<tr>

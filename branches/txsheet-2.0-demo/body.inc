@@ -1,4 +1,6 @@
 <?php
+ErrorHandler::fatalError('Error: This file ('.__FILE__.'has been deprecated.  Please stop using it<br />'.ppr(getShortDebugTrace(3),'trace',true));
+
 //Get the result set for the config set 1
 
 //THERE IS NO REAL NEED FOR THIS.  Its function can now be completed in the applied theme

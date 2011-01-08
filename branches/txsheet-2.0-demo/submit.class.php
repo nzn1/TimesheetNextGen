@@ -1,4 +1,5 @@
 <?php
+if(!class_exists('Site'))die('Restricted Access');
 class SubmitClass{
 
   private $time_fmt;
@@ -25,7 +26,7 @@ public function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
 }
 
 public function make_daily_link($ymdStr, $proj_id, $string) {
-	echo "<a href=\"daily.php?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
+	echo "<a href=\"".Config::getRelativeRoot()."/daily?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 
@@ -34,15 +35,15 @@ public function printInfo($type, $data) {
 //	global $debug;
 	
 	if($type == "projectTitle") {
-		self::jsPopupInfoLink("client_info.php", "client_id", $data["client_id"], "Client_Info");
+		self::jsPopupInfoLink(Config::getRelativeRoot()."/client_info", "client_id", $data["client_id"], "Client_Info");
 		print stripslashes($data["clientName"])."</a> / ";
-		self::jsPopupInfoLink("proj_info.php", "proj_id", $data["proj_id"], "Project_Info");
+		self::jsPopupInfoLink(Config::getRelativeRoot()."/proj_info", "proj_id", $data["proj_id"], "Project_Info");
 		print stripslashes($data["projectTitle"])."</a>&nbsp;\n";
 	} else if($type == "taskName") {
-		self::jsPopupInfoLink("task_info.php", "task_id", $data["task_id"], "Task_Info");
+		self::jsPopupInfoLink(Config::getRelativeRoot()."/task_info", "task_id", $data["task_id"], "Task_Info");
 		print stripslashes($data["taskName"])."</a>&nbsp;\n";
 	} else if($type == "duration") {
-		//self::jsPopupInfoLink("trans_info.php", "trans_num", $data["trans_num"], "Time_Entry_Info");
+		//self::jsPopupInfoLink(Config::getRelativeRoot()."/trans_info", "trans_num", $data["trans_num"], "Time_Entry_Info");
 		print self::format_time($data["duration"]);
 	} else if($type == "start_stamp") {
 		$dateValues = getdate($data["start_stamp"]);

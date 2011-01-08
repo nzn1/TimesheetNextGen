@@ -1,20 +1,13 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');
 }
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
-	exit;
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+  exit;
 }
 
 
@@ -68,7 +61,7 @@ if (isset($popup))
 </script>
 </head>
 
-<form action="rate_action.php" name="rateForm" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/rate_action" name="rateForm" method="post">
 <input type="hidden" name="action" value="" />
 <input type="hidden" name="rate_id" value="" />
 
@@ -124,7 +117,7 @@ while ($data = dbResult($qh)) {
 	</tr>
 	<tr>
 		<td align="left">
-		    <a href="project_user_rates.php">Rate Selection</a>
+		    <a href="<?php echo Config::getRelativeRoot(); ?>/project_user_rates">Rate Selection</a>
 		</td>
 	</tr>
 

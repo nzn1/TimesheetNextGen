@@ -1,18 +1,9 @@
 <?php
-//$Header: /cvsroot/tsheet/timesheet.php/monthly.php,v 1.10 2006/03/15 13:24:28 raghuprasad Exp $
-
+if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclMonthly')) {
-	if(!class_exists('Site')){
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclMonthly'));	
-	}
-	else{
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
 	exit;
 }
 
@@ -74,7 +65,7 @@ $post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_
 PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
 
 if (isset($popup))
-	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
 ?>
 
@@ -225,12 +216,12 @@ if (isset($popup))
 		print "	<table width=\"100%\">\n";
 
 		// Print out date.
-		/*print "<tr><td valign=\"top\"><tt><a href=\"daily.php?month=".gbl::getMonth()."&amp;year=".gbl::getYear()."&amp;".
+		/*print "<tr><td valign=\"top\"><tt><a href=\"".Config::getRelativeRoot()."/daily?month=".gbl::getMonth()."&amp;year=".gbl::getYear()."&amp;".
 			"day=$curDay&amp;client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\">$curDay</a></tt></td></tr>";*/
 
 		$ymdStr = "&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".$curDay;
 		
-		$popup_href = "javascript:void(0)\" onclick=\"window.open('popup.php".
+		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".
@@ -241,7 +232,7 @@ if (isset($popup))
 											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 
 		print "<tr><td valign=\"top\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
-		print "<tr><td valign=\"top\"><a href=\"daily.php?$ymdStr".
+		print "<tr><td valign=\"top\"><a href=\"".Config::getRelativeRoot()."/daily?$ymdStr".
 			"&amp;client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\">$curDay <span class=\"task_time_small\">$holtitle</span></a></td>";
 		print "<td valign=\"top\" align=\"right\"><a href=\"$popup_href\" class=\"action_link\">".
 				 "<img src=\"".Config::getRelativeRoot()."/images/add.gif\" alt=\"+\" width=\"11\" height=\"11\" border=\"0\" />".

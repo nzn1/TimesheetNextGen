@@ -1,7 +1,9 @@
 <?php
 
+if(!class_exists('Site'))die('Restricted Access');
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
-	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
 
@@ -170,7 +172,7 @@ function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
 
 function make_user_link($uid, $string) {
 	global $ymdStr;
-	echo "<a href=\"report_user.php?" . $ymdStr . "&amp;uid=$uid&amp;mode=&monthly\">" . 
+	echo "<a href=\"".Config::getRelativeRoot()."/report_user?" . $ymdStr . "&amp;uid=$uid&amp;mode=&monthly\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 
@@ -185,12 +187,12 @@ function printInfo($type, $data) {
 		print "<td valign=\"top\" class=\"calendar_cell_middle\" nowrap>";
 		print $data["last_name"]."&nbsp;\n";
 	} else if($type == "proj_id") {
-		jsPopupInfoLink("client_info.php", "client_id", $data["client_id"], "Client_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/client_info", "client_id", $data["client_id"], "Client_Info");
 		print stripslashes($data["clientName"])."</a> / ";
-		jsPopupInfoLink("proj_info.php", "proj_id", $data["proj_id"], "Project_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/proj_info", "proj_id", $data["proj_id"], "Project_Info");
 		print stripslashes($data["projectTitle"])."</a>&nbsp;\n";
 	} else if($type == "taskName") {
-		jsPopupInfoLink("task_info.php", "task_id", $data["task_id"], "Task_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/task_info", "task_id", $data["task_id"], "Task_Info");
 		print stripslashes($data["taskName"])."</a>&nbsp;\n";
 	} else if($type == "duration") {
 		print format_time($data["duration"],$time_fmt);

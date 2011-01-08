@@ -1,5 +1,6 @@
 <!-- Daily Navigation Calendar -->
 <?php
+if(!class_exists('Site'))die('Restricted Access');
 $todayDate = mktime(0,0,0,gbl::getMonth(),gbl::getDay(),gbl::getYear());
 $startDateCalendar = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
 

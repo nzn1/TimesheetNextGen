@@ -1,20 +1,11 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/edit.php,v 1.9 2005/02/03 08:06:10 vexil Exp $
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+
+if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 
@@ -62,7 +53,7 @@ if ($action == "saveChanges") {
 
 	list($qh,$num) = dbQuery($queryString);
 
-	Header("Location: daily.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;month=$month&amp;year=$year&amp;day=$day");
+	gotoLocation(Config::getRelativeRoot()."/daily?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;month=$month&amp;year=$year&amp;day=$day");
 	exit;
 }
 

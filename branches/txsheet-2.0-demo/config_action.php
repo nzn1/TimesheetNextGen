@@ -1,11 +1,12 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/config_action.php,v 1.6 2005/02/03 08:06:10 vexil Exp $
+die('NOT CONVERTED TO OO YET');
+if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=Administrator");
 	exit;
 }
 
@@ -84,7 +85,7 @@ $startPage = $_REQUEST["startPage"];
 	}
 
 if (!isset($action)) {
-	Header("Location: $HTTP_REFERER");
+	gotoLocation($HTTP_REFERER);
 }
 elseif ($action == "edit") {
 	$headerhtml = addslashes(unhtmlentities(trim($headerhtml)));
@@ -182,7 +183,6 @@ elseif ($action == "edit") {
 }
 
 //return to the config.php page
-Header("Location: config.php");
+gotoLocation(Config::getRelativeRoot()."/config");
 
-// vim:ai:ts=4:sw=4
 ?>

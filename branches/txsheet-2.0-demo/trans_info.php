@@ -1,9 +1,10 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/trans_info.php,v 1.6 2004/07/04 09:51:07 vexil Exp $
+die('NOT CONVERTED TO OO YET');
+if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 require("class.AuthenticationManager.php");
 if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI']));
 	exit;
 }
 

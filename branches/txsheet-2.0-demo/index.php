@@ -102,7 +102,7 @@ class Site{
 			header("Status: 503 Service Temporarily Unavailable");
 			header("Retry-After: 3600");
 			self::$rewrite->setContent('maintenance');
-      $module = Rewrite::MODULE_NOT_REGISTERED;
+      		$module = Rewrite::MODULE_NOT_REGISTERED;
 		}
 
 		$tp = new templateParser();

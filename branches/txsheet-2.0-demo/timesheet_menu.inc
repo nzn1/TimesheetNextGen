@@ -1,5 +1,5 @@
 <?php
-
+if(!class_exists('Site'))die('Restricted Access');
 ////get todays values
 if(!isset($realToday))
 	$realToday = getdate(time());
@@ -56,9 +56,9 @@ else {
 }
 //define the command menu
 if(class_exists('Site')){
-	$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/stopwatch.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;destination=".Rewrite::getShortUri()."','Stopwatch','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=220')";
+	$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/stopwatch?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;destination=".Rewrite::getShortUri()."','Stopwatch','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=220')";
 }
-else $popup_href = "javascript:void(0)\" onclick=\"window.open('stopwatch.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&destination=$_SERVER[PHP_SELF]\",\"Stopwatch\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=220\") dummy=\"";
+else $popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/stopwatch?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&destination=".urlencode($_SERVER['REQUEST_URI'])."\",\"Stopwatch\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=220\") dummy=\"";
 
 if(class_exists('Site')){
 	if (Site::getAuthenticationManager()->hasAccess('aclStopwatch'))	

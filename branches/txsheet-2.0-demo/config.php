@@ -1,20 +1,10 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/config.php,v 1.8 2005/02/03 08:06:10 vexil Exp $
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 $contextUser = strtolower($_SESSION['contextUser']);
@@ -218,7 +208,7 @@ function onSubmit() {
 </script>
 <body  onload="enableLDAP(<?php echo $resultset["useLDAP"]?>);">
 <div id="inputArea">
-<form action="config_action.php" name="configurationForm" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/config_action" name="configurationForm" method="post">
 <input type="hidden" name="action" value="edit" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

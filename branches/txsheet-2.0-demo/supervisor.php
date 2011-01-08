@@ -1,15 +1,9 @@
 <?php
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+if(!class_exists('Site'))die('Restricted Access');
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
+
 	exit;
 }
 
@@ -281,7 +275,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 
 <?php if(!$export_excel) { ?>
-<form name="subtimes" action="supervisor_action.php" method="post">
+<form name="subtimes" action="<?php echo Config::getRelativeRoot(); ?>/supervisor_action" method="post">
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
 <input type="hidden" name="month" value="<?php echo $month; ?>">

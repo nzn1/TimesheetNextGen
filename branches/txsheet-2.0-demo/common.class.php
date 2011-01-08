@@ -1,5 +1,4 @@
 <?php 
-//$Header: /cvsroot/tsheet/timesheet.php/common.inc,v 1.24 2005/09/12 23:58:09 vexil Exp $
 
 class Common{
 	
@@ -1090,7 +1089,7 @@ class Common{
 			if($info) {
 				print "</td><td width=\"0\">";
 				print "<input type=\"button\" name=\"info\" value=\"Info\"";
-				print "onclick=window.open(\"client_info.php?client_id=$client_id\",";
+				print "onclick=window.open(\"".Config::getRelativeRoot()."/client_info?client_id=$client_id\",";
 				print "\"Client_Info\",";
 				print "\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\") />";
 			}
@@ -1147,9 +1146,9 @@ class Common{
 		$month, $day, $proj_id, $task_id, $destination;
 	?>
 <HTML>
-<body BGCOLOR="#FFFFFF" >
-<FORM ACTION="clock_action.php" METHOD=POST>
-<table BORDER=1 align="center">
+<body bgcolor="#FFFFFF" >
+<form action="<?php echo Config::getRelativeRoot(); ?>/clock_action" method="post">
+<table border="1" align="center">
 	<?php {
 	if ($destination)
 		print "<input type=\"hidden\" name=destination value=$destination />\n";
@@ -1253,10 +1252,10 @@ class Common{
 
 
 	public static function errorPage($message, $from_popup = false) {
-		$targetWindowLocation = "error.php?errormsg=$message";
+		$targetWindowLocation = Config::getRelativeRoot()."error.php?errormsg=$message";
 
 		if (!$from_popup)
-			Header("Location: $targetWindowLocation");
+			gotoLocation($targetWindowLocation);
 		else
 			Common::loadMainPageAndCloseWindow($targetWindowLocation);
 		exit;

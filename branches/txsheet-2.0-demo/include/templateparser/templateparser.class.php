@@ -254,30 +254,30 @@ class TemplateParser{
 	 * checkPageAuth() - check the authorisation for this page
 	 */
 	private function checkPageAuth(){
-		return;  //THIS FUNCTION ISN'T REQUIRED FOR TXSHEET
+		return;	
 		if($this->pageElements->getPageAuth() == null){
 			$msg = "An error has occured.<br />The page authorisation has "
 			."returned as null.  The page therefore cannot be displayed.<br />"
-			.'This could be because the line: PageElements::setPageAuth() = \'value\'; is not '
+			.'This could be because the line: PageElements::setPageAuth(\'value\'); is not '
 			."in the requested file<br />"
 			."<a href=\"".Config::getRelativeRoot()."/\" >"
 			."Click here to visit the home page</a>";
 			ErrorHandler::fatalError($msg,'Page Auth Error','Page Auth Error');
 			exit;
 		}
-		$auth = Site::getSession()->checkAuth($this->pageElements->getPageAuth(),'view');
 
-		if($auth == null && gettype($auth)=='NULL'){
-			if(file_exists(Config::getErrorNoAuth())){
-				$this->pageElements->getTagByName('content')->setOutput($this->parseFile(Config::getErrorNoAuth()));
-			}
-			else{
-				$msg = "No Authorisation & missing no-auth Error Page";
-				ErrorHandler::fatalError($msg);
-			}
+//	if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclMonthly')) {
+//		Header("Location: ".Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
+//	exit;
+//	}
+		//$auth = Site::getSession()->checkAuth($this->pageElements->getPageAuth(),'view');
+		if(PageElements::getPageAuth()=='Open'){
+			return;
 		}
-		else if($auth == 0){
-			if(Site::getSession()->isLoggedIn()){
+		$auth = Site::getAuthenticationManager()->hasAccess(PageElements::getPageAuth());
+		
+		if($auth == 0){
+			if(Site::getAuthenticationManager()->isLoggedIn()){
 				if(file_exists(Config::getErrorAuth())){
 					$this->pageElements->getTagByName('content')->setOutput($this->parseFile(Config::getErrorAuth()));
 				}
@@ -287,7 +287,13 @@ class TemplateParser{
 				}
 			}
 			else {
-				die(header("Location: ".Config::getRelativeRoot()."/login?redir=".urlencode($_SERVER['REQUEST_URI'])));
+				//die(header("Location: ".Config::getRelativeRoot()."/login?redir=".urlencode($_SERVER['REQUEST_URI'])));
+				//header("Location: ".Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
+				//exit;
+				$url = Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclMonthly'); 
+        gotoLocation($url);
+				exit;
+				
 			}
 		}
 		else if($auth != 1){

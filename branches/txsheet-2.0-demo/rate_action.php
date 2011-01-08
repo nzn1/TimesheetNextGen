@@ -1,10 +1,11 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/rate_action.php,v 1.1 2006/03/15 13:57:09 raghuprasad Exp $
+die('NOT CONVERTED TO OO YET');
+if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=Administrator");
 	exit;
 }
 
@@ -23,7 +24,7 @@ include("table_names.inc");
 if ($action == "addupdate") {
 	if ($rate_id == 1) {
 	    //redirect back to the rate management page
-	    Header("Location: rate_maint.php");
+	    gotoLocation(Config::getRelativeRoot()."/rate_maint");
 	    exit(0);
 	}
 	//check whether the rate exists
@@ -44,7 +45,7 @@ if ($action == "addupdate") {
 } 
 
 //redirect back to the rate management page
-Header("Location: rate_maint.php");
+gotoLocation(Config::getRelativeRoot()."/rate_maint");
 
 // vim:ai:ts=4:sw=4
 ?>

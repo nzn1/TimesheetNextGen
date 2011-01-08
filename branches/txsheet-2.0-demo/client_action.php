@@ -1,9 +1,12 @@
 <?php
+die('NOT CONVERTED TO OO YET');
+if(!class_exists('Site'))die('Restricted Access');
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclClients')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclClients'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclClients'));
 	exit;
 }
 
@@ -59,7 +62,7 @@ elseif ($action == "delete") {
 		dbquery("DELETE FROM $CLIENT_TABLE WHERE client_id='$client_id'");
 }
 
-Header("Location: client_maint.php");
+gotoLocation(Config::getRelativeRoot()."/client_maint");      
 
 // vim:ai:ts=4:sw=4
 ?>

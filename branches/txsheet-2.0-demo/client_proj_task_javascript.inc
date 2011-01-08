@@ -1,5 +1,5 @@
 <?php 
-if(class_exists('Site'))die('Error: please use client_proj_task_javascript.php instead');
+ErrorHandler::fatalError('Error: This file ('.__FILE__.'has been deprecated.  Please stop using it<br />'.ppr(getShortDebugTrace(3),'trace',true));
 ?>
 <script type="text/javascript">
 	//define the hash table

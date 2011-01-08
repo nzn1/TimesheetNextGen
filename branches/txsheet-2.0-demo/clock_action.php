@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 //require("debuglog.php");
 if (!Site::getAuthenticationManager()->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI']));
 	exit;
 }
 
@@ -24,8 +24,8 @@ $year = isset($_REQUEST['year']) ? $_REQUEST['year'] : false;
 $client_id = $_REQUEST['client_id'];
 $proj_id = $_REQUEST['proj_id'];
 $task_id = $_REQUEST['task_id'];
-$origin = isset($_REQUEST['origin']) ? $_REQUEST['origin'] : 'daily.php';
-$destination = isset($_REQUEST['destination']) ? $_REQUEST['destination'] : 'daily.php';
+$origin = isset($_REQUEST['origin']) ? $_REQUEST['origin'] : 'daily';
+$destination = isset($_REQUEST['destination']) ? $_REQUEST['destination'] : 'daily';
 $fromPopupWindow = isset($_REQUEST['fromPopupWindow']) ? $_REQUEST['fromPopupWindow']: false;
 $clockonoff = isset($_REQUEST['clockonoff']) ? $_REQUEST['clockonoff']: "";
 $clock_on_time_hour = isset($_REQUEST['clock_on_time_hour']) ? $_REQUEST['clock_on_time_hour']: 0;
@@ -53,7 +53,7 @@ if($fromPopupWindow == 'false')
  */ 
 //set the return location
 $Location = "$destination?month=$month&year=$year&day=$day&destination=$destination";
-if ($destination == "stopwatch.php" || $destination == "daily.php")
+if ($destination == "stopwatch" || $destination == "daily")
 	$Location = "$destination?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day&destination=$destination";
 
 //determine the action
@@ -131,7 +131,7 @@ function getLogMessage() {
 	global $log_message, $log_message_presented, $fromPopupWindow;
 
 	if ($log_message_presented == false) {
-		$targetWindowLocation = "log_message".
+		$targetWindowLocation = Config::getRelativeRoot()."/log_message".
 					"?origin=$origin&destination=$destination".
 					"&clock_on_time_hour=$clock_on_time_hour".
 					"&clock_off_time_hour=$clock_off_time_hour".
@@ -150,7 +150,7 @@ function getLogMessage() {
 			loadMainPageAndCloseWindow($targetWindowLocation);
 		}
 		else {
-			Header("Location: $targetWindowLocation");
+			gotoLocation($targetWindowLocation);
 			exit;
 		}
 	}
@@ -212,6 +212,11 @@ function clockon() {
 function clockoff() {
 	include("table_names.inc");
 
+  /************
+   *
+   *@TODO - THESE VARIABLES DON'T EXIST! - they need to be found!
+   *globals have been removed completely   
+   */        
 	//import global vars
 	global $contextUser, $year, $month, $day, $offStamp, $task_id, $proj_id, $Location;
 	global $log_message, $log_message_presented, $fromPopupWindow;
@@ -253,7 +258,7 @@ function clockoff() {
 			//"start_time < '$year-$month-$day 23:59:59' AND ".
 			"task_id=$task_id";
 	list($qh,$num) = dbQuery($querystring);
-	Header("Location: $Location");
+	gotoLocation($Location);
 }
 
 function clockonandoff() {
@@ -286,7 +291,7 @@ function clockonandoff() {
 			"$proj_id, $task_id, '$log_message')";
 	list($qh,$num) = dbQuery($queryString);
 
-	Header("Location: $Location");
+	gotoLocation($Location);
 	exit;
 }
 ?>

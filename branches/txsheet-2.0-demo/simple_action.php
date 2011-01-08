@@ -1,6 +1,5 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/simple_action.php,v 1.2 2005/03/09 01:40:46 vexil Exp $
-
+if(!class_exists('Site'))die('Restricted Access');
 // Two potential problems exist, both are caused by this file not being able to 
 // easily modify data that does not belong to the current context week.
 //
@@ -35,13 +34,7 @@ ini_set('display_errors', true);
 // Authenticate
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 $contextUser = strtolower($_SESSION['contextUser']);
@@ -149,9 +142,9 @@ for ($i=0; $i<$totalRows; $i++) {
 	}
 }
 
-$Location = "simple?year=$year&amp;month=$month&amp;day=$day";
+$Location = Config::getRelativeRoot()."/simple?year=$year&amp;month=$month&amp;day=$day";
 
-Header("Location: $Location");
+gotoLocation($Location);
 exit;
 // vim:ai:ts=4:sw=4
 ?>

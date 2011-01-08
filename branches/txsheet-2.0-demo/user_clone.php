@@ -1,14 +1,8 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/user_action.php,v 1.7 2005/04/17 12:19:31 vexil Exp $
+if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 
@@ -123,7 +117,7 @@ if($action!='performCopy') {
 //we need to display the copy setup form
 //==========================================================================================
 ?>
-<form action="user_clone.php" name="userForm" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/user_clone" name="userForm" method="post">
 <input type="hidden" name="action" id="action" value="" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

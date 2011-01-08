@@ -1,4 +1,5 @@
 <?php
+if(!class_exists('Site'))die('Restricted Access');
 // navigational calendar functions
 
 	function getNextMonth($time,$orig_day=0,$need_ldom=-1) {

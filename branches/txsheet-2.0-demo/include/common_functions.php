@@ -193,4 +193,14 @@ function encodeEmail($e){
 	for ($i = 0; $i < strlen($e); $i++) { $output .= '&#'.ord($e[$i]).';'; }
 	return $output;
 }
+
+function gotoLocation($url){
+	if($url == ''){
+		$url = '/';
+	}
+	
+	if(debug::getLocation()==1)echo "Location: <a href=\"".$url."\">".$url."</a>";
+	else header("Location:".$url);
+	exit;
+}
 ?>

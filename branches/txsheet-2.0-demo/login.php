@@ -1,5 +1,5 @@
 <?php
-
+if(!class_exists('Site'))die('Restricted Access');
 
 //check that this form has been submitted
 if (isset($_POST["username"]) && isset($_POST["password"])) {
@@ -7,8 +7,8 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
 	if (!Site::getAuthenticationManager()->login($_POST["username"], $_POST["password"]))
 		$loginFailure = true;
 	else {
-		if (!empty($_REQUEST["redirect"]))
-			header("Location: $_REQUEST[redirect]");
+		if (!empty($_REQUEST['redirect']))
+			gotoLocation($_REQUEST['redirect']);
 		else
 			Common::gotoStartPage();
 

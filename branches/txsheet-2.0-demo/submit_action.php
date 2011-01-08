@@ -1,16 +1,16 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/submit_action.php,v 1.7 2005/05/23 07:32:00 vexil Exp $
+if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	Header("Location: login?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 
 $contextUser = strtolower($_SESSION['contextUser']);
 
-// submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1
+// Config::getRelativeRoot()."submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1"
 //load local vars from superglobals
 		$uid = $_REQUEST["uid"];
 		$mode = gbl::getMode();
@@ -53,8 +53,8 @@ if (isset($_REQUEST['submit'])) { // if submission of times
 	// we're done so redirect to the submission page
 
 	$path = Config::getRelativeRoot()."/submit?uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode&year=$year&month=$month&day=$day";
-	if(debug::getLocation()==1)echo "Location: <a href=\"".$path."\">".$path."</a>";
-	else header("Location: ".$path);	
+	gotoLocation($path);
+	exit;
 
 ?>
 
