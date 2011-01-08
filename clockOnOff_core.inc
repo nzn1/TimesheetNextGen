@@ -3,8 +3,6 @@
 <?php 
 if(class_exists('Site'))die('Error: please use clockOnOff_core_new.inc instead');
 
-include("timesheet_face_part_2.inc"); ?>
-
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<form action="clock_action.php" method="post" name="mainForm" id="theForm">
 		<input type="hidden" name="year" value="<?php echo $year; ?>" />
@@ -175,9 +173,4 @@ include("timesheet_face_part_2.inc"); ?>
 		</form>
 	</table>
 
-<!-- include the timesheet face up until the end -->
-<?php 
-include("timesheet_face_part_3.inc"); 
 
-// vim:ai:ts=4:sw=4:filetype=php
-?>
