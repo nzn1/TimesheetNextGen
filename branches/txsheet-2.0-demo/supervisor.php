@@ -12,8 +12,6 @@ include('submit.class.php');
 $sc = new SubmitClass();
 
 
-$contextUser = strtolower($_SESSION['contextUser']);
-
 //load local vars from superglobals
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
@@ -21,7 +19,7 @@ else {
 	// need to find the first user managed by this supervisor, otherwise we display the supervisor's times
 	//$query = "SELECT uid, last_name, first_name, status FROM $USER_TABLE " .
 	//		" WHERE (select uid from ts1_user s WHERE s.username = 'peter') = supervisor ORDER BY status DESC, last_name, first_name";
-	list($qh, $num) = Common::get_users_for_supervisor($contextUser);
+	list($qh, $num) = Common::get_users_for_supervisor(gbl::getContextUser());
 	if ($num > 0) {
 		$data = dbResult($qh);
 		$uid = $data['uid'];
@@ -257,7 +255,7 @@ function submitAll (chk) {
 //-->
 </script>
 <?php } //end if !export_excel 
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
 ob_start();
 
 PageElements::setHead(PageElements::getHead().ob_get_contents());

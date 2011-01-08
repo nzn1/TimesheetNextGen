@@ -33,8 +33,6 @@ if($export_excel){
 } else
 	$time_fmt = "time";
 
-$contextUser = strtolower($_SESSION['contextUser']);
-
 //load local vars from superglobals
 if (isset($_REQUEST['print']))
 	$print = true;
@@ -231,23 +229,15 @@ $post="&amp;orderby=$orderby";
 
 if(!$export_excel) 
 	require("report_javascript.inc");
-PageElements::setHead("<title>".Config::getMainTitle()." - User Report for ".$contextUser."</title>");
-?>
+PageElements::setHead("<title>".Config::getMainTitle()." - All hours this month</title>");
 
-<html>
-<head>
-
-<title>Timesheet Report: All hours this month</title>
-<?php 
 	if(!$export_excel) ; //include ("header.inc");
 	else {
 		print "<style type=\"text/css\"> ";
 		include ("css/timesheet.css");
 		print "</style>";
 	}
-?>
-</head>
-<?php 
+
 	if($print) {
 		echo "<body width=\"100%\" height=\"100%\"";
 		//include ("body.inc");

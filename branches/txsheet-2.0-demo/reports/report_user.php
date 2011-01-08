@@ -7,10 +7,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
-gbl::setContextUser($contextUser);
-
-
 // NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
 //        or the export to excel won't work in IE
 session_cache_limiter('public');
@@ -40,15 +36,13 @@ if($export_excel){
 //  $month $day $year $client_id $proj_id $task_id
 //include("timesheet_menu.inc");
 
-$contextUser = strtolower($_SESSION['contextUser']);
-
 //$debug = new logfile();
 
 //load local vars from superglobals
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
-	$uid = $contextUser;
+	$uid = gbl::getContextUser();
 
 if (isset($_REQUEST['print']))
 	$print = true;
@@ -221,7 +215,7 @@ $post="uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
 if(!$export_excel) 
 	require("report_javascript.inc");
 
-PageElements::setHead("<title>".Config::getMainTitle()." - User Report for ".$contextUser."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - User Report for ".gbl::getContextUser()."</title>");
 
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");

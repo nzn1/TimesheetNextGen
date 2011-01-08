@@ -30,8 +30,6 @@ if($export_excel){
 } else
 	$time_fmt = "time";
 
-$contextUser = strtolower($_SESSION['contextUser']);
-
 if (isset($_REQUEST['print']))
 	$print = true;
 else

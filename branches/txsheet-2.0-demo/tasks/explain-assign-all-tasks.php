@@ -5,7 +5,7 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
-$contextUser = strtolower($_SESSION['contextUser']);
+
 $assignTasks = isset($_REQUEST["assignTasks"]) ? $_REQUEST["assignTasks"]: false;
 
 function do_query($sql) {

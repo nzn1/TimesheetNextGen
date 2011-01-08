@@ -17,7 +17,8 @@ if(empty($post)) $post="year=$year&amp;month=$month&amp;day=$day&amp;proj_id=$pr
 if(class_exists('Site')){
 	if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR))
 		if(isset($_REQUEST["contextuid"]))
-			$_SESSION['contextUser'] = $_REQUEST['contextuid'];	
+			
+      $_SESSION['contextUser'] = $_REQUEST['contextuid'];	
 }
 else{
 	if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR))

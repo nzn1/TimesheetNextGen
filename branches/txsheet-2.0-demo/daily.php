@@ -16,12 +16,6 @@ $dc = new DailyClass();
 //  gbl::getMonth() gbl::getDay() gbl::getYear() gbl::getClientId() gbl::getProjId() gbl::getTaskId()
 //include("timesheet_menu.inc");
 
-if (isset($_SESSION['contextUser']))
-	$contextUser = strtolower($_SESSION['contextUser']);
-gbl::setContextUser($contextUser);        
-
-if (empty($contextUser))
-	Common::errorPage("Could not determine the context user");
 
 //check that project id is valid
 if (gbl::getProjId() == 0)
@@ -40,7 +34,7 @@ $CfgTimeFormat = Common::getTimeFormat();
 
 $post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()."";   //THIS LINE ISN'T USED!!
 
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
 ob_start();
 
 include("client_proj_task_javascript.php");
@@ -108,7 +102,7 @@ $startStr = date("Y-m-d H:i:s",$todayDate);
 $endStr = date("Y-m-d H:i:s",$tomorrowDate);
 
 $order_by_str = "start_stamp, ".tbl::getClientTable().".organisation, ".tbl::getProjectTable().".title, ".tbl::getTaskTable().".name, end_stamp";
-list($num, $qh) = Common::get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
+list($num, $qh) = Common::get_time_records($startStr, $endStr, gbl::getContextUser(), 0, 0, $order_by_str);
 
 if ($num == 0) {
 	$ymdStrSd = "&amp;year=".$year . "&amp;month=".$month . "&amp;day=".$day;

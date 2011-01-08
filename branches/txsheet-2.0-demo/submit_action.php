@@ -8,8 +8,6 @@ gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['RE
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
-
 // Config::getRelativeRoot()."submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1"
 //load local vars from superglobals
 		$uid = $_REQUEST["uid"];

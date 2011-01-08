@@ -10,13 +10,13 @@ ErrorHandler::fatalError('Error: This file ('.__FILE__.'has been deprecated.  Pl
 //$debug=new logfile();
 //Get list of clients and projects the contextUser is assigned to
 $getUsersClientList = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id FROM $ASSIGNMENTS_TABLE, $PROJECT_TABLE WHERE ".
-		"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
+		"$ASSIGNMENTS_TABLE.username='".gbl::getContextUser()."' AND ".
 		"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
 		"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
 		"ORDER BY $PROJECT_TABLE.title";
 
 list($qh5, $num5) = dbQuery($getUsersClientList);
-//$debug->write("found $num5 clients for $contextUser\n");
+//$debug->write("found $num5 clients for gbl::getContextUser()\n");
 $userClientHash=array();
 $userProjectHash=array();
 for ($i=0; $i<$num5; $i++) {
@@ -49,7 +49,7 @@ $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, $P
 			"$PROJECT_TABLE.proj_status FROM ".
 			"$PROJECT_TABLE, $ASSIGNMENTS_TABLE WHERE ".
 			"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
-			"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
+			"$ASSIGNMENTS_TABLE.username='".gbl::getContextUser()."' AND ".
 			"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
 			"ORDER BY $PROJECT_TABLE.title";
 
@@ -83,7 +83,7 @@ foreach ($projCount as $client => $project_count) {
 $getTasksQuery = "SELECT $TASK_TABLE.proj_id, $TASK_TABLE.task_id, $TASK_TABLE.name FROM ".
 			"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE WHERE ".
 			"$TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
-			"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
+			"$TASK_ASSIGNMENTS_TABLE.username='".gbl::getContextUser()."' ".
 			"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);

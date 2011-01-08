@@ -15,8 +15,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 
 // Connect to database.
 //$dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
-
 // Config::getRelativeRoot()."submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1"
 //load local vars from superglobals
 $action = $_REQUEST["Modify"];

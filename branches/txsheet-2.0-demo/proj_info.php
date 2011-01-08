@@ -12,7 +12,6 @@ if (!$authenticationManager->isLoggedIn()) {
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
 $proj_id = $_REQUEST['proj_id'];

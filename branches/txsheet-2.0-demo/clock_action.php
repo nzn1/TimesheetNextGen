@@ -10,7 +10,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn()) {
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION['contextUser']);
 
 /**
  * Updated by robsearles 26 Jan 2008
@@ -125,7 +124,7 @@ else if ($clockonoff == "clockonat") {
 
 function getLogMessage() {
 	//import global vars
-	global $contextUser, $year, $month, $day, $task_id, $proj_id, $client_id, $Location;
+	global $year, $month, $day, $task_id, $proj_id, $client_id, $Location;
 	global $origin, $destination, $clock_on_time_hour, $clock_off_time_hour,
 						$clock_on_time_min, $clock_off_time_min, $clockonoff;
 	global $log_message, $log_message_presented, $fromPopupWindow;
@@ -160,7 +159,7 @@ function clockon() {
 	include("table_names.inc");
 
 	//import global vars
-	global $contextUser, $onStamp, $task_id, $proj_id, $Location, $fromPopupWindow;
+	global $onStamp, $task_id, $proj_id, $Location, $fromPopupWindow;
 
 	if (empty($Location))
 		Common::errorPage("failed sanity check, location empty");
@@ -168,7 +167,7 @@ function clockon() {
 	//check that we are not already clocked on
 	$querystring = "SELECT $TIMES_TABLE.start_time, $TASK_TABLE.name FROM ".
 			"$TIMES_TABLE, $TASK_TABLE WHERE ".
-			"uid='$contextUser' AND ".
+			"uid='".gbl::getContextUser()."' AND ".
 			"end_time='0' AND ".
 			//"start_time>='$year-$month-$day' AND ".
 			//"start_time<='$year-$month-$day 23:59:59' AND ".
@@ -187,7 +186,7 @@ function clockon() {
 
 	//now insert the record for this clock on
 	$querystring = "INSERT INTO $TIMES_TABLE (uid, start_time, proj_id,task_id) ".
-			"VALUES ('$contextUser','$onStr', $proj_id, $task_id)";
+			"VALUES ('".gbl::getContextUser()."','$onStr', $proj_id, $task_id)";
 	list($qh,$num) = dbQuery($querystring);
 
 	//now output an ok page, the redirect back
@@ -218,14 +217,14 @@ function clockoff() {
    *globals have been removed completely   
    */        
 	//import global vars
-	global $contextUser, $year, $month, $day, $offStamp, $task_id, $proj_id, $Location;
+	global $year, $month, $day, $offStamp, $task_id, $proj_id, $Location;
 	global $log_message, $log_message_presented, $fromPopupWindow;
 
 	$offStr = strftime("%Y-%m-%d %H:%M:%S", $offStamp);
 
 	//check that we are actually clocked on
 	$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM $TIMES_TABLE WHERE ".
-			"uid='$contextUser' AND ".
+			"uid='".gbl::getContextUser()."' AND ".
 			"end_time=0 AND ".
 			//"start_time >= '$year-$month-$day' AND ".
 			//"start_time <= '$year-$month-$day 23:59:59' AND ".
@@ -251,7 +250,7 @@ function clockoff() {
 	//now insert the record for this clock off
 	$log_message = addslashes($log_message);
 	$querystring = "UPDATE $TIMES_TABLE SET log_message='$log_message', end_time='$offStr', duration='$duration' WHERE ".
-			"uid='$contextUser' AND ".
+			"uid='".gbl::getContextUser()."' AND ".
 			"proj_id=$proj_id AND ".
 			"end_time=0 AND ".
 			//"start_time >= '$year-$month-$day' AND ".
@@ -265,7 +264,7 @@ function clockonandoff() {
 	include("table_names.inc");
 
 	//import global vars
-	global $contextUser, $year, $month, $day, $task_id, $proj_id, $Location;
+	global $year, $month, $day, $task_id, $proj_id, $Location;
 	global $destination, $clock_on_time_hour, $clock_off_time_hour, $clock_on_time_min, $clock_off_time_min;
 	global $log_message, $log_message_presented, $onStamp, $offStamp;
 	global $clock_on_radio, $clock_off_radio, $fromPopupWindow;
@@ -287,7 +286,7 @@ function clockonandoff() {
 	
 	$log_message = addslashes($log_message);
 	$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
-			"VALUES ('$contextUser','$onStr', '$offStr', '$duration', " .
+			"VALUES ('".gbl::getContextUser()."','$onStr', '$offStr', '$duration', " .
 			"$proj_id, $task_id, '$log_message')";
 	list($qh,$num) = dbQuery($queryString);
 

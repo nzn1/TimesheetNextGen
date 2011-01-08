@@ -9,14 +9,11 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	  exit;
 }
-$contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
 
 //define the command menu
 Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));

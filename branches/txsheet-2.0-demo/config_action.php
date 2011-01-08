@@ -12,7 +12,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 
 // Connect to database.
 $dbh = dbConnect();
-$contextUser = strtolower($_SESSION["contextUser"]);
 
 //$debug = new logfile();
 

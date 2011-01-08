@@ -11,9 +11,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 }
 //load local vars from superglobals
 $client_id = $_REQUEST['client_id'];
-
-$contextUser = strtolower($_SESSION['contextUser']);
-
 ?>
 <HTML>
 <head>

@@ -7,11 +7,8 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
-gbl::setContextUser($contextUser);
-
 //load local vars from superglobals
-$uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']: $contextUser;
+$uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']:gbl::getContextUser();
 
 $todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $ymdStr = "&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."";

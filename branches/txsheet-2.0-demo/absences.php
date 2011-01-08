@@ -9,14 +9,10 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
   	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
-
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
 
 if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_MANAGER))
 	$canChangeUser = true;
@@ -26,7 +22,7 @@ else
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
-	$uid = $contextUser;
+	$uid = gbl::getContextUser();
 
 $action = 0;
 

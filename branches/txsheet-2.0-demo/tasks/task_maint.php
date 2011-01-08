@@ -8,7 +8,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
 
 if (empty($proj_id))
 	$proj_id = 1;

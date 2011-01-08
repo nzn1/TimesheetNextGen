@@ -7,9 +7,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
-gbl::setContextUser($contextUser);
-
 // NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
 //        or the export to excel won't work in IE
 session_cache_limiter('public');
@@ -35,20 +32,16 @@ if($export_excel){
 } else
 	$time_fmt = "time";
 
-$contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
-
 //load local vars from superglobals
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
-	$uid = $contextUser;
+	$uid = gbl::getContextUser();
 
 //load local vars from superglobals
 if (isset($_REQUEST['print']))

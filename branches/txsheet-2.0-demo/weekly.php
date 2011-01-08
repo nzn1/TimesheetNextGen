@@ -5,15 +5,12 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
-gbl::setContextUser($contextUser);
+
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
 //check that project id is valid
 if (gbl::getProjId() == 0)
 	gbl::setTaskId(0);

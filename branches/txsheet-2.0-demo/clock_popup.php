@@ -7,10 +7,7 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 }
 // Connect to database.
 
-$contextUser = strtolower($_SESSION['contextUser']);
 
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
 
 //load local vars from superglobals
 $year = $_REQUEST["year"];
@@ -38,14 +35,11 @@ if ($proj_id == 0)
 //include date input classes
 include "form_input.inc";
 
-?>
-<html>
-<head>
-<title>Update timesheet for <?php echo $contextUser; ?></title>
-<?php
-//include("header.inc");
+
+ob_start();
 include("client_proj_task_javascript.php");
 ?>
+<title>Update timesheet for <?php echo gbl::getContextUser(); ?></title>
 <script type="text/javascript">
 
 function resizePopupWindow() {
@@ -70,8 +64,14 @@ function resizePopupWindow() {
 }
 
 </script>
+
+<?php 
+PageElements::setHead(PageElements::getHead().ob_get_contents());
+ob_end_clean();
+
+?>
 </head>
-<body style="margin: 0; padding: 0;" class="face_padding_cell" <?php include ("body.inc"); ?> onload="doOnLoad();">
+
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
 	  <tr>
 		<td width="100%" class="face_padding_cell">
@@ -90,7 +90,7 @@ function resizePopupWindow() {
 <!-- include the timesheet face up until the next start section -->
 <?php 
 	$fromPopup = "true";
-	include("clockOnOff_core.inc"); 
+	include("clockOnOff_core_new.inc"); 
 ?>
 
 
@@ -99,7 +99,7 @@ function resizePopupWindow() {
 	</table>
 
 </body>
-</HTML>
+</html>
 <?php
 // vim:ai:ts=4:sw=4
 ?>

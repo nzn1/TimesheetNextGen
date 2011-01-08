@@ -9,14 +9,10 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	exit;
 }
 
-$contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
-
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
 
 //bug fix - we must display all projects
 $proj_id = 0;
@@ -46,7 +42,7 @@ $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 $layout = Common::getLayout();
 
 //$post="";
-PageElements::setHead("<title>".Config::getMainTitle()." - Simple Weekly Timesheet for ".$contextUser."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - Simple Weekly Timesheet for ".gbl::getContextUser()."</title>");
 
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
@@ -70,7 +66,7 @@ $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
 							"$CLIENT_TABLE.organisation " .
 						"FROM $PROJECT_TABLE, " .tbl::getAssignmentsTable(). ", $CLIENT_TABLE " .
 						"WHERE $PROJECT_TABLE.proj_id=" .tbl::getAssignmentsTable().".proj_id AND ".
-							"" .tbl::getAssignmentsTable(). ".username='$contextUser' AND ".
+							"" .tbl::getAssignmentsTable(). ".username='".gbl::getContextUser()."' AND ".
 							"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
 						"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
@@ -93,7 +89,7 @@ $getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
 						"$TASK_TABLE.name " .
 					"FROM $TASK_TABLE, " .tbl::getTaskAssignmentsTable(). " ".
 					"WHERE $TASK_TABLE.task_id = " .tbl::getTaskAssignmentsTable().".task_id AND ".
-						"".tbl::getTaskAssignmentsTable().".username='$contextUser' ".
+						"".tbl::getTaskAssignmentsTable().".username='".gbl::getContextUser()."' ".
 					"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);
@@ -810,7 +806,7 @@ for ($i=0; $i<$num4; $i++) {
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
 	$order_by_str = "$CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name";
-	list($num5, $qh5) = Common::get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
+	list($num5, $qh5) = Common::get_time_records($startStr, $endStr, gbl::getContextUser(), 0, 0, $order_by_str);
 
 	//we're going to put the data into an array of
 	//different (unique) TASKS

@@ -14,18 +14,15 @@ $mc = new MonthlyClass();
 //  $month gbl::getDay() ".gbl::getYear()." gbl::getClientId() gbl::getProjId() ".gbl::getTaskId()."
 //include("timesheet_menu.inc");
 
-$contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
-if (empty($contextUser))
-	errorPage("Could not determine the context user");
 
 // Check project assignment.
 if (gbl::getProjId() != 0) { // id 0 means 'All Projects'
-	list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getAssignmentsTable()." WHERE proj_id='".gbl::getProjId()."' AND username='$contextUser'");
+	list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getAssignmentsTable()." WHERE proj_id='".gbl::getProjId()."' AND username='".gbl::getContextUser()."'");
 	if ($num < 1)
 		errorPage("You cannot access this project, because you are not assigned to it.");
 } else 
@@ -62,7 +59,7 @@ $CfgTimeFormat = Common::getTimeFormat();
 
 $post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId();       //this isn't used anywhere
 
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$contextUser."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
 
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
@@ -84,10 +81,10 @@ if (isset($popup))
 		<td width="25%">
 			<?php 
 				if(!class_exists('Site')){
-					Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
+					Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();");
 				} 
 				else{
-					Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();");
+					Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();");
 				}
 			?>
 		</td>
@@ -97,10 +94,10 @@ if (isset($popup))
 		<td width="25%">
 			<?php 
 				if(!class_exists('Site')){
-					Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
+					Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); 
 				} 
 				else{
-					Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); 
+					Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); 
 				}
 			?>
 		</td>
@@ -147,8 +144,8 @@ if (isset($popup))
 	}
 
 	// Get the Monthly data.
-	list($num, $qh) = Common::get_time_records($startStr, $endStr, $contextUser, gbl::getProjId(), gbl::getClientId());
-	list($qhol, $holnum) = Common::get_absences(gbl::getMonth(), gbl::getYear(), $contextUser);
+	list($num, $qh) = Common::get_time_records($startStr, $endStr, gbl::getContextUser(), gbl::getProjId(), gbl::getClientId());
+	list($qhol, $holnum) = Common::get_absences(gbl::getMonth(), gbl::getYear(), gbl::getContextUser());
 
 	$ihol = 0; $holtitle = "";
 	if ($holnum>$ihol)

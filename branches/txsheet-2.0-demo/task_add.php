@@ -8,7 +8,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
-$contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
 $proj_id = $_REQUEST['proj_id'];
