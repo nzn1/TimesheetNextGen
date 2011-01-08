@@ -43,7 +43,7 @@ $CfgTimeFormat = Common::getTimeFormat();
 
 
 //include ("header.inc");
-PageElements::setHead("<title>".Config::getMainTitle()." - Weekly Timesheet for ".$contextUser."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - Weekly Timesheet for ".gbl::getContextUser()."</title>");
 ob_start();
 
 include("client_proj_task_javascript.php");
@@ -75,9 +75,9 @@ if (isset($popup)){
 	<tr>
 		<td width="10%">&nbsp;</td>
 		<td width="10%" align="right">Client: </td>
-		<td width="25%" align="left"><?php Common::client_select_list(gbl::getClientId(), $contextUser, false, false, true, false, "submit();"); ?></td>
+		<td width="25%" align="left"><?php Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?></td>
 		<td width="10%"align="right">Project: </td>
-		<td width="25%"align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), $contextUser, false, true, "submit();"); ?></td>
+		<td width="25%"align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
 		<td width="10%">&nbsp;</td>
 	</tr>
 	</tr>
@@ -155,7 +155,7 @@ if (isset($popup)){
 
 	// Get the Weekly data.
 	$order_by_str = "".tbl::getClientTable().".organisation, ".tbl::getProjectTable().".title, ".tbl::getTaskTable().".name";
-	list($num3, $qh3) = Common::get_time_records($startStr, $endStr, $contextUser, gbl::getProjId(), gbl::getClientId(), $order_by_str);
+	list($num3, $qh3) = Common::get_time_records($startStr, $endStr, gbl::getContextUser(), gbl::getProjId(), gbl::getClientId(), $order_by_str);
 
 	//print "<p>Query: $query </p>";
 	//print "<p>there were $num3 results</p>";
