@@ -2,7 +2,6 @@
 
 <?php 
 if(!class_exists('Site'))die('Error: not accessed through the class structure.  For the old site version please use clockOnOff_core.inc instead');
-include("timesheet_face_part_2new.inc"); 
 
 require_once('form_input.inc');
 ?>
@@ -176,10 +175,3 @@ require_once('form_input.inc');
 		</tr>
 		</form>
 	</table>
-
-<!-- include the timesheet face up until the end -->
-<?php 
-include("timesheet_face_part_3new.inc"); 
-
-// vim:ai:ts=4:sw=4:filetype=php
-?>
