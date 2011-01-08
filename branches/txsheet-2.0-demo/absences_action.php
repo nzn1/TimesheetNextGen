@@ -40,9 +40,8 @@ if ($action!=0) {
 		$endYear++;
 
 	}
-	$ABSENCE_TABLE = tbl::getAbsenceTable();
-	//clear the absences for this user in the month
-	dbQuery("DELETE FROM $ABSENCE_TABLE WHERE user='$uid' AND ".
+		//clear the absences for this user in the month
+	dbQuery("DELETE FROM ".tbl::getAbsenceTable()." WHERE user='$uid' AND ".
 				"date >= '$year-$month-01 00:00:00' AND ".
 				"date < '$endYear-$endMonth-01 00:00:00'");
 
@@ -53,11 +52,11 @@ if ($action!=0) {
 		$PMtext = urlencode($_POST["PMtext".$i]);
 
 		if (($AMtype!='')&&($AMtype!='Public')) {
-			dbquery("INSERT INTO $ABSENCE_TABLE VALUES ".
+			dbquery("INSERT INTO ".tbl::getAbsenceTable()." VALUES ".
 				"(0,'$year-$month-$i 00:00:00','AM','$AMtext','$AMtype','$uid')");
 		}
 		if (($PMtype!='')&&($PMtype!='Public')) {
-			dbquery("INSERT INTO $ABSENCE_TABLE VALUES ".
+			dbquery("INSERT INTO ".tbl::getAbsenceTable()." VALUES ".
 				"(0,'$year-$month-$i 00:00:00','PM','$PMtext','$PMtype','$uid')");
 		}
 	}

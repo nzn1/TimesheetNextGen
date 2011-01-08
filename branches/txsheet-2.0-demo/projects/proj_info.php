@@ -26,7 +26,7 @@ $proj_id = $_REQUEST['proj_id'];
 	$query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, $CLIENT_TABLE.organisation, ".
 			"$PROJECT_TABLE.description, DATE_FORMAT(start_date, '%M %d, %Y') as start_date, DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 			"$PROJECT_TABLE.proj_status, http_link ".
-		"FROM $PROJECT_TABLE, $CLIENT_TABLE, $USER_TABLE ".
+		"FROM $PROJECT_TABLE, $CLIENT_TABLE, ".tbl::getuserTable()." ".
 		"WHERE $PROJECT_TABLE.proj_id=$proj_id  ";
 
 //set up query
@@ -35,7 +35,7 @@ $query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 						"$PROJECT_TABLE.proj_status, http_link, proj_leader ".
-					"FROM $PROJECT_TABLE, $CLIENT_TABLE, $USER_TABLE ".
+					"FROM $PROJECT_TABLE, $CLIENT_TABLE, ".tbl::getuserTable()." ".
 					"WHERE $PROJECT_TABLE.proj_id=$proj_id AND ".
 						"$CLIENT_TABLE.client_id=$PROJECT_TABLE.client_id ".
 					"ORDER BY $PROJECT_TABLE.proj_id";

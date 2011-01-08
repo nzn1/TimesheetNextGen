@@ -28,14 +28,14 @@ $query = "SELECT DATE_FORMAT(start_time, '$dateFormatString') as formattedStartT
 				"$TASK_TABLE.name AS taskName, " .
 				"$TASK_TABLE.status AS taskStatus, ".
 				"$CLIENT_TABLE.organisation, ".
-				"$USER_TABLE.first_name, ".
-				"$USER_TABLE.last_name " .
-				"FROM $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE, $USER_TABLE, $CLIENT_TABLE ".
+				"".tbl::getuserTable().".first_name, ".
+				"".tbl::getuserTable().".last_name " .
+				"FROM $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE, ".tbl::getuserTable().", $CLIENT_TABLE ".
 			"WHERE $PROJECT_TABLE.proj_id=$TIMES_TABLE.proj_id ".
 				"AND $TASK_TABLE.task_id=$TIMES_TABLE.task_id ".
 				"AND $TIMES_TABLE.trans_num=$trans_num ".
 				"AND $PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id ".
-				"AND $USER_TABLE.username = $TIMES_TABLE.uid";
+				"AND ".tbl::getuserTable().".username = $TIMES_TABLE.uid";
 
 
 //print "<PRE>$data[date]\n$data[time]\n$data[log_message]\n$data[title]\n$data[client]\n$data[first_name]\n$data[last_name]</PRE>";

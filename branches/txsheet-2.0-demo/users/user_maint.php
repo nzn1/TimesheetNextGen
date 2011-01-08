@@ -104,10 +104,9 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 <?php
 $PROJECT_TABLE = tbl::getProjectTable();
 $TASK_TABLE = tbl::getTaskTable();
-$USER_TABLE = tbl::getUserTable();
 $TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
 
-list($qh,$num) = dbQuery("SELECT * FROM $USER_TABLE WHERE username!='guest' ORDER BY status desc, last_name, first_name");
+list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getuserTable()." WHERE username!='guest' ORDER BY status desc, last_name, first_name");
 
 while ($data = dbResult($qh)) {
 	$firstNameField = empty($data["first_name"]) ? "&nbsp;": $data["first_name"];

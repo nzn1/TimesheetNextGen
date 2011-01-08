@@ -17,7 +17,7 @@ if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else {
 	// need to find the first user managed by this supervisor, otherwise we display the supervisor's times
-	//$query = "SELECT uid, last_name, first_name, status FROM $USER_TABLE " .
+	//$query = "SELECT uid, last_name, first_name, status FROM ".tbl::getuserTable()." " .
 	//		" WHERE (select uid from ts1_user s WHERE s.username = 'peter') = supervisor ORDER BY status DESC, last_name, first_name";
 	list($qh, $num) = Common::get_users_for_supervisor(gbl::getContextUser());
 	if ($num > 0) {
