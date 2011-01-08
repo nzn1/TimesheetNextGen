@@ -1,15 +1,9 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/task_info.php,v 1.5 2004/07/02 14:15:56 vexil Exp $
+if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 $contextUser = strtolower($_SESSION['contextUser']);

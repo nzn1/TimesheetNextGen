@@ -1,4 +1,6 @@
 <?php
+if(!class_exists('Site'))die('Restricted Access');
+PageElements::setPageAuth('Open');
 PageElements::setHead("<title>".Config::getMainTitle()." - Blank</title>");
 ?>
 

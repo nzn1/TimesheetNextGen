@@ -1,3 +1,4 @@
+<?php ErrorHandler::fatalError('Error: This file ('.__FILE__.'has been deprecated.  Please stop using it<br />'.ppr(getShortDebugTrace(3),'trace',true));?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">	   
   <tr>		     
     <td>			       

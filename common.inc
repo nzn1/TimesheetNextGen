@@ -1,5 +1,6 @@
 <?php {
-//$Header: /cvsroot/tsheet/timesheet.php/common.inc,v 1.24 2005/09/12 23:58:09 vexil Exp $
+ErrorHandler::fatalError('Error: This file ('.__FILE__.'has been deprecated.  Please stop using it<br />'.ppr(getShortDebugTrace(3),'trace',true));
+
 if (!defined("COMMON_INC")) {
 	define("COMMON_INC", 1);
 

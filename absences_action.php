@@ -1,14 +1,10 @@
 <?php
 
+if(!class_exists('Site'))die('Restricted Access');
+
 // Authenticate
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 
@@ -37,7 +33,7 @@ $last_day = isset($_REQUEST['last_day']) ? $_REQUEST['last_day']: "31";
 $action = isset($_REQUEST['action']) ? $_REQUEST['action']: 0;
 
 //set the return location
-$Location = "absences?month=$month&year=$year&day=$day&uid=$uid";
+$Location = Config::getRelativeRoot."/absences?month=$month&year=$year&day=$day&uid=$uid";
 
 if ($action!=0) {
 	$endMonth = $month + 1;
@@ -69,5 +65,5 @@ if ($action!=0) {
 		}
 	}
 }
-Header("Location: $Location");
+gotoLocation($Location);
 ?>

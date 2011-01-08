@@ -1,4 +1,6 @@
-
+<?php
+ if(!class_exists('Site'))die('Restricted Access');
+?>
 <div id="nav-container">
 <ul>
 	<li><a href="<?php echo config::getRelativeRoot();?>">Home</a></li>

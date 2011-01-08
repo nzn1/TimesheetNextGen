@@ -1,4 +1,5 @@
 <?php
+if(!class_exists('Site'))die('Restricted Access');
 class ClientProjTaskJavascript{
 
 	private $userClientList = array();
@@ -133,8 +134,8 @@ class ClientProjTaskJavascript{
 	}
 	
 	public function printJSONObjects(){
-		echo "\nvar jsonClientProjectsHash = '".json_encode($this->jsonClientProjectsHash)."'";
-		echo "\nvar jsonProjectTasksHash = '".json_encode($this->jsonProjectTasksHash)."'";
+		echo "\nvar jsonClientProjectsHash = '".json_encode($this->jsonClientProjectsHash)."';";
+		echo "\nvar jsonProjectTasksHash = '".json_encode($this->jsonProjectTasksHash)."';";
 		echo"\n\n";
 	}
 }

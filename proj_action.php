@@ -1,10 +1,12 @@
 <?php
-//$Header: /cvsroot/tsheet/timesheet.php/proj_action.php,v 1.8 2005/05/17 03:38:37 vexil Exp $
+die('NOT CONVERTED TO OO YET');
+if(!class_exists('Site'))die('Restricted Access');
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header("Location: login?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclProjects'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -82,7 +84,7 @@ elseif ($action == "add") {
 	}
 
 	// we're done adding the project so redirect to the maintenance page
-	Header("Location: proj_maint?client_id=$client_id");
+	gotoLocation(Config::getRelativeRoot()."/proj_maint?client_id=$client_id");
 
 }
 elseif ($action == "edit") {
@@ -111,14 +113,14 @@ elseif ($action == "edit") {
 	}
 
 	//we're done editing, so redirect back to the maintenance page
-	Header("Location: proj_maint?client_id=$client_id");
+	gotoLocation(Config::getRelativeRoot()."/proj_maint?client_id=$client_id");
 }
 elseif ($action == 'delete') {
 	dbQuery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
 	dbQuery("DELETE FROM $TASK_TABLE WHERE proj_id = $proj_id");
 	dbQuery("DELETE FROM $PROJECT_TABLE WHERE proj_id=$proj_id");
 	dbQuery("DELETE FROM $ASSIGNMENTS_TABLE WHERE proj_id=$proj_id");
-	Header("Location: proj_maint?client_id=$client_id");
+	gotoLocation(Config::getRelativeRoot()."/proj_maint?client_id=$client_id");
 }
 
 // vim:ai:ts=4:sw=4

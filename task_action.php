@@ -1,10 +1,13 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/task_action.php,v 1.7 2005/05/23 07:32:00 vexil Exp $
+
+die('not yet converted to OO');
+if(!class_exists('Site'))die('Restricted Access');
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclTasks'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclTasks'));
 	exit;
 }
 
@@ -28,7 +31,7 @@ if ($action == "add" || $action == "edit") {
 $time_string = date("Y-m-d H:i:00");
 
 if (!isset($action))
-	Header("Location: $HTTP_REFERER");
+	gotoLocation($HTTP_REFERER);
 elseif ($action == "add") {
 	$name = addslashes($name);
 	$description = addslashes($description);
@@ -44,7 +47,7 @@ elseif ($action == "add") {
 	}
 
 	// redirect to the task management page (we're done)
-	Header("Location: task_maint.php?proj_id=$proj_id");
+	gotoLocation(Config::getRelativeRoot()."/task_maint?proj_id=$proj_id");
 } elseif ($action == "edit") {
 	$name = addslashes($name);
 	$description = addslashes($description);
@@ -65,11 +68,11 @@ elseif ($action == "add") {
 	}
 
 	// we're done so redirect to the task management page
-	Header("Location: task_maint.php?proj_id=$proj_id");
+	gotoLocation(Config::getRelativeRoot()."/task_maint?proj_id=$proj_id");
 } elseif ($action == 'delete') {
 	dbQuery("DELETE FROM $TASK_TABLE WHERE task_id = $task_id");
 	dbQuery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id = $task_id");
-	Header("Location: task_maint.php?proj_id=$proj_id");
+	gotoLocation(Config::getRelativeRoot()."/task_maint?proj_id=$proj_id");
 }
 
 // vim:ai:ts=4:sw=4

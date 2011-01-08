@@ -1,10 +1,13 @@
 <?php
+
+if(!class_exists('Site'))die('Restricted Access');
+
 // NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
 //        or the export to excel won't work in IE
 session_cache_limiter('public');
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
-	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
 //export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
@@ -147,7 +150,7 @@ function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
 }
 
 function make_daily_link($ymdStr, $proj_id, $string) {
-	echo "<a href=\"daily.php?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
+	echo "<a href=\"".Config::getRelativeRoot()."/daily?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 
@@ -156,10 +159,10 @@ function printInfo($type, $data, $time_fmt) {
 	if($type == "uid") {
 		print stripslashes($data["uid"])."</a>&nbsp;\n";
 	} else if($type == "taskName") {
-		jsPopupInfoLink("task_info.php", "task_id", $data["task_id"], "Task_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/task_info", "task_id", $data["task_id"], "Task_Info");
 		print stripslashes($data["taskName"])."</a>&nbsp;\n";
 	} else if($type == "duration") {
-		//jsPopupInfoLink("trans_info.php", "trans_num", $data["trans_num"], "Time_Entry_Info");
+		//jsPopupInfoLink(Config::getRelativeRoot()."/trans_info", "trans_num", $data["trans_num"], "Time_Entry_Info");
 		print format_time($data["duration"],$time_fmt);
 	} else if($type == "start_stamp") {
 		$dateValues = getdate($data["start_stamp"]);

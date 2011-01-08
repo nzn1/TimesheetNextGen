@@ -1,4 +1,5 @@
 <?php
+if(!class_exists('Site'))die('Restricted Access');
 include("navcalnew/common.inc");
 ?>
 <!-- Monthly Navigation Calendars > -->

@@ -1,6 +1,6 @@
 <?php
 {
-	//$Header: /cvsroot/tsheet/timesheet.php/mysql.db.inc,v 1.3 2005/04/17 12:19:31 vexil Exp $
+if(!class_exists('Site'))die('Restricted Access');
 	//To port to another database, simply keep this interface and duplicate the functionality.
 	//Should have plug in compatibility.
 

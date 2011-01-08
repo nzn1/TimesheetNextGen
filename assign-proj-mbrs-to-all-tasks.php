@@ -1,8 +1,10 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/task_maint.php,v 1.11 2005/05/17 03:38:37 vexil Exp $
+
+if(!class_exists('Site'))die('Restricted Access');
+                              
 // Authenticate
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
-	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
 
@@ -31,7 +33,7 @@ function do_query($sql) {
 		if (confirm('Deleting a task which has been used in the past will make those timesheet ' +
 				'entries invalid, and may cause errors. This action is not recommended. ' +
 				'Are you sure you want to delete this task?'))
-			location.href = 'task_action.php?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
+			location.href = '<?php echo Config::getRelativeRoot();?>/task_action?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
 	}
 
 </script>
@@ -65,9 +67,9 @@ function do_query($sql) {
 <li> iterate through the users and project tables</li>
 <li> and assign each user to all the tasks for every project of which they are a member</li>
 </ol>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="explain-assign-all-tasks.php">Click here if you don't understand</a><br /><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo Config::getRelativeRoot(); ?>/explain-assign-all-tasks">Click here if you don't understand</a><br /><br />
 If this is what you want to do, check this box <input type="checkbox" name="assignTasks" value="checked" <?php if($assignTasks) echo " checked=\"checked\"" ?> />  and hit submit, or return. <br />
-<img src="images/spacer.gif" alt="" width="50" height="1" /><input type="submit" value="Submit" /></h3>
+<img src="<?php echo Config::getRelativeRoot(); ?>/images/spacer.gif" alt="" width="50" height="1" /><input type="submit" value="Submit" /></h3>
 <?php } else { 
 	$task_array=array();
 

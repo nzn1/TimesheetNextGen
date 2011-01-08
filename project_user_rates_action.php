@@ -1,14 +1,9 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/project_user_rates_action.php,v 1.1 2006/03/15 13:53:59 raghuprasad Exp $
+if(!class_exists('Site'))die('Restricted Access');
+
 // Authenticate
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
-	}
-	
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclDaily'));	
 	exit;
 }
 
@@ -53,7 +48,7 @@ if ($action == "show_users") {
 	$usercount = $_REQUEST["usercount"];
 	$proj_id = $_REQUEST["proj_id"];
 	if (empty($proj_id) || empty($usercount)) {
-		Header("Location: project_user_rates.php");
+		gotoLocation(Config::getRelativeRoot()."/project_user_rates");
 		exit(0);
 	}
 
@@ -83,11 +78,11 @@ if ($action == "show_users") {
 	}
 
 	//redirect back to the rate management page
-	Header("Location: project_user_rates.php");
+	gotoLocation(Config::getRelativeRoot()."/project_user_rates");
 	exit(0);
 } else {
 	//redirect back to the rate management page
-	Header("Location: project_user_rates.php");
+	gotoLocation(Config::getRelativeRoot()."/project_user_rates");
 	exit(0);
 }
 
@@ -106,7 +101,7 @@ if ($action == "show_users") {
 </script>
 </head>
 
-<form action="project_user_rates_action.php" name="userRateForm" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/project_user_rates_action" name="userRateForm" method="post">
 
 	<input type="hidden" name="action" value="" />
 	<input type="hidden" name="proj_id" value="<?php print $proj_id; ?>" />

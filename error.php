@@ -1,4 +1,7 @@
 <?php
+die('NOT CONVERTED TO OO YET');
+if(!class_exists('Site'))die('Restricted Access');
+
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 

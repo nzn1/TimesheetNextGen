@@ -1,4 +1,5 @@
 <?php
+if(!class_exists('Site'))die('Restricted Access');
 class MonthlyClass{
 	public function __construct(){}
 	
@@ -51,7 +52,7 @@ public function print_totals($Minutes, $type="", $pyear, $pmonth, $pday) {
 	if ($type=="monthly")
 		print "Monthly total: ";
 	else {
-		print "<a href=\"weekly.php?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id$ymdStr\">Weekly Total: </a>";
+		print "<a href=\"".Config::getRelativeRoot()."/weekly?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id$ymdStr\">Weekly Total: </a>";
 	}
 
 	if(!class_exists('Site')){

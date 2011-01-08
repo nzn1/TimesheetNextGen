@@ -1,9 +1,12 @@
 <?php
+die('NOT CONVERTED TO OO YET');
+if(!class_exists('Site'))die('Restricted Access');
+
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI']));
 	exit;
 }
 
@@ -145,7 +148,7 @@ include ("header.inc");
 															</td>
 															<td width="30%">
 																<div class="project_task_list">
-																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
+																	<a href="<?php echo Config::getRelativeRoot(); ?>/task_maint?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
 <?php
 			//get tasks
 			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]");
@@ -154,7 +157,7 @@ include ("header.inc");
 			if ($num_tasks > 0) {
 				while ($task_data = dbResult($qh3)) {
 					$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
-					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
+					print "<a href=\"javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/task_info?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
 				}
 			}
 			else

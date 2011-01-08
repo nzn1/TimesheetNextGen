@@ -52,7 +52,7 @@ class Session
 //		session_name(Config::getSessionName());
 
 		//session_save_path(Config::getDocumentRoot()."/tmp");
-//		session_start();   //Tell PHP to start the session
+		session_start();   //Tell PHP to start the session
 
 		//date_default_timezone_set(Config::getTimeZone());
 

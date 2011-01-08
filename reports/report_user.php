@@ -1,11 +1,9 @@
 <?php
 
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+if(!class_exists('Site'))die('Restricted Access');
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
-	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
 
@@ -175,22 +173,22 @@ function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
 }
 
 function make_daily_link($ymdStr, $proj_id, $string) {
-	echo "<a href=\"daily.php?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
+	echo "<a href=\"".Config::getRelativeRoot()."/daily?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 
 function printInfo($type, $data) {
 	global $time_fmt;
 	if($type == "projectTitle") {
-		jsPopupInfoLink("client_info.php", "client_id", $data["client_id"], "Client_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/client_info", "client_id", $data["client_id"], "Client_Info");
 		print stripslashes($data["clientName"])."</a> / ";
 		jsPopupInfoLink("proj_info.php", "proj_id", $data["proj_id"], "Project_Info");
 		print stripslashes($data["projectTitle"])."</a>&nbsp;\n";
 	} else if($type == "taskName") {
-		jsPopupInfoLink("task_info.php", "task_id", $data["task_id"], "Task_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/task_info", "task_id", $data["task_id"], "Task_Info");
 		print stripslashes($data["taskName"])."</a>&nbsp;\n";
 	} else if($type == "duration") {
-		//jsPopupInfoLink("trans_info.php", "trans_num", $data["trans_num"], "Time_Entry_Info");
+		//jsPopupInfoLink(Config::getRelativeRoot()."/trans_info", "trans_num", $data["trans_num"], "Time_Entry_Info");
 		print format_time($data["duration"],$time_fmt);
 	} else if($type == "start_stamp") {
 		$dateValues = getdate($data["start_stamp"]);
@@ -226,7 +224,7 @@ if(!$export_excel)
 PageElements::setHead("<title>".Config::getMainTitle()." - User Report for ".$contextUser."</title>");
 
 if (isset($popup))
-	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 ?>
 <?php 
 	//if(!$export_excel) include ("header.inc");

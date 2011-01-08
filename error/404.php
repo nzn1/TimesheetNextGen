@@ -1,4 +1,5 @@
 <?php
+if(!class_exists('Site'))die('Restricted Access');
 PageElements::setPageAuth('content');
 
 PageElements::setHead("<title>".Config::getMainTitle()."</title>");

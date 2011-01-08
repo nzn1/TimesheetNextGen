@@ -1,5 +1,6 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/submit_action.php,v 1.7 2005/05/23 07:32:00 vexil Exp $
+die('NOT CONVERTED TO OO YET');
+if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
 require("class.AuthenticationManager.php");
@@ -8,7 +9,7 @@ require_once("debuglog.php");
 //$debug = new logfile();
 	
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&clearanceRequired=" . get_acl_level('aclTasks'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . get_acl_level('aclTasks'));
 	exit;
 }
 
@@ -16,7 +17,7 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 //$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
-// submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1
+// Config::getRelativeRoot()."submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1"
 //load local vars from superglobals
 $action = $_REQUEST["Modify"];
 
@@ -62,7 +63,7 @@ $action = $_REQUEST["Modify"];
 }
 	
 	// we're done so redirect to the submission page
-	Header("Location: supervisor.php?uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode&year=$year&month=$month&day=$day");
+	gotoLocation(Config::getRelativeRoot()."/supervisor?uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode&year=$year&month=$month&day=$day");
 
 ?>
 

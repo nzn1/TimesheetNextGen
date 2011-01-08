@@ -1,4 +1,5 @@
 <?php
+
 //Get the result set for the config set 1
 
 if(!class_exists('Site')){

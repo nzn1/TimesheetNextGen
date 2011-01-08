@@ -1,19 +1,10 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 
@@ -104,7 +95,7 @@ function popupPrintWindow() {
 
 ?>
 
-<form action="report_absences.php" method="get">
+<form action="<?php echo Config::getRelativeRoot(); ?>/report_absences" method="get">
 <input type="hidden" name="month" value="<?php echo $month; ?>" />
 <input type="hidden" name="year" value="<?php echo $year; ?>" />
 <input type="hidden" name="day" value="<?php echo $day; ?>" />

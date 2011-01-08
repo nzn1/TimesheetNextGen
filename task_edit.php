@@ -1,15 +1,9 @@
 <?php
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+if(!class_exists('Site'))die('Restricted Access');
+
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+
 	exit;
 }
 $contextUser = strtolower($_SESSION['contextUser']);
@@ -50,7 +44,7 @@ while ($datanext = dbResult($qh)) {
 PageElements::setHead("<title>".Config::getMainTitle()." | Edit Task | ".$data["name"]."</title>");
 ?>
 
-<form action="task_action.php" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/task_action" method="post">
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 <input type="hidden" name="task_id" value="<?php echo $data["task_id"]; ?>" />

@@ -1,19 +1,14 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+
+if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');
 }
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+
 	exit;
 }
 $contextUser = strtolower($_SESSION['contextUser']);
@@ -36,7 +31,7 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 <head>
 <title>Add New Project</title>
 
-<form action="proj_action.php" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/proj_action" method="post">
 <input type="hidden" name="action" value="add" />
 <div id="inputArea">
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">

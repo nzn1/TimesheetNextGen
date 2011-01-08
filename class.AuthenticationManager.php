@@ -1,8 +1,6 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', true);
-
+if(!class_exists('Site'))die('Restricted Access');
 /**
  * Added 11 Dec 2008
  * Installation script. As this file is called by every other file,
@@ -32,17 +30,13 @@ if(
 	// pages also check the version number to see if the user is running the latest
 	// version, if not takes user to the "upgrade" pages
 	
-	/**
-	 * @todo put these headers back in
-	 */
-	//header("Location: ./install/");
-	if(class_exists('Site')){
-		header("Location: ".config::getRelativeRoot()."/install/");
-	}
-	else{
-		header("Location: ./install/");
-	}
-	exit;	
+		
+    /**
+     * @TODO - reimplement the install feature.
+     * 
+     */                  
+    //header("Location: ".config::getRelativeRoot()."/install/");
+	  //exit;	
 }
 
 if( file_exists( $cpath . "/siteclosed")) {
@@ -128,7 +122,7 @@ class AuthenticationManager {
 		global $siteclosed;
 
 		//start/continue the session
-		session_start();
+//		session_start();
 
 		//set initial error codes
 		$this->errorCode = AUTH_NONE;
@@ -195,6 +189,9 @@ class AuthenticationManager {
 		//if we want to use a non-random string (for testing)
 		//$session_id=md5($username.$password.$data["level"]);
 		session_id($session_id);
+		
+		//i've left this in here for the time being.  not sure it's needed but
+		//the session is destroyed above.
 		session_start();
 
 		//set session variables
@@ -269,7 +266,7 @@ class AuthenticationManager {
 		require("database_credentials.inc");
 
 		//start/continue the session
-		session_start();
+//		session_start();
 
 		if($this->isLoggedIn()) {
 			$username=$_SESSION['loggedInUser'];
@@ -295,7 +292,7 @@ class AuthenticationManager {
 		require( "table_names.inc" );
 
 		//start/continue the session
-		@session_start();
+//		@session_start();
 
 		$session_id=session_id();
 		if(empty($_SESSION['loggedInUser'])) return false;
@@ -317,7 +314,7 @@ class AuthenticationManager {
 	*/
 	function hasClearance($accessLevel) {
 		//start/continue the session
-		@session_start();
+//		@session_start();
 
 		return (isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] >= $accessLevel);
 	}

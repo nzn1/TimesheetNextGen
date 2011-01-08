@@ -1,11 +1,9 @@
 <?php
 
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
+if(!class_exists('Site'))die('Restricted Access');
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
-	Header("Location: ".Config::getRelativeRoot()."/login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
 	exit;
 }
 
@@ -143,7 +141,7 @@ function make_index($data,$order) {
 	}
 ?>
 
-<form action="report_hours.php" method="get">
+<form action="<?php echo Config::getRelativeRoot(); ?>/report_hours" method="get">
 <input type="hidden" name="month" value="<?php echo $month; ?>" />
 <input type="hidden" name="day" value="<?php echo $day; ?>" />
 

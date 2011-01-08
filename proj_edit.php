@@ -1,17 +1,10 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-	if(!class_exists('Site')){
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclSimple'));	
-	}
-	else{
-		Header("Location: login.php?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
 	exit;
 }
 $contextUser = strtolower($_SESSION['contextUser']);
@@ -31,7 +24,7 @@ $proj_id = $_REQUEST['proj_id'];
 //define the command menu
 Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
 Site::getCommandMenu()->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
-Site::getCommandMenu()->add(new TextCommand("Copy Projects/Tasks between users", true, "user_clone.php"));
+Site::getCommandMenu()->add(new TextCommand("Copy Projects/Tasks between users", true, Config::getRelativeRoot()."/user_clone"));
 
 $PROJECT_TABLE = tbl::getProjectTable();
 $ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
@@ -74,7 +67,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".$cont
 <title>Edit Project</title>
 </head>
 
-<form action="proj_action.php" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/proj_action" method="post">
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 <div id="inputArea">

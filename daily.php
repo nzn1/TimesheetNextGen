@@ -1,14 +1,8 @@
 <?php
-// $Header: /cvsroot/tsheet/timesheet.php/daily.php,v 1.7 2005/05/10 11:42:53 vexil Exp $
+if(!class_exists('Site'))die('Restricted Access');
 
 if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
-	if(!class_exists('Site')){
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . get_acl_level('aclDaily'));	
-	}
-	else{
-		Header("Location: login?redirect=".$_SERVER['REQUEST_URI']."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
-	}
-	
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
 	exit;
 }
 
@@ -54,19 +48,22 @@ include("client_proj_task_javascript.php");
 
 	function delete_entry(transNum) {
 		if (confirm('Are you sure you want to delete this time entry?'))
-			location.href = 'delete.php?month=<?php echo gbl::getMonth(); ?>&amp;year=<?php echo gbl::getYear(); ?>&amp;day=<?php echo gbl::getDay(); ?>&amp;client_id=<?php echo gbl::getClientId(); ?>&amp;proj_id=<?php echo gbl::getProjId(); ?>&amp;task_id=<?php echo gbl::getTaskId(); ?>&amp;trans_num=' + transNum;
+			location.href = '<?php echo Config::getRelativeRoot(); ?>/delete?month=<?php echo gbl::getMonth(); ?>&amp;year=<?php echo gbl::getYear(); ?>&amp;day=<?php echo gbl::getDay(); ?>&amp;client_id=<?php echo gbl::getClientId(); ?>&amp;proj_id=<?php echo gbl::getProjId(); ?>&amp;task_id=<?php echo gbl::getTaskId(); ?>&amp;trans_num=' + transNum;
 	}
 
 </script>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/datetimepicker_css.js"></script>
+<?php 
+PageElements::setHead(PageElements::getHead().ob_get_contents());
+ob_end_clean();
+PageElements::setBodyOnLoad('doOnLoad();');
+?>
 <form name="dayForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
 <!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
 <!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
 <input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
-<?php PageElements::setHead(PageElements::getHead().ob_get_contents());
-ob_end_clean();
-PageElements::setBodyOnLoad('doOnLoad();');
 
+<?php
 	$currentDate = $todayDate;
 	$fromPopup = "false";
 	include("clockOnOff.inc"); 
@@ -227,8 +224,8 @@ else {
 
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
 			if ($data['subStatus'] == "Open") {
-				print "	<a href=\"edit.php?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">Edit</a>,&nbsp;\n";
-				//print "	<a href=\"delete.php?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
+				print "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">Edit</a>,&nbsp;\n";
+				//print "	<a href=\"".Config::getRelativeRoot()."/delete?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
 				print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
 			} else {
 				// submitted or approved times cannot be edited
@@ -257,7 +254,7 @@ else {
 			 * Common::getRealTodayDate() is defined in common.inc
 			 */
 			if ($data["start_stamp"] == Common::getRealTodayDate()) {
-				$stop_link = '<a href="clock_action.php?client_id='.$data['client_id'].'&amp;proj_id='.
+				$stop_link = '<a href="'.Config::getRelativeRoot().'/clock_action?client_id='.$data['client_id'].'&amp;proj_id='.
 						$data['proj_id'].'&amp;task_id='.$data['task_id'].
 						'&amp;clock_off_check=on&amp;clock_off_radio=now" class="action_link\">Clock Off</a>, ';
 				print $stop_link;
