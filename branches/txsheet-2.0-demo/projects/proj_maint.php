@@ -19,30 +19,22 @@ $client_id = gbl::getClientId();
 //set seleced project status to started when nothing is chosen in the dropdown list
 $proj_status = isset($_REQUEST['proj_status']) ? $_REQUEST['proj_status'] : "Started";
 
-$PROJECT_TABLE = tbl::getProjectTable();
-$CLIENT_TABLE = tbl::getClientTable();
-$TIMES_TABLE = tbl::getTimesTable();
-$ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
-$RATE_TABLE = tbl::getRateTable();
-$TASK_TABLE = tbl::getTaskTable();
-
 //set up query
-$query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, ".
-						"$CLIENT_TABLE.organisation, $PROJECT_TABLE.description, " .
+$query = "SELECT DISTINCT p.title, p.proj_id, p.client_id, ".
+						"c.organisation, p.description, " .
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
-						"$PROJECT_TABLE.proj_status, http_link, proj_leader ".
-					"FROM $PROJECT_TABLE, $CLIENT_TABLE, ".tbl::getuserTable()." ".
-					"WHERE ";
+						"p.proj_status, http_link, proj_leader ".
+					"FROM  ".tbl::getProjectTable()." p,  ".tbl::getClientTable()." c,  ".tbl::getUserTable()."  ".
+
 if ($client_id != 0)
-	$query .= "$PROJECT_TABLE.client_id = $client_id AND ";
+	$query .= "p.client_id = $client_id AND ";
 	
 if ($proj_status !== 0 and $proj_status !== 'All' ) {
-	$query .= " $PROJECT_TABLE.proj_status = '$proj_status' AND ";
+	$query .= " p.proj_status = '$proj_status' AND ";
 }
-
-$query .= "$PROJECT_TABLE.proj_id > 0 AND $CLIENT_TABLE.client_id = $PROJECT_TABLE.client_id ".
-						"ORDER BY $PROJECT_TABLE.title";
+$query .= "p.proj_id > 0 AND c.client_id = p.client_id ".
+						"ORDER BY p.title";
 
 if (isset($_POST['page']) && $_POST['page'] != 0) { $page  = $_POST['page']; } else { $page=1; }; 
 $results_per_page = Common::getProjectItemsPerPage();
@@ -54,22 +46,21 @@ $query .= " LIMIT $start_from, $results_per_page";
 list($qh, $num) = dbQuery($query);
 
 //build query for determining number of pages
-$query2 = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, ".
-						"$CLIENT_TABLE.organisation, $PROJECT_TABLE.description, " .
+$query2 = "SELECT DISTINCT p.title, p.proj_id, p.client_id, ".
+						"c.organisation, p.description, " .
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
-						"$PROJECT_TABLE.proj_status, http_link, proj_leader ".
-					"FROM $PROJECT_TABLE, $CLIENT_TABLE, ".tbl::getuserTable()." ".
-					"WHERE ";
+						"p.proj_status, http_link, proj_leader ".
+					"FROM  ".tbl::getProjectTable()." p,  ".tbl::getClientTable()." c,  ".tbl::getUserTable()."  ".
 if ($client_id != 0)
-	$query2 .= "$PROJECT_TABLE.client_id = $client_id AND ";
+	$query2 .= "p.client_id = $client_id AND ";
 	
 if ($proj_status !== 0 and $proj_status !== 'All' ) {
-	$query2 .= " $PROJECT_TABLE.proj_status = '$proj_status' AND ";
+	$query2 .= " p.proj_status = '$proj_status' AND ";
 }
 
-$query2 .= "$PROJECT_TABLE.proj_id > 0 AND $CLIENT_TABLE.client_id = $PROJECT_TABLE.client_id ".
-						"ORDER BY $PROJECT_TABLE.title";
+$query2 .= "p.proj_id > 0 AND c.client_id = p.client_id ".
+						"ORDER BY p.title";
 list($qh2, $num2) = dbQuery($query2);
 
 				
@@ -275,7 +266,7 @@ function writePageLinks($page, $results_per_page, $num2)
 			if ($num_tasks > 0) {
 				while ($task_data = dbResult($qh3)) {
 					$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
-					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
+					print "<a href=\"javascript:void(0)\" onclick=window.open(\"/tasks/task_info?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
 				}
 			}
 			else
