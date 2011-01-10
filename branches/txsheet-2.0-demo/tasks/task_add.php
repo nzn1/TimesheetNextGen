@@ -16,13 +16,9 @@ $proj_id = $_REQUEST['proj_id'];
 Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
 
 ?>
-<html>
-<head>
-	<title>Add New Task</title>
-</head>
+<title><?php echo Config::getMainTitle();?> - Task Add</title>
 
-
-<form action="<?php echo Config::getRelativeRoot(); ?>/task_action" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/tasks/task_action" method="post">
 <input type="hidden" name="action" value="add" />
 <input type="hidden" name="proj_id" value="<?php echo $proj_id ?>" />
 <div id="inputArea">
