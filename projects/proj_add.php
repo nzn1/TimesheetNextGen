@@ -22,12 +22,20 @@ Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.ba
 //load client id from superglobals
 $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 
+$startDate = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
+$start_day = 1;
+$start_month = date("n", $startDate);
+$start_year = date("Y", $startDate);;
+$end_day = 31;
+$end_month = date("n", $startDate);;
+$end_year = date("Y", $startDate);;
+
 ?>
 <html>
 <head>
 <title>Add New Project</title>
 
-<form action="<?php echo Config::getRelativeRoot(); ?>/proj_action" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/projects/proj_action" method="post">
 <input type="hidden" name="action" value="add" />
 <div id="inputArea">
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
@@ -52,11 +60,11 @@ $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
 	</tr>
 	<tr>
 		<td align="right">Start Date:</td>
-		<td><?php Common::day_button("start_day",0,0); Common::month_button("start_month"); Common::year_button("start_year"); ?></td>
+		<td><?php Common::day_button("start_day",0,0); Common::month_button("start_month", $start_month); Common::year_button("start_year", $start_year); ?></td>
 	</tr>
 	<tr>
 		<td align="right">Deadline:</td>
-		<td><?php Common::day_button("end_day",0,0); Common::month_button("end_month"); Common::year_button("end_year"); ?></td>
+		<td><?php Common::day_button("end_day",0,0); Common::month_button("end_month", $end_month); Common::year_button("end_year", $end_year); ?></td>
 	</tr>
 	<tr>
 		<td align="right">Status:</td>

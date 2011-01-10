@@ -59,7 +59,7 @@ while ($datanext = dbResult($qh)) {
 PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
 ?>
 
-<form action="<?php echo Config::getRelativeRoot(); ?>/proj_action" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/projects/proj_action" method="post">
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 <div id="inputArea">
