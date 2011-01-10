@@ -1,18 +1,12 @@
 <?php
-
-die('not yet converted to OO');
 if(!class_exists('Site'))die('Restricted Access');
-
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclTasks'));
+
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclMonthly')) {
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
+
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
@@ -35,44 +29,49 @@ elseif ($action == "add") {
 	$name = addslashes($name);
 	$description = addslashes($description);
 
-	list($qh, $num) = dbQuery("INSERT INTO $TASK_TABLE (proj_id, name, description, assigned, started, status) VALUES ".
+	list($qh, $num) = dbQuery("INSERT INTO ".tbl::getTaskTable()." (proj_id, name, description, assigned, started, status) VALUES ".
 						"('$proj_id', '$name','$description', ".
 						"'$time_string', '$time_string', '$task_status')");
-	$task_id = dbLastID($dbh);
+	//$task_id = dbLastID($dbh);
+	list($qhqt, $numt) = dbQuery("SELECT task_id FROM ".tbl::getTaskTable().
+				" WHERE proj_id= '$proj_id' AND name = '$name' AND description = '$description' ".
+				" AND started = '$time_string' AND status= '$task_status'");
+	$data = dbResult($qhqt);
+	$task_id = $data['task_id'];		
 
 	if (isset($assigned)) {
 		while (list(,$username) = each($assigned))
-			dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
+			dbQuery("INSERT INTO ".tbl::getTaskAssignmentsTable()." (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
 	}
 
 	// redirect to the task management page (we're done)
-	gotoLocation(Config::getRelativeRoot()."/task_maint?proj_id=$proj_id");
+	gotoLocation(Config::getRelativeRoot()."/tasks/task_maint?proj_id=$proj_id");
 } elseif ($action == "edit") {
 	$name = addslashes($name);
 	$description = addslashes($description);
 
-	$query = "UPDATE $TASK_TABLE SET name='$name',description='$description',".
+	$query = "UPDATE ".tbl::getTaskTable()." SET name='$name',description='$description',".
 				" status='$task_status' ";
 	if ($task_status=='Complete') {
 		$query .=	",completed='$time_string'";
 	}
 	$query .=		" WHERE task_id=$task_id";
-
+	
 	list($qh,$num) = dbquery($query);
 
 	if ($assigned) {
-		dbQuery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id = $task_id");
-		while (list(,$username) = each($assigned))
-			dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
+		dbQuery("DELETE FROM ".tbl::getTaskAssignmentsTable()." WHERE task_id = $task_id");
+			while (list(,$username) = each($assigned))
+				dbQuery("INSERT INTO ".tbl::getTaskAssignmentsTable()." (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
 	}
 
-	// we're done so redirect to the task management page
-	gotoLocation(Config::getRelativeRoot()."/task_maint?proj_id=$proj_id");
-} elseif ($action == 'delete') {
-	dbQuery("DELETE FROM $TASK_TABLE WHERE task_id = $task_id");
-	dbQuery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id = $task_id");
-	gotoLocation(Config::getRelativeRoot()."/task_maint?proj_id=$proj_id");
-}
+		// we're done so redirect to the task management page
+		gotoLocation(Config::getRelativeRoot()."/tasks/task_maint?proj_id=$proj_id");
+	} elseif ($action == 'delete') {
+		dbQuery("DELETE FROM ".tbl::getTaskTable()."  WHERE task_id = $task_id");
+		dbQuery("DELETE FROM ".tbl::getTaskAssignmentsTable()."  WHERE task_id = $task_id");
+		gotoLocation(Config::getRelativeRoot()."/tasks/task_maint?proj_id=$proj_id");
+	}
 
 // vim:ai:ts=4:sw=4
 ?>

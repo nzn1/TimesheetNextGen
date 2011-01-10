@@ -12,9 +12,6 @@ $loggedInUser = strtolower($_SESSION['loggedInUser']);
 //load local vars from superglobals
 $task_id = $_REQUEST['task_id'];
 
-$PROJECT_TABLE = tbl::getProjectTable();
-$TASK_TABLE = tbl::getTaskTable();
-$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
 
 //build query
 $query_task = "SELECT DISTINCT task_id, name, description,status, ".
@@ -22,13 +19,13 @@ $query_task = "SELECT DISTINCT task_id, name, description,status, ".
 				"DATE_FORMAT(started, '%M %d, %Y') as started,".
 				"DATE_FORMAT(suspended, '%M %d, %Y') as suspended,".
 				"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
-			"FROM $TASK_TABLE ".
-			"WHERE $TASK_TABLE.task_id=$task_id ".
-					"ORDER BY $TASK_TABLE.task_id";
+			"FROM  ".tbl::getTaskTable()." ".
+			"WHERE task_id=$task_id ".
+					"ORDER BY task_id";
 
 //get the proj_id for this task
 if (!isset($proj_id)) {
-	list($qh, $num) = $proj_id = dbQuery("SELECT proj_id FROM $TASK_TABLE WHERE task_id='$task_id'");
+	list($qh, $num) = $proj_id = dbQuery("SELECT proj_id FROM  ".tbl::getTaskTable()."  WHERE task_id='$task_id'");
 	$results = dbResult($qh);
 	$proj_id = $results["proj_id"];
 }
@@ -37,13 +34,13 @@ $query_project = "SELECT DISTINCT title, description,".
 			"DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
 			"DATE_FORMAT(deadline, '%M %d, %Y') as deadline,".
 			"proj_status, proj_leader ".
-		"FROM $PROJECT_TABLE ".
-		"WHERE $PROJECT_TABLE.proj_id=$proj_id";
+		"FROM  ".tbl::getProjectTable()."  ".
+		"WHERE proj_id=$proj_id";
 
 ?>
 <html>
 <head>
-<title>Task Info</title>
+<title><?php echo Config::getMainTitle();?> - Task Information </title>
 
 </head>
 
@@ -70,7 +67,7 @@ $query_project = "SELECT DISTINCT title, description,".
 							<span class="label">Assigned persons:</span><br />
 <?php
 			//get assigned users
-			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id=$data_task[task_id]");
+			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM  ".tbl::getTaskAssignmentsTable()."  WHERE task_id=$data_task[task_id]");
 			if ($num_3 > 0) {
 				while ($data_3 = dbResult($qh3)) {
 					print "$data_3[username] ";

@@ -22,13 +22,10 @@ Site::getCommandMenu()->add(new TextCommand("Copy Projects/Tasks between users",
 
 //query database for existing task values
 
-$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
-$TASK_TABLE = tbl::getTaskTable();
-
-list($qh, $num) = dbQuery("SELECT task_id, proj_id, name, description, status FROM $TASK_TABLE WHERE task_id = $task_id ");
+list($qh, $num) = dbQuery("SELECT task_id, proj_id, name, description, status FROM ".tbl::getTaskTable(). " WHERE task_id = $task_id ");
 $data = dbResult($qh);
 
-list($qh, $num) = dbQuery("SELECT username FROM $TASK_ASSIGNMENTS_TABLE WHERE proj_id = $data[proj_id] AND task_id = $task_id");
+list($qh, $num) = dbQuery("SELECT username FROM ".tbl::getTaskAssignmentsTable()." WHERE proj_id = $data[proj_id] AND task_id = $task_id");
 $selected_array = array();
 $i = 0;
 while ($datanext = dbResult($qh)) {
@@ -39,7 +36,7 @@ while ($datanext = dbResult($qh)) {
 PageElements::setHead("<title>".Config::getMainTitle()." | Edit Task | ".$data["name"]."</title>");
 ?>
 
-<form action="<?php echo Config::getRelativeRoot(); ?>/task_action" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/tasks/task_action" method="post">
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 <input type="hidden" name="task_id" value="<?php echo $data["task_id"]; ?>" />
