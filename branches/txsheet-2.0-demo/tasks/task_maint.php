@@ -23,27 +23,22 @@ if (isset($_REQUEST['page']) && $_REQUEST['page'] != 0) { $page  = $_REQUEST['pa
 $results_per_page = Common::getTaskItemsPerPage();
 $start_from = ($page-1) * $results_per_page;
 
-$PROJECT_TABLE = tbl::getProjectTable();
-$TASK_TABLE = tbl::getTaskTable();
-$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
-
-//set up the required queries
 $query_task = "SELECT DISTINCT task_id, name, description,status, ".
 			"DATE_FORMAT(assigned, '%M %d, %Y') as assigned,".
 			"DATE_FORMAT(started, '%M %d, %Y') as started,".
 			"DATE_FORMAT(suspended, '%M %d, %Y') as suspended,".
 			"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
-		"FROM $TASK_TABLE ".
-		"WHERE $TASK_TABLE.proj_id=$proj_id ".
-		"ORDER BY $TASK_TABLE.task_id ".
+		"FROM ". tbl::getTaskTable(). " t " .
+		"WHERE t.proj_id=$proj_id ".
+		"ORDER BY t.task_id ".
 		"LIMIT $start_from, $results_per_page";
 
 $query_project = "SELECT DISTINCT title, description,".
 			"DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
 			"DATE_FORMAT(deadline, '%M %d, %Y') as deadline,".
 			"proj_status, proj_leader ".
-		"FROM $PROJECT_TABLE ".
-		"WHERE $PROJECT_TABLE.proj_id=$proj_id";
+		"FROM " .tbl::getProjectTable(). " p ".
+		"WHERE p.proj_id=$proj_id";
 
 function writePageLinks($page, $results_per_page, $num_task_page)
 {
@@ -79,9 +74,9 @@ $query_task_page = "SELECT DISTINCT task_id, name, description,status, ".
 			"DATE_FORMAT(started, '%M %d, %Y') as started,".
 			"DATE_FORMAT(suspended, '%M %d, %Y') as suspended,".
 			"DATE_FORMAT(completed, '%M %d, %Y') as completed ".
-		"FROM $TASK_TABLE ".
-		"WHERE $TASK_TABLE.proj_id=$proj_id ".
-		"ORDER BY $TASK_TABLE.task_id ";
+		"FROM " .tbl::getTaskTable() ." t ".
+		"WHERE t.proj_id=$proj_id ".
+		"ORDER BY t.task_id ";
 
 list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 ?>
@@ -214,7 +209,7 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 							<span class="label">Assigned persons:</span><br />
 <?php
 			//get assigned users
-			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM $TASK_ASSIGNMENTS_TABLE WHERE task_id=$data_task[task_id]");
+			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM ".tbl::getTaskAssignmentsTable()." WHERE task_id=$data_task[task_id]");
 			if ($num_3 > 0) {
 				while ($data_3 = dbResult($qh3)) {
 					print "$data_3[username] ";
