@@ -28,11 +28,10 @@ if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationM
 	</tr>
 <?php
 
-$PROJECT_TABLE = tbl::getProjectTable();
-$CLIENT_TABLE = tbl::getClientTable();
+
 list($qh,$num) = dbQuery(
 					"SELECT p.proj_id, p.title, c.organisation ".
-					"FROM $PROJECT_TABLE p, $CLIENT_TABLE c ".
+					"FROM  ".tbl::getProjectTable()."  p,  ".tbl::getClientTable()."  c ".
 					"WHERE p.client_id = c.client_id ".
 					"ORDER BY c.organisation");
 
