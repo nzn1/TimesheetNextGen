@@ -1,17 +1,12 @@
 <?php
-die('NOT CONVERTED TO OO YET');
 if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn()) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI']));
+if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
+		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+
 	exit;
 }
-
-// Connect to database.
-$dbh = dbConnect();
 
 //load local vars from superglobals
 $proj_id = $_REQUEST['proj_id'];
@@ -20,25 +15,25 @@ $proj_id = $_REQUEST['proj_id'];
 			"DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
 			"DATE_FORMAT(deadline, '%M %d, %Y') as deadline,".
 			"proj_status, proj_leader ".
-		"FROM $PROJECT_TABLE ".
-		"WHERE $PROJECT_TABLE.proj_id=$proj_id";
+		"FROM  ".tbl::getProjectTable()."  ".
+		"WHERE p.proj_id=$proj_id";
 
-	$query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, $CLIENT_TABLE.organisation, ".
-			"$PROJECT_TABLE.description, DATE_FORMAT(start_date, '%M %d, %Y') as start_date, DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
-			"$PROJECT_TABLE.proj_status, http_link ".
-		"FROM $PROJECT_TABLE, $CLIENT_TABLE, ".tbl::getuserTable()." ".
-		"WHERE $PROJECT_TABLE.proj_id=$proj_id  ";
+	$query = "SELECT DISTINCT p.title, p.proj_id, p.client_id, c.organisation, ".
+			"p.description, DATE_FORMAT(start_date, '%M %d, %Y') as start_date, DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
+			"p.proj_status, http_link ".
+		"FROM  ".tbl::getProjectTable()." ,  p".tbl::getClientTable()." c, ".tbl::getUserTable().
+		"WHERE p.proj_id=$proj_id  ";
 
 //set up query
-$query = "SELECT DISTINCT $PROJECT_TABLE.title, $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, ".
-						"$CLIENT_TABLE.organisation, $PROJECT_TABLE.description, " .
+$query = "SELECT DISTINCT p.title, p.proj_id, p.client_id, ".
+						"c.organisation, p.description, " .
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
-						"$PROJECT_TABLE.proj_status, http_link, proj_leader ".
-					"FROM $PROJECT_TABLE, $CLIENT_TABLE, ".tbl::getuserTable()." ".
-					"WHERE $PROJECT_TABLE.proj_id=$proj_id AND ".
-						"$CLIENT_TABLE.client_id=$PROJECT_TABLE.client_id ".
-					"ORDER BY $PROJECT_TABLE.proj_id";
+						"p.proj_status, http_link, proj_leader ".
+					"FROM  ".tbl::getProjectTable()." ,  ".tbl::getClientTable()." ,  ".tbl::getUserTable().
+					"WHERE p.proj_id=$proj_id AND ".
+						"c.client_id=p.client_id ".
+					"ORDER BY p.proj_id";
 ?>
 <html>
 <head>
