@@ -26,6 +26,7 @@ $query = "SELECT DISTINCT p.title, p.proj_id, p.client_id, ".
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 						"p.proj_status, http_link, proj_leader ".
 					"FROM  ".tbl::getProjectTable()." p,  ".tbl::getClientTable()." c,  ".tbl::getUserTable()."  ".
+					"WHERE ";
 
 if ($client_id != 0)
 	$query .= "p.client_id = $client_id AND ";
@@ -52,6 +53,7 @@ $query2 = "SELECT DISTINCT p.title, p.proj_id, p.client_id, ".
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 						"p.proj_status, http_link, proj_leader ".
 					"FROM  ".tbl::getProjectTable()." p,  ".tbl::getClientTable()." c,  ".tbl::getUserTable()."  ".
+					"WHERE ";
 if ($client_id != 0)
 	$query2 .= "p.client_id = $client_id AND ";
 	
