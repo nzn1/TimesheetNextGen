@@ -24,10 +24,7 @@ if($export_excel){
 
 // Authenticate
 
-if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
 $client_id =  gbl::getClientId();
 $year = gbl::getYear();

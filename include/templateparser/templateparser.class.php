@@ -14,24 +14,11 @@
  * permission of the author.
  ******************************************************************************/
 
-include('templateparser.datastructure.class.php');
-class TemplateParser{
-	private $pageElements;
-	private $output;
+include('abstract-template-parser.class.php');
+class TemplateParser extends AbstractTemplateParser{
 
-	/**
-	 * templateParser() - loads in the default template, checks it exists
-	 * and parses the template into $this->output
-	 */
 	public function __construct(){
-		$this->pageElements = new PageElements();
-		$this->pageElements->setTemplate(Config::getDefaultTemplate());
-		if(file_exists($this->pageElements->getTemplate())){
-			$this->output = $this->parseFile($this->pageElements->getTemplate());
-		}
-		else {
-			ErrorHandler::fatalError('Error:Template file '.$this->pageElements->getTemplate().' not found');
-		}
+		parent::__construct();
 	}
 	public function parseTemplate(){
 		//FIRST LINE HERE MUST BE OB_START() as otherwise any echo statements
@@ -47,10 +34,10 @@ class TemplateParser{
 		
 		//check through the tags array to ensure that all of the files exist
 		$this->checkTags();
-
-		$file = $this->pageElements->getTagByName('content')->getFile();
-		if(file_exists($file)){
-				$this->pageElements->getTagByName('content')->setOutput($this->parseFile($file));
+		if(file_exists($this->pageElements->getTagByName('content')->getFile())){
+			
+			$this->pageElements->getTagByName('content')->setOutput($this->parseFile($this->pageElements->getTagByName('content')->getFile()));	
+			//$this->pageElements->getTagByName('content')->parseFile();
 		}
 		else{
 			header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
@@ -61,176 +48,54 @@ class TemplateParser{
 			ErrorHandler::fatalError($msg,'Error 404','Error 404');
 			exit;
 		}
-
-		//content file has been found and parsed
-		if($this->pageElements->getTemplate() != Config::getDefaultTemplate()){
-			$this->output = $this->parseFile($this->pageElements->getTemplate());
-		}
-		 
-		//check the page authorisation
+		
+		//check that the user is authorised
 		$this->checkPageAuth();
 
-		//
-		$this->buildPage();
-
+		//parse the template file
+		if(file_exists($this->pageElements->getTemplate())){
+			$this->output = $this->parseFile($this->pageElements->getTemplate());
+		}
+		else {
+			ErrorHandler::fatalError('Error:Template file '.$this->pageElements->getTemplate().' not found');
+		}
+		
 		//ppr($this->pageElements);
 
 		$this->pageElements->getTagByName('debugInfoTop')->appendOutput(ob_get_contents());
+		
+		
 		ob_end_clean();
+		//die(ppr($this->pageElements->getTagByName('debugInfoTop')));
 		ob_start();
+		$var= null;
 		/*content pane is now populated. Can now safely continue onto any other remaining tags*/
 		foreach($this->pageElements->getTags() as $t){
-			if($t->getName() !='content')$t->ParseFile();
+			/* @var $t Tag */
+			
+			//Debug::ppr($t->getName(),'parse');
+			if($t->getName() != 'content')$t->ParseFile();
 			$this->output=str_replace('{'.$t->getName().'}',$t->getOutput(),$this->output);
 		}
 
-	}
-
-	private function parseFile($file){
-		ob_start();
-		include($file);
-		$content=ob_get_contents();
+		//build the page
+		$this->buildPage();
+		
+		$var .= ob_get_contents();
 		ob_end_clean();
-		return $content;
-	}
-	public function display(){
-		return $this->output;
-	}
-
-	public function finishFile(){
-		echo"</body></html>";
-		exit;
-	}
-
-	/**
-	 * checkTags() - this function checks through the
-	 * tags array to ensure that all of the files exist.
-	 * It also searches for tags that don't have specific file extensions
-	 */
-	private function checkTags(){
-		if(debug::getTemplateTags())echo"<pre>checkTags()<br />Check all the tags to ensure the files exist and to resolve missing file extensions</pre>";
-		if(count($this->pageElements->getTags())<=0) {
-			$msg = 'Error: No tags were provided for replacement';
-			ErrorHandler::fatalError($msg,'Template Parser Error','Template Parser Error');
-			exit;
+		if(!($var=='' || $var==null)){
+			$var ="<div class=\"placeholders\">".$var."</div><!--close placeholders-->";
 		}
-		if(debug::getTemplateTags())echo"<pre>Loop through all \$this->pageElements->getTags()</pre>";
-		//loop through each tag to check the file exists
-		foreach($this->pageElements->getTags() as $id=>$data){
-			if(debug::getTemplateTags())echo"<hr />";
-			if(debug::getTemplateTags())ppr($data,'Tag id ' .$id);
-			$found = false;
+		$this->output=str_replace('{templateParserDebug}',$var,$this->output);
 
-			if(debug::getTemplateTags())ppr($data->getFile(),'search for the file');
-
-			//search for the following file extensions
-			$checkList = array();
-			$checkList[] = '.php';
-			$checkList[] = '.htm';
-			$checkList[] = '';        //check for a file without adding an extension
-			if(debug::getTemplateTags())ppr($checkList,'Check for the following extensions');
-
-			//loop through the file extension list
-			foreach($checkList as $i=>$ext){
-				if($found==true)break;              //file has been found so break
-
-				//if $data->getFile() has a file extension then set $ext to ''
-				if ($ext !='' && strpos($data->getFile(),$ext)){
-					$ext = '';
-				}
-				//check the path as it came in on data
-				$uriPath = $data->getFile().$ext;
-				$str = Config::getDocumentRoot().'/'.$uriPath;
-				if(debug::getTemplateTags())ppr($str,'check Path');
-
-				//if the path is a directory, then add /index.php to the end and check again
-				if(file_exists($str) && is_dir($str)){
-					//rtrim function could be used here
-					if($str[strlen($str)-1] == "/"){
-						$str = substr_replace($str,"",-1);
-					}
-					$str = $str."/"."index.php";
-					if (file_exists($str)){
-						if($uriPath[strlen($uriPath)-1] == "/"){
-							$uriPath = substr_replace($uriPath,"",-1);
-						}
-						$path = $uriPath."/index.php";
-						$found =true;
-						break;
-					}
-					else{
-						continue;
-					}
-				}
-				else
-				if (file_exists($str)){
-					$path = $data->getFile().$ext;
-					$found =true;
-					break;
-				}
-				//check the path as if it were in the content folder
-				$uriPath = 'content/'.$data->getFile().$ext;
-				$str = Config::getDocumentRoot().'/'.$uriPath;
-				if(debug::getTemplateTags())ppr($str,'check content folder:');
-
-				//if the path is a directory, then add /index.php to the end and check again
-				if(file_exists($str) && is_dir($str)){
-					if($str[strlen($str)-1] == "/"){
-						$str = substr_replace($str,"",-1);
-					}
-					$str = $str."/"."index.php";
-					if (file_exists($str)){
-						if($uriPath[strlen($uriPath)-1] == "/"){
-							$uriPath = substr_replace($uriPath,"",-1);
-						}
-						$path = $uriPath."/index.php";
-						$found =true;
-						break;
-					}
-					else{
-						continue;
-					}
-				}
-				else if (file_exists($str)){
-					$path = 'content/'.$data->getFile().$ext;//file exists as php
-					$found =true;
-					break;
-				}
-			}//end checkList foreach loop
-
-			if(debug::getTemplateTags()){
-				if($found)echo "<p><strong>Success! found the file: ".$path."</strong></p>";
-				else echo "<p><strong>Error couldn't find file: ".$data->getFile()."</strong></p>";
-			}
-			 
-			//if the file is found then update the tag as appropriate
-			if($found==true)$this->pageElements->getTagById($id)->setFile($path);
-			//if the main content tag is not found add the error page instead
-			else if($found==false && $data->getName()=='content'){
-				if(debug::getTemplateTags())echo "<p><strong>Changing the requested page to: ".Config::getError404()."</strong></p>";
-							
-				$this->pageElements->getTagById($id)->setFile(Config::getError404());
-			}
-			//otherwise print out 'File Not Found'
-			else{
-				$this->pageElements->getTagById($id)->setFileError('File Not Found');
-			}
-		}//end getTags foreach loop
-
-
-	}
+	}	//end parseTemplate
 
 	/**
 	 * buildPage() -
 	 *
 	 */
-	private function buildPage(){
+	protected function buildPage(){
 		$this->output=str_replace('{content}',$this->pageElements->getTagByName('content')->getOutput(),$this->output);
-
-		if($this->pageElements->getDocType()==''){
-			$this->pageElements->setDocType(Config::getDocType());
-		}
-		$this->output=str_replace('{doctype}',$this->pageElements->getDocType(),$this->output);
 
 		if($this->pageElements->getBodyOnload() !=''){
 			$this->pageElements->setBodyOnload(" onload=\"".$this->pageElements->getBodyOnload()."\"");
@@ -242,7 +107,6 @@ class TemplateParser{
 		}
 		$this->output=str_replace('{head}',$this->pageElements->getHead(),$this->output);
 
-
 		if(isset($_GET['response'])){
 			$response = Site::getDatabase()->getResponse($_GET['response']);
 			$this->pageElements->setResponse("<div class=\"response\"><p>$response</p></div>");
@@ -251,58 +115,47 @@ class TemplateParser{
 	}
 
 	/**
-	 * checkPageAuth() - check the authorisation for this page
+	 * 
+	 * Check the auth for this page and display
+	 * an error page if required.
 	 */
-	private function checkPageAuth(){
-		return;	
-		if($this->pageElements->getPageAuth() == null){
+	protected function checkPageAuth(){
+	   
+		$auth = $this->pageElements->getPageAuth();
+		if($auth == null){
 			$msg = "An error has occured.<br />The page authorisation has "
 			."returned as null.  The page therefore cannot be displayed.<br />"
-			.'This could be because the line: PageElements::setPageAuth(\'value\'); is not '
+			.'This could be because the line: <br />'
+			.'<pre>if(Auth::ACCESS_GRANTED != $this->requestPageAuth(\'level\'))return;</pre>'
+			.' is not '
 			."in the requested file<br />"
 			."<a href=\"".Config::getRelativeRoot()."/\" >"
 			."Click here to visit the home page</a>";
 			ErrorHandler::fatalError($msg,'Page Auth Error','Page Auth Error');
 			exit;
 		}
-
-//	if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclMonthly')) {
-//		Header("Location: ".Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
-//	exit;
-//	}
-		//$auth = Site::getSession()->checkAuth($this->pageElements->getPageAuth(),'view');
-		if(PageElements::getPageAuth()=='Open'){
+		$state = Auth::requestAuth($auth->authGroup,$auth->authName);		
+		if($state == Auth::ACCESS_GRANTED){
 			return;
 		}
-		$auth = Site::getAuthenticationManager()->hasAccess(PageElements::getPageAuth());
-		
-		if($auth == 0){
-			if(Site::getAuthenticationManager()->isLoggedIn()){
-				if(file_exists(Config::getErrorAuth())){
-					$this->pageElements->getTagByName('content')->setOutput($this->parseFile(Config::getErrorAuth()));
-				}
-				else{
-					$msg = "No Authorisation & missing no-auth Error Page";
-					ErrorHandler::fatalError($msg);
-				}
-			}
-			else {
-				//die(header("Location: ".Config::getRelativeRoot()."/login?redir=".urlencode($_SERVER['REQUEST_URI'])));
-				//header("Location: ".Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclMonthly'));
-				//exit;
-				$url = Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclMonthly'); 
-        gotoLocation($url);
-				exit;
-				
-			}
-		}
-		else if($auth != 1){
-			$msg = 'authorisation error. Contact Webmaster';
-			ErrorHandler::fatalError($msg);
-		}
+		else{    
+      gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level($auth->authGroup));
+    }
+    
+    
+    return;
+
 	}
-	public function getPageElements(){
-		return $this->pageElements;
+	
+	protected function requestPageAuth($authGroup,$authName='page'){
+		$auth = new stdClass();
+		$auth->authGroup = $authGroup;
+		$auth->authName = $authName;		
+		$this->pageElements->setPageAuth($auth);
+			
+		$state = Auth::requestAuth($authGroup, $authName);
+		return $state;
+
 	}
 }
 ?>

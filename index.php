@@ -49,29 +49,9 @@ class Site{
 
 		require('include/config.class.php');
 		Config::initialise();
-		include("database_credentials.inc");
-		Config::setDbServer($DATABASE_HOST);
-		Config::setDbUser($DATABASE_USER);
-		Config::setDbPass($DATABASE_PASS);
-		Config::setDbName($DATABASE_DB);		
-
-		include("database_credentials.inc");
-		require("table_names.inc");
-		include("include/tables.class.php");
-
-		tbl::setAssignmentsTable($ASSIGNMENTS_TABLE);
-		tbl::setClientTable($CLIENT_TABLE);
-		tbl::setConfigTable($CONFIG_TABLE);
-		tbl::setProjectTable($PROJECT_TABLE);
-		tbl::setTaskTable($TASK_TABLE);
-		tbl::setTaskAssignmentsTable($TASK_ASSIGNMENTS_TABLE);
-		tbl::setTimesTable($TIMES_TABLE);
-		tbl::setUserTable($USER_TABLE);
-		tbl::setRateTable($RATE_TABLE);		
-		tbl::setAbscenceTable($ABSENCE_TABLE);
-		tbl::setAllowanceTable($ALLOWANCE_TABLE);
 		
 		require('include/session.class.php');
+    require_once('include/auth/auth.class.php');
 		require('include/templateparser/templateparser.class.php');
 		require("include/rewrite.class.php");
 		require("include/database.class.php");
@@ -118,15 +98,15 @@ class Site{
 		else{
 
     		$tp->getPageElements()->addFile('content',self::$rewrite->getContent());
-		    $tp->getPageElements()->addFile('menu','menu.php');
-  		  $tp->getPageElements()->addFile('tsx_footer','footer.inc');
-	     	$tp->getPageElements()->addFile('tsx_banner','banner.inc');
+		    $tp->getPageElements()->addFile('menu','themes/txsheet/menu.php');
+  		  $tp->getPageElements()->addFile('tsx_footer','themes/txsheet/footer.inc');
+	     	$tp->getPageElements()->addFile('tsx_banner','themes/txsheet/banner.inc');
 		}				
 
 		//debugInfoTop is exempt from the module config selection
 		$tp->getPageElements()->addFile('debugInfoTop','debugInfoTop.php');
 		$tp->getPageElements()->addFile('debugInfoBottom','debugInfoBottom.php');
-		
+    //$tp->getPageElements()->addFile('console','include/console/console.php');		
 		$tp->getPageElements()->getTagByName('debugInfoTop')->setOutput(ob_get_contents());
 		ob_end_clean();
 			

@@ -524,7 +524,13 @@ class Common{
 	public static function get_acl_level($page) {
 		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
-		return $configData[$page];
+		if(array_key_exists($page,$configData)){
+		  return $configData[$page];
+		}
+		else {
+      ppr(getShortDebugTrace());
+      return null;
+    }
 	}
 
 	public static function day_button($name, $timeStamp=0, $limit=1) {

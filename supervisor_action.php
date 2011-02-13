@@ -8,10 +8,7 @@ require("class.CommandMenu.php");
 require_once("debuglog.php");
 //$debug = new logfile();
 	
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . get_acl_level('aclTasks'));
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTasks'))return;
 
 // Connect to database.
 //$dbh = dbConnect();

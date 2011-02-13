@@ -5,10 +5,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 define("NR_FIELDS", 9); // number of fields to iterate
 
-if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
-		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclDaily'));
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
 
 include('submit.class.php');
 $subcl = new SubmitClass();

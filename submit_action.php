@@ -3,10 +3,7 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
 
-if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 // Config::getRelativeRoot()."submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1"
 //load local vars from superglobals

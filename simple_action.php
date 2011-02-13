@@ -33,10 +33,7 @@ ini_set('display_errors', true);
 
 // Authenticate
 
-if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 //$debug = new logfile();
 

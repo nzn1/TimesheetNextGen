@@ -1,13 +1,7 @@
 <?php
 
 if(!class_exists('Site'))die('Restricted Access');
-if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclWeekly')) {
-		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclWeekly'));
-	exit;
-}
-// Connect to database.
-
-
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclWeekly'))return;
 
 //load local vars from superglobals
 $year = $_REQUEST["year"];

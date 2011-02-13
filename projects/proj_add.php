@@ -6,11 +6,8 @@ if(!class_exists('Site'))die('Restricted Access');
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');
 }
-if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
-	exit;
-}
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))

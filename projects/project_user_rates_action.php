@@ -2,10 +2,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclDaily')) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclDaily'));	
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
