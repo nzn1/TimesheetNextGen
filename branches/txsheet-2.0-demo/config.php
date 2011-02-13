@@ -3,10 +3,8 @@ if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 
-if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclSimple')) {
-		gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level('aclSimple'));
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+
 //Get the result set for the config set 1
 
 $CONFIG_TABLE = tbl::getConfigTable();

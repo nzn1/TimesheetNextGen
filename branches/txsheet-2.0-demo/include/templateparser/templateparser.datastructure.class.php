@@ -20,9 +20,9 @@ class PageElements{
 	 */
 	private $elements;
 	/**
-	 * $pageAuth - the main page authorisation id
+	 * $pageAuth - the main page authorisation
 	 */
-	private static $pageAuth;
+	private static $pageAuth = array();
 	/**
 	 * $head - the <head></head> section of a site.
 	 * This is defined in most content files
@@ -33,10 +33,6 @@ class PageElements{
 	 * This is defined in most content files
 	 */
 	private static $pageTitle;
-	/**
-	 * $docType
-	 */
-	private static $docType;
 	/**
 	 * $bodyOnLoad
 	 */
@@ -99,9 +95,12 @@ class PageElements{
 	 *
 	 * Retrieves a specific tag from its name
 	 * @param string $name
+	 * 
+	 * @return Tag
 	 */
 	public function getTagByName($name){
 		foreach($this->elements as $e){
+			/* @var $e Tag */
 			if($e->getName() == $name){
 				return $e;
 			}
@@ -111,9 +110,11 @@ class PageElements{
 
 	/**
 	 *
-	 * Retrieve the Page Authorisation Privilege Name.
-	 * This is the name cross referenced against the field 'privilege'
-	 * in the privilege database table
+	 * Retrieve the Page Authorisation Privilege
+	 * 
+	 * @return stdClass - two object variables:
+	 * authGroup - the privilege group
+	 * authName - the privilege Name
 	 */
 	public static function getPageAuth(){
 		return self::$pageAuth;
@@ -124,9 +125,18 @@ class PageElements{
 	 * that is being viewed.
 	 * @param string $s
 	 */
-	public static function setPageAuth($s){
+	public static function setPageAuth(stdClass $s){
 		self::$pageAuth = $s;
+		
+		
+		if(!($s instanceof stdClass)){
+			trigger_error('setPageAuth argument must be an array');
+		}
+		else{
+			self::$pageAuth = $s;
+		}
 	}
+
 	/**
 	 *
 	 * Retrieve the <head></head> portion of the page to
@@ -144,24 +154,15 @@ class PageElements{
 	 * @param string $s
 	 */
 	public static function setHead($s){
+
 		self::$head = $s;
 	}
+	
+	public static function appendHead($s){
+
+		self::$head .= $s;
+	}
 	 
-	/**
-	 *
-	 * Retrieve the Doc Type given at the top of the page
-	 */
-	public static function getDocType(){
-		return self::$docType;
-	}
-	/**
-	 *
-	 * Specify the Doc Type to be sent to the browser
-	 * @param string $s
-	 */
-	public static function setDocType($s){
-		self::$docType = $s;
-	}
 	/**
 	 *
 	 * retrieve the contents of the Body On Load
@@ -267,14 +268,19 @@ class Tag{
 	 * to the output variable;
 	 */
 	public function parseFile(){
-		ob_start();
+		
 		if(file_exists($this->file)){
+			ob_start();
 			include($this->file);
 			$content=ob_get_contents();
 			ob_end_clean();
+			//we must always append the output as we can add stuff in beforehand
+			//i.e. templateparser.php stuff gets added into the debugInfoTop tag
 			$this->appendOutput($content);
 		}
 		else{
+			//we must always append the output as we can add stuff in beforehand
+			//i.e. templateparser.php stuff gets added into the debugInfoTop tag
 			$this->appendOutput($this->file);
 		}
 	}
@@ -352,5 +358,7 @@ class Tag{
 	public function setType($s){
 		$this->type = $s;
 	}
+
+
 }
 ?>

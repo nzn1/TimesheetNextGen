@@ -1,5 +1,6 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 
 //check that this form has been submitted
 if (isset($_POST["username"]) && isset($_POST["password"])) {

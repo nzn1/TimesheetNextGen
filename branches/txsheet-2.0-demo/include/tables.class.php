@@ -31,6 +31,20 @@ private static $RATE_TABLE;
 private static $ABSENCE_TABLE;
 private static $ALLOWANCE_TABLE;
 
+    public static function initialise(){
+      require("table_names.inc");
+      tbl::setAssignmentsTable($ASSIGNMENTS_TABLE);
+      tbl::setClientTable($CLIENT_TABLE);
+      tbl::setConfigTable($CONFIG_TABLE);
+      tbl::setProjectTable($PROJECT_TABLE);
+      tbl::setTaskTable($TASK_TABLE);
+      tbl::setTaskAssignmentsTable($TASK_ASSIGNMENTS_TABLE);
+      tbl::setTimesTable($TIMES_TABLE);
+      tbl::setUserTable($USER_TABLE);
+      tbl::setRateTable($RATE_TABLE);		
+      tbl::setAbscenceTable($ABSENCE_TABLE);
+      tbl::setAllowanceTable($ALLOWANCE_TABLE);
+    }
     public static function getAssignmentsTable(){
     	return self::$ASSIGNMENTS_TABLE;
     }

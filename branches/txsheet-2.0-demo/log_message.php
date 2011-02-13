@@ -1,10 +1,7 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 	
-if (!Site::getAuthenticationManager()->isLoggedIn() || !Site::getAuthenticationManager()->hasAccess('aclReports')) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclReports'));
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
 //load local vars from superglobals
 $month = $_REQUEST['month'];

@@ -5,10 +5,7 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclClients')) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&amp;clearanceRequired=" . Common::get_acl_level('aclClients'));
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
 // Connect to database.
 $dbh = dbConnect();
