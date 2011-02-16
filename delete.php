@@ -9,9 +9,6 @@ if (!$authenticationManager->isLoggedIn()) {
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
 //load local vars from superglobals
 $trans_num = $_REQUEST['trans_num'];
 $year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: (int)date("Y");

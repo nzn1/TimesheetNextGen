@@ -13,10 +13,6 @@ $loggedInUser = strtolower($_SESSION['loggedInUser']);
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
-
-// Connect to database.
-//$dbh = dbConnect();
-
 //define the command menu
 //include("timesheet_menu.inc");
 

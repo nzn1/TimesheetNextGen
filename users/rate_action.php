@@ -8,9 +8,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
 //load local vars from superglobals
 $action = $_REQUEST["action"];
 $rate_id = $_REQUEST["rate_id"];

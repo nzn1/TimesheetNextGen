@@ -7,9 +7,6 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
-// Connect to database.
-$dbh = dbConnect();
-
 //load local vars from superglobals
 $action = $_REQUEST["action"];
 $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;

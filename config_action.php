@@ -10,9 +10,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
 //$debug = new logfile();
 
 //load local vars from superglobals

@@ -8,9 +8,6 @@ if (!Site::getAuthenticationManager()->isLoggedIn()) {
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
 /**
  * Updated by robsearles 26 Jan 2008
  * To enable the "stop" link to work in the "Daily Timesheet" page
