@@ -1,17 +1,7 @@
 <?php
-	//if we are working from the OO version then the table variables
-	//aren't accessible. //this will allow access for now without
-	//rewriting lots of stuff
-	if(class_exists('Site')){
-		include('table_names.inc');
-	}
-
 	//Get the result set for the config set 1
-	if(!class_exists('Site')){
-		$dbh = dbConnect();	
-	}
 	
-	list($qhq, $numq) = dbQuery("SELECT locale, timezone FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+	list($qhq, $numq) = dbQuery("SELECT locale, timezone FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 	$configdata = dbResult($qhq);
 
 	//set the locale

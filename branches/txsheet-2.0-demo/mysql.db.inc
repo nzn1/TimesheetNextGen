@@ -48,28 +48,43 @@ if(!class_exists('Site'))die('Restricted Access');
 		return $strings;
 	}
 
+	/**
+	 * 
+	 * @TODO Move this function to the database class
+	 * @param unknown_type $statement
+	 */
 	function dbQuery ($statement) {
-		if (!isset($GLOBALS["CONNECTED_MYSQL_DB_INC"]))
-			dbConnect();
-		//$result=@mysql_query($statement) or die("<pre>\n\nCan't perform query: " . mysql_error() . " \n\n$statement\n\n</pre>");
-		$result=mysql_query($statement) or die("<pre>\n\nCan't perform query: " . mysql_error() . " \n\n$statement\n\n</pre>");
+		$result = Site::getDatabase()->query($statement) or die("<pre>\n\nCan't perform query: " . mysql_error() . " \n\n$statement\n\n</pre>");
 		$num_rows = dbNumRows($result);
 		return array($result, $num_rows);
 	}
 
+	/**
+	 * 
+	 * @TODO Move this function to the database class
+	 * @param unknown_type $statement
+	 */
 	function tryDbQuery ($statement) {
-		if (!isset($GLOBALS["CONNECTED_MYSQL_DB_INC"]))
-			dbConnect();
 		//$result=@mysql_query($statement) or die("<pre>\n\nCan't perform query: " . mysql_error() . " \n\n$statement\n\n</pre>");
 		$result=mysql_query($statement);
 		$num_rows = dbNumRows($result);
 		return array($result, $num_rows);
 	}
 
+	/**
+	 * 
+	 * @TODO Move this function to the database class
+	 * @param unknown_type $statement
+	 */
 	function dbNumRows ($result) {
 		return @mysql_numrows($result);
 	}
 
+	/**
+	 * 
+	 * @TODO Move this function to the database class
+	 * @param unknown_type $statement
+	 */
 	function dbResult ($result,$i=-1) {
 		if ($i >= 0) {
 			@mysql_data_seek($result,$i);
@@ -77,9 +92,13 @@ if(!class_exists('Site'))die('Restricted Access');
 		return mysql_fetch_array($result);
 	}
 
+	/**
+	 * 
+	 * @TODO Move this function to the database class
+	 * @param unknown_type $statement
+	 */
 	function dbLastID($result) {
 		return mysql_insert_id($result);
 	}
 
-// vim:ai:ts=4:sw=4:filetype=php
 }?>

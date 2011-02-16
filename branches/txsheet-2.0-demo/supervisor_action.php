@@ -10,8 +10,6 @@ require_once("debuglog.php");
 	
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTasks'))return;
 
-// Connect to database.
-//$dbh = dbConnect();
 // Config::getRelativeRoot()."submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1"
 //load local vars from superglobals
 $action = $_REQUEST["Modify"];

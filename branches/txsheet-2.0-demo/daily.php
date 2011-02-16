@@ -6,9 +6,6 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
 include('daily.class.php');
 $dc = new DailyClass();
 
-// Connect to database.
-//$dbh = dbConnect();
-
 //define the command menu & we get these variables from $_REQUEST:
 //  gbl::getMonth() gbl::getDay() gbl::getYear() gbl::getClientId() gbl::getProjId() gbl::getTaskId()
 //include("timesheet_menu.inc");
