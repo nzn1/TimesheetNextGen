@@ -27,10 +27,12 @@ parent::$webmasterEmail = 'myaddress@tnsg.net';
 //parent::$dbName = "my_tx_db";
 
 include("database_credentials.inc");
+
 parent::$dbServer = $DATABASE_HOST;
 parent::$dbUser = $DATABASE_USER;
 parent::$dbPass = $DATABASE_PASS;
-parent::$dbName = $DATABASE_DB;	
+parent::$dbName = $DATABASE_DB;
+	
 
 //parent::$sessionName = 'a-session-name';
 

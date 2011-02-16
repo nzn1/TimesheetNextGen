@@ -25,6 +25,30 @@ require('include/tables.class.php');
  *
  */
 class ConfigFactory{
+
+	/**
+	 * This is the current version of the code.
+	 * 
+	 */
+	private static $version = '1.5.3'; 
+	
+	/**
+	 * 
+	 * This is the version stored in the database config.
+	 * $version and $databaseVersion can be compared to ensure that
+	 * the code and the database are uptodate.
+	 * @var unknown_type
+	 */
+	protected static $databaseVersion;
+	
+	
+	/**
+	 * This variable is set in config.php to 
+	 * say that the site has already been installed
+	 * successfully.
+	 */
+	protected static $isInstalled = false;
+	
 	/**
 	 *
 	 * determine whether config has been initialised as it is
@@ -345,7 +369,34 @@ class ConfigFactory{
 		}
 	}
 	
+	private static $installer = false;
+	public static function setInstaller($var){
+		self::$installer = $var;	
+	}
+	public static function getInstaller(){
+		return self::$installer;
+	}
+	public static function runVersionCheck(){
+		if(self::$installer == true){
+			return;
+		}
+		
+		if(self::$databaseVersion != self::$version){
+			gotoLocation(Config::getRelativeRoot()."/install.php?page=upgrade");
+		}
+	}
 
+	public static function getVersion(){
+		return self::$version; 
+	}
+	
+	public static function getDatabaseVersion(){
+		return self::$databaseVersion;
+	}
+	
+	public static function isInstalled(){
+		return self::$isInstalled;
+	}
 	/**
 	 *
 	 */

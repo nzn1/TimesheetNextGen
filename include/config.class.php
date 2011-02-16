@@ -42,8 +42,42 @@ class Config extends ConfigFactory{
 		//this is also really temporary code until the install script process is written
 		
 		tbl::initialise();
+		//the database config can't be initialised until the database has been started.
 	}
 
+	
+	public static function getDbConfig(){
+		
+		$q = "SELECT * FROM ".tbl::getNewConfigTable();
+		
+		$data = Site::getDatabase()->sql($q,true, MySQLDB::TYPE_OBJECT);
+		//ppr($data);
+		if($data == MySQLDB::SQL_EMPTY || $data == MySQLDB::SQL_ERROR){
+			//no data was found.  This is a potential problem
+			//this means that we are either missing the new config table
+			//or there is no data!
+			//we best run the version check anyway!
+			//ppr('table not found');
+			self::runVersionCheck();
+			return;
+		}
+
+		foreach($data as $obj){		
+			if($obj->name == 'version'){
+				parent::$databaseVersion = $obj->value;								
+			}
+			
+			//more config variables to be stored into the 
+			//config class or config.factory.class
+			
+			
+		}
+		//run a version check
+		self::runVersionCheck();
+		
+		
+	}
+	
 
 }//end config class
 
