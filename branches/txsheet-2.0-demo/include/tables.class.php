@@ -22,6 +22,7 @@ class tbl{
 private static $ASSIGNMENTS_TABLE;
 private static $CLIENT_TABLE;
 private static $CONFIG_TABLE;
+private static $NEW_CONFIG_TABLE;
 private static $PROJECT_TABLE;
 private static $TASK_TABLE;
 private static $TASK_ASSIGNMENTS_TABLE;
@@ -33,82 +34,56 @@ private static $ALLOWANCE_TABLE;
 
     public static function initialise(){
       require("table_names.inc");
-      tbl::setAssignmentsTable($ASSIGNMENTS_TABLE);
-      tbl::setClientTable($CLIENT_TABLE);
-      tbl::setConfigTable($CONFIG_TABLE);
-      tbl::setProjectTable($PROJECT_TABLE);
-      tbl::setTaskTable($TASK_TABLE);
-      tbl::setTaskAssignmentsTable($TASK_ASSIGNMENTS_TABLE);
-      tbl::setTimesTable($TIMES_TABLE);
-      tbl::setUserTable($USER_TABLE);
-      tbl::setRateTable($RATE_TABLE);		
-      tbl::setAbscenceTable($ABSENCE_TABLE);
-      tbl::setAllowanceTable($ALLOWANCE_TABLE);
+      self::$ASSIGNMENTS_TABLE = $ASSIGNMENTS_TABLE;
+      self::$CLIENT_TABLE = $CLIENT_TABLE;
+      self::$CONFIG_TABLE = $CONFIG_TABLE;
+      self::$PROJECT_TABLE = $PROJECT_TABLE;
+      self::$TASK_TABLE = $TASK_TABLE;
+      self::$TASK_ASSIGNMENTS_TABLE = $TASK_ASSIGNMENTS_TABLE;
+      self::$TIMES_TABLE = $TIMES_TABLE;
+      self::$USER_TABLE = $USER_TABLE;
+      self::$RATE_TABLE = $RATE_TABLE;		
+      self::$ABSENCE_TABLE = $ABSENCE_TABLE;
+      self::$ALLOWANCE_TABLE = $ALLOWANCE_TABLE;
+      self::$NEW_CONFIG_TABLE = $NEW_CONFIG_TABLE;
     }
     public static function getAssignmentsTable(){
     	return self::$ASSIGNMENTS_TABLE;
-    }
-    public static function setAssignmentsTable($str){
-    	self::$ASSIGNMENTS_TABLE = $str;
-    }    
+    }   
 	public static function getClientTable(){
     	return self::$CLIENT_TABLE;
     }
-	public static function setClientTable($str){
-    	self::$CLIENT_TABLE = $str;
+    public static function getNewConfigTable(){
+    	return self::$NEW_CONFIG_TABLE;
     }
 	public static function getConfigTable(){
     	return self::$CONFIG_TABLE;
     }
-	public static function setConfigTable($str){
-    	self::$CONFIG_TABLE = $str;
-    }    
+    
 	public static function getProjectTable(){
     	return self::$PROJECT_TABLE;
     }
-	public static function setProjectTable($str){
-    	self::$PROJECT_TABLE = $str;
-    }    
+   
 	public static function getTaskTable(){
     	return self::$TASK_TABLE;
-    }
-	public static function setTaskTable($str){
-    	self::$TASK_TABLE = $str;
     }
 	public static function getTaskAssignmentsTable(){
     	return self::$TASK_ASSIGNMENTS_TABLE;
     }
-	public static function setTaskAssignmentsTable($str){
-    	self::$TASK_ASSIGNMENTS_TABLE = $str;
-    }    
+    
 	public static function getTimesTable(){
     	return self::$TIMES_TABLE;
     }
-	public static function setTimesTable($str){
-    	self::$TIMES_TABLE = $str;
-    }    
 	public static function getUserTable(){
     	return self::$USER_TABLE;
     }
-	public static function setUserTable($str){
-    	self::$USER_TABLE = $str;
-    }    
 	public static function getRateTable(){
     	return self::$RATE_TABLE;
-    }
-	public static function setRateTable($str){
-    	self::$RATE_TABLE = $str;
     }    
 	public static function getAbsenceTable(){
     	return self::$ABSENCE_TABLE;
-    }
-	public static function setAbscenceTable($str){
-    	self::$ABSENCE_TABLE = $str;
     }    
 	public static function getAllowanceTable(){
     	return self::$ALLOWANCE_TABLE;
-    }
-	public static function setAllowanceTable($str){
-    	self::$ALLOWANCE_TABLE = $str;
     }    
 }

@@ -149,7 +149,7 @@ class AuthenticationManager {
 		}
 
 		//connect to the database
-		$dbh = dbConnect();
+		//$dbh = dbConnect();
 
 		//check whether we are using ldap
 		if ($this->usingLDAP()) {
