@@ -120,7 +120,10 @@ class ConfigFactory{
 	 * The Database table name
 	 */
 	protected static $dbName = "core";
-
+	/**
+	 * The Database Password Function
+	 */
+	protected static $dbPasswordFunction = "PASSWORD";
 	
 	
 	/**
@@ -474,6 +477,12 @@ class ConfigFactory{
 	 */
 	public static function getDbName(){
 		return self::$dbName;
+	}
+	/**
+	 *
+	 */
+	public static function getDbPwdFunction(){
+		return self::$dbPasswordFunction;
 	}
 	/**
 	 *

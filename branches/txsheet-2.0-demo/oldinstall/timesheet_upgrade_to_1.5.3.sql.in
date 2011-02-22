@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__configuration` (
+  `name` varchar(32) NOT NULL,
+  `value` tinytext NOT NULL DEFAULT '',
+  PRIMARY KEY (`name`)
+);
+
+/* copy stuff from active config to new configuration table */
+insert into __TABLE_PREFIX__configuration values ('version','1.5.3');
+insert into __TABLE_PREFIX__configuration values ('timezone',(select (timezone) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('locale',(select (locale) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('startPage',(select (startPage) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('weekstartday',(select (weekstartday) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('project_items_per_page',(select (project_items_per_page) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('task_items_per_page',(select (task_items_per_page) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('simpleTimesheetLayout',(select (simpleTimesheetLayout) from __TABLE_PREFIX__config where config_set_id=1));
+
+insert into __TABLE_PREFIX__configuration values ('useLDAP',(select (useLDAP) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPurl',(select concat((select (LDAPScheme) from __TABLE_PREFIX__config where config_set_id=1),"://",(select (LDAPHost) from __TABLE_PREFIX__config where config_set_id=1),":",(select (LDAPPort) from __TABLE_PREFIX__config where config_set_id=1),"/")));
+insert into __TABLE_PREFIX__configuration values ('LDAPProtocolVersion',(select (LDAPProtocolVersion) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPBaseDN',(select (LDAPBaseDN) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPFilter',(select (LDAPFilter) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPSearchScope',(select (LDAPSearchScope) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPUsernameAttribute',(select (LDAPUsernameAttribute) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPFallback',(select (LDAPFallback) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPReferrals',(select (LDAPReferrals) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPBindUsername',(select (LDAPBindUsername) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPBindPassword',(select (LDAPBindPassword) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPBindByUser',(select (LDAPBindByUser) from __TABLE_PREFIX__config where config_set_id=1));

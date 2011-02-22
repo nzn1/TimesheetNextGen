@@ -46,7 +46,7 @@ class Site{
 		Config::initialise();
 		
 		require('include/session.class.php');
-    	require_once('include/auth/auth.class.php');
+		require_once('include/auth/auth.class.php');
 		require('include/templateparser/templateparser.class.php');
 		require("include/rewrite.class.php");
 		require("include/database.class.php");
