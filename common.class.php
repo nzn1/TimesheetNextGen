@@ -18,7 +18,7 @@ class Common{
 	if (!defined("COMMON_INC")) define("COMMON_INC", 1);
 
 
-	include("database_credentials.inc");
+//	include("database_credentials.inc");
 	include_once("mysql.db.inc");
 	require("timezone.inc");
 

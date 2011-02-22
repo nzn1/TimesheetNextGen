@@ -4,8 +4,6 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
-include("database_credentials.inc");
-
 //load local vars from superglobals
 $action = $_REQUEST["action"];
 $uid = $_REQUEST["uid"];
@@ -26,12 +24,12 @@ $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIV
 $ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
 $TASK_TABLE = tbl::getTaskTable();
 $TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
+
 if ($action == "delete") {
 	dbquery("DELETE FROM ".tbl::getuserTable()." WHERE uid='$uid'");
 	dbquery("DELETE FROM $ASSIGNMENTS_TABLE WHERE username='$username'");
 	dbquery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE username='$username'");
-}
-else if ($action == "addupdate") {
+} else if ($action == "addupdate") {
 	//set the level
 	if ($isAdministrator == "true")
 		$level = 11;
@@ -70,14 +68,14 @@ else if ($action == "addupdate") {
 								"username='$username', " .
 								"email_address='$email_address', ".
 								"level='$level', ".
-								"password=$DATABASE_PASSWORD_FUNCTION('$password') " .
+								"password=".config::getDbPwdFunction()."('$password') " .
 								"WHERE uid='$uid'");
 		}
 	} else {
 		// a new user
 		dbquery("INSERT INTO ".tbl::getuserTable()." (username, level, password, first_name, ".
 							"last_name, email_address, time_stamp, status) " .
-						"VALUES ('$username',$level,$DATABASE_PASSWORD_FUNCTION('$password'),'$first_name',".
+						"VALUES ('$username',$level,".config::getDbPwdFunction()."('$password'),'$first_name',".
 							"'$last_name','$email_address',0,'$status')");
 		dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
 		dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task

@@ -93,7 +93,8 @@ if(class_exists('Site')){
 			Site::getCommandMenu()->add(new IconTextCommand("User Rates", true, Config::getRelativeRoot()."/users/rate_maint", Config::getRelativeRoot()."/images/icon_rates.gif"));
 		Site::getCommandMenu()->add(new IconTextCommand("Configuration", true, Config::getRelativeRoot()."/config", Config::getRelativeRoot()."/images/icon_configuration.gif"));
 	}
-	if (!Site::getAuthenticationManager()->usingLDAP())
+	//if (!Site::getAuthenticationManager()->usingLDAP())
+	if (!Site::getAuthenticationManager()->ldapCfgInfo['useLDAP']==1)
 		Site::getCommandMenu()->add(new IconTextCommand("Change Password", true, Config::getRelativeRoot()."/changepwd", Config::getRelativeRoot()."/images/icon_key.gif"));
 	Site::getCommandMenu()->add(new IconTextCommand("Logout", true, Config::getRelativeRoot()."/logout?logout=true", Config::getRelativeRoot()."/images/icon_logout.gif"));
 	if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
@@ -140,7 +141,8 @@ else{
 			$commandMenu->add(new IconTextCommand("User Rates", true, "users/rate_maint", "images/icon_rates.gif"));
 		$commandMenu->add(new IconTextCommand("Configuration", true, "config", "images/icon_configuration.gif"));
 	}
-	if (!$authenticationManager->usingLDAP())
+	//if (!$authenticationManager->usingLDAP())
+	if (!Site::getAuthenticationManager()->ldapCfgInfo['useLDAP']==1)
 		$commandMenu->add(new IconTextCommand("Change Password", true, "changepwd", "images/icon_key.gif"));
 	$commandMenu->add(new IconTextCommand("Logout", true, "logout?logout=true", "images/icon_logout.gif"));
 	if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {

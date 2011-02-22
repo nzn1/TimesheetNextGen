@@ -113,12 +113,15 @@ class AuthenticationManager {
 	*/
 	var $ldapServerErrorText;
 
+	/**
+	* LDAP config info
+	*/
+	var $ldapCfgInfo;
+
 	/* authentication function: this is called by
 	*   each page to ensure that there is an authenticated user
 	*/
 	function login($username, $password) {
-		require("table_names.inc");
-		require("database_credentials.inc");
 		global $siteclosed;
 
 		//start/continue the session
@@ -152,10 +155,10 @@ class AuthenticationManager {
 		//$dbh = dbConnect();
 
 		//check whether we are using ldap
-		if ($this->usingLDAP()) {
+		if ($this->ldapCfgInfo['useLDAP']==1) {
 			//check their credentials with LDAP
 			if ( !$this->ldapAuth($username, $password) ) {
-				if ($this->usingFallback()) {
+				if ($this->ldapCfgInfo['LDAPFallback']==1) {
 					if(!$this->dbAuth($username, $password)){
 						return false;
 					}
@@ -233,10 +236,8 @@ class AuthenticationManager {
 	* Login using local database 
 	*/
 	function dbAuth($username, $password){
-		require( "table_names.inc" );
-		require( "database_credentials.inc" );
 		// query the user table for authentication details
-		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2, status " . "FROM ".tbl::getuserTable()." WHERE username='$username'" );
+		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, ".config::getDbPwdFunction()."('$password') AS passwd2, status " . "FROM ".tbl::getuserTable()." WHERE username='$username'" );
 		$data = dbResult( $qh );
 		// is the password correct?
 		if ( $num == 0 || $data["passwd1"] != $data["passwd2"] ){
@@ -262,8 +263,6 @@ class AuthenticationManager {
 	* Logs out the currenlty logged in user
 	*/
 	function logout() {
-		require("table_names.inc");
-		require("database_credentials.inc");
 
 		//start/continue the session
 //		session_start();
@@ -344,43 +343,18 @@ class AuthenticationManager {
 		return ($this->hasClearance($level));
 	}
 
-	/* This function returns true if the system is configured to use
-	*	LDAP for authentication
-	*/
-	function usingLDAP() {
-		require("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT useLDAP FROM $CONFIG_TABLE WHERE config_set_id='1'");
-		$data = dbResult($qh);
-		return $data['useLDAP'] == 1;
-	}
+	/* Gather the LDAP variables */
+	function getLDAPcfgInfo() {
 
-	/* 
-	* This function returns true if the system is configured to fallback to local authentication should LDAP authentication fail
-	* DB Field should perhaps be renamed to LOCALFallback
-	*/
-	function usingFallback(){
-		require( "table_names.inc" );
-		list( $qh, $num ) = dbQuery( "SELECT BIN(LDAPFallback) FROM $CONFIG_TABLE WHERE config_set_id='1'" );
-		$data = dbResult( $qh );
-		return $data['BIN(LDAPFallback)'] == 1;
+		list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getNewConfigTable()." where name like '%LDAP%';");
+		while ($data = dbResult($qh)) {
+			$this->ldapCfgInfo[$data['name']]=$data[$data['type']];
+		}
 	}
 
 	function ldapLogin($username, $password) {
-		require("table_names.inc");
-		require("database_credentials.inc");
-
-		//require("debuglog.php");
-		//$debug = new logfile();
-
-		//get the connection settings from the database
-		list($qh, $num) = dbQuery("SELECT LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, " .
-						"LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, " .
-						"LDAPBindByUser, LDAPBindUsername, LDAPBindPassword, LDAPReferrals " .
-						"FROM $CONFIG_TABLE WHERE config_set_id='1'");
-		$data = dbResult($qh);
-
 		//build up connection string
-		$connectionString = $data['LDAPScheme'] . "://" . $data['LDAPHost'] . ":" . $data['LDAPPort'];
+		$connectionString = $this->ldapCfgInfo['LDAPurl'];
 
 		//$debug->write("connectionString = $connectionString\n");
 
@@ -393,13 +367,13 @@ class AuthenticationManager {
 		}
 
 		//attempt to set the protocol version to use
-		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $data["LDAPProtocolVersion"]);
+		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapCfgInfo['LDAPProtocolVersion']);
 
 		// bind to server by user
-		if ($data['LDAPBindByUser'] == 1) {
-			if (empty($data["LDAPBindUsername"])) {
+		if ($this->ldapCfgInfo['LDAPBindByUser'] == 1) {
+			if (empty($this->ldapCfgInfo['LDAPBindUsername'])) {
 				//bind using user supplied info, if there is no BindUsername in the config
-				$credentials=$data['LDAPUsernameAttribute'] . "=" . $username . "," . $data['LDAPBaseDN'];
+				$credentials=$this->ldapCfgInfo['LDAPUsernameAttribute'] . "=" . $username . "," . $this->ldapCfgInfo['LDAPBaseDN'];
 
 				if (!($bind = @ldap_bind($connection, $credentials, $password))) {
 					$this->ldapErrorCode = LDAP_SERVER_ERROR;
@@ -409,7 +383,7 @@ class AuthenticationManager {
 				}
 			} else {
 				//bind to server with config provided username and password
-				if (!($bind = @ldap_bind($connection, $data["LDAPBindUsername"], $data["LDAPBindPassword"]))) {
+				if (!($bind = @ldap_bind($connection, $this->ldapCfgInfo['LDAPBindUsername'], $this->ldapCfgInfo['LDAPBindPassword']))) {
 					$this->ldapErrorCode = LDAP_SERVER_ERROR;
 					$this->ldapServerErrorCode = ldap_errno($connection);
 					$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
@@ -427,13 +401,13 @@ class AuthenticationManager {
 		}
 
 		//attempt to set the protocol version to use
-		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $data["LDAPProtocolVersion"]);
+		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapCfgInfo['LDAPProtocolVersion']);
 
 		//build up the filter by adding the username filter
-		$filter = $data['LDAPUsernameAttribute'] . "=" . $username;
-		if ($data['LDAPFilter'] != "") {
+		$filter = $this->ldapCfgInfo['LDAPUsernameAttribute'] . "=" . $username;
+		if ($this->ldapCfgInfo['LDAPFilter'] != "") {
 			//does it start with a '(' and end with a ')' ?
-			$userFilter = $data["LDAPFilter"];
+			$userFilter = $this->ldapCfgInfo['LDAPFilter'];
 			$length = strlen($userFilter);
 			if ($userFilter{0} == "(" && $userFilter{$length-1} == ")")
 				$userFilter = substr($userFilter, 1, $length-2);
@@ -442,25 +416,25 @@ class AuthenticationManager {
 		}
 
 		// Always avoid referals if flag is not set (they are enabled by default in php ldap module)
-		if ( $data["LDAPReferrals"] != 1) {
+		if ( $this->ldapCfgInfo['LDAPReferrals'] != 1) {
 			@ldap_set_option( $connection, LDAP_OPT_REFERRALS, 0 );
 		}
 
-		if ($data["LDAPSearchScope"] == "base") {
+		if ($this->ldapCfgInfo['LDAPSearchScope'] == "base") {
 			//search the directory returning records in the base dn
-			//echo "<p>searching base dn: $data[LDAPBaseDN]        with filter: $filter <p>";
-			//$debug->write("searching base ".$data['LDAPBaseDN']." for $filter\n");
-			if (!($search = @ldap_read($connection, $data['LDAPBaseDN'], $filter))) {
+			//echo "<p>searching base dn: $this->ldapCfgInfo[LDAPBaseDN]        with filter: $filter <p>";
+			//$debug->write("searching base ".$this->ldapCfgInfo['LDAPBaseDN']." for $filter\n");
+			if (!($search = @ldap_read($connection, $this->ldapCfgInfo['LDAPBaseDN'], $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
 				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
 				return false;
 			}
-		} else if ($data["LDAPSearchScope"] == "one") {
+		} else if ($this->ldapCfgInfo['LDAPSearchScope'] == "one") {
 			//search the directory returning records in the base dn
-			//echo "<p>searching base dn: $data[LDAPBaseDN]        with filter: $filter <p>";
-			//$debug->write("searching one ".$data['LDAPBaseDN']." for $filter\n");
-			if (!($search = @ldap_list($connection, $data['LDAPBaseDN'], $filter))) {
+			//echo "<p>searching base dn: $this->ldapCfgInfo[LDAPBaseDN]        with filter: $filter <p>";
+			//$debug->write("searching one ".$this->ldapCfgInfo['LDAPBaseDN']." for $filter\n");
+			if (!($search = @ldap_list($connection, $this->ldapCfgInfo['LDAPBaseDN'], $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
 				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
@@ -468,9 +442,9 @@ class AuthenticationManager {
 			}
 		} else { //full subtree search
 			//search the directory returning records in the base dn
-			//echo "<p>searching base dn: $data[LDAPBaseDN]        with filter: $filter <p>";
-			//$debug->write("searching sub ".$data['LDAPBaseDN']." for $filter\n");
-			if (!($search = @ldap_search($connection, $data['LDAPBaseDN'], $filter))) {
+			//echo "<p>searching base dn: $this->ldapCfgInfo[LDAPBaseDN]        with filter: $filter <p>";
+			//$debug->write("searching sub ".$this->ldapCfgInfo['LDAPBaseDN']." for $filter\n");
+			if (!($search = @ldap_search($connection, $this->ldapCfgInfo['LDAPBaseDN'], $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
 				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
@@ -531,16 +505,17 @@ class AuthenticationManager {
 		//does the user exist in the db?
 		if (!$this->userExists($username)) {
 			//create the user
-			if ($this->usingFallback()) //if we're using Fallback, then we want to put the password in the database
-				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
+			if ($this->ldapCfgInfo['LDAPFallback']==1)
+			    //if we're using Fallback, then we want to put the password in the database
+				$pwdstr = config::getDbPwdFunction()."('$password')";
 			else 
 				$pwdstr = "";
 			dbquery("INSERT INTO ".tbl::getuserTable()." (username, level, password, first_name, last_name, " .
 						"email_address, time_stamp, status) " .
 						"VALUES ('$username',1,$pwdstr,'$firstName',".
 						"'$lastName','$emailAddress',0,'ACTIVE')");
-			dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
-			dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
+			dbquery("INSERT INTO ".tbl::getAssignmentsTable()." VALUES (1,'$username', 1)"); // add default project.
+			dbquery("INSERT INTO ".tbl::getTaskAssignmentsTable()." VALUES (1,'$username', 1)"); // add default task
 		} else {
 			//get the existing user details
 			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address, status " .
@@ -562,8 +537,9 @@ class AuthenticationManager {
 				$emailAddress = $existingUserDetails['email_address'];
 
 			//update the users details
-			if ($this->usingFallback()) //if we're using Fallback, then we want to store the current password in the database
-				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
+			if ($this->ldapCfgInfo['LDAPFallback']==1)
+				//if we're using Fallback, then we want to store the current password in the database
+				$pwdstr = config::getDbPwdFunction()."('$password')";
 			else 
 				$pwdstr = "''";
 			dbquery("UPDATE ".tbl::getuserTable()." SET first_name='$firstName', last_name='$lastName', ".
@@ -603,7 +579,10 @@ class AuthenticationManager {
 }
 
 //create the instance so its availiable by just including this file
-if(!class_exists('Site'))$authenticationManager = new AuthenticationManager();
+if(!class_exists('Site')) {
+	$authenticationManager = new AuthenticationManager();
+	$authenticationManager->getLDAPcfgInfo();
+}
 
 // vim:ai:ts=4:sw=4
 ?>

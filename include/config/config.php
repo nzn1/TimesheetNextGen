@@ -17,22 +17,24 @@ parent::$webmasterEmail = 'myaddress@tnsg.net';
 //parent::$mainTitle = 'TimesheetNG';
 
 /**
- * I think this is the best way to configure the database credentials.
- * But for now, I will allow the original database_credentials.inc to function
+ * Configure the database credentials.
  */  
 
-//parent::$dbServer = "localhost";
-//parent::$dbUser = "username";
-//parent::$dbPass = "password";
-//parent::$dbName = "my_tx_db";
+//parent::$dbServer 		= "localhost";
+//parent::$dbUser 		= "username";
+//parent::$dbPass 		= "password";
+//parent::$dbName 		= "my_tx_db";
+//parent::$dbPasswordFunction	= "PASSWORD";
 
+/**
+ * for now, get the info from the database_credentials.inc 
+ */  
 include("database_credentials.inc");
-
 parent::$dbServer = $DATABASE_HOST;
 parent::$dbUser = $DATABASE_USER;
 parent::$dbPass = $DATABASE_PASS;
-parent::$dbName = $DATABASE_DB;
-	
+parent::$dbName = $DATABASE_DB;	
+parent::$dbPasswordFunction = $DATABASE_PASSWORD_FUNCTION;
 
 //parent::$sessionName = 'a-session-name';
 
@@ -40,12 +42,4 @@ parent::$dbName = $DATABASE_DB;
 //parent::$relativeRoot = '/tx';
 //parent::$documentRoot = 'c:/htdocs/tx';
 //parent::$absoluteRoot = 'http://localhost/tx';
-
 ?>
-
-
-
-
-
-
-

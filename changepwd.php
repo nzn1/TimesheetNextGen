@@ -30,13 +30,12 @@ if ($passwd1 != $passwd2)
 	$errormsg = "Passwords do not match, please try again";
 
 if (empty($errormsg) && !empty($old_pass)) {
-	$qh = mysql_query("SELECT password, $DATABASE_PASSWORD_FUNCTION('$old_pass') FROM ".tbl::getuserTable()." WHERE username='".gbl::getContextUser()."'") or die("Unable to select ". mysql_error());
+	$qh = mysql_query("SELECT password, ".config::getDbPwdFunction()."('$old_pass') FROM ".tbl::getuserTable()." WHERE username='".gbl::getContextUser()."'") or die("Unable to select ". mysql_error());
 	list($check1, $check2) = mysql_fetch_row($qh);
 	if ($check1 != $check2) {
 		$errormsg = "Wrong password, sorry!";
-	}
-	else {
-		$qh = mysql_query("UPDATE ".tbl::getUserTable()." SET password=$DATABASE_PASSWORD_FUNCTION('$passwd1') WHERE username='".gbl::getContextUser()."'");
+	} else {
+		$qh = mysql_query("UPDATE ".tbl::getUserTable()." SET password=".config::getDbPwdFunction()."('$passwd1') WHERE username='".gbl::getContextUser()."'");
 		gotoStartPage();
 		exit;
 	}
