@@ -1,5 +1,5 @@
 <?php {
-#ErrorHandler::fatalError('Error: This file ('.__FILE__.'has been deprecated.  Please stop using it<br />'.ppr(getShortDebugTrace(3),'trace',true));
+ErrorHandler::fatalError('Error: This file ('.__FILE__.'has been deprecated.  Please stop using it.  Please use Common.class.php instead<br />'.ppr(getShortDebugTrace(3),'trace',true));
 
 if (!defined("COMMON_INC")) {
 	define("COMMON_INC", 1);
