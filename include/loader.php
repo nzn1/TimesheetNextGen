@@ -49,13 +49,9 @@ abstract class JLoader
 
 			$path = str_replace('.', DS, $filePath);
 
-			echo "base = $base\npath = $path\n";
-
 			// Prepend the classname with a capital J.
 			$className = 'J'.$className;
 			$classes = JLoader::register($className, $base.DS.$path.'.php');
-
-			echo "classname = $className  in  $base".DS.$path.".php\n";
 
 			$rs = isset($classes[strtolower($className)]);
 

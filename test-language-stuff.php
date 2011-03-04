@@ -22,15 +22,17 @@ jimport('jclasses.factory');
 //JLoader::register('JLanguage', dirname(__FILE__).DS.'test-classes'.DS.'language.php');
 //JLoader::register('JXMLElement', dirname(__FILE__).DS.'test-classes'.DS.'xmlelement.php');
 
-JLoader::register('JText', dirname(__FILE__).DS.'jclasses'.DS.'methods.php');
-JLoader::register('JRoute', dirname(__FILE__).DS.'jclasses'.DS.'methods.php');
-JLoader::register('JPath', dirname(__FILE__).DS.'jclasses'.DS.'filesystem.php');
-JLoader::register('JFolder', dirname(__FILE__).DS.'jclasses'.DS.'filesystem.php');
-JLoader::register('JFile', dirname(__FILE__).DS.'jclasses'.DS.'filesystem.php');
+JLoader::register('JText', dirname(__FILE__).DS.'include'.DS.'jclasses'.DS.'methods.php');
+JLoader::register('JPath', dirname(__FILE__).DS.'include'.DS.'jclasses'.DS.'filesystem.php');
+JLoader::register('JFolder', dirname(__FILE__).DS.'include'.DS.'jclasses'.DS.'filesystem.php');
+JLoader::register('JFile', dirname(__FILE__).DS.'include'.DS.'jclasses'.DS.'filesystem.php');
 
 //jimport('test-classes.language');
 print_r(JLoader::getClasses());
 
 $lang = JFactory::getLanguage();
 print_r($lang);
+
+echo JText::_('JLIB_ERROR_INFINITE_LOOP')."\n";
+echo JText::sprintf('JERROR_TABLE_BIND_FAILED',"These are a couple of JText tests")."\n";
 ?>
