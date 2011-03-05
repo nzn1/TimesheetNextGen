@@ -1,4 +1,5 @@
 <?php
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 define('JPATH_BASE', dirname(__FILE__));
 // Load the loader class.
 if (!class_exists('JLoader')) {
@@ -28,10 +29,10 @@ JLoader::register('JFolder', dirname(__FILE__).DS.'include'.DS.'jclasses'.DS.'fi
 JLoader::register('JFile', dirname(__FILE__).DS.'include'.DS.'jclasses'.DS.'filesystem.php');
 
 //jimport('test-classes.language');
-print_r(JLoader::getClasses());
+ppr(JLoader::getClasses());
 
 $lang = JFactory::getLanguage();
-print_r($lang);
+ppr($lang);
 
 echo JText::_('JLIB_ERROR_INFINITE_LOOP')."\n";
 echo JText::sprintf('JERROR_TABLE_BIND_FAILED',"These are a couple of JText tests")."\n";
