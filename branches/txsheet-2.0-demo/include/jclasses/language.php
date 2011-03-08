@@ -15,7 +15,7 @@ define('_QQ_', '"');
 /**
  * Languages/translation handler class
  */
-class JLanguage extends JObject
+class JLanguage
 {
 	protected static $languages = array();
 	/**
@@ -24,6 +24,8 @@ class JLanguage extends JObject
 	 * @var		boolean
 	 */
 	protected $debug = false;
+
+	protected $junk = '';
 
 	/**
 	 * The default language
@@ -68,6 +70,13 @@ class JLanguage extends JObject
 	 * @var		array of arrays
 	 */
 	protected $paths = array();
+
+	/**
+	 * An array of errors
+	 *
+	 * @var		array of error messages or JExceptions objects.
+	 */
+	protected $_errors = array();
 
 	/**
 	 * List of language files that are in error state
@@ -121,6 +130,8 @@ class JLanguage extends JObject
 		if ($lang == null) {
 			$lang = $this->default;
 		}
+
+		$this->junk = dirname(__FILE__);
 
 		$this->setLanguage($lang);
 		$this->setDebug($debug);
@@ -344,14 +355,12 @@ class JLanguage extends JObject
 	/**
 	 * Loads a single language file and appends the results to the existing strings
 	 *
-	 * @param	string	$extension	The extension for which a language file should be loaded
 	 * @param	string	$basePath	The basepath to use
 	 * @param	string	$lang		The language to load, default null for the current language
-	 * @param	boolean $reload		Flag that will force a language to be reloaded if set to true
 	 * @param	boolean	$default	Flag that force the default language to be loaded if the current does not exist
 	 * @return	boolean	True, if the file has successfully loaded.
 	 */
-	public function load($extension = 'tsheetx', $basePath = JPATH_BASE, $lang = null, $reload = false, $default = true)
+	public function load($basePath = JPATH_BASE, $lang = null, $default = true)
 	{
 		if (! $lang) {
 			$lang = $this->lang;
@@ -359,17 +368,15 @@ class JLanguage extends JObject
 
 		$path = self::getLanguagePath($basePath, $lang);
 
-		$internal = $extension == 'tsheetx' || $extension == '';
-		$filename = $internal ? $lang : $lang . '.' . $extension;
-		$filename = "$path/$filename.ini";
+		$filename = "$path/$lang.ini";
 
 		$result = false;
-		if (isset($this->paths[$extension][$filename]) && ! $reload) {
+		if (isset($this->paths[$filename])) {
 			// Strings for this file have already been loaded
 			$result = true;
 		} else {
 			// Load the language file
-			$result = $this->loadLanguage($filename, $extension);
+			$result = $this->loadLanguage($filename);
 
 			// Check if there was a problem with loading the file
 			if ($result === false && $default) {
@@ -378,12 +385,12 @@ class JLanguage extends JObject
 
 				// Check the standard file name
 				$path		= self::getLanguagePath($basePath, $this->default);
-				$filename = $internal ? $this->default : $this->default . '.' . $extension;
+				$filename 	= $this->default;
 				$filename	= "$path/$filename.ini";
 
 				// If the one we tried is different than the new name, try again
 				if ($oldFilename != $filename) {
-					$result = $this->loadLanguage($filename, $extension, false);
+					$result = $this->loadLanguage($filename);
 				}
 			}
 		}
@@ -396,11 +403,10 @@ class JLanguage extends JObject
 	 * This method will not note the successful loading of a file - use load() instead
 	 *
 	 * @param	string The name of the file
-	 * @param	string The name of the extension
 	 * @return	boolean True if new strings have been added to the language
 	 * @see		JLanguage::load()
 	 */
-	protected function loadLanguage($filename, $extension = 'unknown', $overwrite = true)
+	protected function loadLanguage($filename)
 	{
 
 		$this->counter++;
@@ -419,12 +425,7 @@ class JLanguage extends JObject
 			}
 		}
 
-		// Record the result of loading the extension's file.
-		if (! isset($this->paths[$extension])) {
-			$this->paths[$extension] = array();
-		}
-
-		$this->paths[$extension][$filename] = $result;
+		$this->paths[$filename] = $result;
 
 		return $result;
 	}
@@ -575,20 +576,11 @@ class JLanguage extends JObject
 	/**
 	 * Get a list of language files that have been loaded
 	 *
-	 * @param	string	$extension	An option extension name
 	 * @return	array
 	 */
-	public function getPaths($extension = null)
+	public function getPaths()
 	{
-		if (isset($extension)) {
-			if (isset($this->paths[$extension])) {
-				return $this->paths[$extension];
-			}
-
-			return null;
-		} else {
-			return $this->paths;
-		}
+		return $this->paths;
 	}
 
 	/**
@@ -799,18 +791,6 @@ class JLanguage extends JObject
 	 *
 	 * @param	string	$dir	directory of files
 	 * @return	array	Array holding the found languages as filename => real name pairs
-	 * @deprecated use parseLanguageFiles instead
-	 */
-	public static function _parseLanguageFiles($dir = null)
-	{
-		return self::parseLanguageFiles($dir);
-	}
-
-	/**
-	 * Searches for language directories within a certain base dir
-	 *
-	 * @param	string	$dir	directory of files
-	 * @return	array	Array holding the found languages as filename => real name pairs
 	 */
 	public static function parseLanguageFiles($dir = null)
 	{
@@ -825,18 +805,6 @@ class JLanguage extends JObject
 		}
 
 		return $languages;
-	}
-
-	/**
-	 * Parses XML files for language information
-	 *
-	 * @param	string	$dir	Directory of files
-	 * @return	array	Array holding the found languages as filename => metadata array
-	 * @deprecated use parseXMLLanguageFiles instead
-	 */
-	public static function _parseXMLLanguageFiles($dir = null)
-	{
-		return self::parseXMLLanguageFiles($dir);
 	}
 
 	/**
@@ -870,18 +838,6 @@ class JLanguage extends JObject
 	 *
 	 * @param	string	$path	Path to the xml files
 	 * @return	array	Array holding the found metadata as a key => value pair
-	 * @deprecated use parseXMLLanguageFile instead
-	 */
-	public static function _parseXMLLanguageFile($path)
-	{
-		return self::parseXMLLanguageFile($path);
-	}
-
-	/**
-	 * Parse XML file for language information.
-	 *
-	 * @param	string	$path	Path to the xml files
-	 * @return	array	Array holding the found metadata as a key => value pair
 	 */
 	public static function parseXMLLanguageFile($path)
 	{
@@ -902,5 +858,71 @@ class JLanguage extends JObject
 		}
 
 		return $metadata;
+	}
+
+	/**
+	 * Get the most recent error message.
+	 *
+	 * @param	integer	$i			Option error index.
+	 * @param	boolean	$toString	Indicates if JError objects should return their error message.
+	 * @return	string	Error message
+	 */
+	public function getError($i = null, $toString = true)
+	{
+		// Find the error
+		if ($i === null) {
+			// Default, return the last message
+			$error = end($this->_errors);
+		} else if (!array_key_exists($i, $this->_errors)) {
+			// If $i has been specified but does not exist, return false
+			return false;
+		} else {
+			$error	= $this->_errors[$i];
+		}
+
+		// Check if only the string is requested
+		if (($error instanceof Exception) && $toString) {
+			return (string)$error;
+		}
+
+		return $error;
+	}
+
+	/**
+	 * Return all errors, if any.
+	 *
+	 * @return	array	Array of error messages or JErrors.
+	 */
+	public function getErrors()
+	{
+		return $this->_errors;
+	}
+
+	/**
+	 * Add an error message.
+	 *
+	 * @param	string $error	Error message.
+	 */
+	public function setError($error)
+	{
+		array_push($this->_errors, $error);
+	}
+
+	/**
+	 * Magic method to convert the object to a string gracefully.
+	 *
+	 * @return	string	The classname.
+	 */
+	public function __toString()
+	{
+		return get_class($this);
+	}
+
+	/**
+	 * @see __toString()
+	 */
+	function toString()
+	{
+		return __toString();
 	}
 }
