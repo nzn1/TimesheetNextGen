@@ -35,17 +35,15 @@ abstract class JFactory
 	 */
 	public static function getXML($fileORdata, $isFile = true)
 	{
-		jimport('jclasses.xmlelement');
-
 		// Disable libxml errors and allow to fetch error information as needed
 		libxml_use_internal_errors(true);
 
 		if ($isFile) {
 			// Try to load the xml file
-			$xml = simplexml_load_file($fileORdata, 'JXMLElement');
+			$xml = simplexml_load_file($fileORdata);
 		} else {
 			// Try to load the xml string
-			$xml = simplexml_load_string($fileORdata, 'JXMLElement');
+			$xml = simplexml_load_string($fileORdata);
 		}
 
 		if (empty($xml)) {
