@@ -17,13 +17,11 @@
 class Site{
 
 	private static $session;
-	protected static $database;
-	private static $rewrite;
-	private static $errorHandler;
-	private static $authenticationManager;
-	private static $commandMenu;
-	
 	protected static $timeStart;
+	private static $installer;
+	private static $authenticationManager;
+	private static $commandMenu;	
+	
 
 	/**
 	 * 
@@ -32,31 +30,38 @@ class Site{
 	 */
 	public function __construct(){
 		if(ini_get('short_open_tag')==0){
-			die('PHP short tags are currently disabled.  This site won\'t work without short tags enabled');
+			die('PHP short tags are currently disabled.  This site won\'t work without short tags enabled.<br />
+				Please modify your php.ini file to include the line "short_open_tag = On"');
 		}
+	}
 	
+	public function setInstallMode(){
+		self::$installer = true;
+	}
+	
+	public function load(){
 		require('include/debug.class.php');
 		require('include/common_functions.php');
 		$timeStart = getmicrotime();
 		
-		require('include/error_handler.php');
-		self::$errorHandler = new ErrorHandler();		
-
-		require('include/config.class.php');
+		require('include/errorhandler.class.php');
+		new ErrorHandler();		
+							
+		require('include/config/config.class.php');
 		Config::initialise();
-		
+
 		require('include/session.class.php');
 		require_once('include/auth/auth.class.php');
 		require('include/templateparser/templateparser.class.php');
 		require("include/rewrite.class.php");
 		require("include/database.class.php");
-		
+
 		ob_start();
 		self::$session = new Session();
-		self::$database = new MySQLDB();
+		$database = Database::getInstance();
 		
 		try{
-			self::$database->connect();
+			$database->connect();
 		}
 		catch (Exception $e){
 			
@@ -65,77 +70,89 @@ class Site{
 			//or a config file has changed
 
 			if(true == Config::isInstalled()){
-				//the site (according to config has already been installed
-				$this->dbError($e);
+				//the site (according to config) has already been installed
+				Database::getInstance()->dbError($e);
 				exit();
 				
 			}
+			else if(self::isInstaller()){
+				
+			}
 			else{
-				//the site hasn't been installed yet!
-				Config::setInstaller(true);
-								
-				echo "<div class=\"errorbox\">".$e."</div>";
+				//the site hasn't been installed yet!								
+				echo "<div class=\"errorbox\">".$e->getMessage()."</div>";
+				
+				echo "<p>The database could not connect, and the site does not appear to be installed.<br />
+				Load the site installer:</p>";
 				//as the site is not installed, redirect to the install page
 				gotoLocation(Config::getRelativeRoot()."/install.php?page=install");
 			}
 			
 		}
-				
+		
+		#if(Database::getInstance()->isConnected())
 		Config::getDbConfig();
 		self::$session->startSession();
+			
+		if(!self::$session->isadmin() && debug::getHideDebugData()==true){
+			debug::hideDebug();
+		}
 
-		require_once("common.class.php");
+    
+		require_once("include/tsx/common.class.php");
 		new Common();
-		require("class.AuthenticationManager.php");
+		
+		
+		require("include/tsx/authenticationManager.class.php");
 		self::$authenticationManager = new AuthenticationManager();
 
-		require("class.CommandMenu.php");		
+    
+		require("include/tsx/commandmenu.class.php");		
 		self::$commandMenu = new CommandMenu();
 					
-		require("globals.class.php");
+		require("include/tsx/globals.class.php");
 		gbl::initialize();
 
-		self::$rewrite =new Rewrite();
+		Rewrite::__init();
 		//check for installed modules
-		$module = self::$rewrite->checkModule();
-	
+		$module = Rewrite::checkModule();
+
 		//check for site shutdown flag
-		if(debug::getSiteDown() == 1 && !self::$session->isAdmin()){
+		//if(debug::getSiteDown() == 1 && !self::$session->isAdmin()){
+		if(debug::getSiteDown() == 1 && Auth::ACCESS_GRANTED != Auth::requestAuth('maintenance','login')){
 			header("HTTP/1.1 503 Service Temporarily Unavailable");
 			header("Status: 503 Service Temporarily Unavailable");
 			header("Retry-After: 3600");
-			self::$rewrite->setContent('maintenance');
-      		$module = Rewrite::MODULE_NOT_REGISTERED;
+			Rewrite::setContent('maintenance');
+			$module = Rewrite::MODULE_NOT_REGISTERED;
 		}
 
-		$tp = new templateParser();
-
-		$filename = Config::getDocumentRoot()."/modules/".self::$rewrite->getModule()."/config.php";
+    	$tp = new TemplateParser();
+		//apply the theme configuration
+    	require_once('themes/'.PageElements::getTheme().'/config.php');
+    	
+		$filename = Config::getDocumentRoot()."/modules/".Rewrite::getModule()."/config.php";
 
 		if($module == Rewrite::MODULE_ACTIVE && file_exists($filename)){
-			/*if a module is detected then we need to load the module config
+			/*
+			 * if a module is detected then we need to load the module config
 			 * to determine what files need to be loaded
 			 */
 			include($filename);
+//			ppr($tp->getPageElements());
 		}
-		else{
 
-    		$tp->getPageElements()->addFile('content',self::$rewrite->getContent());
-		    $tp->getPageElements()->addFile('menu','themes/txsheet/menu.php');
-  		  	$tp->getPageElements()->addFile('tsx_footer','themes/txsheet/footer.inc');
-	    	$tp->getPageElements()->addFile('tsx_banner','themes/txsheet/banner.inc');
-		}				
-
+  	PageElements::addElement(new FunctionTag('response','PageElements::createResponseOutput',FunctionTag::TYPE_STATIC));
+		//PageElements::addElement(new FunctionTag('googleanalytics','PageElements::getGoogleAnalyticsCode',FunctionTag::TYPE_STATIC));
 		//debugInfoTop is exempt from the module config selection
-		$tp->getPageElements()->addFile('debugInfoTop','debugInfoTop.php');
-		$tp->getPageElements()->addFile('debugInfoBottom','debugInfoBottom.php');
-    	//$tp->getPageElements()->addFile('console','include/console/console.php');		
-		$tp->getPageElements()->getTagByName('debugInfoTop')->setOutput(ob_get_contents());
-		ob_end_clean();
-			
+		PageElements::addFile('debugInfoTop','include/debug/debugInfoTop.php');
+		PageElements::addFile('debugInfoBottom','include/debug/debugInfoBottom.php');
+		PageElements::addFile('console','include/console/console.php');
+		PageElements::getTagByName('debugInfoTop')->setOutput(ob_get_contents());
+		ob_end_clean();	
 		// parse template file
 		$tp->parseTemplate();
-
+		
 		// display generated page
 		echo $tp->display();
 
@@ -147,29 +164,16 @@ class Site{
 	}
 
 
-	
-	/**
-	 * getDatabase() - returns the database object
-	 * @param self::$database - database object
-	 */
-	public static function getDatabase(){
-		return self::$database;
-	}
-
 	/**
 	 * getSession() - returns the session object
-	 * @param self::$session - session object
+	 * @return Session
 	 */
 	public static function getSession(){
 		return self::$session;
 	}
 
-	/**
-	 * 
-	 * returns the static Rewrite Class Object
-	 */
-	public static function getRewrite(){
-		return self::$rewrite;
+	public static function isInstaller(){
+		return self::$installer;
 	}
 	
 	public static function getAuthenticationManager(){

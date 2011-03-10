@@ -16,40 +16,14 @@
  * permission of the author.
  ******************************************************************************/
 
-
-/**
- * HOW TO IMPORT A DATABASE USING MYSQL CLI.
- *
- * mysql -u root -p -f  mark3290_uybb < sql.sql
- *               		
- * NOTE: If the .sql file contains multiple databases it doesn't matter
- * that you have specified a db already.  The initial specification of an
- * existing db is necessary however!
- */
-class MySQLDB
-{
-
 	/**
-	 * The MySQL database connection
-	 */
-	private $connection;
-	
-	private $isConnected = false;
-	/**
-	 * Class constructor
-	 */
-	function __construct(){
-		if(!function_exists('mysql_connect')){
-			ErrorHandler::fatalError("The MySQL module hasn't been loaded correctly");
-		}		
-		
-	}
-
-	
-	const ERROR_CONNECT = 100;
-	const ERROR_SELECT_DB = 101;
-	    
-	/**
+	 * HOW TO IMPORT A DATABASE USING MYSQL CLI.
+	 *
+	 * mysql -u root -p -f  mark3290_uybb < sql.sql
+	 *               		
+	 * NOTE: If the .sql file contains multiple databases it doesn't matter
+     * that you have specified a db already.  The initial specification of an
+     * existing db is necessary however!
      *
      * On Windows Vista or above, an entry in the Windows/System32/drivers/etc/hosts 
      * file causes mysql_connect() connections to "localhost" to timeout and never connect. 
@@ -66,47 +40,127 @@ class MySQLDB
      * Also, you could change the code to connect to the ip instead, but that is inconvenient if you have many web sites.
      * This issue occurs on Windows Vista, Windows 7 and Windows Server 2008.                    
      */
-	public function connect(){
-       
+class Database
+{
+
+	/**
+	 * The MySQL database connection
+	 */
+	private $connection;
+	
+	private $isConnected = false;
+	
+	/**
+	 * 
+	 * The result of the last database query.
+	 * This could be true, false or a resource identifier
+	 * @var unknown_type
+	 */
+	private $result;
+	
+	/**
+	 * 
+	 * The error message of the last database query.
+	 * @var unknown_type
+	 */
+	private $error;
+	
+	/**
+	 * 
+	 * Enter description here ...
+	 * @var unknown_type
+	 */
+	private $numRows;
+	
+	/**
+	 * 
+	 * Enter description here ...
+	 * @var unknown_type
+	 */
+	private $affectRows;
+	
+	/**
+	 * 
+	 * Enter description here ...
+	 * @var unknown_type
+	 */
+	private $insertId;
+	
+	
+	private static $singletonInstance;
+
+	
+	const ERROR_CONNECT = 100;
+	const ERROR_SELECT_DB = 101;
+	
+	/**
+	 * 
+	 * Singleton Functionality
+	 * http://www.talkphp.com/advanced-php-programming/1304-how-use-singleton-design-pattern.html
+	 */
+	public static function getInstance(){
+		if (!isset(self::$singletonInstance)){
+			//echo 'new instance';
+		     self::$singletonInstance = new self();
+		     //self::$singletonInstance->connect();	
+        }
+        else{
+        	//echo 'old instance';
+        }
+    	return self::$singletonInstance;
+	}  	
+
+	/**
+	 * This is an alternative from the Pork Project.
+	 * It allows multiple instances of this class 
+	 * using the singleton method
+	 */	
+//	public static function getInstance($instanceName='Database')
+//    {
+//		static $instances = array();
+//		if (!array_key_exists($instanceName, $instances)) 
+//		{
+//		   $instances[$instanceName] = new dbConnection($instanceName);
+//	   }
+//	  return $instances[$instanceName];
+//    }
+	/**
+	 * Class constructor
+	 */
+	public function __construct(){
+		//this intentionally does nothing
+	}
+		
+
+    
+		
+		public function connect(){
+    
     /* Make connection to database */
-		//try{
-
-
+			if(!function_exists('mysql_connect')){
+				ErrorHandler::fatalError("The MySQL module hasn't been loaded correctly");
+			}
+			/**
+			 * @todo Fix: mysql_connect() [function.mysql-connect]: Headers and client library minor version mismatch. Headers:60000 Library:50151 
+			 */
 			$this->connection = @mysql_connect(Config::getDbServer(),Config::getDbUser(), Config::getDbPass());
-			if (!$this->connection) throw new Exception('MySQL Connection Database Error: ' . mysql_error(),self::ERROR_CONNECT);
-	/*	
-	}
-		catch (Exception $e){
-			if(true == Config::getInstaller()){
-				echo "<div class=\"errorbox\">".$e."</div>";
-				return;
+			if (!$this->connection){
+				$this->error = mysql_error();
+				throw new Exception('MySQL Connection Database Error: ' . $this->error,self::ERROR_CONNECT);
 			}
-			else{
-				$this->dbError($e);
-				exit();
-			}
-		}
-		*/
 
-		//try{
 			$result = mysql_select_db(Config::getDbName(), $this->connection);
-			if (!$result) throw new Exception('MySQL Connection Database Error: ' . mysql_error(),self::ERROR_SELECT_DB);
-		/*}
-		catch (Exception $e){
-			if(true == Config::getInstaller()){
-				echo "<div class=\"errorbox\">".$e."</div>";
-				return;
+			if (!$result){
+				$this->error = mysql_error();
+				throw new Exception('MySQL Connection Database Error: ' . $this->error,self::ERROR_SELECT_DB);
 			}
-			else{
-				$this->dbError($e);
-				exit();
-			}
-		}*/
-		$this->isConnected = true;
-
+			$this->isConnected = true;	
 
 	}
 
+
+	
+	
 	/**
 	 * Performs the given query on the database and
 	 * returns the result, which may be false, true or a
@@ -114,12 +168,54 @@ class MySQLDB
 	 *
 	 * @param $q - sql query
 	 */
-	function query($q){
+	public function query($q){
 		if(!$this->isConnected){
-			trigger_error('Database Not Connected');
+			//trigger_error('Database Not Connected');
 			return false;
 		}
 		return mysql_query($q, $this->connection);
+	}
+	
+	/**
+	 * Execute the passed query on the database and determine 
+	 * if insert_id or affected_rows or numrows has to be called.
+	 *
+	 * @param SQL String
+	 * 
+	 * @return boolean - true for successful query. false for unsuccessful.
+	 */	
+	public function newQuery($q){
+
+		if(!$this->isConnected){
+			//trigger_error('Database Not Connected');
+			return false;
+		}
+		$this->result = mysql_query($q, $this->connection);
+		$this->error = mysql_error($this->connection);
+		$query = strtolower($q);
+		if (empty($this->error)){
+			if (strpos($query, 'insert') !== false){
+				$this->insertId = mysql_insert_id($this->connection);
+				$this->numRows = 0;
+			}
+			elseif (strpos($query, 'delete') !== false || strpos($query, 'replace') !== false || strpos($query, 'update') !== false){
+				$this->affectedRows = mysql_affected_rows($this->connection); 
+				$this->numRows = 0;
+			}
+			else{
+				$this->numRows = $this->numrows();
+				$this->affectedRows = 0;
+			}
+
+			if (!empty($this->insertId)) { 
+				return $this->insertId; 
+			}
+			return true;
+		}
+		else{
+		 //die($this->error."\nWhile executing query: \n{$query}");
+		 return false;
+		}		
 	}
 
 	/**
@@ -128,30 +224,29 @@ class MySQLDB
 	 * response database table
 	 * @param $id - reponse uid
 	 */
-	function getResponse($id){
+	public function getResponse($id){
 		if($id == ''){
 			$response = "Oops! - an unknown Response Code has been Requested.";
 			return $response;
 		}
-		if(isset($_GET['track'])&& $_GET['track']==0) return;
 			
 		$q = "SELECT response FROM `".tbl::getResponse()."` WHERE `id` = $id LIMIT 0 , 1";
-		if (debug::getSqlStatement()==1)echo "<pre>".$q."</pre>";
-		$result = Site::getDatabase()->query($q, $this->connection);
-		$num_rows = mysql_numrows($result);
-		if(!$result || ($num_rows <= 0)){
-			if(debug::getSqlError())Debug::ppr(mysql_error(),'sqlError');
+		
+		$data = Database::getInstance()->sql($q,false, Database::TYPE_OBJECT);
+		
+		if($data == Database::SQL_EMPTY || $data == Database::SQL_ERROR){
 			$response = "Oops! - an unknown Response Code has been Requested.";
 			return $response;
-		}
-
-		$response  = nl2br(mysql_result($result,0,"response"));
-		return $response;
+		}		
+		return $data[0]->response;
 	}
+
+
 
 
 	const TYPE_OBJECT = 1;
 	const TYPE_ARRAY = 2;
+	const TYPE_ASSOC = 3;
 	
 	const SQL_ERROR = 0;
 	const SQL_EMPTY = -1;
@@ -161,10 +256,14 @@ class MySQLDB
 	 *
 	 * @param $q - sql query string
 	 * @param $showInfo - boolean
-	 * @param $type - either MySQLDB::TYPE_OBJECT or MySQLDB::TYPE_ARRAY
+	 * @param $type - either Database::TYPE_OBJECT or Database::TYPE_ARRAY
 	 */
 
 	public function sql($q,$showInfo=true,$type=self::TYPE_OBJECT,$neverShowErrors=false){
+		if(!$this->isConnected){
+			//trigger_error('Database Not Connected');
+			return self::SQL_ERROR;
+		}
 		if($q==''){
 			trigger_error("The SQL Statement is blank",E_USER_WARNING);
 			return self::SQL_ERROR;
@@ -198,6 +297,9 @@ class MySQLDB
 		else if($type==self::TYPE_OBJECT){
 			while($obj = mysql_fetch_object($result))$data[] = $obj;
 		}
+		else if($type==self::TYPE_ASSOC){
+			while($obj = mysql_fetch_assoc($result))$data[] = $obj;
+		}
 		return $data;
 	}
 
@@ -215,8 +317,22 @@ class MySQLDB
 	 */
 	public function getConnection(){
 		return $this->connection;
+	
+	}
+	
+	public function getError(){
+		return $this->error;
+	}
+	
+	public function getNumRows(){
+		return $this->numRows;
+	}
+	public function getAffectedRows(){
+		return $this->affectRows;
+	}
+	public function isConnected(){
+		return $this->isConnected;
 	}
 
 }
 ?>
-

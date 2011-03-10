@@ -33,6 +33,9 @@ class Session
 		return $this->time;
 	}
 
+  	public function isLoggedIn(){
+		return $this->loggedIn;
+	}
 	/**
 	 * init
 	 *
@@ -71,6 +74,14 @@ class Session
 		$this->time = time();
 	}
 	 
+	
+	/**
+	 * 
+	 * Not Yet Implemented
+	 */
+	public function isAdmin(){
+		return false;
+	}
 	/**
 	 * fatalError() - when something serious goes wrong.  This function is called.
 	 * It displays a boring page stating the error that occured.

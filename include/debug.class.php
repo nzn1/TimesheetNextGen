@@ -16,9 +16,14 @@
  * permission of the author.
  ******************************************************************************/
 
-class debug{
+class Debug{
 
+	private static $consoleData = array();
+		
 	private static $hideDebugData    = 0;        //hide debug data if not logged in
+
+	private static $sendToConsole	   = 0;
+	private static $sendToScreen	   = 1;
 
 	private static $location         = 1;        //display location headers
 	private static $_sessionTop      = 0;        //display session data at top of page
@@ -26,7 +31,7 @@ class debug{
 	private static $requestUri       = 0;        //display mini session data
 	private static $contentSession   = 0;        //display sesion data within content pane
 	private static $_files           = 0;
-	private static $_post            = 1;        //display POST data
+	private static $_post            = 0;        //display POST data
 	private static $_get             = 0;        //display GET data
 	private static $_server          = 0;        //display server data
 	private static $_cookie          = 0;        //display cookie data
@@ -46,7 +51,7 @@ class debug{
 	private static $authFull         = 0;        //display user authorisation data detailed
 	private static $authBasic        = 0;        //display user authorisation data basic
 	private static $rewrite          = 0;        //display php rewrite information
-	private static $pprTrace         = 0;        //display the trace log for all ppr commands
+	private static $pprTrace         = 1;        //display the trace log for all ppr commands
 
 	/*END DEBUG*/
 
@@ -60,6 +65,9 @@ class debug{
 	 * whilst keeping the site active for everyone else
 	 */
 	public static function hideDebug(){
+		self::$sendToConsole 	= 0;
+		self::$sendToScreen 	= 0;
+		
 		self::$location         = 0;        //display location headers
 		self::$_sessionTop      = 0;        //display session data at top of page
 		self::$session          = 0;        //display session data
@@ -81,8 +89,19 @@ class debug{
 		self::$errors			= 0;
 	}
 
+	
+	public static function getConsoleData(){
+		return self::$consoleData;
+	}
+	
 	public static function getHideDebugData(){
 		return self::$hideDebugData;
+	}
+	public static function getSendToConsole(){
+		return self::$sendToConsole;
+	}
+	public static function getSendToScreen(){
+		return self::$sendToScreen;
 	}
 	public static function getLocation(){
 		return self::$location;
@@ -141,8 +160,7 @@ class debug{
     public static function getFormFiles(){
         return self::$formFiles;
     }
-    
-    
+        
 	public static function getSqlStatement(){
 		return self::$sqlStatement;
 	}
@@ -177,6 +195,101 @@ class debug{
 		return self::$errors;
 	} 
 	
+/**
+ *
+ * ppr - print out an object into a neat array list
+ * surrounded by pre tags
+ * @param $var - the object to be printed
+ * @param $group - a reference name for the object to be printed
+ */
+public static function ppr($var,$group='None',$traceData=null){
+	$showTrace = false;
+	
+	if($traceData==null){		
+		$trace = debug_backtrace();
+		//ppr($trace);		
+		if (isset($trace[2])){
+			$t = @array(
+		        'file'=>$trace[1]['file'],
+		        'line'=>$trace[1]['line'],
+		        'function'=>$trace[2]['function'], 
+				'class'=>$trace[2]['class']      
+				);
+		}
+	}
+	else $t = $traceData;
+	$item = new ConsoleItem(print_r($var,true), $group, $t);	
+	self::$consoleData[] = $item;
+	if(debug::getPprTrace()==1)$showTrace=true;
+
+	if(Debug::getSendToScreen()){
+		$i = "<pre>$group: ";
+		$i .= print_r($var,true);
+		if($showTrace==true)$i .= "ppr Trace: ".getShortDebugTrace();
+		$i .= "</pre>";	
+		echo $i;
+	}
+}
+
+public static function log($var,$group){
+	$showTrace = false;
+	$trace = debug_backtrace();
+	//ppr($trace);		
+	if (isset($trace[1]) && isset($trace[0])){
+		$t = @array(
+	        'file'=>$trace[0]['file'],
+	        'line'=>$trace[0]['line'],
+	        'function'=>$trace[0]['function'], 
+			'class'=>$trace[1]['class']      
+			);
+	}
+	$item = new ConsoleItem(print_r($var,true), $group, $t);	
+	self::$consoleData[] = $item;	
+	
+	if(Debug::getSendToScreen()){
+		$i = "<pre>$group: ";
+		$i .= print_r($var,true);
+		if($showTrace==true)$i .= "ppr Trace: ".getShortDebugTrace();
+		$i .= "</pre>";	
+		echo $i;
+	}
+}
 
 
 }
+
+class ConsoleItem{
+	private $data;
+	private $group;
+	private $trace;
+	
+	public function __construct($data,$group,array $trace){
+		$this->data = $data;
+		$this->group = $group;
+		$this->trace = arrayToObject($trace);
+	}
+	public function getData(){
+		return $this->data;
+	}
+	public function getGroup(){
+		return $this->group;
+	}
+	public function getTrace(){
+		return $this->trace;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

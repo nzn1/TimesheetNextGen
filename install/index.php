@@ -1,7 +1,5 @@
 <?php 
-	if(class_exists('Auth')){
-		gotoLocation(Config::getRelativeRoot()."/install.php?page=index");
-	}
+
 	PageElements::setHead("<title>".Config::getMainTitle()." | Install | New Install</title>");
 ?>
 <div class="pad5">

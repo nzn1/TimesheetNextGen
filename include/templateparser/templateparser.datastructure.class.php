@@ -14,44 +14,48 @@
  * permission of the author.
  ******************************************************************************/
 
+require_once('tags/filetag.class.php');
+require_once('tags/functiontag.class.php');
+require_once('tags/stringtag.class.php');
+/**
+ * @todo This class is almost completely static.  Only the constructor remains. AbstractTemplateParser also calls the constructor.
+ * Enter description here ...
+ * @author Mark
+ *
+ */
 class PageElements{
 	/**
 	 * $elements - an array of instances of the class Tag
 	 */
-	private $elements;
+	private static $elements;
 	/**
 	 * $pageAuth - the main page authorisation
 	 */
 	private static $pageAuth = array();
 	/**
-	 * $head - the <head></head> section of a site.
-	 * This is defined in most content files
-	 */
-	private static $head;
-	/**
-	 * $pageTitle - the <title></title> section of a site.
-	 * This is defined in most content files
-	 */
-	private static $pageTitle;
-	/**
-	 * $bodyOnLoad
-	 */
-	private static $bodyOnLoad;
-	/**
-	 * $response
-	 */
-	private static $response;
-	/**
 	 * $template - path of the template file
 	 */
-	private static $template;
+	private static $template;	
+	private static $theme;	
+	private static $error404;
+	private static $deniedAuth = 'include/auth/denied-auth.php';
+	private static $unknownAuth = 'include/auth/unknown-auth.php';
 
 	/**
 	 *
 	 * This datastructure contains all the data required to build the page
+	 * 
+	 * @todo - this is now basically a static class but it still needs
+	 * to be instantiated to add in a few StringTag Elements.
+	 * This needs to be thought through a little more
 	 */
-	function __construct(){
-		$this->elements = array();
+	public function __construct(){
+		self::$elements = array();
+		self::addElement(new StringTag('head'));
+		self::addElement(new FunctionTag('onload','PageElements::createBodyOnLoadOutput',FunctionTag::TYPE_STATIC));
+		self::setTemplate(Config::getDefaultTemplate());
+		self::setTheme(Config::getDefaultTheme());
+		
 	}
 	/**
 	 *
@@ -61,34 +65,70 @@ class PageElements{
 	 * @param string $name
 	 * @param string $file
 	 */
-	public function addFile($name, $file){
-		$this->elements[] = new Tag($name,$file);
-		$this->getTagByName($name)->setType('file');
+	public static function addFile($name, $file){
+		$match = false;
+		
+		//search through array to make sure that the tag doesn't already exist.
+		//if it exists then overwrite it
+		foreach (self::$elements as $key=>$obj){
+			/* @var $obj Tag */
+			if($obj->getName() == $name){
+				
+				if(!($obj instanceof FileTag)){
+					ErrorHandler::fatalError('Tag type cannot be changed to file type');
+				}
+				
+				self::$elements[$key] = new FileTag($name,$file);				
+				$match = true;
+				break;
+			}
+		}
+		if(false == $match){
+			self::$elements[] = new FileTag($name,$file);
+		}
 	}
 	/**
 	 *
 	 * The add function adds a new tag without any additional parameters
 	 * @param string $name
 	 */
-	public function add($name){
-		$this->elements[] = new Tag($name);
+	public static function add($name){
+		trigger_error('function deprecated - PageElements::add');
+		return false;
+		//self::$elements[] = new Tag($name);
 	}
 
+	public static function addElement(Tag $tag){
+		$match = false;		
+		//search through array to make sure that the tag doesn't already exist.
+		//if it exists then overwrite it
+		foreach (self::$elements as $key=>$obj){
+			/* @var $obj Tag */
+			if($obj->getName() == $tag->getName()){
+				trigger_error('this tag name ('.$tag->getName().') already exists in the datastructure');
+				$match = true;
+				break;
+			}
+		}
+		if(false == $match){
+			self::$elements[] = $tag;			
+		}
+	}
 	/**
 	 *
 	 * Retrieve the array of tags
 	 */
-	public function getTags(){
-		return $this->elements;
+	public static function getTags(){
+		return self::$elements;
 	}
 	/**
 	 *
 	 * Retrieves a specific tag from it's array key id
 	 * @param int $id
 	 */
-	public function getTagById($id){
-		if(array_key_exists($id,$this->elements)){
-			return $this->elements[$id];
+	public static function getTagById($id){
+		if(array_key_exists($id,self::$elements)){
+			return self::$elements[$id];
 		}
 	}
 	/**
@@ -98,8 +138,8 @@ class PageElements{
 	 * 
 	 * @return Tag
 	 */
-	public function getTagByName($name){
-		foreach($this->elements as $e){
+	public static function getTagByName($name){
+		foreach(self::$elements as $e){
 			/* @var $e Tag */
 			if($e->getName() == $name){
 				return $e;
@@ -144,7 +184,9 @@ class PageElements{
 	 * tag.
 	 */
 	public static function getHead(){
-		return self::$head;
+		/* @var $tag StringTag */
+		$tag = self::getTagByName('head');
+		return $tag->getString();
 	}
 	/**
 	 *
@@ -154,22 +196,29 @@ class PageElements{
 	 * @param string $s
 	 */
 	public static function setHead($s){
-
-		self::$head = $s;
+		/* @var $tag StringTag */
+		$tag = self::getTagByName('head');
+		$tag->setString($s);
 	}
 	
 	public static function appendHead($s){
 
-		self::$head .= $s;
+		//self::$head .= $s;
+		/* @var $tag StringTag */
+		$tag = self::getTagByName('head');
+		$tag->appendString($s);
 	}
-	 
+
+	
 	/**
 	 *
 	 * retrieve the contents of the Body On Load
 	 * section of the <body> tag
 	 */
 	public static function getBodyOnLoad(){
-		return self::$bodyOnLoad;
+		/* @var $tag StringTag */
+		$tag = self::getTagByName('onload');
+		return $tag->getOutput();
 	}
 	/**
 	 *
@@ -179,27 +228,30 @@ class PageElements{
 	 * @param string $s
 	 */
 	public static function setBodyOnLoad($s){
-		self::$bodyOnLoad = $s;
+		/* @var $tag StringTag */
+		$tag = self::getTagByName('onload');
+		$tag->setOutput($s);
 	}
-	/**
-	 *
-	 * Retrieve the message response to be given to the user
-	 * as a result of an action that has occurred on the site.
-	 * the response message is typically trigger by
-	 * ?respone = 104 or similar in the url
-	 */
-	public static function getResponse(){
-		return self::$response;
+
+	public static function createResponseOutput(){
+		if(isset($_GET['response'])){
+			$response = Database::getInstance()->getResponse($_GET['response']);
+			echo "<div class=\"response\"><p>$response</p></div>";
+		}
 	}
-	/**
-	 *
-	 * Set a response to be display as a result of a user action
-	 *
-	 * @param string $s
-	 */
-	public static function setResponse($s){
-		self::$response = $s;
+	public static function createBodyOnLoadOutput(){
+		if(PageElements::getBodyOnload() !=''){
+			$ret =  ' onload="'.PageElements::getBodyOnload().'"';
+		}
+		else $ret = '';
+		
+		return $ret;
+	}	
+	
+	public static function getGoogleAnalyticsCode(){
+		return Config::getGoogleAnalyticsCode();
 	}
+	
 	/**
 	 *
 	 * Retrieve the name of the template to be used by the
@@ -212,153 +264,106 @@ class PageElements{
 	 *
 	 * Specify a different template to be used for this particular page.
 	 * This will override the default template.
-	 * @param string $s - path to the template file
+	 * @param string $s - path to the theme dir
 	 */
 	public static function setTemplate($s){
 		self::$template = $s;
 	}
-
-}
-
-
-/**
- *
- * A tag is an object {head} that is contained in the template file
- * Each tag must be handled by the template parser in some way.
- * @author Mark
- *
- */
-class Tag{
+	
+	public static function getTheme(){
+		return self::$theme;
+	}
 	/**
-	 * $name - name of the tag
-	 */
-	private $name;
-	/**
-	 * $file - path to the file
-	 */
-	private $file;
-	/**
-	 * $fileError - any file related error messages
-	 * N.B. not really implemented
-	 */
-	private $fileError = '';
-	/**
-	 * $output - the html output data for the tag
-	 */
-	private $output = null;
-	/**
-	 * $type - the type of the tag
-	 * N.B. not really implemented
-	 */
-	private $type;
-
-	/**
-	 * __construct() - class constructor
 	 *
-	 * @param $name - name of the tag
-	 * @param $file - name of the file to be parsed
+	 * Specify a different theme to be used for this particular page.
+	 * This will override the default theme.
+	 * @param string $s - path to the theme dir
 	 */
-	function __construct($name,$file=null){
-		$this->name = $name;
-		$this->file = $file;
+	public static function setTheme($s){
+		self::$theme = $s;
+	}	
+	
+	
+	public static function getTemplatePath(){
+		$path = 'themes/'.self::$theme.'/'.self::$template;
+		return $path;
+	}
+	
+	/**
+	 * 
+	 * Get the theme path from the relativeRoot of the site.
+	 * i.e. /core/themes/voltnet-default
+	 * @return string
+	 */
+	public static function getRelThemePath(){
+		$path = Config::getRelativeRoot().'/themes/'.self::$theme;
+		return $path;
+	}
+	
+	
+	public static function getError404(){	
+		return self::$error404;
+	}
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $file
+	 * @param boolean $relToTheme - file relative to theme dir or not
+	 */
+	public static function setError404($file,$relToTheme=true){
+		$s = self::checkFile($file, $relToTheme);
+		if(-1 != $s){
+			self::$error404 = $s;
+		}
 	}
 
+	public static function getDeniedAuth(){	
+		return self::$deniedAuth;
+	}
 	/**
-	 * parseFile() - parse the file stored in $this->file and append the output
-	 * to the output variable;
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $file
+	 * @param boolean $relToTheme - file relative to theme dir or not
 	 */
-	public function parseFile(){
-		
-		if(file_exists($this->file)){
-			ob_start();
-			include($this->file);
-			$content=ob_get_contents();
-			ob_end_clean();
-			//we must always append the output as we can add stuff in beforehand
-			//i.e. templateparser.php stuff gets added into the debugInfoTop tag
-			$this->appendOutput($content);
+	public static function setDeniedAuth($file,$relToTheme=true){
+		$s = self::checkFile($file, $relToTheme);
+		if(-1 != $s){
+			self::$deniedAuth = $s;
+		}
+	}
+
+	public static function getunknownAuth(){	
+		return self::$unknownAuth;
+	}
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $file
+	 * @param boolean $relToTheme - file relative to theme dir or not
+	 */
+	public static function setunknownAuth($file,$relToTheme=true){
+		$s = self::checkFile($file, $relToTheme);
+		if(-1 != $s){
+			self::$unknownAuth = $s;
+		}
+	}
+
+	
+	private static function checkFile($file,$relToTheme){
+	if($relToTheme){
+			$path = 'themes/'.self::$theme.'/'.$file;
 		}
 		else{
-			//we must always append the output as we can add stuff in beforehand
-			//i.e. templateparser.php stuff gets added into the debugInfoTop tag
-			$this->appendOutput($this->file);
+			$path = $file;
+		}
+		if(file_exists($path)){
+			return $path;
+		}
+		else{
+			trigger_error('Could not set error 404 page as it does not exist');
+			return -1;
 		}
 	}
-
-	/**
-	 * getName() - get the name of the tag
-	 */
-	public function getName(){
-		return $this->name;
-	}
-	/**
-	 * getFile() - get the filename
-	 */
-	public function getFile(){
-		return $this->file;
-	}
-	/**
-	 * setFile() - set the filename
-	 */
-	public function setFile($s){
-		$this->file = $s;
-	}
-	/**
-	 * getFileError() - the any file related error messages.
-	 * N.B. not really implemented
-	 */
-	public function getFileError(){
-		return $this->fileError;
-	}
-	/**
-	 * setFileError() - record any error messages
-	 * N.B. not really implemented
-	 *
-	 *@param $s - string containing the error msg
-	 */
-	public function setFileError($s){
-		$this->fileError = $s;
-	}
-	/**
-	 * getOutput() - get the output data for this tag
-	 */
-	public function getOutput(){
-		return $this->output;
-	}
-	/**
-	 * setOutput() - set the output data for this tag
-	 *
-	 * @param - $i - string containing the html to be output
-	 * for this tag
-	 */
-	public function setOutput($i){
-		$this->output = $i;
-	}
-	/**
-	 * appendOutput() - append output data to the output instance variable
-	 *
-	 * @param $i - string to be appended to the output variable
-	 */
-	public function appendOutput($i){
-		$this->output .= $i;
-	}
-	/**
-	 * getType() - get the type of tag
-	 * N.B. not really implemented yet
-	 */
-	public function getType(){
-		return $this->type;
-	}
-	/**
-	 * setType() - set the type of tag
-	 * N.B. not really implemented yet
-	 *
-	 * @param $s - ....
-	 */
-	public function setType($s){
-		$this->type = $s;
-	}
-
-
 }
 ?>

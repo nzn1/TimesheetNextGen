@@ -50,8 +50,10 @@ function pre_print_r($var,$info = '',$flag=false,$showTrace=false){
 	if($showTrace==true)$i .= "ppr Trace: ".getShortDebugTrace();
 	$i .= "</pre>";
 
-	if($flag==true)return $i;
-	else echo $i;
+	if(Debug::getSendToScreen()){
+		if($flag==true)return $i;
+		else echo $i;
+	}
 }
 
 /**
@@ -124,7 +126,20 @@ function space_encode($var){
  *
  */
 function recursive_mysql_real_escape_string($data){
-	if(is_array($data)){
+	if(!Database::getInstance()->isConnected()){
+		throw new Exception('Database is not connected');
+	}
+	if(is_object($data)){
+		if($data instanceof stdClass){
+			$arr = objectToArray($data);
+			$arr = array_map('recursive_mysql_real_escape_string', $arr);
+			$data = arrayToObject($arr);
+		}
+		else{
+			trigger_error('unknown object type. Don\'t know how to handle it');
+		}
+	}
+	else if(is_array($data)){
 		$data = array_map('recursive_mysql_real_escape_string', $data);
 	}
 	else{
@@ -147,7 +162,7 @@ function is_assoc($var){
 /**
  * generateRandID - Generates a string made up of randomized
  * letters (lower and upper case) and digits and returns
- * the md5 hash of it to be used as a userid.
+ * the md5 hash of it.
  */
 function generateRandID(){
 	return md5(generateRandStr(16));
@@ -194,7 +209,62 @@ function encodeEmail($e){
 	return $output;
 }
 
-function gotoLocation($url){
+/**
+ * http://www.if-not-true-then-false.com/2009/php-tip-convert-stdclass-object-to-multidimensional-array-and-convert-multidimensional-array-to-stdclass-object/
+ * Enter description here ...
+ * @param unknown_type $d
+ */
+function objectToArray($d) {
+		if (is_object($d)) {
+			// Gets the properties of the given object
+			// with get_object_vars function
+			$d = get_object_vars($d);
+		}
+ 
+		if (is_array($d)) {
+			/*
+			* Return array converted to object
+			* Using __FUNCTION__ (Magic constant)
+			* for recursive call
+			*/
+			return array_map(__FUNCTION__, $d);
+		}
+		else {
+			// Return array
+			return $d;
+		}
+	}
+
+	
+	/**
+	 * http://www.if-not-true-then-false.com/2009/php-tip-convert-stdclass-object-to-multidimensional-array-and-convert-multidimensional-array-to-stdclass-object/
+	 * Enter description here ...
+	 * @param unknown_type $d
+	 */
+	function arrayToObject($d) {
+		if (is_array($d)) {
+			/*
+			* Return array converted to object
+			* Using __FUNCTION__ (Magic constant)
+			* for recursive call
+			*/
+			return (object) array_map(__FUNCTION__, $d);
+		}
+		else {
+			// Return object
+			return $d;
+		}
+	}
+	
+	/**
+	 * 
+	 * This function is used instead of calling the header('Location:')
+	 * function.  Code execution finishes when this is called.
+	 * it also provides debug functionality for when the Debug::getLocation
+	 * variable is set.
+	 * @param string $url
+	 */
+	function gotoLocation($url){
 	if($url == ''){
 		$url = '/';
 	}
@@ -202,5 +272,14 @@ function gotoLocation($url){
 	if(debug::getLocation()==1)echo "Location: <a href=\"".$url."\">".$url."</a>";
 	else header("Location:".$url);
 	exit;
-}
+	}
+	
+	
+	function relRoot(){
+		echo Config::getRelativeRoot();
+		
+	}
+	
+
+
 ?>
