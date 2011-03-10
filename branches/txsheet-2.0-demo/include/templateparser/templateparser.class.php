@@ -14,7 +14,7 @@
  * permission of the author.
  ******************************************************************************/
 
-include('abstract-template-parser.class.php');
+require_once('abstract.templateparser.class.php');
 class TemplateParser extends AbstractTemplateParser{
 
 	public function __construct(){
@@ -50,43 +50,39 @@ class TemplateParser extends AbstractTemplateParser{
 		}
 		
 		//check that the user is authorised
-		$this->checkPageAuth();
+		if(!Site::isInstaller())$this->checkPageAuth();
 
 		//parse the template file
-		if(file_exists($this->pageElements->getTemplate())){
-			$this->output = $this->parseFile($this->pageElements->getTemplate());
+		if(file_exists($this->pageElements->getTemplatePath())){
+			$this->output = $this->parseFile($this->pageElements->getTemplatePath());
 		}
 		else {
-			ErrorHandler::fatalError('Error:Template file '.$this->pageElements->getTemplate().' not found');
+			ErrorHandler::fatalError('Error:Template file '.$this->pageElements->getTemplatePath().' not found');
 		}
 		
 		//ppr($this->pageElements);
 
-		$this->pageElements->getTagByName('debugInfoTop')->appendOutput(ob_get_contents());
+		$this->pageElements->getTagByName('debugInfoTop')->appendOutput(ob_get_contents());		
+		ob_end_clean();
 		
 		
 		ob_end_clean();
 		//die(ppr($this->pageElements->getTagByName('debugInfoTop')));
 		ob_start();
-		$var= null;
+		$var = null;
 		/*content pane is now populated. Can now safely continue onto any other remaining tags*/
-		foreach($this->pageElements->getTags() as $t){
-			/* @var $t Tag */
-			
-			//Debug::ppr($t->getName(),'parse');
-			if($t->getName() != 'content')$t->ParseFile();
-			$this->output=str_replace('{'.$t->getName().'}',$t->getOutput(),$this->output);
-		}
-
 		//build the page
 		$this->buildPage();
 		
-		$var .= ob_get_contents();
+		$var = ob_get_contents();
 		ob_end_clean();
 		if(!($var=='' || $var==null)){
 			$var ="<div class=\"placeholders\">".$var."</div><!--close placeholders-->";
 		}
-		$this->output=str_replace('{templateParserDebug}',$var,$this->output);
+		$this->output=str_replace('{templateParserDebug}',$var,$this->output,$count);
+		if($count == 0){
+			trigger_error('The tag \'{templateParserDebug}\' could not be found in the template');
+		}
 
 	}	//end parseTemplate
 
@@ -95,23 +91,44 @@ class TemplateParser extends AbstractTemplateParser{
 	 *
 	 */
 	protected function buildPage(){
-		$this->output=str_replace('{content}',$this->pageElements->getTagByName('content')->getOutput(),$this->output);
-
-		if($this->pageElements->getBodyOnload() !=''){
-			$this->pageElements->setBodyOnload(" onload=\"".$this->pageElements->getBodyOnload()."\"");
+		//ppr($this->pageElements->getTags());
+		
+		/**
+		 * @todo Define a method of priority for tags
+		 * Certain tags need to be complete before others.
+		 * The priority at the moment is:
+		 * 1. FileTag
+		 * 2. FunctionTag
+		 * 3. StringTag
+		 * 
+		 * */ 
+		/*Parse the FileTag Objects*/
+		foreach($this->pageElements->getTags() as $t){						
+			if($t instanceof FileTag){
+				/* @var $t FileTag */
+				//Debug::ppr($t->getName(),'parse');
+				if($t->getName() != 'content')$t->parse();
+				$this->output=str_replace('{'.$t->getName().'}',$t->getOutput(),$this->output);
+			}
 		}
-		$this->output=str_replace('{onload}',$this->pageElements->getBodyOnload(),$this->output);
-
-		if($this->pageElements->getHead()==''){
-			$this->pageElements->setHead("<title>".Config::getMainTitle()."</title>");
+		
+		/*Parse the FunctionTag Objects*/
+		foreach($this->pageElements->getTags() as $t){						
+			if($t instanceof FunctionTag){
+				/* @var $t FunctionTag */
+				$t->parse();				
+				$this->output=str_replace('{'.$t->getName().'}',$t->getOutput(),$this->output);
+			}
 		}
-		$this->output=str_replace('{head}',$this->pageElements->getHead(),$this->output);
-
-		if(isset($_GET['response'])){
-			$response = Site::getDatabase()->getResponse($_GET['response']);
-			$this->pageElements->setResponse("<div class=\"response\"><p>$response</p></div>");
+		/*Parse the StringTag Objects*/
+		foreach($this->pageElements->getTags() as $t){					
+			if($t instanceof StringTag){
+				/* @var $t StringTag */
+				//ppr($t);
+				$t->parse();				
+				$this->output=str_replace('{'.$t->getName().'}',$t->getOutput(),$this->output);
+			}
 		}
-		$this->output=str_replace('{response}',$this->pageElements->getResponse(),$this->output);
 	}
 
 	/**
@@ -120,7 +137,6 @@ class TemplateParser extends AbstractTemplateParser{
 	 * an error page if required.
 	 */
 	protected function checkPageAuth(){
-	   
 		$auth = $this->pageElements->getPageAuth();
 		if($auth == null){
 			$msg = "An error has occured.<br />The page authorisation has "
@@ -134,16 +150,60 @@ class TemplateParser extends AbstractTemplateParser{
 			ErrorHandler::fatalError($msg,'Page Auth Error','Page Auth Error');
 			exit;
 		}
-		$state = Auth::requestAuth($auth->authGroup,$auth->authName);		
+		
+		$state = Auth::requestAuth($auth->authGroup,$auth->authName);
 		if($state == Auth::ACCESS_GRANTED){
 			return;
 		}
-		else{    
-      gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=" . Common::get_acl_level($auth->authGroup));
-    }
-    
-    
-    return;
+		
+		else if($state == Auth::ACCESS_DENIED || (!Config::getShowAuthUnknownPage() && $state == Auth::ACCESS_UNKNOWN)){
+			//if user is logged in then show error page
+			if(Site::getSession()->isLoggedIn()){
+				if(file_exists(PageElements::getDeniedAuth())){
+					$this->pageElements->getTagByName('content')->setOutput($this->parseFile(PageElements::getDeniedAuth()));
+				}
+				else{
+					$msg = "No Authorisation & missing Auth Error Page";
+					ErrorHandler::fatalError($msg);
+				}
+			}
+			//user isn't logged in so redirect to login page
+			else {
+        	$url = Config::getRelativeRoot()."/login?redir=".urlencode($_SERVER['REQUEST_URI']);
+			  gotoLocation($url);
+			  exit();
+			}
+			
+		}
+		else if($state == Auth::ACCESS_UNKNOWN){
+			//echo 'access unknown';
+			//ppr(Config::getErrorNoAuth());
+			if(Site::getSession()->isLoggedIn()){
+				if(file_exists(PageElements::getUnknownAuth())){
+				//$tag = $this->pageElements->getTagByName('content');
+				/* @var $tag Tag */
+				//$tag->setFile(Config::getErrorNoAuth());
+				//$tag->parseFile();
+				$this->pageElements->getTagByName('content')->setOutput($this->parseFile(PageElements::getUnknownAuth()));
+
+				}
+				else{
+					$msg = "No Authorisation & missing no-auth Error Page";
+					ErrorHandler::fatalError($msg);
+				}	
+			}
+			//user isn't logged in so redirect to login page
+			else {
+        		$url = Config::getRelativeRoot()."/login?redir=".urlencode($_SERVER['REQUEST_URI']);
+			 	gotoLocation($url);
+			 	exit();
+			}		
+		}
+		else{
+			$msg = 'authorisation error. Contact Webmaster';
+			ErrorHandler::fatalError($msg);
+		}
+		return $state;
 
 	}
 	

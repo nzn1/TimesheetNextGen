@@ -9,9 +9,9 @@
 <meta name="distribution" content="global" />
 <meta name="revisit-after" content="5 days" />
 <meta name="description" content="Timesheet Next Gen" />
-<link rel="stylesheet" href="<?php echo Config::getRelativeRoot();?>/css/timesheet.css" type="text/css" />
-<link rel="stylesheet" href="<?php echo Config::getRelativeRoot();?>/themes/txsheet/styles/main.css" type="text/css" />
-<link rel="shortcut icon" href="<?php echo Config::getRelativeRoot();?>/favicon.ico" />
+<link rel="stylesheet" href="<?php echo PageElements::getRelThemePath();?>/styles/timesheet.css" type="text/css" />
+<link rel="stylesheet" href="<?php echo PageElements::getRelThemePath();?>/styles/main.css" type="text/css" />
+<link rel="shortcut icon" href="<?php echo PageElements::getRelThemePath();?>/images/favicon.ico" />
 
 {head}
 <style type="text/css">
@@ -52,6 +52,7 @@ html {
 <!-- this is the old body tag from body.inc  -->
 <!-- <body style="width:100%; height:100%;"link="#004E8A" vlink="#171A42"> -->
 {debugInfoTop}
+{templateParserDebug}
 <div id="wrap" style="">
 <div class="headerwrap" style="background:#222;">
 	<h1 style="color:#fff;">TimesheetNG <?php echo Config::getVersion();?> OO Demo</h1>

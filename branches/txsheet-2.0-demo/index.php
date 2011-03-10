@@ -20,7 +20,8 @@ if (defined('SESSION_INCLUDED')){
 }
 
 require_once('include/site/site.class.php');
-new Site();
+$site = new Site();
+$site->load();
 
 
 ?>

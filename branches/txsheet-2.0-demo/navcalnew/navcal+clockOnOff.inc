@@ -31,7 +31,7 @@ include("navcalnew/common.inc");
 			<td width="10">&nbsp;
 			</td>
 			<td align="left" valign="middle" class="outer_table_heading">
-				<?php include ("clockOnOff.inc"); ?>
+				<?php include ("include/tsx/clockOnOff.inc"); ?>
 			</td>
 			<td width="30%">&nbsp;
 			</td>
