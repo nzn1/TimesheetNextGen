@@ -29,7 +29,7 @@ parent::$webmasterEmail = 'myaddress@tnsg.net';
 /**
  * for now, get the info from the database_credentials.inc 
  */  
-include("database_credentials.inc");
+require("database_credentials.inc");
 parent::$dbServer = $DATABASE_HOST;
 parent::$dbUser = $DATABASE_USER;
 parent::$dbPass = $DATABASE_PASS;

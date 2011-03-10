@@ -433,9 +433,11 @@ class ErrorHandler{
 	 * @param stdClass $data
 	 */
 	private static function logErrorToDb(stdClass $data){
-		if(!Database::getInstance()->isConnected())return;
 		/*not yet implemented properly*/
 		return;
+		if(!class_exists('Database'))return;
+		if(!Database::getInstance()->isConnected())return;
+		
 		
 		$data->trace = serialize($data->trace);
 		
