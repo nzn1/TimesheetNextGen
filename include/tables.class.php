@@ -33,7 +33,11 @@ private static $ABSENCE_TABLE;
 private static $ALLOWANCE_TABLE;
 
     public static function initialise(){
-      require("table_names.inc");
+      if(!file_exists('table_names.inc')){
+      	trigger_error('table_names.inc could not be found');
+      	return;	
+      }
+    	require("table_names.inc");
       self::$ASSIGNMENTS_TABLE = $ASSIGNMENTS_TABLE;
       self::$CLIENT_TABLE = $CLIENT_TABLE;
       self::$CONFIG_TABLE = $CONFIG_TABLE;

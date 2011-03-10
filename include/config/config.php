@@ -29,12 +29,17 @@ parent::$webmasterEmail = 'myaddress@tnsg.net';
 /**
  * for now, get the info from the database_credentials.inc 
  */  
-require("database_credentials.inc");
-parent::$dbServer = $DATABASE_HOST;
-parent::$dbUser = $DATABASE_USER;
-parent::$dbPass = $DATABASE_PASS;
-parent::$dbName = $DATABASE_DB;	
-parent::$dbPasswordFunction = $DATABASE_PASSWORD_FUNCTION;
+if(file_exists("database_credentials.inc")){
+	include("database_credentials.inc");
+	parent::$dbServer = $DATABASE_HOST;
+	parent::$dbUser = $DATABASE_USER;
+	parent::$dbPass = $DATABASE_PASS;
+	parent::$dbName = $DATABASE_DB;	
+	parent::$dbPasswordFunction = $DATABASE_PASSWORD_FUNCTION;
+}
+else{
+	trigger_error('database_credentials.inc could not be found');
+}
 
 //parent::$sessionName = 'a-session-name';
 
