@@ -1,11 +1,11 @@
 <?php
 /**
  * *****************************************************************************
- * Name:                    session.php
- * Recommended Location:    /include
- * Last Updated:            July 2010
- * Author:                  Mark Wrightson
- * Contact:                 mark@voltnet.co.uk
+ * Name:			session.php
+ * Recommended Location:	/include
+ * Last Updated:		July 2010
+ * Author:			Mark Wrightson
+ * Contact:			mark@voltnet.co.uk
  *
  * Description:
  * The Session class is meant to simplify the task of keeping
@@ -19,23 +19,24 @@
 class Session
 {
 
-	private $time;                     //Time user was last active (page loaded)
-	private $loggedIn;                //True if user is logged in, false otherwise
+	private $time;			 //Time user was last active (page loaded)
+	private $loggedIn;		//True if user is logged in, false otherwise
 
 	/* Class constructor */
-	public function Session(){
+	public function Session() {
 		if (!defined("SESSION_INCLUDED")) {
 			define("SESSION_INCLUDED", 1);
 		}
 	}
-	
-	public function getTime(){
+
+	public function getTime() {
 		return $this->time;
 	}
 
-  	public function isLoggedIn(){
+	public function isLoggedIn() {
 		return $this->loggedIn;
 	}
+
 	/**
 	 * init
 	 *
@@ -50,7 +51,7 @@ class Session
 	 * accordingly. Also takes advantage of this page load to
 	 * update the active visitors tables.
 	 */
-	function startSession(){
+	function startSession() {
 
 //		session_name(Config::getSessionName());
 
@@ -73,15 +74,16 @@ class Session
 
 		$this->time = time();
 	}
-	 
-	
+
+
 	/**
-	 * 
+	 *
 	 * Not Yet Implemented
 	 */
-	public function isAdmin(){
+	public function isAdmin() {
 		return false;
 	}
+
 	/**
 	 * fatalError() - when something serious goes wrong.  This function is called.
 	 * It displays a boring page stating the error that occured.
@@ -90,8 +92,8 @@ class Session
 	 * @param $title - the title of the page
 	 * @param $heading - the level 1 heading of the error page
 	 */
-	
-	public function fatalError($msg,$title='Fatal Error',$heading='Error'){
+
+	public function fatalError($msg,$title='Fatal Error',$heading='Error') {
 		ErrorHandler::fatalError($msg,$title,$heading);
 		exit;
 	}

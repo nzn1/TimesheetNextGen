@@ -55,26 +55,6 @@ abstract class JLoader
 
 			$rs = isset($classes[strtolower($className)]);
 
-			/*} else {
-				// If it is not in the joomla namespace then we have no idea if
-				// it uses our pattern for class names/files so just include
-				// if the file exists or set it to false if not
-
-				$filename = $base.DS.$path.'.php';
-				if (is_file($filename)) {
-					$rs   = (bool) include_once $filename;
-				} else {
-					// if the file doesn't exist fail
-					$rs   = false;
-
-					// note: JLoader::register does an is_file check itself so we don't need it above, we do it here because we
-					// try to load the file directly and it may not exist which could cause php to throw up nasty warning messages
-					// at us so we set it to false here and hope that if the programmer is good enough they'll check the return value
-					// instead of hoping it'll work. remmeber include only fires a warning, so $rs was going to be false with a nasty
-					// warning message
-				}
-			}*/
-
 			JLoader::$paths[$keyPath] = $rs;
 		}
 
@@ -103,7 +83,6 @@ abstract class JLoader
 	 *
 	 * @param   string	The class that will be loaded
 	 * @return  boolean True on success
-	 * @since   1.5
 	 */
 	public static function load($class) {
 		$class = strtolower($class); //force to lower case

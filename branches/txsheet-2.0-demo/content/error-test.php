@@ -25,8 +25,8 @@ var_dump($c); // NULL
 // this is a critical error, log of zero or negative number is undefined
 echo "----<br />vector d - fatal error<br />";
 /* log(x) for x <= 0 is undefined, you used: scale = $scale" */
-$d = scale_by_log($a, -2.5)
-var_dump($d); // Never reached
+//$d = scale_by_log($a, -2.5);
+//var_dump($d); // Never reached
 
 
 
