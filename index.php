@@ -19,6 +19,8 @@ if (defined('SESSION_INCLUDED')){
   <p>Return to <a href=\"".Config::getRelativeRoot()."/\">Home Page</a></p>");
 }
 
+define('JPATH_BASE', dirname(__FILE__));
+
 require_once('include/site/site.class.php');
 $site = new Site();
 $site->load();

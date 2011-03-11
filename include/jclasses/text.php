@@ -190,6 +190,11 @@ class JText
 		return '';
 	}
 
+	public static function ppr($string, $n) {
+		$lang = JFactory::getLanguage();
+		ppr($lang);
+	}
+
 	/**
 	 * Translate a string into the current language and stores it in the JavaScript language store.
 	 *

@@ -1,11 +1,11 @@
 <?
 /**
  ******************************************************************************
- * Name:                    common_functions.php
- * Recommended Location:    /include
- * Last Updated:            August 2010
- * Author:                  Mark Wrightson
- * Contact:                 mark@voltnet.co.uk
+ * Name:			common_functions.php
+ * Recommended Location:	/include
+ * Last Updated:		August 2010
+ * Author:			Mark Wrightson
+ * Contact:			mark@voltnet.co.uk
  *
  * Description:
  * This is a set of commonly used functions throughout the web framework
@@ -43,16 +43,20 @@ function ppr($var,$info = '',$flag=false,$showTrace=false){
  */
 
 function pre_print_r($var,$info = '',$flag=false,$showTrace=false){
-	if(debug::getPprTrace()==1)$showTrace=true;
+	if(debug::getPprTrace()==1)
+		$showTrace=true;
 	$i = null;
 	$i .= "<pre>$info: ";
 	$i .= print_r($var,true);
-	if($showTrace==true)$i .= "ppr Trace: ".getShortDebugTrace();
+	if($showTrace==true)
+		$i .= "ppr Trace: ".getShortDebugTrace();
 	$i .= "</pre>";
 
 	if(Debug::getSendToScreen()){
-		if($flag==true)return $i;
-		else echo $i;
+		if($flag==true)
+			return $i;
+		else 
+			echo $i;
 	}
 }
 
@@ -69,25 +73,23 @@ function getShortDebugTrace($level = null){
 
 		if (isset($traces[2])){
 			$arr = array(
-            'file'=>$traces[2]['file'],
-            'line'=>$traces[2]['line'],
-            'function'=>$traces[2]['function']        
+				'file'=>$traces[2]['file'],
+				'line'=>$traces[2]['line'],
+				'function'=>$traces[2]['function']
 			);
 			$output = print_r($arr,true);
 		}
 		return $output;
-	}
-
-	else{
+	} else {
 		$output = null;
 		$traces = debug_backtrace();
 
 		for ($i=0;$i<=$level;$i++){
 			if (isset($traces[$i])){
 				$arr = array(
-              'file'=>$traces[$i]['file'],
-              'line'=>$traces[$i]['line'],
-              'function'=>$traces[$i]['function']        
+					'file'=>$traces[$i]['file'],
+					'line'=>$traces[$i]['line'],
+					'function'=>$traces[$i]['function']
 				);
 				$output .= ppr($arr,$i,true);
 			}
@@ -113,7 +115,7 @@ function getmicrotime(){
  */
 
 function space_encode($var){
-	$var = str_replace  (  ' '  ,  '%20'  ,  $var );
+	$var = str_replace( ' ' , '%20' , $var );
 	return $var;
 }
 
@@ -134,15 +136,12 @@ function recursive_mysql_real_escape_string($data){
 			$arr = objectToArray($data);
 			$arr = array_map('recursive_mysql_real_escape_string', $arr);
 			$data = arrayToObject($arr);
-		}
-		else{
+		} else{
 			trigger_error('unknown object type. Don\'t know how to handle it');
 		}
-	}
-	else if(is_array($data)){
+	} else if(is_array($data)){
 		$data = array_map('recursive_mysql_real_escape_string', $data);
-	}
-	else{
+	} else{
 		$data = mysql_real_escape_string($data);
 	}
 	return $data;
@@ -167,7 +166,7 @@ function is_assoc($var){
 function generateRandID(){
 	return md5(generateRandStr(16));
 }
- 
+
 /**
  * generateRandStr - Generates a string made up of randomized
  * letters (lower and upper case) and digits, the length
@@ -189,7 +188,7 @@ function generateRandStr($length){
 	}
 	return $randstr;
 }
- 
+
 /**
  * if get_magic_quotes_gpc() is on then all cookie, post and get data will contain
  * characters that have been escaped by a backslash.  This function will recursively
@@ -197,7 +196,7 @@ function generateRandStr($length){
  *
  * the string or array to remove the slashes
  */
- 
+
 function stripslashes_deep($value){
 	$value = is_array($value) ? array_map('stripslashes_deep', $value):stripslashes($value);
 	return $value;
@@ -205,7 +204,9 @@ function stripslashes_deep($value){
 
 function encodeEmail($e){
 	$output = null;
-	for ($i = 0; $i < strlen($e); $i++) { $output .= '&#'.ord($e[$i]).';'; }
+	for ($i = 0; $i < strlen($e); $i++) { 
+		$output .= '&#'.ord($e[$i]).';'; 
+	}
 	return $output;
 }
 
@@ -215,71 +216,66 @@ function encodeEmail($e){
  * @param unknown_type $d
  */
 function objectToArray($d) {
-		if (is_object($d)) {
-			// Gets the properties of the given object
-			// with get_object_vars function
-			$d = get_object_vars($d);
-		}
- 
-		if (is_array($d)) {
-			/*
-			* Return array converted to object
-			* Using __FUNCTION__ (Magic constant)
-			* for recursive call
-			*/
-			return array_map(__FUNCTION__, $d);
-		}
-		else {
-			// Return array
-			return $d;
-		}
+	if (is_object($d)) {
+		// Gets the properties of the given object
+		// with get_object_vars function
+		$d = get_object_vars($d);
 	}
 
-	
-	/**
-	 * http://www.if-not-true-then-false.com/2009/php-tip-convert-stdclass-object-to-multidimensional-array-and-convert-multidimensional-array-to-stdclass-object/
-	 * Enter description here ...
-	 * @param unknown_type $d
-	 */
-	function arrayToObject($d) {
-		if (is_array($d)) {
-			/*
-			* Return array converted to object
-			* Using __FUNCTION__ (Magic constant)
-			* for recursive call
-			*/
-			return (object) array_map(__FUNCTION__, $d);
-		}
-		else {
-			// Return object
-			return $d;
-		}
+	if (is_array($d)) {
+		/*
+		* Return array converted to object
+		* Using __FUNCTION__ (Magic constant)
+		* for recursive call
+		*/
+		return array_map(__FUNCTION__, $d);
+	} else {
+		// Return array
+		return $d;
 	}
-	
-	/**
-	 * 
-	 * This function is used instead of calling the header('Location:')
-	 * function.  Code execution finishes when this is called.
-	 * it also provides debug functionality for when the Debug::getLocation
-	 * variable is set.
-	 * @param string $url
-	 */
-	function gotoLocation($url){
+}
+
+/**
+ * http://www.if-not-true-then-false.com/2009/php-tip-convert-stdclass-object-to-multidimensional-array-and-convert-multidimensional-array-to-stdclass-object/
+ * Enter description here ...
+ * @param unknown_type $d
+ */
+function arrayToObject($d) {
+	if (is_array($d)) {
+		/*
+		* Return array converted to object
+		* Using __FUNCTION__ (Magic constant)
+		* for recursive call
+		*/
+		return (object) array_map(__FUNCTION__, $d);
+	} else {
+		// Return object
+		return $d;
+	}
+}
+
+/**
+ *
+ * This function is used instead of calling the header('Location:')
+ * function.  Code execution finishes when this is called.
+ * it also provides debug functionality for when the Debug::getLocation
+ * variable is set.
+ * @param string $url
+ */
+function gotoLocation($url){
 	if($url == ''){
 		$url = '/';
 	}
-	
-	if(debug::getLocation()==1)echo "Location: <a href=\"".$url."\">".$url."</a>";
-	else header("Location:".$url);
-	exit;
-	}
-	
-	
-	function relRoot(){
-		echo Config::getRelativeRoot();
-		
-	}
-	
 
+	if(debug::getLocation()==1)
+		echo "Location: <a href=\"".$url."\">".$url."</a>";
+	else 
+		header("Location:".$url);
+	exit;
+}
+
+function relRoot(){
+	echo Config::getRelativeRoot();
+}
 
 ?>
