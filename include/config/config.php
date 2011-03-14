@@ -10,36 +10,30 @@
 */
 
 
-parent::$webmasterEmail = 'myaddress@tnsg.net';
+parent::$webmasterEmail = 'support@prioritytech.com';
 
 //parent::$defaultTemplate = 'themes/txsheet/template.php';
 
 //parent::$mainTitle = 'TimesheetNG';
 
 /**
- * Configure the database credentials.
+ * I think this is the best way to configure the database credentials.
+ * But for now, I will allow the original database_credentials.inc to function
  */  
 
-//parent::$dbServer 		= "localhost";
-//parent::$dbUser 		= "username";
-//parent::$dbPass 		= "password";
-//parent::$dbName 		= "my_tx_db";
-//parent::$dbPasswordFunction	= "PASSWORD";
+parent::$dbServer		= "localhost";
+parent::$dbUser 		= "tsadmin";
+parent::$dbPass			= "d3vTim3";
+parent::$dbName			= "ts20";
+parent::$dbPasswordFunction	= "OLD_PASSWORD";
 
-/**
- * for now, get the info from the database_credentials.inc 
- */  
-if(file_exists("database_credentials.inc")){
-	include("database_credentials.inc");
-	parent::$dbServer = $DATABASE_HOST;
-	parent::$dbUser = $DATABASE_USER;
-	parent::$dbPass = $DATABASE_PASS;
-	parent::$dbName = $DATABASE_DB;	
-	parent::$dbPasswordFunction = $DATABASE_PASSWORD_FUNCTION;
-}
-else{
-	trigger_error('database_credentials.inc could not be found');
-}
+/*
+// include("database_credentials.inc");
+// parent::$dbServer = $DATABASE_HOST;
+// parent::$dbUser = $DATABASE_USER;
+// parent::$dbPass = $DATABASE_PASS;
+// parent::$dbName = $DATABASE_DB;	
+*/
 
 //parent::$sessionName = 'a-session-name';
 
@@ -47,4 +41,5 @@ else{
 //parent::$relativeRoot = '/tx';
 //parent::$documentRoot = 'c:/htdocs/tx';
 //parent::$absoluteRoot = 'http://localhost/tx';
+
 ?>

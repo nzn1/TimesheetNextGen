@@ -1,12 +1,7 @@
 <?php
-die('NOT CONVERTED TO OO YET');
 if(!class_exists('Site'))die('Restricted Access');
 
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-
-//continue session
-session_start();
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 
 //get the logged in user
 $loggedInUser = $_SESSION['loggedInUser'];
@@ -15,24 +10,9 @@ $loggedInUser = $_SESSION['loggedInUser'];
 $errormsg = stripslashes($_REQUEST['errormsg']);
 
 //define the command menu
-$commandMenu->add(new TextCommand("Back", true, "javascript:back()"));
+//$commandMenu->add(new TextCommand("Back", true, "javascript:back()"));
 
-?>
-<HTML>
-	<head>
-	<title>Error, <?php echo $loggedInUser; ?></title>
-<?php
-include ("header.inc");
-?>
-</head>
-<body <?php include ("body.inc"); ?> >
-<?php
-include ("banner.inc");
-include ("error.inc");
-include ("footer.inc");
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
+echo '<br><br><a href="javascript:history.back()"><h2>&nbsp;&nbsp;<font color="red">'.$errormsg.'</font></h2><br>';
+echo '<font color="red">&nbsp;&nbsp;&nbsp;&nbsp;'.JText::_('CLICK_TO_GO_BACK').'</font></a><br>&nbsp;';
+
 ?>

@@ -1259,7 +1259,7 @@ class Common{
 
 
 	public static function errorPage($message, $from_popup = false) {
-		$targetWindowLocation = Config::getRelativeRoot()."error.php?errormsg=$message";
+		$targetWindowLocation = Config::getRelativeRoot().DS."error.php?errormsg=$message";
 
 		if (!$from_popup)
 			gotoLocation($targetWindowLocation);
