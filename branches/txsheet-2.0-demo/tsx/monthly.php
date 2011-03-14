@@ -1,5 +1,5 @@
 <?php
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
@@ -13,15 +13,15 @@ $mc = new MonthlyClass();
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
-	errorPage("Could not determine the logged in user");
+	Common::errorPage("Could not determine the logged in user");
 
 
 // Check project assignment.
 if (gbl::getProjId() != 0) { // id 0 means 'All Projects'
 	list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getAssignmentsTable()." WHERE proj_id='".gbl::getProjId()."' AND username='".gbl::getContextUser()."'");
 	if ($num < 1)
-		errorPage("You cannot access this project, because you are not assigned to it.");
-} else 
+		Common::errorPage(JText::sprintf('NOT_ASSIGNED_TO_IT',JText::_('PROJECT')));
+} else
 	gbl::setTaskId(0);
 
 //get the context date
@@ -55,7 +55,7 @@ $CfgTimeFormat = Common::getTimeFormat();
 
 $post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId();       //this isn't used anywhere
 
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser()."</title>");
 
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
@@ -72,29 +72,21 @@ if (isset($popup))
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="left" nowrap="nowrap">
-			Client:
+			<?php echo ucfirst(JText::_('CLIENT')).':'; ?>
 		</td>
 		<td width="25%">
-			<?php 
-				if(!class_exists('Site')){
-					Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();");
-				} 
-				else{
-					Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();");
-				}
+			<?php
+				Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();");
 			?>
 		</td>
 		<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" />
 		</td>
-		<td>Project:</td>
+		<td>
+			<?php echo ucfirst(JText::_('PROJECT')).':'; ?>
+		</td>
 		<td width="25%">
-			<?php 
-				if(!class_exists('Site')){
-					Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); 
-				} 
-				else{
-					Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); 
-				}
+			<?php
+				Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();");
 			?>
 		</td>
 	</tr>
@@ -104,7 +96,7 @@ if (isset($popup))
 			<span><?php echo date('F Y', $startDate); ?></span>
 		</td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')"
 				value="<?php echo date('d-M-Y', $startDate); ?>" />
 		</td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
@@ -147,7 +139,7 @@ if (isset($popup))
 	if ($holnum>$ihol)
 		$holdata = dbResult($qhol, $ihol);
 
-	$a=0; $b=0; $curDay = 1; $monthlyTotal = 0; $weeklyTotal = 0; 
+	$a=0; $b=0; $curDay = 1; $monthlyTotal = 0; $weeklyTotal = 0;
 
 	while (checkdate(gbl::getMonth(), $curDay, gbl::getYear())) {
 		$curStamp = mktime(0,0,0, gbl::getMonth(), $curDay, gbl::getYear());
@@ -171,8 +163,7 @@ if (isset($popup))
 			if ($holnum>$ihol) {
 				if ($holdata['day_of_month']==$curDay) {
 					$cellstyle = 'calendar_cell_holiday_middle';
-					if ($holdata['user']=='') 
-					{
+					if ($holdata['user']=='') {
 						$holtitle = urldecode($holdata['subject']);
 						if (($holdata['AM_PM']=='AM')||($holdata['AM_PM']=='PM'))
 							$holtitle .= " (".$holdata['AM_PM'].")";
@@ -182,8 +173,7 @@ if (isset($popup))
 					if ($holnum>$ihol)
 					{
 						$holdata = dbResult($qhol, $ihol);
-						if ($holdata['day_of_month']==$curDay) 
-						{
+						if ($holdata['day_of_month']==$curDay) {
 							if ($holdata['user']=='')
 							{
 								$holtitle .= " ".urldecode($holdata['subject']);
@@ -205,7 +195,7 @@ if (isset($popup))
 			}
 			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"".$cellstyle."\">\n";
 		}
-		
+
 		print "	<table width=\"100%\">\n";
 
 		// Print out date.
@@ -213,7 +203,7 @@ if (isset($popup))
 			"day=$curDay&amp;client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\">$curDay</a></tt></td></tr>";*/
 
 		$ymdStr = "&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".$curDay;
-		
+
 		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
@@ -242,7 +232,7 @@ if (isset($popup))
 		//works out to be O=N^2, ie. way inefficient.
 
 		//Here we need to keep track of how far back we need to keep checking the time entries
-		//and how far forward we need to check them, in variables $a and $b respectively.  
+		//and how far forward we need to check them, in variables $a and $b respectively.
 		//As tasks finish, $a can be incremented, as we check additional entries, $b is
 		//incremented.  If tasks are nested, ie. one starts and stops in the middle of another
 		//task, we have to keep $a from being incremented until the end of the outer most nested
@@ -265,7 +255,7 @@ if (isset($popup))
 			//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
 			//So, we handle it as best we can for now...
 
-			Common::fixStartEndDuration($data);		
+			Common::fixStartEndDuration($data);
 
 			//set some booleans
 			$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
@@ -298,33 +288,18 @@ if (isset($popup))
 
 					if ($startsBeforeToday && $endsAfterToday) {
 						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= "...-...";
-						if(!class_exists('Site')){
-							$todaysTotal += get_duration($curStamp, $tomorrowStamp);
-						}
-						else{
-							$todaysTotal += Common::get_duration($curStamp, $tomorrowStamp);
-						}
+						$todaysTotal += Common::get_duration($curStamp, $tomorrowStamp);
 					} else if ($startsBeforeToday && $endsToday) {
 						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= "...-" . $formattedEndTime;
-						if(!class_exists('Site')){
-							$todaysTotal += get_duration($curStamp, $data["end_stamp"]);
-						}
-						else{
-							$todaysTotal += Common::get_duration($curStamp, $data["end_stamp"]);
-						}
-						
+						$todaysTotal += Common::get_duration($curStamp, $data["end_stamp"]);
+
 					} else if ($startsToday && $endsToday) {
 						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= $formattedStartTime . "-" . $formattedEndTime;
 						$todaysTotal += $data["duration"];
 					} else if ($startsToday && $endsAfterToday) {
 						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= $formattedStartTime . "-...";
-						if(!class_exists('Site')){
-							$todaysTotal += get_duration($data["start_stamp"],$tomorrowStamp);
-						}
-						else{
-							$todaysTotal += Common::get_duration($data["start_stamp"],$tomorrowStamp);
-						}
-						
+						$todaysTotal += Common::get_duration($data["start_stamp"],$tomorrowStamp);
+
 					} else {
 						print "Error: time booleans are in a confused state<br />\n";
 					}
@@ -344,13 +319,8 @@ if (isset($popup))
 
 				if($i<$num) {
 					$data = dbResult($qh,$i);
-					if(!class_exists('Site')){
-						fixStartEndDuration($data);
-					}
-					else{
-						Common::fixStartEndDuration($data);
-					}
-					
+					Common::fixStartEndDuration($data);
+
 
 					$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
 					$endsToday =   (($data["end_stamp"] > $curStamp ) && ($data["end_stamp"] <= $tomorrowStamp));
@@ -383,13 +353,8 @@ if (isset($popup))
 				}
 			}
 
-			if(!class_exists('Site')){
-				print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</td></tr>";
-			}
-			else{
-				print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</td></tr>";
-			}
-		
+			print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</td></tr>";
+
 		} else {
 			print "<tr><td>&nbsp;</td></tr>";
 		}
