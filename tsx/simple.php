@@ -9,7 +9,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
-	errorPage("Could not determine the logged in user");
+	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 //bug fix - we must display all projects
 $proj_id = 0;
@@ -47,13 +47,13 @@ if (isset($popup))
 	
 ob_start();	
 ?>
-<title><?php echo Config::getMainTitle();?> - Simple Weekly Timesheet for <?php echo gbl::getContextUser();?></title>
-<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
-<script type="text/javascript">
+<title><?php echo Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser();?></title>
+
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js">
 	//define the hash table
 	var projectTasksHash = {};
 	
-<?php
+<?php //Notice: We're dynamically creating more javascript below
 $PROJECT_TABLE = tbl::getProjectTable();
 $CLIENT_TABLE = tbl::getClientTable();
 $TASK_TABLE = tbl::getTaskTable();
@@ -121,15 +121,15 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading">
-							Timesheet
+							<?php echo JText::_('TIMESHEET'); ?>
 						</td>
 						<td align="middle" nowrap class="outer_table_heading">
 							<?php
-								$sdStr = date("M d, Y",$startDate);
+								$sdStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
 								//just need to go back 1 second most of the time, but DST 
 								//could mess things up, so go back 6 hours...
-								$edStr = date("M d, Y",$endDate - 6*60*60); 
-								echo "Week: $sdStr - $edStr"; 
+								$edStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
+								echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr"; 
 							?>
 						</td>
 						<td>
@@ -137,7 +137,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 								value="<?php echo date("d-M-Y",$startDate); ?>" />
 								</td>
 								<td align="center" nowrap="nowrap" class="outer_table_heading">
-								<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+								<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 								</td>
 							
 						</td>
@@ -145,7 +145,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 							<!--prev / next buttons used to be here -->
 						</td>
 						<td align="right" nowrap>
-							<input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="true" onClick="validate();" />
+							<input type="button" name="saveButton" id="saveButton" value="<?php echo ucwords(JText::_('SAVE_CHANGES'))?>" disabled="true" onClick="validate();" />
 						</td>
 					</tr>
 				</table>
@@ -156,7 +156,11 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 					<tr class="inner_table_head">
 						<td class="inner_table_column_heading" align="center">
-							Client / Project / Task<?php if(strstr($layout, 'no work description') == '') echo ' / Work Description'; ?>
+							<?php
+								echo ucwords(JText::_('CLIENT')." / ".JText::_('PROJECT')." / ".JText::_('TASK'));
+								if(strstr($layout, 'no work description') == '') 
+									echo ' / '.ucwords(JText::_('WORK_DESCRIPTION')); 
+							?>
 						</td>
 						<td align="center" width="2">&nbsp;</td>
 						<?php
@@ -181,9 +185,13 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 						}
 						?>
 						<td align="center" width="2">&nbsp;</td>
-						<td class="inner_table_column_heading" align="center" width="50">Total</td>
+						<td class="inner_table_column_heading" align="center" width="50">
+							<?php echo ucfirst(JText::_('TOTAL')) ?>
+						</td>
 						<td align="center" width="2">&nbsp;</td>
-						<td class="inner_table_column_heading" align="center" width="50">delete</td>
+						<td class="inner_table_column_heading" align="center" width="50">
+							<?php echo ucfirst(JText::_('DELETE')) ?>
+						</td>
 					</tr>
 					<tr>
 <?php
@@ -337,8 +345,8 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay+1);
 			$disabled = $isEmptyRow?'disabled="disabled" ':'';
 
-			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled />h</span>";
-			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled />m</span>";
+			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled />".JText::_('HR')."</span>";
+			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled />".JText::_('MN')."</span>";
 
 			//close the times class
 			print "</span>";
@@ -549,7 +557,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 	//create a new totals row
 	print "<tr id=\"totalsRow\">\n";
-	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">Total Hours:</td>\n";
+	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">".ucwords(JText::_('TOTAL')." ".JText::_('HOURS')).":</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 
 	//iterate through day totals for all tasks

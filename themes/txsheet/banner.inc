@@ -9,7 +9,9 @@ $banner = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\
   </tr>
   <tr>
 	<td style=\"background-color: #F2F3FF; padding: 3;\">%commandmenu%</td>
-	<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">You are logged in as %username%</td>
+	<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">".
+		JText::_('LOGGED_IN_AS')."
+	</td>
   </tr>
   <tr>
 	<td colspan=\"2\" height=\"1\" style=\"background-color: #758DD6;\">
