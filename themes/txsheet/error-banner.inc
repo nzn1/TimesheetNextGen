@@ -1,7 +1,5 @@
 <?php
 
-include("include/tsx/timesheet_menu.inc");
-
 $banner = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">
   <tr>
 	<td colspan=\"2\" style=\"background-image: url('".config::getRelativeRoot()."/images/timesheet_background_pattern.gif');\">
