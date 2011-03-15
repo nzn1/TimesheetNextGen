@@ -3,6 +3,11 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 
+PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/error-banner.inc');
+//$newMenu = new CommandMenu();
+//Site::setCommandMenu($newMenu);
+Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:back()"));
+
 //get the logged in user
 $loggedInUser = $_SESSION['loggedInUser'];
 

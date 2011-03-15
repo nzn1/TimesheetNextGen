@@ -93,14 +93,14 @@ if (isset($popup))
 	<tr>
 		<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<span><?php echo date('F Y', $startDate); ?></span>
+			<span><?php echo date(JText::_('DFMT_MONTH_YEAR'), $startDate); ?></span>
 		</td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
 			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')"
 				value="<?php echo date('d-M-Y', $startDate); ?>" />
 		</td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
 	</tr>
 </table><!-- end of the client, project select table and the current month -->
