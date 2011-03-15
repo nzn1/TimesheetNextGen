@@ -50,9 +50,9 @@ class MonthlyClass{
 			print "<td align=\"right\" colspan=\"7\" class=\"calendar_totals_line_$type\">";
 
 		if ($type=="monthly")
-			print "Monthly total: ";
+			print JText::_('MONTHLY')." ".JText::_('TOTAL').": ";
 		else
-			print "<a href=\"".Config::getRelativeRoot()."/weekly?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id$ymdStr\">Weekly Total: </a>";
+			print "<a href=\"".Config::getRelativeRoot()."/weekly?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id$ymdStr\">". JText::_('WEEKLY')." ".JText::_('TOTAL').": </a>";
 
 		print "<span class=\"calendar_total_value_$type\">". Common::formatMinutes($Minutes) ."</span></td>\n";
 	}
