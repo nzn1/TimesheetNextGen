@@ -77,6 +77,7 @@ html {
 </div>
 <!--end footer--> {debugInfoBottom}</div>
 <!--end wrap-->
+{console}
 
 
 <?php /*</body></html> are in index.php & are the last two lines parsed in the webapp*/?>
