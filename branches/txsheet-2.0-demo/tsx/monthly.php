@@ -13,8 +13,7 @@ $mc = new MonthlyClass();
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
-	Common::errorPage("Could not determine the logged in user");
-
+	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 // Check project assignment.
 if (gbl::getProjId() != 0) { // id 0 means 'All Projects'
