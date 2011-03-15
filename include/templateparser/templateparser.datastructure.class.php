@@ -240,12 +240,16 @@ class PageElements{
 		}
 	}
 	public static function createBodyOnLoadOutput(){
+
 		if(PageElements::getBodyOnload() !=''){
 			$ret =  ' onload="'.PageElements::getBodyOnload().'"';
 		}
 		else $ret = '';
-		
-		return $ret;
+		//clear the output variable
+		$tag = self::getTagByName('onload');
+		$tag->setOutput('');
+		//it will be reloaded when this function returns
+		echo $ret;
 	}	
 	
 	public static function getGoogleAnalyticsCode(){
