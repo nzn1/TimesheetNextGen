@@ -1,6 +1,5 @@
 <?php
-
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 // Authenticate
 
@@ -177,7 +176,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 								"<td align=\"center\" width=\"65\">" .
 								"<table width=\"65\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr>" .
 								"<td class=\"inner_table_column_heading\" align=\"center\">" .
-								"$currentDayStr<br />" .
+								"$currentDayStr<br>" .
 								//Output the numerical date in the form of day of the month
 								date("d", $currentDayDate) .
 								"</td></tr></table></td>\n";
@@ -267,7 +266,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 							<td align="left" style="width:160px;">
 								<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
 								<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
-								<br/>
+								<br>
 								<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
 								<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
 							</td>
@@ -311,7 +310,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		$weeklyTotal = 0;
 		$isEmptyRow = ($daysArray == null);
 
-		//print_r($daysArray); print "<br />";
+		//print_r($daysArray); print "<br>";
 
 		//print hours and minutes input field for each day
 

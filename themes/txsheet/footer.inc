@@ -3,8 +3,8 @@
 	$footer = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">
   <tr>
     <td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">TimesheetNextGen 
-      <br />
-      <span style=\"font-size: 9px;\"><b>Page generated %time% %date% (%timezone% time)</b>
+      <br>
+      <span style=\"font-size: 9px;\"><b>".JText::_('PAGE_GENERATED')."</b>
       </span></td>
   </tr>
 </table>";
@@ -23,11 +23,11 @@
 		</td>
 		<td> </td>
 		<td align="center" width="30%">
-			&copy; 2008-2011 <a href="http://sourceforge.net/projects/tsheetx">Tsheetx Development Team</a><br />
+			&copy; 2008-<?php $rt=gbl::getRealToday(); echo $rt['year']; ?> &nbsp;<a href="http://sourceforge.net/projects/tsheetx"><?php echo JText::_('DEVELOPMENT_TEAM') ?></a><br>
 		</td>
 		<td> </td>
 		<td align="right" width="30%">
-			Usage under terms of <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.
+			<?php echo JText::_('USAGE_TERMS') ?> <a href="http://www.gnu.org/copyleft/gpl.html"><?php echo JText::_('GPL') ?></a>.
 		</td>
 		<td width="10px"> </td>
 	</tr>

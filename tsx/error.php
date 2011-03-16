@@ -1,5 +1,5 @@
 <?php
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 
@@ -10,6 +10,9 @@ Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:back()"));
 
 //get the logged in user
 $loggedInUser = $_SESSION['loggedInUser'];
+
+if (empty($loggedInUser))
+	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 //load local vars from superglobals
 $errormsg = stripslashes($_REQUEST['errormsg']);
