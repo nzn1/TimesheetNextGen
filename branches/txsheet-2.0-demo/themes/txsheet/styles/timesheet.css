@@ -136,6 +136,9 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 .clock_off_text { color: #FF1010; }
 
 .grey_area { background-color: #FFFFFF; }
+.grey_area a:link { font-size: 10px; font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #00066F; padding: 0px;}
+.grey_area a:visited { font-size: 10px; font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #00066F; padding: 0px;}
+.grey_area a:hover { font-size: 10px; font-weight: bold; font-family: Verdana, Arial, sans-serif; cursor:default; color: #60006F; padding: 0px;}
 
 .timesheet_logo { font-size: 20px; font-family: Arial, sans-serif; font-weight: bold; font-style: italic; color: #CCCCE0; }
 

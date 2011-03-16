@@ -1,5 +1,5 @@
 <?php
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 // Two potential problems exist, both are caused by this file not being able to 
 // easily modify data that does not belong to the current context week.
 //

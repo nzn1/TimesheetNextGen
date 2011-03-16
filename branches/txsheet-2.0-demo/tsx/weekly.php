@@ -1,12 +1,11 @@
 <?php
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclWeekly'))return;
-
 
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
-	errorPage("Could not determine the logged in user");
+	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 //check that project id is valid
 if (gbl::getProjId() == 0)
@@ -40,7 +39,7 @@ $CfgTimeFormat = Common::getTimeFormat();
 
 
 //include ("header.inc");
-PageElements::setHead("<title>".Config::getMainTitle()." - Weekly Timesheet for ".gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser()."</title>");
 ob_start();
 
 include("client_proj_task_javascript.php");
@@ -60,7 +59,7 @@ if (isset($popup)){
 	$fromPopup = "false";
 	//include("navcalnew/navcal+clockOnOff.inc"); 
 ?>
-<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/datetimepicker_css.js"></script>
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
 <input type="hidden" name="month" value=<?php echo gbl::getMonth(); ?> />
 <input type="hidden" name="year" value=<?php echo gbl::getYear(); ?> />
@@ -70,16 +69,30 @@ if (isset($popup)){
 <!-- date selection table -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="10%">&nbsp;</td>
-		<td width="10%" align="right">Client: </td>
-		<td width="25%" align="left"><?php Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?></td>
-		<td width="10%"align="right">Project: </td>
+		<td align="left" nowrap class="outer_table_heading">
+			<?php echo JText::_('TIMESHEET'); ?>
+		</td>
+		<td width="10%" align="right">
+				<?php echo ucfirst(JText::_('CLIENT')).':'; ?>
+		</td>
+		<td width="25%" align="left">
+			<?php Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?>
+		</td>
+		<td width="10%"align="right">
+			<?php echo ucfirst(JText::_('PROJECT')).':'; ?>
+		</td>
 		<td width="25%"align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
 		<td width="10%">&nbsp;</td>
 	</tr>
 	</tr>
 		<td align="center" nowrap class="outer_table_heading">
-			Week Start: <?php echo date('l F j, Y',$startDate); ?>
+			<?php
+				$sdStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
+				//just need to go back 1 second most of the time, but DST 
+				//could mess things up, so go back 6 hours...
+				$edStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
+				echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr"; 
+			?>
 		</td>
 		<td width="10%">&nbsp;</td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
@@ -87,7 +100,7 @@ if (isset($popup)){
 				value="<?php echo date('d-M-Y', $startDate); ?>" />
 		</td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
 		<td align="right" nowrap>
 		</td>
@@ -102,12 +115,12 @@ if (isset($popup)){
 // print heading row including days of week
 
 			if (gbl::getClientId() == 0)
-				print "Client / ";
+				print ucfirst(JText::_('CLIENT'))." / ";
 
 			if (gbl::getProjId() == 0)
-				print "Project / ";
+				print ucfirst(JText::_('PROJECT'))." / ";
 
-			print "Task";
+			print ucfirst(JText::_('Task'));
 ?>
 						</td>
 						<td align="center">&nbsp;</td>
@@ -121,7 +134,9 @@ if (isset($popup)){
 						}
 						?>
 						<td align="center">&nbsp;</td>
-						<td class="inner_table_column_heading" align="center">Total</td>
+						<td class="inner_table_column_heading" align="center">
+							<?php echo ucfirst(JText::_('TOTAL')) ?>
+						</td>
 					</tr>
 					<tr>
 <?php
@@ -346,7 +361,7 @@ if (isset($popup)){
 						$emptyCell = false;
 					else
 						//print a break for the next entry
-						print "&nbsp;"; //"<br />";
+						print "&nbsp;"; //"<br>";
 
 					//format printable times
 					if ($CfgTimeFormat == "12") {
@@ -402,7 +417,7 @@ if (isset($popup)){
 			if (!$emptyCell) {
 				//print todays total
 				$todaysTotalStr = Common::formatMinutes($todaysTotal);
-				print "<br /><span class=\"task_time_total_small\">$todaysTotalStr</span>";
+				print "<br><span class=\"task_time_total_small\">$todaysTotalStr</span>";
 			}
 
 			//end the column
@@ -437,7 +452,7 @@ if (isset($popup)){
 
 	//create an actions row
 	print "<tr>\n";
-	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">Actions:</td>\n";
+	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">".ucfirst(JText::_('ACTIONS')).":</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	$currentDate = $startDate;
 	for ($i=0; $i<7; $i++) {
@@ -451,8 +466,8 @@ if (isset($popup)){
 											"&amp;destination=$_SERVER[PHP_SELF]".
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 		print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
-		print "<a href=\"$popup_href\" class=\"action_link\">Add</a>,";
-		print "<a href=\"daily?$ymdStr\">Edit</a></td>\n";
+		print "<a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>,";
+		print "<a href=\"daily?$ymdStr\">".ucfirst(JText::_('EDIT'))."</a></td>\n";
 		$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 days");
 	}
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
@@ -462,7 +477,7 @@ if (isset($popup)){
 
 	//create a new totals row
 	print "<tr>\n";
-	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">Total Hours:</td>\n";
+	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">".ucwords(JText::_('TOTAL')." ".JText::_('HOURS')).":</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 
 	//iterate through day totals for all tasks
@@ -484,15 +499,8 @@ if (isset($popup)){
 
 ?>
 
-				</table>
-			</td>
-		</tr>
-	</table>
-
-
 		</td>
 	</tr>
 </table>
 
 </form>
-
