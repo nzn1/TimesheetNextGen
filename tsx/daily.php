@@ -1,5 +1,5 @@
 <?php
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
 
@@ -26,7 +26,7 @@ $CfgTimeFormat = Common::getTimeFormat();
 
 $post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()."";   //THIS LINE ISN'T USED!!
 
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser()."</title>");
 ob_start();
 
 include("client_proj_task_javascript.php");
@@ -59,17 +59,17 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="left" nowrap class="outer_table_heading" nowrap>
-			Daily Timesheet
+			<?php echo ucwords(JText::_('DAILY')." ".JText::_('TIMESHEET')); ?>
 		</td>
 		<td align="left" nowrap class="outer_table_heading">
-			<?php echo strftime("%A %B %d, %Y", $todayDate); ?>
+			<?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate); ?>
 		</td>
 		<td align="right" nowrap>
 			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
 				value="<?php echo date('d-M-Y', $todayDate);  ?>" />
 		</td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
 	</tr>
 </table>
@@ -78,14 +78,14 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		<tr>
 			<td>
 			<tr class="inner_table_head">
-			<td class="inner_table_column_heading" align="center">Client</td>
-			<td class="inner_table_column_heading" align="center">Project</td>
-			<td class="inner_table_column_heading" align="center">Task</td>
-			<td class="inner_table_column_heading" align="center">Work Description</td>
-			<td class="inner_table_column_heading" align="center" width="10%">Start</td>
-			<td class="inner_table_column_heading" align="center" width="10%">End</td>
-			<td class="inner_table_column_heading" align="center" width="10%">Total</td>
-			<td class="inner_table_column_heading" align="center" width="15%"><i>Actions</i></td>
+			<td class="inner_table_column_heading" align="center"><?php print ucfirst(JText::_('CLIENT')) ?></td>
+			<td class="inner_table_column_heading" align="center"><?php print ucfirst(JText::_('PROJECT')) ?></td>
+			<td class="inner_table_column_heading" align="center"><?php print ucfirst(JText::_('TASK')) ?></td>
+			<td class="inner_table_column_heading" align="center"><?php print ucwords(JText::_('WORK_DESCRIPTION')) ?></td>
+			<td class="inner_table_column_heading" align="center" width="10%"><?php print ucfirst(JText::_('START')) ?></td>
+			<td class="inner_table_column_heading" align="center" width="10%"><?php print ucfirst(JText::_('END')) ?></td>
+			<td class="inner_table_column_heading" align="center" width="10%"><?php print ucfirst(JText::_('TOTAL')) ?></td>
+			<td class="inner_table_column_heading" align="center" width="15%"><i><?php print ucfirst(JText::_('ACTIONS')) ?></i></td>
 		</tr>
 <?php
 
@@ -113,7 +113,7 @@ if ($num == 0) {
 								"$ymdStrSd".
 								"&amp;destination=$_SERVER[PHP_SELF]".
 								"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
-	print "	<td class=\"calendar_cell_disabled_right\" width=\"15%\"><a href=\"$popup_href\" class=\"action_link\">Add</a>&nbsp;</td>\n";
+	print "	<td class=\"calendar_cell_disabled_right\" width=\"15%\"><a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;</td>\n";
 	
 	print "	</tr>\n";
 	//print "</table>\n";
@@ -221,9 +221,9 @@ else {
 
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
 			if ($data['subStatus'] == "Open") {
-				print "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">Edit</a>,&nbsp;\n";
+				print "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">".ucfirst(JText::_('EDIT'))."</a>,&nbsp;\n";
 				//print "	<a href=\"".Config::getRelativeRoot()."/delete?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete, </a>\n";
-				print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete, </a>\n";
+				print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">".ucfirst(JText::_('DELETE')).", </a>\n";
 			} else {
 				// submitted or approved times cannot be edited
 				print  $data['subStatus'] . "&nbsp;\n";
@@ -235,7 +235,7 @@ else {
 											"$ymdStrSd".
 											"&amp;destination=$_SERVER[PHP_SELF]".
 											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
-			print "	<a href=\"$popup_href\" class=\"action_link\">Add</a>&nbsp;\n";
+			print "	<a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;\n";
 			print "</td>";
 
 			//add to todays total
@@ -261,10 +261,10 @@ else {
 			if ($data["start_stamp"] == Common::getRealTodayDate()) {
 				$stop_link = '<a href="'.Config::getRelativeRoot().'/clock_action?client_id='.$data['client_id'].'&amp;proj_id='.
 						$data['proj_id'].'&amp;task_id='.$data['task_id'].
-						'&amp;clock_off_check=on&amp;clock_off_radio=now" class="action_link\">Clock Off</a>, ';
+						'&amp;clock_off_check=on&amp;clock_off_radio=now" class="action_link\">'.JText::_('CLOCK_OFF').'</a>, ';
 				print $stop_link;
 			}
-			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
+			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">".ucfirst(JText::_('DELETE'))."</a>\n";
 			print "</td>";
 		}
 
@@ -280,12 +280,5 @@ else {
 }
 ?>
 
-			</td>
-		</tr>
-	</table>
 </form>
-		</td>
-	</tr>
-</table>
-
 <!-- ?php include("include/tsx/clockOnOff.inc"); ?-->

@@ -55,7 +55,7 @@ html {
 {templateParserDebug}
 <div id="wrap" style="">
 <div class="headerwrap" style="background:#222;">
-	<h1 style="color:#fff;">TimesheetNG <?php echo Config::getVersion();?> OO Demo</h1>
+	<h3 style="color:#fff;">&nbsp; &nbsp; &nbsp;TimesheetNG <?php echo Config::getVersion();?> OO Demo</h3>
 <!--	<p style="color:#fff;">The surrounding template can be customised easily in the themes directory!</p>-->
 	{tsx_banner}
 </div>

@@ -1,10 +1,9 @@
 <?php
-die('NOT CONVERTED TO OO YET');
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
+//require("class.AuthenticationManager.php");
+//require("class.CommandMenu.php");
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
 //load local vars from superglobals
@@ -26,12 +25,14 @@ $fax_number = isset($_POST['fax_number']) ? $_POST['fax_number']: "";
 $gsm_number = isset($_POST['gsm_number']) ? $_POST['gsm_number']: "";
 $http_url = isset($_POST['http_url']) ? $_POST['http_url']: "";
 
+$CLIENT_TABLE = tbl::getClientTable();
+$PROJECT_TABLE = tbl::getProjectTable();
+
 if ($_REQUEST['action'] == "add") {
 	dbquery("INSERT INTO $CLIENT_TABLE VALUES ('$client_id','$organisation','$description','$address1','$city'," .
 	"'L','$country','$postal_code','$contact_first_name','$contact_last_name','$client_username'," .
 	"'$contact_email','$phone_number','$fax_number','$gsm_number','$http_url','$address2')");
-}
-elseif ($action == "edit") {
+} elseif ($action == "edit") {
 	//create the query
 	$query = "UPDATE $CLIENT_TABLE SET organisation='$organisation',".
 		"description='$description',address1='$address1',city='$city',".
@@ -43,19 +44,17 @@ elseif ($action == "edit") {
 		"http_url='$http_url',address2='$address2' ".
 		"WHERE client_id=$client_id ";
 
-	//run the query
 	list($qh,$num) = dbquery($query);
-}
-elseif ($action == "delete") {
+} elseif ($action == "delete") {
 	//find out if this client is in use
 	list($qh,$num) = dbQuery("SELECT * FROM $PROJECT_TABLE WHERE client_id='$client_id'");
 	if ($num > 0)
-		errorPage("You cannot delete a client for which there are projects. Please delete the projects first.");
+		errorPage(JText::_('CANT_DELETE_CLIENT_WITH_PROJECTS'));
 	else
 		dbquery("DELETE FROM $CLIENT_TABLE WHERE client_id='$client_id'");
 }
 
-gotoLocation(Config::getRelativeRoot()."/client_maint");      
+gotoLocation(Config::getRelativeRoot()."/clients/client_maint");
 
 // vim:ai:ts=4:sw=4
 ?>

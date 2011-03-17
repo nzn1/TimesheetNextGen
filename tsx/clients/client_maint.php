@@ -1,15 +1,12 @@
 <?php
-if(!class_exists('Site'))die('Restricted Access');
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
-// Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
-	errorPage("Could not determine the logged in user");
-
+	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 //make sure "No Client exists with client_id of 1
 //execute the query
@@ -21,26 +18,26 @@ tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1
 
 <HTML>
 <head>
-<title>Client Management Page</title>
+<title><?php echo Config::getMainTitle()." - ".ucfirst(JText::_('CLIENT_MANAGEMENT'));?></title>
 
 <script type="text/javascript">
 
 	function delete_client(clientId) {
-				if (confirm('Are you sure you want to delete this client?'))
-					location.href = '<?php echo Config::getRelativeRoot(); ?>/client_action?client_id=' + clientId + '&action=delete';
+				if (confirm(<?php echo JText::_('CONFIRM_DELETE').JText::_('CLIENT').'?'; ?>))
+					location.href = '<?php echo Config::getRelativeRoot(); ?>/clients/client_action?client_id=' + clientId + '&action=delete';
 	}
 
 </script>
 </head>
-<form action="<?php echo Config::getRelativeRoot(); ?>/client_action" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/clients/client_action" method="post">
 
 	<table width="100%" border="0">
 		<tr>
 		<td align="left" nowrap class="outer_table_heading">
-			Clients
+			<?php echo JText::_('CLIENTS') ?>
 		</td>
 		<td align="right">
-			<a href="client_add" class="outer_table_action">Add new client</a>
+			<a href="client_add" class="outer_table_action"><?php echo JText::_('ADD_NEW_CLIENT')?></a>
 		</td>
 		</tr>
 	</table>
@@ -54,20 +51,18 @@ list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE WHERE client_id > 1 ORDER 
 
 //are there any results?
 if ($num == 0) {
-	print "<tr><td align=\"center\" colspan=\"5\"><br />There are currently no clients.<br /><br /></td></tr>";
-}
-else {
+	print "<tr><td align=\"center\" colspan=\"5\"><br />".JText::_('NO_CLIENTS')." &nbsp; ";
+	print "<a href=\"client_add\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
+} else {
 
-?>
-			<tr class="inner_table_head">
-				<td class="inner_table_column_heading">Organisation</td>
-				<td class="inner_table_column_heading">Contact Name</td>
-				<td class="inner_table_column_heading">Phone</td>
-				<td class="inner_table_column_heading">Contact Email</td>
-				<td class="inner_table_column_heading"><i>Actions</i></td>
-			</tr>
-<?php
-$count = 0;
+	print "<tr class=\"inner_table_head\">";
+	print "<td class=\"inner_table_column_heading\">".ucfirst(JText::_('ORGANISATION'))."</td>";
+	print "<td class=\"inner_table_column_heading\">".ucfirst(JText::_('CONTACT_NAME'))."</td>";
+	print "<td class=\"inner_table_column_heading\">".ucfirst(JText::_('EMAIL'))."</td>";
+	print "<td class=\"inner_table_column_heading\">".ucfirst(JText::_('PHONE'))."</td>";
+	print "<td class=\"inner_table_column_heading\" align=\"right\" width=\"10%\" ><i>".ucfirst(JText::_('ACTIONS'))."</i></td>";
+
+	$count = 0;
 	while ($data = dbResult($qh)) {
 		$organisationField = stripslashes($data["organisation"]);
 		if (empty($organisationField))
@@ -83,10 +78,10 @@ $count = 0;
 			print "<tr class=\"diff\">";
 		else
 			print "<tr>";
-		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=window.open(\"client_info?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=240\")>$organisationField</a></td>";
+		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=window.open(\"client_info?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=260\")>$organisationField</a></td>";
 		print "<td class=\"calendar_cell_middle\">$contactNameField</td>";
-		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
 		print "<td class=\"calendar_cell_middle\">$emailField</td>";
+		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
 		print "<td class=\"calendar_cell_disabled_right\">\n";
 		print "	<a href=\"client_edit?client_id=$data[client_id]\">Edit</a>,&nbsp;\n";
 		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>\n";
@@ -95,14 +90,7 @@ $count = 0;
 	}
 }
 ?>
-				
-			</td>
-		</tr>
-	</table>
 
-		</td>
-	</tr>
 </table>
 
 </form>
-

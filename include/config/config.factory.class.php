@@ -71,7 +71,7 @@ class ConfigFactory
 	 * The default main title of a webpage to be placed in
 	 * the <title> </title> tags
 	 */
-	protected static $mainTitle = 'TimesheetNG 2.0';
+	protected static $mainTitle = "TSX v";
 
 
 	/**
@@ -462,7 +462,7 @@ class ConfigFactory
 	 *
 	 */
 	public static function getMainTitle() {
-		return self::$mainTitle;
+		return self::$mainTitle.self::$version;
 	}
 
 	/**

@@ -217,6 +217,8 @@ class JLanguage
 			$string = str_replace(array('\\\\','\t','\n'),array("\\", "\t","\n"),$string);
 		}
 
+		//help find where JText is missing
+		$string="j".$string;
 		return $string;
 	}
 
