@@ -16,7 +16,7 @@ $task_id = 0;
 
 //get the passed date (context date)
 $month = gbl::getMonth();
-$day = gbl::getDay(); 
+$day = gbl::getDay();
 $year = gbl::getYear();
 $todayStamp = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $todayValues = getdate($todayStamp);
@@ -42,16 +42,14 @@ $layout = Common::getLayout();
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
-	
-	
-ob_start();	
+ob_start();
 ?>
-<title><?php echo Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser();?></title>
+<title><?php echo Config::getMainTitle()." - ".ucfirst(JText::_('SIMPLE'));?></title>
 
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js">
 	//define the hash table
 	var projectTasksHash = {};
-	
+
 <?php //Notice: We're dynamically creating more javascript below
 $PROJECT_TABLE = tbl::getProjectTable();
 $CLIENT_TABLE = tbl::getClientTable();
@@ -125,20 +123,20 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 						<td align="middle" nowrap class="outer_table_heading">
 							<?php
 								$sdStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
-								//just need to go back 1 second most of the time, but DST 
+								//just need to go back 1 second most of the time, but DST
 								//could mess things up, so go back 6 hours...
 								$edStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
-								echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr"; 
+								echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr";
 							?>
 						</td>
 						<td>
-								<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+								<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')"
 								value="<?php echo date("d-M-Y",$startDate); ?>" />
 								</td>
 								<td align="center" nowrap="nowrap" class="outer_table_heading">
 								<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 								</td>
-							
+
 						</td>
 						<td align="right" nowrap>
 							<!--prev / next buttons used to be here -->
@@ -157,8 +155,8 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 						<td class="inner_table_column_heading" align="center">
 							<?php
 								echo ucwords(JText::_('CLIENT')." / ".JText::_('PROJECT')." / ".JText::_('TASK'));
-								if(strstr($layout, 'no work description') == '') 
-									echo ' / '.ucwords(JText::_('WORK_DESCRIPTION')); 
+								if(strstr($layout, 'no work description') == '')
+									echo ' / '.ucwords(JText::_('WORK_DESCRIPTION'));
 							?>
 						</td>
 						<td align="center" width="2">&nbsp;</td>
@@ -474,7 +472,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			//print "<p> added matched pair with task '$matchedPair->taskName'</p>";
 		}
 
-		//iterate through the days array  
+		//iterate through the days array
 		$currentDayDate = $startDate;
 		for ($k=0; $k<7; $k++) {
 			$tomorrowDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
