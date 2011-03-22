@@ -157,11 +157,12 @@ class ErrorHandler{
 	 * @param int $errorNo
 	 */
 	private static function getErrorName($errorNo){
+		if(!defined('E_RECOVERABLE_ERROR')) define('E_RECOVERABLE_ERROR', 4096);
 		$errorType = array (
-			E_ERROR			=> 'E_ERROR',
-			E_WARNING		=> 'E_WARNING',
-			E_PARSE			=> 'E_PARSE',
-			E_NOTICE		=> 'E_NOTICE',
+			E_ERROR				=> 'E_ERROR',
+			E_WARNING			=> 'E_WARNING',
+			E_PARSE				=> 'E_PARSE',
+			E_NOTICE			=> 'E_NOTICE',
 			E_CORE_ERROR	 	=> 'E_CORE ERROR',
 			E_CORE_WARNING	 	=> 'E_CORE WARNING',
 			E_COMPILE_ERROR		=> 'E_COMPILE ERROR',
@@ -169,7 +170,7 @@ class ErrorHandler{
 			E_USER_ERROR	 	=> 'E_USER ERROR',
 			E_USER_WARNING	 	=> 'E_USER WARNING',
 			E_USER_NOTICE		=> 'E_USER NOTICE',
-			E_STRICT	 	=> 'E_STRICT NOTICE',
+			E_STRICT		 	=> 'E_STRICT NOTICE',
 			E_RECOVERABLE_ERROR	=> 'E_RECOVERABLE ERROR'
 		);
 

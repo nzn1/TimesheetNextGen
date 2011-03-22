@@ -722,8 +722,7 @@ class Common{
 						"".tbl::getProjectTable().".client_id, ".tbl::getProjectTable().".proj_id, ".
 						"".tbl::getAssignmentsTable().".proj_id, ".tbl::getAssignmentsTable().".username ".
 						"FROM ".tbl::getClientTable().", ".tbl::getProjectTable().", ".tbl::getAssignmentsTable()." ".
-						"WHERE ".tbl::getClientTable().".client_id > 1 ".
-						"AND ".tbl::getClientTable().".client_id=".tbl::getProjectTable().".client_id ".
+						"WHERE ".tbl::getClientTable().".client_id=".tbl::getProjectTable().".client_id ".
 						"AND ".tbl::getProjectTable().".proj_id=".tbl::getAssignmentsTable().".proj_id ".
 						"AND ".tbl::getAssignmentsTable().".username='$contextUser' ".
 						"GROUP BY ".tbl::getClientTable().".client_id ".
@@ -732,8 +731,7 @@ class Common{
 		else {
 				list($qh,$num) = dbQuery(
 						"SELECT client_id, organisation ".
-						"FROM ".tbl::getClientTable()." WHERE client_id > 1 " .
-						"ORDER BY organisation");
+						"FROM ".tbl::getClientTable()." ORDER BY organisation");
 		}
 
 		print "<select name=\"client_id\" onchange=\"$onChange\" style=\"width:100%;\"";

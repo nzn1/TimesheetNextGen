@@ -449,13 +449,13 @@ class JLanguage
 		$track_errors	= ini_get('track_errors');
 		ini_set('track_errors', true);
 
-		if ($version >= '5.3.1') {
+		if ($version >= '5.3.0') {  //parse_ini_string introduced in 5.3.0
 			$contents = file_get_contents($filename);
 			$contents = str_replace('_QQ_','"\""',$contents);
 			$strings = @parse_ini_string($contents);
 		} else {
 			$strings = @parse_ini_file($filename);
-			if ($version == '5.3.0' && is_array($strings)) {
+			if ($version >= '4.3.0' && is_array($strings)) {
 				foreach($strings as $key => $string) {
 					$strings[$key]=str_replace('_QQ_','"',$string);
 				}

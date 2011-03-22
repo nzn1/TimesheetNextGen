@@ -42,10 +42,10 @@ ppr($lang);
 */
 
 //ppr(JLoader::getClasses());
-//$thing = Site::getLanguage();
-//ppr($thing);
 
 echo JText::_('JLIB_ERROR_INFINITE_LOOP')."\n<br>";
 echo JText::sprintf('JERROR_TABLE_BIND_FAILED',"These are a couple of JText tests")."\n";
 
+$thing = Site::getLanguage();
+ppr($thing);
 ?>
