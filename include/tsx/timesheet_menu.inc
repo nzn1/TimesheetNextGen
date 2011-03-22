@@ -64,8 +64,8 @@ $menuArray[] = array('USERS',				'aclUsers',			1, "users/user_maint",			'icon_us
 $menuArray[] = array('USER_RATES',			'aclRates',			1, "users/rate_maint",			'icon_rates.gif');
 $menuArray[] = array('SUPERVISORS',			'aclSupervisor',	1, "supervisor",				'icon_supervisor.gif');
 $menuArray[] = array('CONFIGURATION',		'aclConfiguration',	1, "config",					'icon_configuration.gif');
-$menuArray[] = array('CHANGE_PASSWD',		'aclOpen',			1, "changepwd",					'icon_key.gif');
-$menuArray[] = array('LOGOUT',				'aclOpen',			1, "logout?logout=true",		'icon_logout.gif');
+$menuArray[] = array('CHANGE_PASSWD',		'Open',				1, "changepwd",					'icon_key.gif');
+$menuArray[] = array('LOGOUT',				'Open',				1, "logout?logout=true",		'icon_logout.gif');
 
 //define the command menu
 foreach($menuArray as $menuItem) {

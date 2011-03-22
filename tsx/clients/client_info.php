@@ -1,7 +1,7 @@
 <?php
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 
 PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/popups.inc');
 PageElements::addFile('tsx_footer','themes/'.PageElements::getTheme().'/popups.inc');

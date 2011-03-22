@@ -8,12 +8,7 @@ $loggedInUser = strtolower($_SESSION['loggedInUser']);
 if (empty($loggedInUser))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
-//make sure "No Client exists with client_id of 1
-//execute the query
 $CLIENT_TABLE = tbl::getClientTable();
-tryDbQuery("INSERT INTO $CLIENT_TABLE VALUES (1,'No Client', 'This is required, do not edit or delete this client record', '', '', '', '', '', '', '', '', '', '', '', '', '', '');");
-tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1'");
-
 ?>
 
 <HTML>
@@ -23,7 +18,7 @@ tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1
 <script type="text/javascript">
 
 	function delete_client(clientId) {
-				if (confirm(<?php echo JText::_('CONFIRM_DELETE').JText::_('CLIENT').'?'; ?>))
+				if (confirm("<?php echo JText::_('CONFIRM_DELETE_CLIENT'); ?>"))
 					location.href = '<?php echo Config::getRelativeRoot(); ?>/clients/client_action?client_id=' + clientId + '&action=delete';
 	}
 
@@ -47,7 +42,7 @@ tryDbQuery("UPDATE $CLIENT_TABLE set organisation='No Client' WHERE client_id='1
 <?php
 
 //execute the query
-list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE WHERE client_id > 1 ORDER BY organisation");
+list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE ORDER BY organisation");
 
 //are there any results?
 if ($num == 0) {
