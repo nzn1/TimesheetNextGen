@@ -136,10 +136,10 @@ function change_page(newPageValue) {
 	if ($num == 0) {
 		if ($client_id != 0) {
 			print "<tr><td align=\"center\"><br />".JText::_('NO_PROJECTS_FOR_CLIENT')." &nbsp; ";
-			print "<a href=\"proj_add?client_id=<?php echo $client_id;?>\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
+			print "<a href=\"proj_add?client_id=$client_id\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
 		} else {
 			print "<tr><td align=\"center\"><br />".JText::_('NO_PROJECTS')." &nbsp; ";
-			print "<a href=\"proj_add?client_id=<?php echo $client_id;?>\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
+			print "<a href=\"proj_add?client_id=$client_id\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
 		}
 	} else {
 		//iterate through results
