@@ -1,8 +1,53 @@
-/**
- * 
- */
+<script type="text/javascript">
+	var projectTasksHash = {};
+	//we're building a javascript hash table using php here
+	<?php
+		$PROJECT_TABLE = tbl::getProjectTable();
+		$CLIENT_TABLE = tbl::getClientTable();
+		$TASK_TABLE = tbl::getTaskTable();
+		//get all of the projects and put them into the hashtable
+		$getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
+									"$PROJECT_TABLE.title, " .
+									"$PROJECT_TABLE.client_id, " .
+									"$CLIENT_TABLE.client_id, " .
+									"$CLIENT_TABLE.organisation " .
+								"FROM $PROJECT_TABLE, " .tbl::getAssignmentsTable(). ", $CLIENT_TABLE " .
+								"WHERE $PROJECT_TABLE.proj_id=" .tbl::getAssignmentsTable().".proj_id AND ".
+									"" .tbl::getAssignmentsTable(). ".username='".gbl::getContextUser()."' AND ".
+									"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
+								"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
+		list($qh3, $num3) = dbQuery($getProjectsQuery);
 
+		//iterate through results
+		for ($i=0; $i<$num3; $i++) {
+			//get the current record
+			$data = dbResult($qh3, $i);
+			print("projectTasksHash['" . $data["proj_id"] . "'] = {};\n");
+			print("projectTasksHash['" . $data["proj_id"] . "']['name'] = '". addslashes($data["title"]) . "';\n");
+			print("projectTasksHash['" . $data["proj_id"] . "']['clientId'] = '". $data["client_id"] . "';\n");
+			print("projectTasksHash['" . $data["proj_id"] . "']['clientName'] = '". addslashes($data["organisation"]) . "';\n");
+			print("projectTasksHash['" . $data["proj_id"] . "']['tasks'] = {};\n");
+		}
+
+		//get all of the tasks and put them into the hashtable
+		$getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
+								"$TASK_TABLE.task_id, " .
+								"$TASK_TABLE.name " .
+							"FROM $TASK_TABLE, " .tbl::getTaskAssignmentsTable(). " ".
+							"WHERE $TASK_TABLE.task_id = " .tbl::getTaskAssignmentsTable().".task_id AND ".
+								"".tbl::getTaskAssignmentsTable().".username='".gbl::getContextUser()."' ".
+							"ORDER BY $TASK_TABLE.name";
+
+		list($qh4, $num4) = dbQuery($getTasksQuery);
+		//iterate through results
+		for ($i=0; $i<$num4; $i++) {
+			//get the current record
+			$data = dbResult($qh4, $i);
+			print("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
+			print("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
+		}
+	?>
 	//function to populate existing rows with project and task names and select the right one in each
 	function populateExistingSelects() {
 		//get the number of existing rows
@@ -18,6 +63,10 @@
 			var projectId = document.getElementById('project_row' + i).value;
 			var taskId = document.getElementById('task_row' + i).value;
 
+			//alert('clientID is' + clientId + "\nprojectID is" + projectId + "\ntaskID is" + taskId);
+
+			//alert('projectTaskHash is ' + projectTasksHash);
+
 			//get the selects
 			var clientSelect = document.getElementById('clientSelect_row' + i);
 			var projectSelect = document.getElementById('projectSelect_row' + i);
@@ -31,14 +80,16 @@
 			//add the clients
 			//var clientId = -1;
 			for (var key in projectTasksHash) {
+				//alert('looking at key ' + key);
 				if (projectTasksHash[key]['clientId'] != clientId) {
 					//projectSelect.options[projectSelect.options.length] = new Option('[' + projectTasksHash[key]['clientName'] + ']', -1);
 					clientSelect.options[clientSelect.options.length] = new Option(projectTasksHash[key]['clientName'], projectTasksHash[key]['clientId']);
 					clientId = projectTasksHash[key]['clientId'];
 				}
 
-				if (key == projectId && projectTasksHash[key]['clientId'] == clientId)
-				{
+				//alert('added client ' + key);
+
+				if (key == projectId && projectTasksHash[key]['clientId'] == clientId) {
 					populateProjectSelect(i, clientId, key);
 					clientSelect.options[clientSelect.options.length-1].selected = true;
 				}
@@ -66,6 +117,8 @@
 		for (var taskKey in thisProjectTasks) {
 			taskSelect.options[taskSelect.options.length] = new Option(thisProjectTasks[taskKey], taskKey);
 
+			//alert('added task ' + taskKey);
+
 			if (taskKey == selectedTaskId)
 				taskSelect.options[taskSelect.options.length-1].selected = true;
 		}
@@ -79,8 +132,10 @@
 		for (key in projectTasksHash) {
 			if (projectTasksHash[key]['clientId'] == clientId) {
 				projectSelect.options[projectSelect.options.length] = new Option(projectTasksHash[key]['name'], key);
-				if (key == selectedProjectId)
-				{
+
+				//alert('added project ' + key);
+
+				if (key == selectedProjectId) {
 					projectSelect.options[projectSelect.options.length-1].selected = true;
 				}
 			}
@@ -424,5 +479,6 @@
 			}
 		}
 
-		document.theForm.submit();
+		document.simpleForm.submit();
 	}
+</script>
