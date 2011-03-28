@@ -507,7 +507,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 	//create a new totals row
 	print "<tr id=\"totalsRow\">\n";
-	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">".ucwords(JText::_('TOTAL')." ".JText::_('HOURS')).":</td>\n";
+	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">".ucwords(JText::_('TOTAL_HOURS')).":</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 
 	//iterate through day totals for all tasks

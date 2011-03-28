@@ -34,6 +34,8 @@ class Site {
 			die('PHP short tags are currently disabled.  This site won\'t work without short tags enabled.<br />
 				Please modify your php.ini file to include the line "short_open_tag = On"');
 		}
+
+		self::load();
 	}
 
 	public function setInstallMode() {
@@ -139,9 +141,14 @@ class Site {
 			$module = Rewrite::MODULE_NOT_REGISTERED;
 		}
 
+		if(Common::get_post_max_size() < 32768) { 
+			Rewrite::setContent('max_post_size_too_small');
+		}
+
 		$tp = new TemplateParser();
 		//apply the theme configuration
 		require_once('themes/'.PageElements::getTheme().'/config.php');
+
 
 		$filename = Config::getDocumentRoot()."/modules/".Rewrite::getModule()."/config.php";
 
@@ -154,7 +161,7 @@ class Site {
 //			ppr($tp->getPageElements());
 		}
 
-  	PageElements::addElement(new FunctionTag('response','PageElements::createResponseOutput',FunctionTag::TYPE_STATIC));
+		PageElements::addElement(new FunctionTag('response','PageElements::createResponseOutput',FunctionTag::TYPE_STATIC));
 		//PageElements::addElement(new FunctionTag('googleanalytics','PageElements::getGoogleAnalyticsCode',FunctionTag::TYPE_STATIC));
 		//debugInfoTop is exempt from the module config selection
 		PageElements::addFile('debugInfoTop','include/debug/debugInfoTop.php');

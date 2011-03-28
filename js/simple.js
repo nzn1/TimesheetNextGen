@@ -225,16 +225,23 @@
 		taskSelect = document.getElementById('taskSelect_row' + row);
 		//alert('octsr called for row ' + row);
 		if (taskSelect.options[0].selected == true) {
+			//alert('disabling row ' + row);
 			//disable fields
 			for (var i=1; i<=7; i++) {
 				document.getElementById('hours_row' + row + '_col' + i).disabled = true;
 				document.getElementById('mins_row' + row + '_col' + i).disabled = true;
 			}
-		} 
-		else {
+		} else {
 			//get the total number of rows
 			var totalRows = parseInt(document.getElementById('totalRows').value);
 			//alert('change task droplist on row ' + row + ', totalRows=' + totalRows);
+
+			//enable fields
+			//alert('enabling row ' + row);
+			for (var i=1; i<=7; i++) {
+				document.getElementById('hours_row' + row + '_col' + i).disabled = false;
+				document.getElementById('mins_row' + row + '_col' + i).disabled = false;
+			}
 
 			if (row == (totalRows-1)) {
 				//get the row to copy
@@ -260,11 +267,6 @@
 				//insert the new node before the totals node
 				totalsNode.parentNode.insertBefore(newNode, totalsNode);
 
-				//enable fields
-				for (var i=1; i<=7; i++) {
-					document.getElementById('hours_row' + row + '_col' + i).disabled = false;
-					document.getElementById('mins_row' + row + '_col' + i).disabled = false;
-				}
 
 				//clear the task select
 				clearTaskSelect(totalRows);
@@ -306,8 +308,8 @@
 
 		// clear hours and minutes
 		for (var i=1; i<=7; i++) {
-			document.getElementById("hours_row" + row + "_col" + i).value = "";
-			document.getElementById("mins_row" + row + "_col" + i).value = "";
+			document.getElementById("hours_row" + row + "_col" + i).value = "0";
+			document.getElementById("mins_row" + row + "_col" + i).value = "0";
 			recalculateCol(i,idStr);
 		}
 
@@ -355,7 +357,7 @@
 			var minutes = hours * 60 + mins;
 
 			if (minutes > minsinday) {
-				alert("Too much time, date only has " + minsinday/60 + " hours in the day");
+				alert("<?php echo JText::sprintf('TOO_MUCH_TIME_FOR_DAY', minsinday/60) ?>");
 				document.getElementById("hours_row" + row + "_col" + i).value="";  //=true;
 				document.getElementById("mins_row" + row + "_col" + i).value="";  //=true;
 				document.getElementById("hours_row" + row + "_col" + i).select();  //=true;
@@ -397,7 +399,7 @@
 		}
 
 		if (totalMins > minsinday) {
-			alert("Too much time, only " + minsinday/60 + " hours in the day, check your column");
+			alert("<?php echo JText::sprintf('TOO_MUCH_TIME_FOR_COL', minsinday/60) ?>");
 			row=rowFromIdStr(idStr);
 			document.getElementById("hours_row" + row + "_col" + col).value="";  //=true;
 			document.getElementById("mins_row" + row + "_col" + col).value="";  //=true;
@@ -468,7 +470,7 @@
 				var minutes = hours * 60 + mins;
 
 				if (minutes > minsinday) {
-					alert("Too much time, date only has " + minsinday/60 + " hours in the day");
+					alert("<?php echo JText::sprintf('TOO_MUCH_TIME_FOR_DAY', minsinday/60) ?>");
 					document.getElementById("hours_row" + i + "_col" + j).value="";  //=true;
 					document.getElementById("mins_row" + i + "_col" + j).value="";  //=true;
 					document.getElementById("hours_row" + i + "_col" + j).select();  //=true;
