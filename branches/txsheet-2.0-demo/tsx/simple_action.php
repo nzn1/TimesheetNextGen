@@ -31,14 +31,20 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 //    c} figure out logic to split up tasks that would be tickled by this bug
 //       and save and update the extra day's times as needed.
 
-error_reporting(E_ALL);
-ini_set('display_errors', true);
+//error_reporting(E_ALL);
+ini_set('display_errors', false);
 
 $simple_debug=true;
 if($simple_debug) {
 	require(Config::getDocumentRoot()."/include/tsx/debuglog.php");
 	$debug = new logfile();
-}
+
+	$test=http_build_query($_POST);
+	$tsize = strlen($test);
+
+	$debug->write("post size is $tsize\n");
+} else
+	$debug=0;
 
 //get the passed date (context date)
 $month = gbl::getMonth();
@@ -76,10 +82,9 @@ if($simple_debug) {
 	$debug->write("  existingRows = \"".$_POST["existingRows"]."\"\n");
 }
 
-function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr) {
-	global $debug, $simple_debug;
+function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr, $simple_debug, $debug) {
+	//global $debug, $simple_debug;
 
-//clear the tasks which start on this week
 	$TIMES_TABLE = tbl::getTimesTable();
 	$queryString = "DELETE FROM $TIMES_TABLE " . 
 						"WHERE uid='$uid' AND " .
@@ -88,8 +93,6 @@ function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr) {
 							"proj_id=$proj_id AND task_id=$task_id AND ".
 							"log_message='$descr'";
 
-// to prevent deleteion when nothing is to be inserted
-//if (isset($_POST["totalRows"]) && gbl::getContextUser() != "") {
 
 	if($simple_debug)
 		$debug->write("   Query = \"$queryString\"\n");
@@ -99,18 +102,17 @@ function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr) {
 
 $TIMES_TABLE = tbl::getTimesTable();
 
-//TODO: write meaningful todos ;)
 for ($i=0; $i<$totalRows; $i++) {
 	if($simple_debug)
-		$debug->write("i=$i ". $_POST["projectSelect_row".$i]."  ".$_POST["taskSelect_row".$i]."\n");
+		$debug->write("working on row $i proj_id ". $_POST["projectSelect_row".$i]." task_id ".$_POST["taskSelect_row".$i]."\n");
 
 	$projectId = $_POST["projectSelect_row" . $i];
 	$oprojectId = $_POST["project_row" . $i];
-	if ($projectId < 1)
+	if ($oprojectId < 1 && $projectId < 1)
 		continue;
 	$taskId = $_POST["taskSelect_row" . $i];
 	$otaskId = $_POST["task_row" . $i];
-	if ($taskId < 1)
+	if ($otaskId < 1 && $taskId < 1)
 		continue;
 	$workDescription = '';
 	if (array_key_exists("description_row" . $i, $_POST)) {
@@ -121,9 +123,6 @@ for ($i=0; $i<$totalRows; $i++) {
 		$workDescription = '';
 		$oworkDescription = '';
 	}
-
-	if($simple_debug)
-		$debug->write("proj=$projectId  task=$taskId  log=$workDescription\n");
 
 	$curDaysTimestamp = $startDate;
 	for ($j=1; $j<=7; $j++) {
@@ -138,17 +137,22 @@ for ($i=0; $i<$totalRows; $i++) {
 		$ohours = $_POST["ohours_row" . $i . "_col" . $j];
 		$omins = $_POST["omins_row" . $i . "_col" . $j];
 
-		$hours = $_POST["hours_row" . $i . "_col" . $j];
-		$mins = $_POST["mins_row" . $i . "_col" . $j];
+		if($taskId > -1) {  //if this row was deleted, taskId is -1, and variables hours_rowx_coly don't exist
+			$hours = $_POST["hours_row" . $i . "_col" . $j];
+			$mins = $_POST["mins_row" . $i . "_col" . $j];
+		} else {
+			$hours = 0;
+			$mins = 0;
+		}
 
 		if($ohours != $hours || $omins != $mins || $oprojectId != $projectId || $otaskId != $taskId || $oworkDescription != $workDescription) {
 			//something changed for this entry
-			if($simple_debug)
-				$debug->write(" changing pid=$projectId tid=$taskId date=$stsStr  hours=$hours  mins=$mins \n");
+			//if($simple_debug)
+			//	$debug->write(" changing opid=$oprojectId otid=$otaskId date=$stsStr\n");
 
 			//don't delete anything if this was a new set of entries
 			if($oprojectId != '' && $otaskId != '') 
-				delete_time_entries(gbl::getContextUser(), $stsStr, $etsStr, $oprojectId, $otaskId, $oworkDescription);
+				delete_time_entries(gbl::getContextUser(), $stsStr, $etsStr, $oprojectId, $otaskId, $oworkDescription, $simple_debug, $debug);
 
 			if ((!empty($hours) && $hours != 0) || (!empty($mins) && $mins != 0)) {
 

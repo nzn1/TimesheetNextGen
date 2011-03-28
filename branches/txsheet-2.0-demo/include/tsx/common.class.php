@@ -150,6 +150,35 @@ class Common{
 		return $worked_sec;
 	}
 
+	/**
+	* Parse a size with a "binary prefix" multiplier 
+	* Function borrowed from the Drupal Project
+	*/
+	public static function parse_size($size) {
+		$unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
+		$size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+
+		if ($unit) {
+			// Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
+			return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+		} else {
+			return round($size);
+		}
+	}
+
+	/**
+	* Get the "post" max size limit in bytes
+	*/
+	public static function get_post_max_size() {
+		static $max_post_size = -1;
+
+		if ($max_post_size < 0) {
+			// Start with post_max_size.
+			$max_post_size = self::parse_size(ini_get('post_max_size'));
+		}
+		return $max_post_size;
+	}
+
 	public static function format_hours_minutes($seconds) {
 		$temp = $seconds;
 		if ($seconds < 0) {
@@ -207,14 +236,14 @@ class Common{
 		$minutes = (int)($seconds/60);
 		$seconds -= $minutes * 60;
 
-		return "${hours}h ${minutes}m";
+		return "${hours}".JText::_('HR')." ${minutes}".JText::_('MN');
 	}
 
 	public static function formatMinutes($minutes) {
 		$hours = (int)($minutes/60);
 		$minutes -= $hours * 60;
 
-		return "${hours}h ${minutes}m";
+		return "${hours}".JText::_('HR')." ${minutes}".JText::_('MN');
 	}
 
 	public static function format_minutes($minutes) {
