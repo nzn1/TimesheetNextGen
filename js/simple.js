@@ -106,6 +106,7 @@
 				}
 			}
 		}
+		recalculateAll();
 	}
 
 	function populateTaskSelect(row, projectId, selectedTaskId) {
@@ -342,6 +343,7 @@
 
 	function recalculateRow(row) {
 		var totalMins = 0;
+		//alert('recalculateRow ' + row);
 		for (i=1; i<=7; i++) {
 			minsinday = parseInt(document.getElementById("minsinday_" + i).value);
 			//var hrsinday = minsinday/60;
@@ -377,6 +379,8 @@
 	}
 
 	function recalculateCol(col,idStr) {
+		//alert('recalculateCol ' + col +' idStr:' + idStr);
+
 		//get the total number of rows
 		var totalRows = parseInt(document.getElementById('totalRows').value);
 		var minsinday = parseInt(document.getElementById("minsinday_" + col).value);
@@ -420,6 +424,7 @@
 	}
 
 	function recalculateGrandTotal() {
+		//alert('recalculateGrandTotal');
 		var totalMins = 0;
 		for (var i=1; i<=7; i++) {
 			var currentInnerHTML = document.getElementById("subtotal_col" + i).innerHTML;
@@ -442,6 +447,67 @@
 		//get the grand total cell
 		var grandTotalCell = document.getElementById("grand_total");
 		grandTotalCell.innerHTML = '' + hours + 'h&nbsp;' + mins + 'm';
+	}
+
+	function recalculateAll() {
+		//alert('recalculateAll');
+
+		var totalRows = parseInt(document.getElementById('totalRows').value);
+		var rowTotals = {}; 
+		var colTotals = {};
+		var grandTotal = 0;
+
+		for (i=0; i<=7; i++) {
+			colTotals[i] = 0;
+		}
+
+		for (j=0; j<totalRows; j++) {
+			rowTotals[j] = 0;
+		}
+
+		for (i=1; i<=7; i++) {
+			for (j=0; j<totalRows; j++) {
+				hours = parseInt(document.getElementById("hours_row" + j + "_col" + i).value);
+				mins = parseInt(document.getElementById("mins_row" + j + "_col" + i).value);
+
+				if (isNaN(hours)) {
+					hours = 0;
+				}
+
+				if (isNaN(mins)) {
+					mins = 0;
+				}
+
+				minutes = hours * 60 + mins;
+
+				colTotals[i] += minutes;
+				rowTotals[j] += minutes;
+				grandTotal   += minutes;
+
+				//alert('i=' + i + ' j=' + j + ' minutes=' + minutes + ' ct[i]=' + colTotals[i] + ' rt[j]=' + rowTotals[j]);
+			}
+		}
+		for (i=1; i<=7; i++) {
+			hours = Math.floor(colTotals[i] / 60);
+			mins = colTotals[i] - (hours * 60);
+
+			totalCell = document.getElementById("subtotal_col" + i);
+			totalCell.innerHTML = '' + hours + "<?php echo JText::_('HR')?>" + '&nbsp;' + mins + "<?php echo JText::_('MN')?>";
+		}
+
+		for (j=0; j<totalRows; j++) {
+			hours = Math.floor(rowTotals[j] / 60);
+			mins = rowTotals[j] - (hours * 60);
+
+			totalCell = document.getElementById("subtotal_row" + j);
+			totalCell.innerHTML = '' + hours + "<?php echo JText::_('HR')?>" + '&nbsp;' + mins + "<?php echo JText::_('MN')?>";
+		}
+
+		hours = Math.floor(grandTotal / 60);
+		mins = grandTotal - (hours * 60);
+
+		totalCell = document.getElementById("grand_total");
+		totalCell.innerHTML = '' + hours + "<?php echo JText::_('HR')?>" + '&nbsp;' + mins + "<?php echo JText::_('MN')?>";
 	}
 
 	function setDirty() {

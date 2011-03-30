@@ -59,7 +59,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="left" nowrap class="outer_table_heading" nowrap>
-			<?php echo ucwords(JText::_('DAILY')." ".JText::_('TIMESHEET')); ?>
+			<?php echo ucwords(JText::_('DAILY_TIMESHEET')); ?>
 		</td>
 		<td align="left" nowrap class="outer_table_heading">
 			<?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate); ?>
@@ -68,16 +68,14 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
 				value="<?php echo date('d-M-Y', $todayDate);  ?>" />
 		</td>
-		<td align="center" nowrap="nowrap" class="outer_table_heading">
+		<td align="center" nowrap class="outer_table_heading">
 			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
 	</tr>
 </table>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-			<tr class="inner_table_head">
+		<tr class="inner_table_head">
 			<td class="inner_table_column_heading" align="center"><?php print ucfirst(JText::_('CLIENT')) ?></td>
 			<td class="inner_table_column_heading" align="center"><?php print ucfirst(JText::_('PROJECT')) ?></td>
 			<td class="inner_table_column_heading" align="center"><?php print ucfirst(JText::_('TASK')) ?></td>
@@ -99,7 +97,7 @@ list($num, $qh) = Common::get_time_records($startStr, $endStr, gbl::getContextUs
 if ($num == 0) {
 	$ymdStrSd = "&amp;year=".$year . "&amp;month=".$month . "&amp;day=".$day;
 	print "	<tr>\n";
-	print "		<td class=\"calendar_cell_middle\"><i>No hours recorded.</i></td>\n";
+	print "		<td class=\"calendar_cell_middle\"><i>".JText::_('NO_TIME_RECORDED')."</i></td>\n";
 	print "		<td class=\"calendar_cell_middle\">&nbsp;</td>\n";
 	print "		<td class=\"calendar_cell_middle\">&nbsp;</td>\n";
 	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
