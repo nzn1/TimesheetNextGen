@@ -70,8 +70,30 @@ if (isset($popup)){
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="left" nowrap class="outer_table_heading">
-			<?php echo JText::_('TIMESHEET'); ?>
+			<?php echo JText::_('WEEKLY_TIMESHEET'); ?>
 		</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td nowrap align="center">
+			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+			value="<?php echo date('d-M-Y', $startDate); ?>" />
+			&nbsp;&nbsp;&nbsp;
+			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
+		</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td align="center" nowrap class="outer_table_heading">
+			<?php
+				$sdStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
+				//just need to go back 1 second most of the time, but DST 
+				//could mess things up, so go back 6 hours...
+				$edStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
+				echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr"; 
+			?>
+		</td>
+		<td width="10%" align="right"><?php echo JText::_('FILTER')?>:</td>
 		<td width="10%" align="right">
 				<?php echo ucfirst(JText::_('CLIENT')).':'; ?>
 		</td>
@@ -84,32 +106,11 @@ if (isset($popup)){
 		<td width="25%"align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
 		<td width="10%">&nbsp;</td>
 	</tr>
-	</tr>
-		<td align="center" nowrap class="outer_table_heading">
-			<?php
-				$sdStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
-				//just need to go back 1 second most of the time, but DST 
-				//could mess things up, so go back 6 hours...
-				$edStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
-				echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr"; 
-			?>
-		</td>
-		<td width="10%">&nbsp;</td>
-		<td align="center" nowrap="nowrap" class="outer_table_heading">
-				<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-				value="<?php echo date('d-M-Y', $startDate); ?>" />
-		</td>
-		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
-		</td>
-		<td align="right" nowrap>
-		</td>
-	</tr>
 </table>
 
  <!--  data table -->
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
+		<tr class="inner_table_head">
 			<td class="inner_table_column_heading" align="left" width="22%">
 <?php
 // print heading row including days of week

@@ -81,14 +81,11 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr";
 			?>
 		</td>
-		<td>
-				<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')"
-				value="<?php echo date("d-M-Y",$startDate); ?>" />
-				</td>
-				<td align="center" nowrap="nowrap" class="outer_table_heading">
-				<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
-				</td>
-
+		<td nowrap align="center">
+			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+			value="<?php echo date('d-M-Y', $startDate); ?>" />
+			&nbsp;&nbsp;&nbsp;
+			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
 		<td align="right" nowrap>
 			<!--prev / next buttons used to be here -->

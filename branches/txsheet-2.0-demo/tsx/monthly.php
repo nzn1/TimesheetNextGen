@@ -70,37 +70,36 @@ if (isset($popup))
 <!-- Overall table covering month cells, client and project and date -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap="nowrap">
-			<?php echo ucfirst(JText::_('CLIENT')).':'; ?>
+		<td align="left" nowrap class="outer_table_heading">
+			<?php echo ucwords(JText::_('MONTHLY_VIEW')); ?>
 		</td>
-		<td width="25%">
-			<?php
-				Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();");
-			?>
-		</td>
-		<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" />
-		</td>
-		<td>
-			<?php echo ucfirst(JText::_('PROJECT')).':'; ?>
-		</td>
-		<td width="25%">
-			<?php
-				Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();");
-			?>
-		</td>
-	</tr>
-	<tr>
-		<td height="1"><img src="<?php echo Config::getRelativeRoot();?>/images/spacer.gif" alt="spacer" width="150" height="1" /></td>
-		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<span><?php echo date(JText::_('DFMT_MONTH_YEAR'), $startDate); ?></span>
-		</td>
-		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')"
-				value="<?php echo date('d-M-Y', $startDate); ?>" />
-		</td>
-		<td align="center" nowrap="nowrap" class="outer_table_heading">
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td nowrap align="center">
+			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
+			value="<?php echo date('d-M-Y', $startDate); ?>" />
+			&nbsp;&nbsp;&nbsp;
 			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td align="center" nowrap class="outer_table_heading">
+			<span><?php echo date(JText::_('DFMT_MONTH_YEAR'), $startDate); ?></span>
+		</td>
+		<td width="10%" align="right"><?php echo JText::_('FILTER')?>:</td>
+		<td width="10%" align="right">
+				<?php echo ucfirst(JText::_('CLIENT')).':'; ?>
+		</td>
+		<td width="25%" align="left">
+			<?php Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?>
+		</td>
+		<td width="10%"align="right">
+			<?php echo ucfirst(JText::_('PROJECT')).':'; ?>
+		</td>
+		<td width="25%"align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
+		<td width="10%">&nbsp;</td>
 	</tr>
 </table><!-- end of the client, project select table and the current month -->
 
