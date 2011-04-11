@@ -55,7 +55,7 @@ function resizePopupWindow() {
 
 </script>
 </head>
-<body style="margin: 0;"  class="face_padding_cell" <?php include ("body.inc"); ?> onload="doOnLoad();">
+<body style="margin: 0;"  class="face_padding_cell"  onload="doOnLoad();">
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
 		<tr>
@@ -75,7 +75,7 @@ function resizePopupWindow() {
 	$month = $realToday["mon"];
 	$day = $realToday["mday"];
 	$fromPopup = "true";
-	include("clockOnOff_core.inc");
+	include(dirname(__FILE__)."/../include/tsx/clockOnOff_core_new.inc");
 ?>
 			</td>
 		</tr>

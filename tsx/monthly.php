@@ -86,7 +86,7 @@ if (isset($popup))
 	</tr>
 	<tr>
 		<td align="center" nowrap class="outer_table_heading">
-			<span><?php echo date(JText::_('DFMT_MONTH_YEAR'), $startDate); ?></span>
+			<span><?php echo strftime(JText::_('DFMT_MONTH_YEAR'), $startDate); ?></span>
 		</td>
 		<td width="10%" align="right"><?php echo JText::_('FILTER')?>:</td>
 		<td width="10%" align="right">

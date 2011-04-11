@@ -104,7 +104,7 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 .calendar_cell_disabled_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; }
 .calendar_cell_disabled_middle_2 { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; width: 2px; }
 .calendar_cell_disabled_middle_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; text-align: right;}
-.calendar_cell_disabled_right { border-bottom: 1px solid #5271CC; background-color: #C4C4C4; text-align: right;}
+.calendar_cell_disabled_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; text-align: center;}
 
 .calendar_cell_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; }
 .calendar_cell_middle_2 { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; width: 2px }
@@ -112,7 +112,7 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 
 .calendar_totals_line_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: black; background-color: #fff0f0; }
 .calendar_totals_line_weekly { border-bottom: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
-.calendar_totals_line_weekly_right { border-bottom: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
+.calendar_totals_line_weekly_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
 
 .calendar_total_value_weekly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
 .calendar_total_value_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }

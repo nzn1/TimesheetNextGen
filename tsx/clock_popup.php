@@ -2,6 +2,7 @@
 
 if(!class_exists('Site'))die('Restricted Access');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclWeekly'))return;
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('CLOCK')." ".JText::_('FOR')." ".gbl::getContextUser()."</title>");
 
 //load local vars from superglobals
 $year = $_REQUEST["year"];
@@ -33,7 +34,6 @@ include "include/tsx/form_input.inc";
 ob_start();
 include("client_proj_task_javascript.php");
 ?>
-<title>Update timesheet for <?php echo gbl::getContextUser(); ?></title>
 <script type="text/javascript">
 
 function resizePopupWindow() {
@@ -73,10 +73,10 @@ ob_end_clean();
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
-							Clock On / Off
+							<?php echo JText::_('CLOCK_ON_OFF')?>
 						</td>
 						<td align="right" nowrap class="outer_table_heading">
-							<?php echo strftime("%A %B %d, %Y", mktime(0,0,0,$month, $day, $year)); ?>
+							<?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), mktime(0,0,0,$month, $day, $year)); ?>
 						</td>
 					</tr>
 				</table>
@@ -84,7 +84,7 @@ ob_end_clean();
 <!-- include the timesheet face up until the next start section -->
 <?php 
 	$fromPopup = "true";
-	include("clockOnOff_core_new.inc"); 
+	include(dirname(__FILE__)."/../include/tsx/clockOnOff_core_new.inc"); 
 ?>
 
 
