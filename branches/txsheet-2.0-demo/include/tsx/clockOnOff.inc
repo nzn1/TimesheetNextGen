@@ -7,7 +7,7 @@
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
-							Clock On / Off
+							<?php echo JText::_('CLOCK_ON_OFF'); ?>
 						</td>
 					</tr>
 				</table>

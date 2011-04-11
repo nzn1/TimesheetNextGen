@@ -38,6 +38,7 @@ $CfgTimeFormat = Common::getTimeFormat();
 //$post="proj_id=".gbl::getProjId()."&amp;amp;task_id=".gbl::getTaskId()."&amp;amp;client_id=".gbl::getClientId()."";
 
 
+
 //include ("header.inc");
 PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser()."</title>");
 ob_start();
@@ -66,6 +67,7 @@ if (isset($popup)){
 <input type="hidden" name="day" value=<?php echo gbl::getDay(); ?> />
 <input type="hidden" name="task_id" value=<?php echo gbl::getTaskId(); ?> />
 
+
 <!-- date selection table -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -86,10 +88,10 @@ if (isset($popup)){
 	<tr>
 		<td align="center" nowrap class="outer_table_heading">
 			<?php
-				$sdStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
+				$sdStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
 				//just need to go back 1 second most of the time, but DST 
 				//could mess things up, so go back 6 hours...
-				$edStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
+				$edStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
 				echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr"; 
 			?>
 		</td>

@@ -4,12 +4,20 @@ if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('ABSENCE_ENTRY')." ".JText::_('FOR')." ".gbl::getContextUser()."</title>");
+
+
+
+
+
 
 
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
+
+
 
 if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_MANAGER))
 	$canChangeUser = true;
@@ -37,7 +45,6 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 ?>
 <html>
 <head>
-<title>Timesheet Absence Entry</title>
 
 <script type="text/javascript">
 
@@ -52,6 +59,8 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 </head>
 
+
+
 <form name="theForm" id="theForm" action="absences_action" method="post">
 <input type="hidden" name="month" value=<?php echo $month; ?> />
 <input type="hidden" name="day" value=<?php echo $day; ?> />
@@ -64,12 +73,12 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 	<tr>
 			<?php print "$day $month $year"; ?>
 		<?php if($canChangeUser) : ?>
-			<td align="left" width="38%" nowrap>User: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
+			<td align="left" width="38%" nowrap class="outer_table_heading"><?php echo JText::_('USER'); ?>: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
 		<?php else : ?>
-			<td width="38%" nowrap>User: &nbsp;<?php echo "<b>$uid</b>"; ?></td>
+			<td width="38%" nowrap><?php echo JText::_('USER'); ?>: &nbsp; <?php echo "<b>$uid</b>"; ?></td>
 		<?php endif; ?>
 		<td align="center" nowrap class="outer_table_heading">
-			<?php echo date('F Y',mktime(0,0,0,$month, 1, $year)); ?>
+			<?php echo strftime(JText::_('DFMT_MONTH_YEAR'), mktime(0,0,0,$month, 1, $year)); ?>
 		</td>
 		<td align="right">&nbsp; </td>
 				<td align="center" nowrap="nowrap" class="outer_table_heading">
@@ -91,16 +100,23 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 			<td>
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 				<tr>
-					<td class="calendar_cell_disabled_right">&nbsp</td>
-					<td align="center" class="calendar_cell_disabled_right"><b>Day</b></td>
-					<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b>Morning</b></td>
-					<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b>Afternoon</b></td>
+<!--					<td class="calendar_cell_disabled_right">&nbsp</td> -->
+					<td align="center" colspan="2" rowspan="2" class="calendar_cell_disabled_right"><b><?php echo JText::_('JOUR'); ?></b></td>
+					<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('MORNING'); ?></b></td>
+					<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('AFTERNOON'); ?></b></td>
 				</tr>
+				<tr>
+					<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
+					<td align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></td>
+					<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
+					<td align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></td>
+				</tr>
+				
 		<tr>
 <?php
 	for ($i=1;$i<=$last_day;$i++) {
 		$day = mktime(0,0,0,$month,$i,$year);
-		$dow = strftime("%a", $day);
+		$dow = strftime("%A", $day);
 		$daystyle = "calendar_cell_middle";
 		if ((date('w', $day) == 6)||(date('w', $day) == 0)) {
 			$daystyle = "calendar_cell_holiday_middle";
@@ -166,9 +182,9 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $dow; ?></td>
 			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $i; ?></td>
 			<td align="right" class="<?php echo $AMstyle; ?>"><?php Common::absence_select_droplist($AM_type, $disabled, "AMtype".$i); ?></td>
-			<td align="left" class="<?php echo $AMstyle; ?>"><input type="text" id="<?php echo "AMtext",$i; ?>" name="<?php echo "AMtext",$i; ?>" class="<?php echo $AMstyle; ?>" value="<?php echo $AM_text; ?>" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
+			<td align="left" class="<?php echo $AMstyle; ?>"><input type="text" id="<?php echo "AMtext",$i; ?>" name="<?php echo "AMtext",$i; ?>" class="<?php echo $AMstyle; ?>" value="<?php echo $AM_text; ?>" style="width: 100%;" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
 			<td align="right" class="<?php echo $PMstyle; ?>"><?php Common::absence_select_droplist($PM_type, $disabled, "PMtype".$i); ?></td>
-			<td align="left" class="<?php echo $PMstyle; ?>"><input type="text" id="<?php echo $i,"_PMtext"; ?>" name="<?php echo "PMtext",$i; ?>" class="<?php echo $PMstyle; ?>" value="<?php echo $PM_text; ?>" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
+			<td align="left" class="<?php echo $PMstyle; ?>"><input type="text" id="<?php echo $i,"_PMtext"; ?>" name="<?php echo "PMtext",$i; ?>" class="<?php echo $PMstyle; ?>" value="<?php echo $PM_text; ?>" style="width: 100%;" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
 		</tr>
 <?php
 	}

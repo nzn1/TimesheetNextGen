@@ -74,10 +74,10 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		</td>
 		<td align="middle" nowrap class="outer_table_heading">
 			<?php
-				$sdStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
+				$sdStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
 				//just need to go back 1 second most of the time, but DST
 				//could mess things up, so go back 6 hours...
-				$edStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
+				$edStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
 				echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr";
 			?>
 		</td>
@@ -469,6 +469,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	for ($rowIndex = 0; $rowIndex<$count; $rowIndex++) {
 		$matchedPair = &$structuredArray[$rowIndex];
 
+
 		printFormRow($rowIndex, $layout,
 					 $matchedPair->projectId,
 					 $matchedPair->value1,
@@ -476,6 +477,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 					 $startDate,
 					 $matchedPair->value2,
 					 $allTasksDayTotals);
+
 
 
 		//store the previous task and project ids

@@ -1086,7 +1086,7 @@ class Common{
 
 	public static function absence_select_droplist($selected='', $disabled='false', $id) {
 ?>
-	<select name="<?php echo $id; ?>" onchange="OnChange()" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
+	<select name="<?php echo $id; ?>" onchange="OnChange()" style="width: 100%;" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
 	<option value="" <?php if ($selected == '') echo "selected=\"selected\"";?>></option>
 	<option value="Holiday" <?php if ($selected== 'Holiday') echo "selected=\"selected\"";?>>Holiday</option>
 	<option value="Sick" <?php if ($selected== 'Sick') echo "selected=\"selected\"";?>>Sick</option>
