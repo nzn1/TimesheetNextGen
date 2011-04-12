@@ -19,10 +19,10 @@ $destination = $_REQUEST["destination"];
 if ($proj_id == 0)
 	$task_id = 0;
 
+ob_start();
 ?>
-<html>
-<head>
-	<title><?php echo gbl::getContextUser(); ?> Stopwatch</title>
+
+<title><?php echo Config::getMainTitle() - gbl::getContextUser(); ?> Stopwatch</title>
 <?php
 include("client_proj_task_javascript.php");
 ?>
@@ -55,8 +55,13 @@ function resizePopupWindow() {
 }
 
 </script>
-</head>
-<body style="margin: 0;"  class="face_padding_cell"  onload="doOnLoad();">
+<?php
+
+$head = ob_get_contents();
+PageElements::setHead($head);
+
+PageElements::setBodyOnLoad("doOnLoad();");
+?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
 		<tr>
