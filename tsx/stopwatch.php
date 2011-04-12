@@ -4,6 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
+PageElements::setTemplate('popup_template.php');
 //load local vars from superglobals
 $proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 $task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
