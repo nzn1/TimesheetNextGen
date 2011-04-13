@@ -4,32 +4,9 @@ if(!class_exists('Site'))die('Restricted Access');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclWeekly'))return;
 PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('CLOCK')." ".JText::_('FOR')." ".gbl::getContextUser()."</title>");
 
-//load local vars from superglobals
-$year = $_REQUEST["year"];
-$month = $_REQUEST["month"];
-$day = $_REQUEST["day"];
-$destination = $_REQUEST["destination"];
-$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
-$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
-$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
-
-
-$currentDate = mktime(0, 0, 0, $month, $day, $year);
-
-//get todays values
-
-$todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
-//check that the client id is valid
-//if ($client_id == 0 || empty($client_id))
-//	$client_id = getFirstClient();
-
-//check that project id is valid
-if ($proj_id == 0)
-	$task_id = 0;
 
 //include date input classes
 include "include/tsx/form_input.inc";
-
 
 ob_start();
 include("client_proj_task_javascript.php");
@@ -64,7 +41,6 @@ PageElements::setHead(PageElements::getHead().ob_get_contents());
 ob_end_clean();
 
 ?>
-</head>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
 	  <tr>
@@ -76,7 +52,7 @@ ob_end_clean();
 							<?php echo JText::_('CLOCK_ON_OFF')?>
 						</td>
 						<td align="right" nowrap class="outer_table_heading">
-							<?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), mktime(0,0,0,$month, $day, $year)); ?>
+							<?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), mktime(0,0,0,gbl::getMonth(), gbl::getDay(), gbl::getYear())); ?>
 						</td>
 					</tr>
 				</table>
@@ -84,7 +60,7 @@ ob_end_clean();
 <!-- include the timesheet face up until the next start section -->
 <?php 
 	$fromPopup = "true";
-	include(dirname(__FILE__)."/../include/tsx/clockOnOff_core_new.inc"); 
+	require(dirname(__FILE__)."/../include/tsx/clockOnOff_core_new.inc"); 
 ?>
 
 

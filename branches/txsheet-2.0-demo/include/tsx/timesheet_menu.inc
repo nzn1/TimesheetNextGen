@@ -3,16 +3,9 @@ if(!class_exists('Site'))die('Restricted Access');
 ////get todays values
 if(!isset($realToday))
 	$realToday = getdate(time());
-//
-////load local vars from superglobals
-$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: $realToday["year"];
-$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: $realToday["mon"];
-$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: $realToday["mday"];
-$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
-$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
-$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 
-if(empty($post)) $post="year=$year&amp;month=$month&amp;day=$day&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";
+
+if(empty($post)) $post="year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()."";
 
 if(class_exists('Site')){
 	if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR))
@@ -35,13 +28,13 @@ if (!($mode == "all" || $mode == "monthly" || $mode == "weekly"))
 if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	Site::getCommandMenu()->add(new Command("<form action=\"".urlencode($_SERVER['REQUEST_URI'])."\" method=\"get\">",true,false));
 	Site::getCommandMenu()->add(new Command(
-		"<input type=\"hidden\" name=\"year\" value=\"$year\" />" .
-		"<input type=\"hidden\" name=\"month\" value=\"$month\" />" .
-		"<input type=\"hidden\" name=\"day\" value=\"$day\" />"
+		"<input type=\"hidden\" name=\"year\" value=\"".gbl::getYear()."\" />" .
+		"<input type=\"hidden\" name=\"month\" value=\"".gbl::getMonth()."\" />" .
+		"<input type=\"hidden\" name=\"day\" value=\"".gbl::getDay()."\" />"
 	,true,false));
 }	
 
-$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/stopwatch?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;destination=".Rewrite::getShortUri()."','Stopwatch','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=220')";
+$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/stopwatch?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;destination=".Rewrite::getShortUri()."','Stopwatch','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=220')";
 
 /*
  Once we get acls for Users, Submit, Supervisor, and Configuration, we can uncomment this section 

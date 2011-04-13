@@ -6,8 +6,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/popups.inc');
 PageElements::addFile('tsx_footer','themes/'.PageElements::getTheme().'/popups.inc');
 
-//load local vars from superglobals
-$client_id = $_REQUEST['client_id'];
+
 ?>
 <HTML>
 <head>
@@ -15,13 +14,13 @@ $client_id = $_REQUEST['client_id'];
 </head>
 
 <?php
-$CLIENT_TABLE = tbl::getClientTable();
+
 	$query = "SELECT organisation, description, address1, address2,".
 				"city, country, postal_code, contact_first_name, contact_last_name,".
 				"username, contact_email, phone_number, fax_number, gsm_number, ".
 				"http_url ".
-			"FROM $CLIENT_TABLE ".
-			"WHERE $CLIENT_TABLE.client_id=$client_id";
+			"FROM ".tbl::getClientTable()." ct ".
+			"WHERE ct.client_id=".gbl::getClientId().";
 
 
 

@@ -55,11 +55,11 @@ include ("header.inc");
 			list($billqh, $bill_num) = dbquery(
 					"SELECT sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, ".
 						"sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))) as billed ".
-						"FROM $TIMES_TABLE, $ASSIGNMENTS_TABLE, $RATE_TABLE ".
-						"WHERE end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] ".
-						"AND $ASSIGNMENTS_TABLE.proj_id = $data[proj_id] ".
-						"AND $ASSIGNMENTS_TABLE.rate_id = $RATE_TABLE.rate_id ".
-						"AND $ASSIGNMENTS_TABLE.username = $TIMES_TABLE.uid ");
+						"FROM ".tbl::getTimesTable()." tt, ".tbl::getAssignmentsTable()." at, ".tbl::getRateTable()." rt ".
+						"WHERE end_time > 0 AND rt.proj_id = $data[proj_id] ".
+						"AND at.proj_id = $data[proj_id] ".
+						"AND at.rate_id = rt.rate_id ".
+						"AND at.username = tt.uid ");
 			$bill_data = dbResult($billqh);
 
 			//start the row
@@ -114,7 +114,7 @@ include ("header.inc");
 			print "<tr><td><span class=\"label\">Project Leader:</span> $data[proj_leader] </td></tr>";
 
 			//display assigned users
-			list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $data[proj_id]");
+			list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM ".tbl::getAssignmentsTable()." WHERE proj_id = $data[proj_id]");
 			if ($num_workers == 0) {
 				print "<tr><td><font size=\"-1\">Nobody assigned to this project</font></td></tr>\n";
 			}
@@ -141,7 +141,7 @@ include ("header.inc");
 																	<a href="<?php echo Config::getRelativeRoot(); ?>/task_maint?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
 <?php
 			//get tasks
-			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]");
+			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM ".tbl::getTaskTable()." WHERE proj_id=$data[proj_id]");
 
 			//are there any tasks?
 			if ($num_tasks > 0) {

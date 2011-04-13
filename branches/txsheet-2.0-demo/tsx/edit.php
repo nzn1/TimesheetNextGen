@@ -38,7 +38,7 @@ if ($action == "saveChanges") {
 
 	$duration = get_duration(strtotime($clock_on_time_string),strtotime($clock_off_time_string));
 
-	$queryString = "UPDATE $TIMES_TABLE SET start_time='$clock_on_time_string', ".
+	$queryString = "UPDATE ".tbl::getTimesTables()." SET start_time='$clock_on_time_string', ".
 								"end_time='$clock_off_time_string', ".
 								"duration=$duration, " .
 								"log_message='$log_message', ".

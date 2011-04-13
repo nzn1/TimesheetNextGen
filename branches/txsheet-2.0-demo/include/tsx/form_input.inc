@@ -30,7 +30,7 @@
 
 			//work out whether we want to display time in 12 or 24 hour format
 			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+			list($qhq, $numq) = dbQuery("SELECT timeformat FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 			$configdata = dbResult($qhq);
 
 			if ($configdata['timeformat'] == "12")

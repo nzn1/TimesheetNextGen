@@ -25,16 +25,13 @@ $fax_number = mysql_real_escape_string(isset($_POST['fax_number']) ? $_POST['fax
 $gsm_number = mysql_real_escape_string(isset($_POST['gsm_number']) ? $_POST['gsm_number']: "");
 $http_url = mysql_real_escape_string(isset($_POST['http_url']) ? $_POST['http_url']: "");
 
-$CLIENT_TABLE = tbl::getClientTable();
-$PROJECT_TABLE = tbl::getProjectTable();
-
 if ($_REQUEST['action'] == "add") {
-	dbquery("INSERT INTO $CLIENT_TABLE VALUES ('$client_id','$organisation','$description','$address1','$city'," .
+	dbquery("INSERT INTO ".tbl::getClientTable()." VALUES ('$client_id','$organisation','$description','$address1','$city'," .
 	"'L','$country','$postal_code','$contact_first_name','$contact_last_name','$client_username'," .
 	"'$contact_email','$phone_number','$fax_number','$gsm_number','$http_url','$address2')");
 } elseif ($action == "edit") {
 	//create the query
-	$query = "UPDATE $CLIENT_TABLE SET organisation='$organisation',".
+	$query = "UPDATE ".tbl::getClientTable()." SET organisation='$organisation',".
 		"description='$description',address1='$address1',city='$city',".
 		"country='$country',postal_code='$postal_code',".
 		"contact_first_name='$contact_first_name',".
@@ -47,11 +44,11 @@ if ($_REQUEST['action'] == "add") {
 	list($qh,$num) = dbquery($query);
 } elseif ($action == "delete") {
 	//find out if this client is in use
-	list($qh,$num) = dbQuery("SELECT * FROM $PROJECT_TABLE WHERE client_id='$client_id'");
+	list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getProjectTable()." WHERE client_id='$client_id'");
 	if ($num > 0)
 		errorPage(JText::_('CANT_DELETE_CLIENT_WITH_PROJECTS'));
 	else
-		dbquery("DELETE FROM $CLIENT_TABLE WHERE client_id='$client_id'");
+		dbquery("DELETE FROM ".tbl::getClientTable()." WHERE client_id='$client_id'");
 }
 
 gotoLocation(Config::getRelativeRoot()."/clients/client_maint");

@@ -23,6 +23,10 @@ class gbl{
 		self::$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: self::$realToday["year"];
 		self::$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: self::$realToday["mon"];
 		self::$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: self::$realToday["mday"];
+		self::$mode = isset($_REQUEST["mode"]) ? $_REQUEST["mode"]: 0;
+		self::$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
+		self::$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
+		self::$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;		
 
 	if(isset($_REQUEST['date1'])){
 //if the date variable exists
@@ -76,16 +80,15 @@ class gbl{
 	
 }
 		
-		self::$mode = isset($_REQUEST["mode"]) ? $_REQUEST["mode"]: 0;
-		self::$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
-		self::$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
-		self::$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
+
 		
 		if (isset($_SESSION['contextUser']))
 			self::$contextUser = strtolower($_SESSION['contextUser']);
 		if (isset($_SESSION['loggedInUser']))
 		self::$loggedInUser = strtolower($_SESSION['loggedInUser']);
 		
+		//check that project id is valid
+  if (self::$proj_id == 0)self::$task_id = 0;
 		
 	}
 	

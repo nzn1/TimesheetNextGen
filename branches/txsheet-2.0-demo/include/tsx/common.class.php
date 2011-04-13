@@ -35,7 +35,7 @@ class Common{
 
 	}
 	
-	public static function get_time_records($startStr, $endStr, $uid='', $proj_id=0, $client_id=0, 
+	public static function get_time_records($startStr, $endStr, $uid='', $projId=0, $clientId=0, 
 							$order_by = "start_time, proj_id, task_id") {
 
 	//build the database query
@@ -61,10 +61,10 @@ class Common{
 
 		if ($uid != '') //otherwise we want all users
 			$query .= "".tbl::getTimesTable().".uid='$uid' AND ";
-		if ($proj_id > 0) //otherwise we want all projects
-			$query .= "".tbl::getTimesTable().".proj_id=$proj_id AND ";
-		if ($client_id > 0) //otherwise we want all clients
-			$query .= "".tbl::getProjectTable().".client_id=$client_id AND ";
+		if ($projId > 0) //otherwise we want all projects
+			$query .= "".tbl::getTimesTable().".proj_id=$projId AND ";
+		if ($clientId > 0) //otherwise we want all clients
+			$query .= "".tbl::getProjectTable().".client_id=$clientId AND ";
 
 		$query .=	"".tbl::getTimesTable().".uid    = ".tbl::getUserTable().".username AND ".
 					"".tbl::getTaskTable().".task_id = ".tbl::getTimesTable().".task_id AND ".
@@ -508,21 +508,21 @@ class Common{
 		return $result['EmpId'];
 	}
 
-	public static function get_project_name($proj_id) {
+	public static function get_project_name($projId) {
 
 		// Retreives project title (name)
-		$sql = "SELECT title FROM ".tbl::getProjectTable()." WHERE proj_id=$proj_id";
+		$sql = "SELECT title FROM ".tbl::getProjectTable()." WHERE proj_id=$projId";
 		list($my_qh, $num) = dbQuery($sql);
 		$result = dbResult($my_qh);
 		return $result['title'];
 	}
 
-	public static function get_project_info($proj_id) {
+	public static function get_project_info($projId) {
 
 		// Retreives title, client_id, description, deadline and link from database for a given proj_id
 		$result = array();
-		if ($proj_id > 0) {
-			$sql = "SELECT * FROM ".tbl::getProjectTable()." WHERE proj_id=$proj_id";
+		if ($projId > 0) {
+			$sql = "SELECT * FROM ".tbl::getProjectTable()." WHERE proj_id=$projId";
 			list($my_qh, $num) = dbQuery($sql);
 			$result = dbResult($my_qh);
 		}
@@ -947,16 +947,16 @@ class Common{
 		if ($contextUser == '')
 			$query = "SELECT task_id, name, status FROM ".tbl::getTaskTable()." WHERE proj_id=$currentProjectId";
 		else {
-// 	$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_TABLE.task_id, ".tbl::getTaskTable().".name FROM $TASK_ASSIGNMENTS_TABLE, ".tbl::getTaskTable().", ".tbl::getAssignmentsTable()." WHERE ".
-// 	  "".tbl::getAssignmentsTable().".proj_id=$proj_id AND $TASK_ASSIGNMENTS_TABLE.task_id = ".tbl::getTaskTable().".task_id and ".
-// 	  "$TASK_ASSIGNMENTS_TABLE.task_id > 1 AND ".tbl::getTaskTable().".status='Started' ORDER BY $TASK_ASSIGNMENTS_TABLE.task_id";
-			$query = "SELECT DISTINCT $TASK_ASSIGNMENTS_TABLE.task_id, ".tbl::getTaskTable().".name " .
-				"FROM $TASK_ASSIGNMENTS_TABLE, ".tbl::getTaskTable()." WHERE ".
-				"".tbl::getTaskTable().".proj_id=$currentProjectId AND ".
-				"$TASK_ASSIGNMENTS_TABLE.task_id = ".tbl::getTaskTable().".task_id AND ".
-				"$TASK_ASSIGNMENTS_TABLE.username = '$contextUser' AND ".
-				"".tbl::getTaskTable().".status='Started' " .
-				"ORDER BY $TASK_ASSIGNMENTS_TABLE.name,$TASK_ASSIGNMENTS_TABLE.task_id";
+// 	$query = "SELECT DISTINCT tat.task_id, tt.name FROM ".tbl::getTaskAssignmentsTable()." tat, ".tbl::getTaskTable()." tt , ".tbl::getAssignmentsTable()." at WHERE ".
+// 	  "at.proj_id=$projId AND tat.task_id = tt.task_id and ".
+// 	  "tat.task_id > 1 AND tt.status='Started' ORDER BY tat.task_id";
+			$query = "SELECT DISTINCT tat.task_id, tt.name " .
+				"FROM ".tbl::getTaskAssignmentsTable()." tat, ".tbl::getTaskTable()." tt WHERE ".
+				"tt.proj_id=$currentProjectId AND ".
+				"tat.task_id = ".tbl::getTaskTable().".task_id AND ".
+				"tat.username = '$contextUser' AND ".
+				"tt.status='Started' " .
+				"ORDER BY tat.name,tat.task_id";
 		}
 
 		list($qh, $num) = dbQuery($query);
@@ -1099,7 +1099,7 @@ class Common{
 <?php
 	}
 
-	public static function client_select_droplist($client_id=1, $disabled=false, $info=true) {
+	public static function client_select_droplist($clientId=1, $disabled=false, $info=true) {
 
 		$query = "SELECT client_id, organisation FROM ".tbl::getClientTable()." ORDER BY organisation";
 
@@ -1115,7 +1115,7 @@ class Common{
 				if($num > 1 && $return["client_id"] == 1) continue; //ignore default client
 				$current_organisation = stripslashes($return["organisation"]);
 				print "<option value=\"$return[client_id]\"";
-				if ($return["client_id"] == $client_id)
+				if ($return["client_id"] == $clientId)
 					print " selected=\"selected\"";
 				print ">$current_organisation</option>\n";
 			}
@@ -1123,7 +1123,7 @@ class Common{
 			if($info) {
 				print "</td><td width=\"0\">";
 				print "<input type=\"button\" name=\"info\" value=\"Info\"";
-				print "onclick=window.open(\"".Config::getRelativeRoot()."/client_info?client_id=$client_id\",";
+				print "onclick=window.open(\"".Config::getRelativeRoot()."/client_info?client_id=$clientId\",";
 				print "\"Client_Info\",";
 				print "\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\") />";
 			}
@@ -1134,7 +1134,7 @@ class Common{
 			//print "</td></tr></table>";
 	}
 
-	public static function project_select_droplist($proj_id=1, $disabled='false') {
+	public static function project_select_droplist($projId=1, $disabled='false') {
 
 			$query = "SELECT " .
 							"proj_id, " .
@@ -1162,7 +1162,7 @@ class Common{
 				}
 				$current_title = $return['title'];
 				print "<option value=\"$return[proj_id]\"";
-				if ($return["proj_id"] == $proj_id)
+				if ($return["proj_id"] == $projId)
 					print " selected=\"selected\"";
 				print ">$current_title</option>\n";
 			}
@@ -1177,7 +1177,7 @@ class Common{
 
 	public static function present_log_message($action) {
 		global $check_in_time_hour, $check_out_time_hour,$check_in_time_min, $check_out_time_min, $year,
-		$month, $day, $proj_id, $task_id, $destination;
+		$month, $day, $projId, $taskId, $destination;
 	?>
 <HTML>
 <body bgcolor="#FFFFFF" >
@@ -1193,8 +1193,8 @@ class Common{
 		print "<input type=\"hidden\" name=year value=\"$year\" />\n";
 		print "<input type=\"hidden\" name=month value=\"$month\" />\n";
 		print "<input type=\"hidden\" name=day value=\"$day\" />\n";
-		print "<input type=\"hidden\" name=proj_id value=\"$proj_id\" />\n";
-		print "<input type=\"hidden\" name=task_id value=\"$task_id\" />\n";
+		print "<input type=\"hidden\" name=proj_id value=\"$projId\" />\n";
+		print "<input type=\"hidden\" name=task_id value=\"$taskId\" />\n";
 		switch($action) {
 		case "inout":
 			print "<input type=\"hidden\" name=\"check_in_out_x\" value=\"1\" />\n";
@@ -1377,17 +1377,17 @@ class Common{
 		return $data["client_id"];
 	}
 
-	public static function getClientNameFromProject($proj_id) {
+	public static function getClientNameFromProject($projId) {
 
-		list($qh, $num) = dbQuery("SELECT client_id FROM ".tbl::getProjectTable()." WHERE proj_id = $proj_id");
+		list($qh, $num) = dbQuery("SELECT client_id FROM ".tbl::getProjectTable()." WHERE proj_id = $projId");
 		if ($num == 0)
 			return 0;
 
 		//get the first result
 		$data = dbResult($qh);
-		$client_id = $data["client_id"];
+		$clientId = $data["client_id"];
 
-		list($qh, $num) = dbQuery("SELECT organisation FROM ".tbl::getClientTable()." WHERE client_id = $client_id");
+		list($qh, $num) = dbQuery("SELECT organisation FROM ".tbl::getClientTable()." WHERE client_id = $clientId");
 		if ($num == 0)
 			return 0;
 		$data = dbResult($qh);

@@ -70,7 +70,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 <?php } else { 
 	$task_array=array();
 
-	$sql = "SELECT task_id, proj_id FROM $TASK_TABLE order by task_id";
+	$sql = "SELECT task_id, proj_id FROM ".tbl::getTaskTable()." order by task_id";
 	$result = do_query($sql);
 	if($result) {
 		while($data = mysql_fetch_array($result)) {
@@ -81,7 +81,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 		}
 	}
 
-	$sql = "DELETE from $TASK_ASSIGNMENTS_TABLE";
+	$sql = "DELETE from ".tbl::getTaskAssignmentsTable()."";
 	$rslt = do_query($sql);
 	print "All task assignments removed<br />\n";
 
@@ -89,7 +89,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 	$userprojcnt=0;
 	$usertaskcnt=0;
 
-	$sql = "SELECT username, proj_id FROM $ASSIGNMENTS_TABLE order by username";
+	$sql = "SELECT username, proj_id FROM ".tbl::getAssignmentsTable()." order by username";
 	$result = do_query($sql);
 	if($result) {
 		while($data = mysql_fetch_array($result)) {
@@ -106,7 +106,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 			$userprojcnt++;
 
 			foreach($task_array[$proj_id] as $task_id => $value) {	
-				$sql = "INSERT into $TASK_ASSIGNMENTS_TABLE VALUES ($task_id,'$username',$proj_id)";
+				$sql = "INSERT into ".tbl::getTaskAssignmentsTable()." VALUES ($task_id,'$username',$proj_id)";
 				$rslt = do_query($sql);
 				$usertaskcnt++;
 			}

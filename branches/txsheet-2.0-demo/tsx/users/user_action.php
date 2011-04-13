@@ -21,14 +21,10 @@ $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIV
 //print "<p>isAdministrator='$isAdministrator'</p>";
 
 
-$ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
-$TASK_TABLE = tbl::getTaskTable();
-$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
-
 if ($action == "delete") {
-	dbquery("DELETE FROM ".tbl::getuserTable()." WHERE uid='$uid'");
-	dbquery("DELETE FROM $ASSIGNMENTS_TABLE WHERE username='$username'");
-	dbquery("DELETE FROM $TASK_ASSIGNMENTS_TABLE WHERE username='$username'");
+	dbquery("DELETE FROM ".tbl::getUserTable()." WHERE uid='$uid'");
+	dbquery("DELETE FROM ".tbl::getAssignmentsTable()." WHERE username='$username'");
+	dbquery("DELETE FROM ".tbl::getTaskAssignmentsTable()." WHERE username='$username'");
 } else if ($action == "addupdate") {
 	//set the level
 	if ($isAdministrator == "true")
@@ -47,10 +43,10 @@ if ($action == "delete") {
 		//has the username changed
 		if ($data["username"] != $username) {
 			//update the assignments
-			dbQuery("UPDATE $ASSIGNMENTS_TABLE SET username='$username' WHERE username='$data[username]'");
-			dbQuery("UPDATE $TASK_ASSIGNMENTS_TABLE SET username='$username' WHERE username='$data[username]'");
-			dbQuery("UPDATE $PROJECT_TABLE SET proj_leader='$username' WHERE proj_leader='$data[username]'");
-			dbQuery("UPDATE $TIMES_TABLE SET uid='$username' WHERE uid='$data[username]'");
+			dbQuery("UPDATE ".tbl::getAssignmentsTable()." SET username='$username' WHERE username='$data[username]'");
+			dbQuery("UPDATE ".tbl::getTaskAssignmentsTable()." SET username='$username' WHERE username='$data[username]'");
+			dbQuery("UPDATE ".tbl::getProjectTable()." SET proj_leader='$username' WHERE proj_leader='$data[username]'");
+			dbQuery("UPDATE ".tbl::getTimesTable()." SET uid='$username' WHERE uid='$data[username]'");
 		}
 
 		if ($data["password"] == $password) {
@@ -77,11 +73,11 @@ if ($action == "delete") {
 							"last_name, email_address, time_stamp, status) " .
 						"VALUES ('$username',$level,".config::getDbPwdFunction()."('$password'),'$first_name',".
 							"'$last_name','$email_address',0,'$status')");
-		dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
-		dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task
+		dbquery("INSERT INTO ".tbl::getAssignmentsTable()." VALUES (1,'$username', 1)"); // add default project.
+		dbquery("INSERT INTO ".tbl::getTaskAssignmentsTable()." VALUES (1,'$username', 1)"); // add default task
 		//create a time string for >>now<<
 		$today_stamp = date("Y-m-d H:i:00");
-		dbquery("INSERT INTO $ALLOWANCE_TABLE VALUES (NULL,'$username', '$today_stamp', 0, 0.0)"); // add default allowance
+		dbquery("INSERT INTO ".tbl::getAllowanceTable()." VALUES (NULL,'$username', '$today_stamp', 0, 0.0)"); // add default allowance
 	}
 }
 
