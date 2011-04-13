@@ -1,5 +1,5 @@
 <?php
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 class ClientProjTaskJavascript{
 
 	private $userClientList = array();
@@ -57,7 +57,7 @@ class ClientProjTaskJavascript{
 			$data = dbResult($qh2, $i);
 
 			
-			if(($data["client_id"]==1) && ($numClients>1) && sizeof($this->userClientList)>1) continue;
+			#if(($data["client_id"]==1) && ($numClients>1) && sizeof($this->userClientList)>1) continue;
 			
 			if(array_key_exists($data["client_id"],$this->userClientList)) {
 				
@@ -90,7 +90,7 @@ class ClientProjTaskJavascript{
 
 			if(!array_key_exists($data["client_id"],$this->userClientList)) continue;
 			if(!array_key_exists($data["proj_id"],$this->userProjectList))  continue;
-			if(($data["client_id"]==1) && ($data["proj_id"]==1) && ($num3>1)) continue;
+			#if(($data["client_id"]==1) && ($data["proj_id"]==1) && ($num3>1)) continue;
 
 			//add the project id to the array for this particular client
 			$this->jsonClientProjectsHash[$data["client_id"]]['projects'][$data['proj_id']] = $data['proj_id'];
@@ -127,7 +127,7 @@ class ClientProjTaskJavascript{
 
 			if(!array_key_exists($data["proj_id"],$this->userProjectList)) continue;
 			
-			if($this->jsonProjectTasksHash[$data['proj_id']] != null){
+			if(array_key_exists($data['proj_id'],$this->jsonProjectTasksHash)){
 				$this->jsonProjectTasksHash[$data['proj_id']]['tasks'][$data['task_id']] = addslashes($data["name"]);
 			}
 		}

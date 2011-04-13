@@ -1,13 +1,34 @@
 <?php
-if(!class_exists('Site'))die('Restricted Access');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 trigger_error('WARNING - LOTS OF STUFF IN clock_action has not be converted to OO!');
 
 // Authenticate
 //require(Config::getDocumentRoot()."/include/tsx/debuglog.php");
 if (!Site::getAuthenticationManager()->isLoggedIn()) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI']));
+	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['POST_URI']));
 	exit;
 }
+
+
+$GLOBALS["simple_debug"]=true;
+if($GLOBALS["simple_debug"]) {
+	require(Config::getDocumentRoot()."/include/tsx/debuglog.php");
+	$GLOBALS["debug"] = new logfile();
+
+	$test=http_build_query($_POST);
+	$tsize = strlen($test);
+
+	$GLOBALS["debug"]->write("post size is $tsize\n");
+} else
+	$GLOBALS["debug"]=0;
+
+if($GLOBALS["simple_debug"]) {
+	$GLOBALS["debug"]->write(print_r($_POST, TRUE));
+}
+
+// Oh, bother, in OO mode, we're not at the "root" level of anything here, so, none of these
+// variables below are global in scope...
+// So, what do we really need?
 
 /**
  * Updated by robsearles 26 Jan 2008
@@ -15,33 +36,30 @@ if (!Site::getAuthenticationManager()->isLoggedIn()) {
  * set a few default values in the list of local vars below
  */
 //load local vars from superglobals
-$month = isset($_REQUEST['month']) ? $_REQUEST['month'] : false;
-$day = isset($_REQUEST['day']) ? $_REQUEST['day'] : false;
-$year = isset($_REQUEST['year']) ? $_REQUEST['year'] : false;
-$client_id = $_REQUEST['client_id'];
-$proj_id = $_REQUEST['proj_id'];
-$task_id = $_REQUEST['task_id'];
-$origin = isset($_REQUEST['origin']) ? $_REQUEST['origin'] : 'daily';
-$destination = isset($_REQUEST['destination']) ? $_REQUEST['destination'] : 'daily';
-$fromPopupWindow = isset($_REQUEST['fromPopupWindow']) ? $_REQUEST['fromPopupWindow']: false;
-$clockonoff = isset($_REQUEST['clockonoff']) ? $_REQUEST['clockonoff']: "";
-$clock_on_time_hour = isset($_REQUEST['clock_on_time_hour']) ? $_REQUEST['clock_on_time_hour']: 0;
-$clock_on_time_min = isset($_REQUEST['clock_on_time_min']) ? $_REQUEST['clock_on_time_min']: 0;
-$clock_off_time_hour = isset($_REQUEST['clock_off_time_hour']) ? $_REQUEST['clock_off_time_hour']: 0;
-$clock_off_time_min = isset($_REQUEST['clock_off_time_min']) ? $_REQUEST['clock_off_time_min']: 0;
-$log_message = isset($_REQUEST['log_message']) ? $_REQUEST['log_message']: "";
-$log_message_presented = isset($_REQUEST['log_message_presented']) ? $_REQUEST['log_message_presented']: false;
-$clock_on_check = isset($_REQUEST['clock_on_check']) ? $_REQUEST['clock_on_check']: "";
-$clock_off_check = isset($_REQUEST['clock_off_check']) ? $_REQUEST['clock_off_check']: "";
-$clock_on_radio = isset($_REQUEST['clock_on_radio']) ? $_REQUEST['clock_on_radio']: "";
-$clock_off_radio = isset($_REQUEST['clock_off_radio']) ? $_REQUEST['clock_off_radio']: "";
+$month = isset($_POST['month']) ? $_POST['month'] : false;
+$day = isset($_POST['day']) ? $_POST['day'] : false;
+$year = isset($_POST['year']) ? $_POST['year'] : false;
+$client_id = $_POST['client_id'];
+$proj_id = $_POST['proj_id'];
+$task_id = $_POST['task_id'];
+$origin = isset($_POST['origin']) ? $_POST['origin'] : 'daily';
+$destination = isset($_POST['destination']) ? $_POST['destination'] : 'daily';
+$fromPopupWindow = isset($_POST['fromPopupWindow']) ? $_POST['fromPopupWindow']: false;
+$clockonoff = isset($_POST['clockonoff']) ? $_POST['clockonoff']: "";
+$clock_on_time_hour = isset($_POST['clock_on_time_hour']) ? $_POST['clock_on_time_hour']: 0;
+$clock_on_time_min = isset($_POST['clock_on_time_min']) ? $_POST['clock_on_time_min']: 0;
+$clock_off_time_hour = isset($_POST['clock_off_time_hour']) ? $_POST['clock_off_time_hour']: 0;
+$clock_off_time_min = isset($_POST['clock_off_time_min']) ? $_POST['clock_off_time_min']: 0;
+$log_message = isset($_POST['log_message']) ? $_POST['log_message']: "";
+$log_message_presented = isset($_POST['log_message_presented']) ? $_POST['log_message_presented']: false;
+$clock_on_check = isset($_POST['clock_on_check']) ? $_POST['clock_on_check']: "";
+$clock_off_check = isset($_POST['clock_off_check']) ? $_POST['clock_off_check']: "";
+$clock_on_radio = isset($_POST['clock_on_radio']) ? $_POST['clock_on_radio']: "";
+$clock_off_radio = isset($_POST['clock_off_radio']) ? $_POST['clock_off_radio']: "";
 
 if($fromPopupWindow == 'false')
 	$fromPopupWindow = false;
 
-//$debug = new logfile();
-//$debug->write("destination = \"$destination\"\n");
-//$debug->write("fromPopupWindow = \"$fromPopupWindow\"\n");
 
 /**
  * @todo the &var= stuff needs to be changed to &amp;var= BUT 
@@ -96,8 +114,13 @@ if ($clock_off_radio == "now" || $clockonoff == "clockoffnow") {
 	$clock_off_time_min = $realToday["minutes"];
 }
 
-$onStamp = mktime($clock_on_time_hour, $clock_on_time_min, 0, $month, $day, $year);
-$offStamp = mktime($clock_off_time_hour, $clock_off_time_min, 0, $month, $day, $year);
+$info['onStamp']= mktime($clock_on_time_hour, $clock_on_time_min, 0, $month, $day, $year);
+$info['offStamp'] = mktime($clock_off_time_hour, $clock_off_time_min, 0, $month, $day, $year);
+
+if($GLOBALS["simple_debug"]) {
+	$GLOBALS["debug"]->write("onStamp = $onStamp");
+	$GLOBALS["debug"]->write("offStamp = $offStamp");
+}
 
 //call appropriate functions
 if ($clockonoff == "clockonandoff")
@@ -259,13 +282,19 @@ function clockoff() {
 }
 
 function clockonandoff() {
-	include("table_names.inc");
+//	include("table_names.inc");
 
 	//import global vars
 	global $year, $month, $day, $task_id, $proj_id, $Location;
 	global $destination, $clock_on_time_hour, $clock_off_time_hour, $clock_on_time_min, $clock_off_time_min;
 	global $log_message, $log_message_presented, $onStamp, $offStamp;
 	global $clock_on_radio, $clock_off_radio, $fromPopupWindow;
+	global $simple_debug, $debug;
+
+	if($simple_debug) {
+		$debug->write("onStamp = $onStamp");
+		$debug->write("offStamp = $offStamp");
+	}
 
 	//make sure we're not clocking on after clocking off
 	if ($offStamp < $onStamp)

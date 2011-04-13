@@ -243,7 +243,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onchangeTaskSelect(this.id);" style="width: 100%;"></select>
 								</td>
 								<td align="left" style="width:auto;">
-									<input type="hidden" id="odescription_row<?php echo $rowIndex; ?>" name="odescription_row<?php echo $rowIndex; ?>" value="<?php echo $workDescription; ?>" ></select>
+									<input type="hidden" id="odescription_row<?php echo $rowIndex; ?>" name="odescription_row<?php echo $rowIndex; ?>" value="<?php echo $workDescription; ?>" />
 									<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onchange="onchangeWorkDescription(this.id);" value="<?php echo $workDescription; ?>" style="width: 100%;" />
 								</td>
 								<?php
@@ -323,7 +323,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 		//print the total column
 		print "<td class=\"calendar_totals_line_weekly subtotal\" valign=\"bottom\" align=\"right\">";
-		print "<span class=\"calendar_total_value_weekly\" style=\"text-align:right;\"id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
+		print "<span class=\"calendar_total_value_weekly\" style=\"text-align:right;\" id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
 
 		printSpaceColumn();
 

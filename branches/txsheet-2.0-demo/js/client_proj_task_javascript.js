@@ -53,28 +53,30 @@
 	/**
 	 * @todo .....
 	 */
-	function onSubmit() {
+	function validate() {
 		if (document.getElementById('clock_on_check') != null) {
 			if (!document.getElementById('clock_on_check').checked &&
 					!document.getElementById('clock_off_check').checked) {
 				alert('Please select an action by ticking a box: clock on, clock off, or both.');
-				return;
+				return false;
 			}
 		}
 
-		//copy the values of the selects
+		/*copy the values of the selects
 		var clientSelect = document.getElementById('clientSelect');
 		document.getElementById('client_id').value = clientSelect.options[clientSelect.selectedIndex].value;
 		var projectSelect = document.getElementById('projectSelect');
 		document.getElementById('proj_id').value = projectSelect.options[projectSelect.selectedIndex].value;
 		var taskSelect = document.getElementById('taskSelect');
 		document.getElementById('task_id').value = taskSelect.options[taskSelect.selectedIndex].value;
+		*/
 
 		/*alert('submitting with clientId ' + document.getElementById('client_id').value +
 						'  projectId ' + document.getElementById('proj_id').value +
 						'  taskId ' + document.getElementById('task_id').value);*/
 
-		document.getElementById('theForm').submit();
+		document.theForm.submit();
+		//return true;
 	}
 
 	/**

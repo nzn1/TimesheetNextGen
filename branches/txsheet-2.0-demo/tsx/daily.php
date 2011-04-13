@@ -45,16 +45,16 @@ PageElements::setHead(PageElements::getHead().ob_get_contents());
 ob_end_clean();
 PageElements::setBodyOnLoad('doOnLoad();');
 ?>
-<form name="dayForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
-<!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
-<!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
-<input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
-
 <?php
 	$currentDate = $todayDate;
 	$fromPopup = "false";
 	include("include/tsx/clockOnOff.inc"); 
 ?>
+
+<form name="dayForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
+<!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
+<!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
+<input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
