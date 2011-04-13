@@ -33,7 +33,7 @@ if (!($mode == "all" || $mode == "monthly" || $mode == "weekly"))
 	$mode = "all";
 
 if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Site::getCommandMenu()->add(new Command("<form action=\"".$_SERVER['REQUEST_URI']."\" method=\"get\">",true,false));
+	Site::getCommandMenu()->add(new Command("<form action=\"".urlencode($_SERVER['REQUEST_URI'])."\" method=\"get\">",true,false));
 	Site::getCommandMenu()->add(new Command(
 		"<input type=\"hidden\" name=\"year\" value=\"$year\" />" .
 		"<input type=\"hidden\" name=\"month\" value=\"$month\" />" .

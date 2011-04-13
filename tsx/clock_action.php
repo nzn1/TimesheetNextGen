@@ -48,9 +48,9 @@ if($fromPopupWindow == 'false')
  * as I think javascript doesn't like &amp;  
  */ 
 //set the return location
-$Location = "$destination?month=$month&year=$year&day=$day&destination=$destination";
+$Location = "$destination?month=$month&amp;year=$year&amp;day=$day&amp;destination=$destination";
 if ($destination == "stopwatch" || $destination == "daily")
-	$Location = "$destination?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day&destination=$destination";
+	$Location = "$destination?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;month=$month&amp;year=$year&amp;day=$day&amp;destination=$destination";
 
 //determine the action
 if (empty($clockonoff)) {
@@ -109,7 +109,7 @@ else if ($clockonoff == "clockonat") {
 	//if we're coming from the popup window then set the return location to the origin
 	if ($fromPopupWindow == "true")
 		//set the return location
-		$Location = "$origin?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&month=$month&year=$year&day=$day&destination=$destination";
+		$Location = "$origin?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;month=$month&amp;year=$year&amp;day=$day&amp;destination=$destination";
 
 	clockon();
 } else if ($clockonoff == "clockoffnow") {
@@ -128,18 +128,18 @@ function getLogMessage() {
 
 	if ($log_message_presented == false) {
 		$targetWindowLocation = Config::getRelativeRoot()."/log_message".
-					"?origin=$origin&destination=$destination".
-					"&clock_on_time_hour=$clock_on_time_hour".
-					"&clock_off_time_hour=$clock_off_time_hour".
-					"&clock_on_time_min=$clock_on_time_min".
-					"&clock_off_time_min=$clock_off_time_min".
-					"&year=$year".
-					"&month=$month".
-					"&day=$day".
-					"&client_id=$client_id".
-					"&proj_id=$proj_id".
-					"&task_id=$task_id".
-					"&clockonoff=$clockonoff";
+					"?origin=$origin&amp;destination=$destination".
+					"&amp;clock_on_time_hour=$clock_on_time_hour".
+					"&amp;clock_off_time_hour=$clock_off_time_hour".
+					"&amp;clock_on_time_min=$clock_on_time_min".
+					"&amp;clock_off_time_min=$clock_off_time_min".
+					"&amp;year=$year".
+					"&amp;month=$month".
+					"&amp;day=$day".
+					"&amp;client_id=$client_id".
+					"&amp;proj_id=$proj_id".
+					"&amp;task_id=$task_id".
+					"&amp;clockonoff=$clockonoff";
 
 		if ($fromPopupWindow == "true") {
 			//close this popup window and load the log message page in the main window.

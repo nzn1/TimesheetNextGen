@@ -5,7 +5,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
-// Config::getRelativeRoot()."submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1"
+// Config::getRelativeRoot()."submit.php?uid=peter&amp;orderby=project&amp;client_id=0&amp;mode=monthly&amp;year=2010&amp;month=8&amp;day=1"
 //load local vars from superglobals
 		$uid = $_REQUEST["uid"];
 		$mode = gbl::getMode();
@@ -47,7 +47,7 @@ if (isset($_REQUEST['submit'])) { // if submission of times
 	}
 	// we're done so redirect to the submission page
 
-	$path = Config::getRelativeRoot()."/submit?uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode&year=$year&month=$month&day=$day";
+	$path = Config::getRelativeRoot()."/submit?uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode&amp;year=$year&amp;month=$month&amp;day=$day";
 	gotoLocation($path);
 	exit;
 

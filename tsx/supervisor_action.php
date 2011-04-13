@@ -10,7 +10,7 @@ require("class.CommandMenu.php");
 	
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTasks'))return;
 
-// Config::getRelativeRoot()."submit.php?uid=peter&orderby=project&client_id=0&mode=monthly&year=2010&month=8&day=1"
+// Config::getRelativeRoot()."submit.php?uid=peter&amp;orderby=project&amp;client_id=0&amp;mode=monthly&amp;year=2010&amp;month=8&amp;day=1"
 //load local vars from superglobals
 $action = $_REQUEST["Modify"];
 
@@ -56,7 +56,7 @@ $action = $_REQUEST["Modify"];
 }
 	
 	// we're done so redirect to the submission page
-	gotoLocation(Config::getRelativeRoot()."/supervisor?uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode&year=$year&month=$month&day=$day");
+	gotoLocation(Config::getRelativeRoot()."/supervisor?uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode&amp;year=$year&amp;month=$month&amp;day=$day");
 
 ?>
 

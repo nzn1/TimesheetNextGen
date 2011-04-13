@@ -40,7 +40,7 @@ $layout = Common::getLayout();
 //$post="";
 
 if (isset($popup))
-	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&amp;task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
 ob_start();
 ?>
@@ -62,17 +62,17 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 ?>
 
 <form name="simpleForm" action="<?php echo Config::getRelativeRoot(); ?>/simple_action" method="post">
-<input type="hidden" name="year" value=<?php echo $year; ?> />
-<input type="hidden" name="month" value=<?php echo $month; ?> />
-<input type="hidden" name="day" value=<?php echo $day; ?> />
-<input type="hidden" name="startStamp" value=<?php echo $startDate; ?> />
+<input type="hidden" name="year" value="<?php echo $year; ?>" />
+<input type="hidden" name="month" value="<?php echo $month; ?>" />
+<input type="hidden" name="day" value="<?php echo $day; ?>" />
+<input type="hidden" name="startStamp" value="<?php echo $startDate; ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading">
+		<td align="left" nowrap="nowrap" class="outer_table_heading">
 			<?php echo JText::_('TIMESHEET'); ?>
 		</td>
-		<td align="middle" nowrap class="outer_table_heading">
+		<td align="center" nowrap="nowrap" class="outer_table_heading">
 			<?php
 				$sdStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
 				//just need to go back 1 second most of the time, but DST
@@ -81,17 +81,17 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr";
 			?>
 		</td>
-		<td nowrap align="center">
+		<td nowrap="nowrap" align="center">
 			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
 			value="<?php echo date('d-M-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;
 			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
-		<td align="right" nowrap>
+		<td align="right" nowrap="nowrap">
 			<!--prev / next buttons used to be here -->
 		</td>
-		<td align="right" nowrap>
-			<input type="button" name="saveButton" id="saveButton" value="<?php echo ucwords(JText::_('SAVE_CHANGES'))?>" disabled="true" onClick="validate();" />
+		<td align="right" nowrap="nowrap">
+			<input type="button" name="saveButton" id="saveButton" value="<?php echo ucwords(JText::_('SAVE_CHANGES'))?>" disabled="disabled" onclick="validate();" />
 		</td>
 	</tr>
 </table>
@@ -118,10 +118,11 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 							$dst_adjustment = Common::get_dst_adjustment($currentDayDate);
 							$dstadj[]=$dst_adjustment;
 							$minsinday = ((24*60*60) - $dst_adjustment)/60;
-							print "<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\" />";
+
 							print
-								"<td class=\"inner_table_column_heading\" align=\"center\" width=\"65\">" .
-									"$currentDayStr<br>" .
+								"<td class=\"inner_table_column_heading\" align=\"center\" width=\"65\">"								
+								  ."<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\" />"
+									."$currentDayStr<br />" .
 									//Output the numerical date in the form of day of the month
 									date("d", $currentDayDate) . 
 								"</td>";
@@ -187,15 +188,15 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 								?>
 								<td align="left" style="width:33%;">
 									<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
-									<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+									<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onchange="onchangeClientSelect(this.id);" style="width: 100%;"></select>
 								</td>
 								<td align="left" style="width:33%;">
 									<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
-									<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+									<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onchange="onchangeProjectSelect(this.id);" style="width: 100%;"></select>
 								</td>
 								<td align="left" style="width:33%;">
 									<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
-									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onchangeTaskSelect(this.id);" style="width: 100%;"></select>
 								</td>
 								<?php
 								break;
@@ -203,20 +204,24 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 							case "big work description field":
 								// big work description field
 								?>
-								<td align="left" style="width:100px;">
-									<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
-									<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+								<td align="left" style="width:50px;">
+									<p>Client:</p>                  
+									<p>Project:</p>					
+									<p>Task:</p>
 								</td>
 								<td align="left" style="width:160px;">
+									<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
 									<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
-									<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
-									<br>
-									<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
-									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
-								</td>
+                  <input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
+									<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onchange="onchangeClientSelect(this.id);" style="width: 100%;"></select>
+                  <br />
+									<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onchange="onchangeProjectSelect(this.id);" style="width: 100%;"></select>
+									<br />									
+									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onchangeTaskSelect(this.id);" style="width: 100%;"></select>
+								</td>								
 								<td align="left" style="width:auto;">
 									<input type="hidden" id="odescription_row<?php echo $rowIndex; ?>" name="odescription_row<?php echo $rowIndex; ?>" value="<?php echo $workDescription; ?>" />
-									<textarea rows="2" style="width:100%;" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onKeyUp="onChangeWorkDescription(this.id);"><?php echo $workDescription; ?></textarea>
+									<textarea rows="2" cols="4" style="width:98%;" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onkeyup="onchangeWorkDescription(this.id);"><?php echo $workDescription; ?></textarea>
 								</td>
 								<?php
 								break;
@@ -227,19 +232,19 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 								?>
 								<td align="left" style="width:100px;">
 									<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
-									<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+									<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onchange="onchangeClientSelect(this.id);" style="width: 100%;"></select>
 								</td>
 								<td align="left" style="width:100px;">
 									<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
-									<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+									<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onchange="onchangeProjectSelect(this.id);" style="width: 100%;"></select>
 								</td>
 								<td align="left" style="width:140px;">
 									<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
-									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onchangeTaskSelect(this.id);" style="width: 100%;"></select>
 								</td>
 								<td align="left" style="width:auto;">
-									<input type="hidden" id="odescription_row<?php echo $rowIndex; ?>" name="odescription_row<?php echo $rowIndex; ?>" value="<?php echo $workDescription; ?>" />
-									<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onChange="onChangeWorkDescription(this.id);" value="<?php echo $workDescription; ?>" style="width: 100%;" />
+									<input type="hidden" id="odescription_row<?php echo $rowIndex; ?>" name="odescription_row<?php echo $rowIndex; ?>" value="<?php echo $workDescription; ?>" ></select>
+									<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onchange="onchangeWorkDescription(this.id);" value="<?php echo $workDescription; ?>" style="width: 100%;" />
 								</td>
 								<?php
 								break;
@@ -256,7 +261,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		$weeklyTotal = 0;
 		$isEmptyRow = ($daysArray == null);
 
-		//print_r($daysArray); print "<br>";
+		//print_r($daysArray); print "<br />";
 
 		//print hours and minutes input field for each day
 
@@ -292,8 +297,8 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 			print "<input type=\"hidden\" id=\"ohours".$rowCol."\" name=\"ohours".$rowCol."\" value=\"$curDaysHours\" />";
 			print "<input type=\"hidden\" id=\"omins".$rowCol."\" name=\"omins".$rowCol."\" value=\"$curDaysMinutes\" />";
-			print "<span nowrap><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled />".JText::_('HR')."</span>";
-			print "<span nowrap><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onChange=\"recalculateRowCol(this.id)\" onKeyDown=\"setDirty()\" $disabled />".JText::_('MN')."</span>";
+			print "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>";
+			print "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>";
 
 			//close the times class
 			print "</span>";
@@ -317,13 +322,13 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		$weeklyTotalStr = Common::formatMinutes($weeklyTotal);
 
 		//print the total column
-		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\">";
-		print "<span class=\"calendar_total_value_weekly\" align=\"right\" id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
+		print "<td class=\"calendar_totals_line_weekly subtotal\" valign=\"bottom\" align=\"right\">";
+		print "<span class=\"calendar_total_value_weekly\" style=\"text-align:right;\"id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
 
 		printSpaceColumn();
 
 		// print delete button
-		print "<td class=\"calendar_delete_cell\" class=\"subtotal\">";
+		print "<td class=\"calendar_delete_cell subtotal\" >";
 		print "<a id=\"delete_row$rowIndex\" href=\"#\" onclick=\"onDeleteRow(this.id); return false;\">x</a></td>\n";
 
 		//end the row
@@ -491,12 +496,6 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 	printFormRow($count, $layout, -1, -1);
 
-	//store a hidden form field containing the number of existing rows
-	print "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $count . "\" />";
-
-	//store a hidden form field containing the total number of rows
-	print "<input type=\"hidden\" id=\"totalRows\" name=\"totalRows\" value=\"" . ($count+1) . "\" />";
-
 	////////////////////////////////////////////////////
 	//Changes reequired to enter data on form -define 10 entry rows
 
@@ -506,7 +505,13 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 	//create a new totals row
 	print "<tr id=\"totalsRow\">\n";
-	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">".ucwords(JText::_('TOTAL_HOURS')).":</td>\n";
+	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
+  	//store a hidden form field containing the number of existing rows
+	print "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $count . "\" />";
+
+	//store a hidden form field containing the total number of rows
+	print "<input type=\"hidden\" id=\"totalRows\" name=\"totalRows\" value=\"" . ($count+1) . "\" />";
+  print ucwords(JText::_('TOTAL_HOURS')).":</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 
 	//iterate through day totals for all tasks

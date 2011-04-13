@@ -1,4 +1,5 @@
 <script type="text/javascript">
+//<![CDATA[
 	var projectTasksHash = {};
 	//we're building a javascript hash table using php here
 	<?php
@@ -549,4 +550,5 @@
 
 		document.simpleForm.submit();
 	}
+	//]]>
 </script>
