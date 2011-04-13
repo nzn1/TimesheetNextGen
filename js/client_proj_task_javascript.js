@@ -13,7 +13,13 @@
 		projectTasksHash = JSON.parse(jsonProjectTasksHash);
 	}
 
-
+  function clockingShowHide(id){
+    obj = document.getElementById(id);
+    var stlSection = obj.style;
+    var isCollapsed = obj.style.display.length;
+    if (isCollapsed) stlSection.display = '';
+    else stlSection.display = 'none';
+  }
 	/**
 	 * @todo .....
 	 */
