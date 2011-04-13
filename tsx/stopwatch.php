@@ -77,9 +77,6 @@ PageElements::setBodyOnLoad("doOnLoad();");
 				</table>
 <?php
 	$stopwatch = 1;
-	$year = $realToday["year"];
-	$month = $realToday["mon"];
-	$day = $realToday["mday"];
 	$fromPopup = "true";
 	include(dirname(__FILE__)."/../include/tsx/clockOnOff_core_new.inc");
 ?>

@@ -7,8 +7,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 //Get the result set for the config set 1
 
-$CONFIG_TABLE = tbl::getConfigTable();
-list($qh, $num) = dbQuery("SELECT * FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 $resultset = dbResult($qh);
 
 ?>

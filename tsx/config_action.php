@@ -73,11 +73,11 @@ $startPage = $_REQUEST["startPage"];
 		include("table_names.inc");
 
 		//get the default value
-		list($qh, $num) = dbQuery("SELECT $fieldName FROM $CONFIG_TABLE WHERE config_set_id='0';");
+		list($qh, $num) = dbQuery("SELECT $fieldName FROM ".tbl::getConfigTable()." WHERE config_set_id='0';");
 		$resultset = dbResult($qh);
 
 		//set it
-		dbQuery("UPDATE $CONFIG_TABLE SET $fieldName='" . $resultset[$fieldName] . "' WHERE config_set_id='1';");
+		dbQuery("UPDATE ".tbl::getConfigTable()." SET $fieldName='" . $resultset[$fieldName] . "' WHERE config_set_id='1';");
 	}
 
 if (!isset($action)) {
@@ -94,7 +94,7 @@ elseif ($action == "edit") {
 	$timezone = addslashes(unhtmlentities(trim($timezone)));
 	$projectItemsPerPage = addslashes(unhtmlentities(trim($projectItemsPerPage)));
 	$taskItemsPerPage = addslashes(unhtmlentities(trim($taskItemsPerPage)));
-	$query = "UPDATE $CONFIG_TABLE SET ".
+	$query = "UPDATE ".tbl::getConfigTable()." SET ".
 		"headerhtml='$headerhtml',".
 		"bodyhtml='$bodyhtml',".
 		"footerhtml='$footerhtml',".

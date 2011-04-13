@@ -35,7 +35,7 @@ $action = $_REQUEST["Modify"];
 			else 
 				$transids = $transids . ", " . $transId;
 		}
-		list($qh, $num) = dbQuery("UPDATE $TIMES_TABLE SET status = \"Approved\"" .
+		list($qh, $num) = dbQuery("UPDATE ".tbl::getTimesTable()." SET status = \"Approved\"" .
 				" WHERE trans_num IN ( $transids )");
 		//$debug->write("update query transids = \" $transids\" qh = \"$qh\"  num=\"".$num. "\"\n");		
 		}
@@ -49,14 +49,15 @@ $action = $_REQUEST["Modify"];
 			else 
 				$transids = $transids . ", " . $transId;
 		}
-		list($qh, $num) = dbQuery("UPDATE $TIMES_TABLE SET status = \"Open\"" .
+		list($qh, $num) = dbQuery("UPDATE ".tbl::getTimesTable()." SET status = \"Open\"" .
 				" WHERE trans_num IN ( $transids )");
 		//$debug->write("update query transids = \" $transids\" qh = \"$qh\"  num=\"".$num. "\"\n");		
 	}
 }
 	
 	// we're done so redirect to the submission page
-	gotoLocation(Config::getRelativeRoot()."/supervisor?uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode&amp;year=$year&amp;month=$month&amp;day=$day");
+	$path = Config::getRelativeRoot()."/supervisor?uid=".$_REQUEST["uid"]."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay();
+	gotoLocation($path);
 
 ?>
 

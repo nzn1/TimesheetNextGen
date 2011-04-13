@@ -324,40 +324,40 @@ else {  //create Excel header
 /*$query =	"select distinct first_name, ".
 			"last_name, ".
 			"".tbl::getuserTable().".username, ".
-			"$PROJECT_TABLE.title, ".
-			"$PROJECT_TABLE.proj_id, ".
-			"$TASK_TABLE.name, ".
-			"$TASK_TABLE.task_id ".
-		"FROM ".tbl::getuserTable().", $PROJECT_TABLE, $TASK_TABLE, $ASSIGNMENTS_TABLE, $TASK_ASSIGNMENTS_TABLE ".
-		"WHERE $ASSIGNMENTS_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
-			"$TASK_ASSIGNMENTS_TABLE.task_id = $TASK_TABLE.task_id AND ".
-			"$PROJECT_TABLE.proj_id = $TASK_TABLE.proj_id AND ".
-			"$ASSIGNMENTS_TABLE.username = ".tbl::getuserTable().".username AND ".
-			"".tbl::getuserTable().".username NOT IN ('admin','guest') ".
+			"pt.title, ".
+			"pt.proj_id, ".
+			"tt.name, ".
+			"tt.task_id ".
+		"FROM ".tbl::getUserTable()." ut, ".tbl::getProjectTable()." pt , ".tbl::getTaskTable()." tt , ".tbl::getAssignmentTable()." at, ".tbl::getTaskAssignmentsTable()." tat ".
+		"WHERE at.proj_id = pt.proj_id AND ".
+			"tat.task_id = tt.task_id AND ".
+			"pt.proj_id = tt.proj_id AND ".
+			"at.username = ut.username AND ".
+			"ut.username NOT IN ('admin','guest') ".
 		"ORDER BY $orderby";
 
 
-$query = "SELECT $TIMES_TABLE.proj_id, ".
-		"$TIMES_TABLE.task_id, ".
-		"$TIMES_TABLE.log_message, " .
+$query = "SELECT tt.proj_id, ".
+		"tt.task_id, ".
+		"tt.log_message, " .
 		"end_time AS end_time_str, ".
 		"start_time AS start_time_str, ".
 		"timediff(end_time, start_time) as diff_time, ".
 		"unix_timestamp(end_time) as end_stamp, ".
 		"unix_timestamp(start_time) as start_stamp, ".
-		"$PROJECT_TABLE.title, ".
-		"$TASK_TABLE.name, ".
+		"pt.title, ".
+		"tt.name, ".
 		"first_name, last_name, ".
-		"$TIMES_TABLE.uid as username, ".
+		"timest.uid as username, ".
 		"date_format(start_time, '%Y/%m/%d') as start_date, ".
 		"trans_num ".
-	"FROM ".tbl::getuserTable().", $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
-	"WHERE $TIMES_TABLE.uid= ".tbl::getuserTable().".username AND ".
+	"FROM ".tbl::getUserTable()." ut, ".tbl::getTimesTable()." timest, ".tbl::getProjectTable()." pt, ".tbl::getTaskTable()." tt ".
+	"WHERE timest.uid= ut.username AND ".
 		"end_time > 0 AND ".
-		//"$TIMES_TABLE.uid='$uid' AND ".
+		//"timest.uid='$uid' AND ".
 		"start_time >= '$year-$month-1' AND ".
-		"$PROJECT_TABLE.proj_id = $TIMES_TABLE.proj_id AND ".
-		"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
+		"pt.proj_id = timest.proj_id AND ".
+		"tt.task_id = timest.task_id AND ".
 		"end_time < '".date('Y-m-1',$next_month)."' ".
 	"ORDER BY $orderby";
 

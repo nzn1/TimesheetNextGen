@@ -50,7 +50,7 @@ if ($action == "show_users") {
 	}
 
 	// Find out which users are assigned to given project
-	list($qh,$num) = dbQuery("SELECT username FROM $ASSIGNMENTS_TABLE " .
+	list($qh,$num) = dbQuery("SELECT username FROM ".tbl::getAssignmentsTable()." " .
 								"WHERE proj_id = '$proj_id' ");
 	$user_array = array();
 	while ($data = dbResult($qh)) {
@@ -67,7 +67,7 @@ if ($action == "show_users") {
 		//if (array_key_exists($username, $user_array)) {
 			$query = "UPDATE  ".tbl::getAssignmentsTable()."  SET rate_id = '$rateid' WHERE proj_id = '$proj_id' AND username = '$username'";
 		//} else {
-		//	$query = "insert into $PROJECT_USER_RATE_table (proj_id, username, rate_id) values ('$proj_id', '$username', '$rateid')";
+		//	$query = "insert into ".tbl::getProjectUserRateTable()." (proj_id, username, rate_id) values ('$proj_id', '$username', '$rateid')";
 		//}
 		list($qh,$num) = dbQuery($query);
 

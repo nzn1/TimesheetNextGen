@@ -97,9 +97,6 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 		<td class="inner_table_column_heading"><i>Actions</i></td>
 	</tr>
 <?php
-$PROJECT_TABLE = tbl::getProjectTable();
-$TASK_TABLE = tbl::getTaskTable();
-$TASK_ASSIGNMENTS_TABLE = tbl::getTaskAssignmentsTable();
 
 list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getuserTable()." WHERE username!='guest' ORDER BY status desc, last_name, first_name");
 

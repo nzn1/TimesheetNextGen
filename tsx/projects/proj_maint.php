@@ -10,15 +10,6 @@ if (empty($loggedInUser))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 
-$client_id = gbl::getClientId();
-
-$CLIENT_TABLE = tbl::getClientTable();
-$PROJECT_TABLE = tbl::getProjectTable();
-$TASK_TABLE = tbl::getTaskTable();
-$USER_TABLE = tbl::getUserTable();
-$TIMES_TABLE = tbl::getTimesTable();
-$ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
-$RATE_TABLE = tbl::getRateTable();
 //set seleced project status to started when nothing is chosen in the dropdown list
 $proj_status = isset($_REQUEST['proj_status']) ? $_REQUEST['proj_status'] : "Started";
 
@@ -27,11 +18,11 @@ $query = "SELECT DISTINCT p.title, p.proj_id, p.client_id, p.description, " .
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 						"p.proj_status, http_link, proj_leader ".
-					"FROM  ".$PROJECT_TABLE." p,  ".$CLIENT_TABLE." c,  ".$USER_TABLE."  ".
+					"FROM  ".tbl::getProjectTable()." p,  ".tbl::getClientTable()." c,  ".tbl::getUserTable()."  ".
 					"WHERE ";
 
-if ($client_id != 0)
-	$query .= "p.client_id = $client_id AND ";
+if (gbl::getClientId() != 0)
+	$query .= "p.client_id = ".gbl::getClientId()." AND ";
 	
 if ($proj_status !== 0 and $proj_status !== 'All' )
 	$query .= " p.proj_status = '$proj_status' AND ";
@@ -39,7 +30,12 @@ if ($proj_status !== 0 and $proj_status !== 'All' )
 //$query .= "p.proj_id > 0 AND c.client_id = p.client_id ".  "ORDER BY p.title";
 $query .= " p.proj_id > 0 ORDER BY p.title";
 
-if (isset($_POST['page']) && $_POST['page'] != 0) { $page  = $_POST['page']; } else { $page=1; }; 
+if (isset($_POST['page']) && $_POST['page'] != 0) { 
+  $page  = $_POST['page']; 
+} 
+else { 
+  $page=1; 
+}
 $results_per_page = Common::getProjectItemsPerPage();
 $start_from = ($page-1) * $results_per_page; 
 $query .= " LIMIT $start_from, $results_per_page";
@@ -52,10 +48,10 @@ $query2 = "SELECT DISTINCT p.title, p.proj_id, p.client_id, p.description, " .
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 						"p.proj_status, http_link, proj_leader ".
-					"FROM  $PROJECT_TABLE p,  $CLIENT_TABLE c,  $USER_TABLE  ".
+					"FROM  ".tbl::getProjectTable()." p,  ".tbl::getClientTable()." c,  ".tbl::getUserTable()."  ".
 					"WHERE ";
-if ($client_id != 0)
-	$query2 .= "p.client_id = $client_id AND ";
+if (gbl::getClientId() != 0)
+	$query2 .= "p.client_id = ".gbl::getClientId()." AND ";
 	
 if ($proj_status !== 0 and $proj_status !== 'All' ) {
 	$query2 .= " p.proj_status = '$proj_status' AND ";
@@ -91,9 +87,9 @@ function writePageLinks($page, $results_per_page, $num2) {
 		echo '</b> )';
 	}
 }
+
+ob_start();
 ?>
-<html>
-<head>
 
 <script type="text/javascript" type="text/javascript">
 function delete_project(clientId, projectId) {
@@ -106,7 +102,11 @@ function change_page(newPageValue) {
 	document.projectFilter.submit(); 
 }
 </script>
-</head>
+
+<?php
+ $head = ob_get_contents();
+ PageElements::setHead($head);
+?>
 
 <form method="post" name="projectFilter" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
 	<input type="hidden" name="page" value="English" />
@@ -116,14 +116,14 @@ function change_page(newPageValue) {
 				<?php echo ucwords(JText::_('PROJECTS'))?>
 			</td>
 			<td align="right">&nbsp;<?php echo ucwords(JText::_('CLIENT'))?>:&nbsp;</td>
-			<td><?php Common::client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
+			<td><?php Common::client_select_list(gbl::getClientId(), 0, false, false, true, false, "submit();", false); ?></td>
 			<td align="right">&nbsp;<?php echo ucwords(JText::_('STATUS'))?>:&nbsp;</td><td><?php Common::proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>
 			</td>
 			<td>
 				<?php writePageLinks($page, $results_per_page, $num2);?>
 			</td>
 			<td align="right" nowrap>
-				<a href="proj_add?client_id=<?php echo $client_id; ?>"><?php echo JText::_('ADD_NEW_PROJECT')?></a>
+				<a href="proj_add?client_id=<?php echo gbl::getClientId(); ?>"><?php echo JText::_('ADD_NEW_PROJECT')?></a>
 			</td>
 		</tr>
 	</table>
@@ -134,12 +134,12 @@ function change_page(newPageValue) {
 <?php
 	//are there any results?
 	if ($num == 0) {
-		if ($client_id != 0) {
+		if (gbl::getClientId() != 0) {
 			print "<tr><td align=\"center\"><br />".JText::_('NO_PROJECTS_FOR_CLIENT')." &nbsp; ";
-			print "<a href=\"proj_add?client_id=$client_id\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
+			print "<a href=\"proj_add?client_id=".gbl::getClientId()."\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
 		} else {
 			print "<tr><td align=\"center\"><br />".JText::_('NO_PROJECTS')." &nbsp; ";
-			print "<a href=\"proj_add?client_id=$client_id\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
+			print "<a href=\"proj_add?client_id=".gbl::getClientId()."\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
 		}
 	} else {
 		//iterate through results
@@ -158,11 +158,11 @@ function change_page(newPageValue) {
 			list($billqh, $bill_num) = dbquery(
 					"SELECT sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, ".
 						"sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))) as billed ".
-						"FROM $TIMES_TABLE, $ASSIGNMENTS_TABLE, $RATE_TABLE ".
-						"WHERE end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] ".
-						"AND $ASSIGNMENTS_TABLE.proj_id = $data[proj_id] ".
-						"AND $ASSIGNMENTS_TABLE.rate_id = $RATE_TABLE.rate_id ".
-						"AND $ASSIGNMENTS_TABLE.username = $TIMES_TABLE.uid ");
+						"FROM ".tbl::getTimesTable()." tt, ".tbl::getAssignmentsTable()." at, ".tbl::getRateTable()." rt ".
+						"WHERE end_time > 0 AND tt.proj_id = $data[proj_id] ".
+						"AND at.proj_id = $data[proj_id] ".
+						"AND at.rate_id = rt.rate_id ".
+						"AND at.username = tt.uid ");
 			$bill_data = dbResult($billqh);
 
 			//start the row
@@ -201,9 +201,9 @@ function change_page(newPageValue) {
 						<span class="label">
 							<?php echo ucwords(JText::_('ACTIONS'))?>:
 						</span>
-						<a href="proj_edit?client_id=<?php echo $client_id; ?>&amp;proj_id=<?php echo $data["proj_id"]; ?>"><?php echo ucwords(JText::_('EDIT'))?></a>,
+						<a href="proj_edit?client_id=<?php echo gbl::getClientId(); ?>&amp;proj_id=<?php echo $data["proj_id"]; ?>"><?php echo ucwords(JText::_('EDIT'))?></a>,
 						<a href="project_user_rates_action?proj_id=<?php echo $data["proj_id"]; ?>&amp;action=show_users"><?php echo JText::_('CHG_BILL_RATES')?></a>,
-						<a href="javascript:delete_project(<?php echo $client_id; ?>,<?php echo $data["proj_id"]; ?>);"><?php echo ucwords(JText::_('DELETE'))?></a>
+						<a href="javascript:delete_project(<?php echo gbl::getClientId(); ?>,<?php echo $data["proj_id"]; ?>);"><?php echo ucwords(JText::_('DELETE'))?></a>
 					</td>
 				</tr>
 				<?php if(trim($data['description']) != '') { ?>
@@ -247,7 +247,7 @@ function change_page(newPageValue) {
 									<br>
 	<?php
 				//display assigned users
-				list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $data[proj_id]");
+				list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM ".tbl::getAssignmentsTable()." WHERE proj_id = $data[proj_id]");
 				if ($num_workers == 0) {
 					print "<font size=\"-1\">".JText::_('NO_USERS_FOR_PROJECT')."</font>\n";
 				} else {
@@ -272,7 +272,7 @@ function change_page(newPageValue) {
 
 <?php
 			//get tasks
-			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id] order by name");
+			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM ".tbl::getTaskTable()." WHERE proj_id=$data[proj_id] order by name");
 
 			//are there any tasks?
 			if ($num_tasks > 0) {

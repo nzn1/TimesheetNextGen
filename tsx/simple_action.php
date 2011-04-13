@@ -46,10 +46,7 @@ if($simple_debug) {
 } else
 	$debug=0;
 
-//get the passed date (context date)
-$month = gbl::getMonth();
-$day = gbl::getDay(); 
-$year = gbl::getYear();
+
 $todayStamp = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $todayValues = getdate($todayStamp);
 $curDayOfWeek = $todayValues["wday"];
@@ -83,10 +80,8 @@ if($simple_debug) {
 }
 
 function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr, $simple_debug, $debug) {
-	//global $debug, $simple_debug;
-
-	$TIMES_TABLE = tbl::getTimesTable();
-	$queryString = "DELETE FROM $TIMES_TABLE " . 
+	
+	$queryString = "DELETE FROM ".tbl::getTimesTable()." " . 
 						"WHERE uid='$uid' AND " .
 							"start_time >= '$btime' AND ".
 							"start_time < '$etime' AND ".
@@ -99,8 +94,6 @@ function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr, $
 
 	dbQuery($queryString);
 }
-
-$TIMES_TABLE = tbl::getTimesTable();
 
 for ($i=0; $i<$totalRows; $i++) {
 	if($simple_debug)
@@ -167,7 +160,7 @@ for ($i=0; $i<$totalRows; $i++) {
 				$etsStr = strftime("%Y-%m-%d %H:%M:%S", $ets);
 				
 				//add to database
-				$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
+				$queryString = "INSERT INTO ".tbl::getTimesTable()." (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
 										"VALUES ('".gbl::getContextUser()."','$stsStr', ".
 										"'$etsStr', ".
 										"'$minutes', ".
@@ -183,8 +176,7 @@ for ($i=0; $i<$totalRows; $i++) {
 	}
 }
 
-$Location = Config::getRelativeRoot()."/simple?year=$year&amp;month=$month&amp;day=$day";
-
+$Location = Config::getRelativeRoot()."/simple?year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay();
 gotoLocation($Location);
 exit;
 // vim:ai:ts=4:sw=4

@@ -14,17 +14,14 @@ if (empty($loggedInUser))
 //define the command menu
 Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 
-//load local vars from superglobals
-$client_id = gbl::getClientId();
 
-$CLIENT_TABLE = tbl::getClientTable();
 //build the query
 $query = "SELECT client_id, organisation, description, address1, address2,".
 			"city, country, postal_code, contact_first_name, contact_last_name,".
 			"username, contact_email, phone_number, fax_number, gsm_number, ".
 			"http_url ".
-		"FROM $CLIENT_TABLE ".
-		"WHERE $CLIENT_TABLE.client_id=$client_id";
+		"FROM ".tbl::getClientTable()." ct ".
+		"WHERE ct.client_id=".gbl::getClientId().";
 
 //run the query
 list($qh, $num) = dbQuery($query);
@@ -37,7 +34,7 @@ $data = dbResult($qh);
 <div id="inputArea">
 <form action="<?php echo Config::getRelativeRoot(); ?>/clients/client_action" method="post">
 <input type="hidden" name="action" value="edit" />
-<input type="hidden" name="client_id" value="<?php echo $client_id ?>" />
+<input type="hidden" name="client_id" value="<?php echo gbl::getClientId() ?>" />
 
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>

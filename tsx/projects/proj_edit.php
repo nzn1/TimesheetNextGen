@@ -21,9 +21,6 @@ Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:
 Site::getCommandMenu()->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
 Site::getCommandMenu()->add(new TextCommand("Copy Projects/Tasks between users", true, Config::getRelativeRoot()."/user_clone"));
 
-$PROJECT_TABLE = tbl::getProjectTable();
-$ASSIGNMENTS_TABLE = tbl::getAssignmentsTable();
-
 list($qh, $num) = dbQuery("SELECT proj_id, " .
 								"title, " .
 								"client_id, " .
@@ -33,7 +30,7 @@ list($qh, $num) = dbQuery("SELECT proj_id, " .
 								"http_link, " .
 								"proj_status, " .
 								"proj_leader " .
-							"FROM $PROJECT_TABLE " .
+							"FROM ".tbl::getProjectTable()." " .
 							"WHERE proj_id = $proj_id " .
 							"ORDER BY proj_id");
 $data = dbResult($qh);
@@ -46,7 +43,7 @@ $dti=getdate($data["end_stamp"]);
 $end_month = $dti["mon"];
 $end_year = $dti["year"];
 
-list($qh, $num) = dbQuery("SELECT username FROM $ASSIGNMENTS_TABLE WHERE proj_id = $proj_id");
+list($qh, $num) = dbQuery("SELECT username FROM ".tbl::getAssignmentsTable()." WHERE proj_id = $proj_id");
 $selected_array = array();
 $i = 0;
 while ($datanext = dbResult($qh)) {

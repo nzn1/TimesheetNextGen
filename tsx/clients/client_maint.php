@@ -9,7 +9,6 @@ $loggedInUser = strtolower($_SESSION['loggedInUser']);
 if (empty($loggedInUser))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
-$CLIENT_TABLE = tbl::getClientTable();
 ?>
 
 <HTML>
@@ -42,7 +41,7 @@ $CLIENT_TABLE = tbl::getClientTable();
 <?php
 
 //execute the query
-list($qh,$num) = dbQuery("SELECT * FROM $CLIENT_TABLE ORDER BY organisation");
+list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getClientTable()." ORDER BY organisation");
 
 //are there any results?
 if ($num == 0) {

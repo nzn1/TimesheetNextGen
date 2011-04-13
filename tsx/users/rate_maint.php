@@ -67,8 +67,8 @@ if (isset($popup))
 		<td class="inner_table_column_heading">&nbsp;<i>Actions</i></td>
 	</tr>
 <?php
-$RATE_TABLE = tbl::getRateTable();
-list($qh,$num) = dbQuery("select * from $RATE_TABLE where rate_id != 1 order by rate_id");
+
+list($qh,$num) = dbQuery("select * from ".tbl::getRateTable()." where rate_id != 1 order by rate_id");
 
 $count = 0;
 while ($data = dbResult($qh)) {

@@ -21,19 +21,19 @@ $query = "SELECT DATE_FORMAT(start_time, '$dateFormatString') as formattedStartT
 				"DATE_FORMAT(end_time, '$dateFormatString') as formattedEndTime, ".
 				"(unix_timestamp(end_time) - unix_timestamp(start_time)) as time,".
 				"log_message, " .
-				"$PROJECT_TABLE.title AS projectTitle, " .
-				"$PROJECT_TABLE.proj_status AS projectStatus, ".
-				"$TASK_TABLE.name AS taskName, " .
-				"$TASK_TABLE.status AS taskStatus, ".
-				"$CLIENT_TABLE.organisation, ".
-				"".tbl::getuserTable().".first_name, ".
-				"".tbl::getuserTable().".last_name " .
-				"FROM $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE, ".tbl::getuserTable().", $CLIENT_TABLE ".
-			"WHERE $PROJECT_TABLE.proj_id=$TIMES_TABLE.proj_id ".
-				"AND $TASK_TABLE.task_id=$TIMES_TABLE.task_id ".
-				"AND $TIMES_TABLE.trans_num=$trans_num ".
-				"AND $PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id ".
-				"AND ".tbl::getuserTable().".username = $TIMES_TABLE.uid";
+				"pt.title AS projectTitle, " .
+				"pt.proj_status AS projectStatus, ".
+				"tt.name AS taskName, " .
+				"tt.status AS taskStatus, ".
+				"ct.organisation, ".
+				"ut.first_name, ".
+				"ut.last_name " .
+				"FROM ".tbl::getTimesTable()." timest, ".tbl::getProjectTable()." pt, ".tbl::getTasksTable()." tt, ".tbl::getUserTable()." ut, ".tbl::getClientTable()." ct".
+			"WHERE pt.proj_id=timest.proj_id ".
+				"AND tt.task_id=timest.task_id ".
+				"AND timest.trans_num=$trans_num ".
+				"AND pt.client_id = ct.client_id ".
+				"AND ut.username = timest.uid";
 
 
 //print "<PRE>$data[date]\n$data[time]\n$data[log_message]\n$data[title]\n$data[client]\n$data[first_name]\n$data[last_name]</PRE>";
@@ -102,9 +102,4 @@ include ("header.inc");
 
 <?php
 	}
-?>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
 ?>
