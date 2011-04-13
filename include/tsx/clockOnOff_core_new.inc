@@ -7,7 +7,7 @@ require_once('form_input.inc');
 ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<form action="<?php echo Config::getRelativeRoot(); ?>/clock_action" method="post" name="mainForm" id="theForm">
+		<form action="<?php echo Config::getRelativeRoot(); ?>/clock_action" method="post" name="theForm" id="theForm">
 		<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
 		<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
 		<input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
@@ -160,7 +160,7 @@ require_once('form_input.inc');
 											</tr>
 											<tr>
 												<td align="center">
-													<input type="button" value="Clock on and/or off" name="submitButton" id="submitButton" onclick="onSubmit();" />
+													<input type="button" value="Clock on and/or off" name="submitButton" id="submitButton" onclick="validate();" />
 												</td>
 											</tr>
 										</table>

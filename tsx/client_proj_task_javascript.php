@@ -1,5 +1,5 @@
 <?php 
-if(!class_exists('Site'))die('Error: not accessed through the class structure.  For the old site version please use client_proj_task_javascript.inc instead');
+if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 ?>
 <script type="text/javascript">
@@ -21,8 +21,14 @@ $js = new ClientProjTaskJavascript();
 	echo "var initialTaskId = ".gbl::getTaskId().";\n";
 	
 	$js->printJSONObjects();
-echo"</script>";
  
-echo "<script type=\"text/javascript\" src=\"".Config::getRelativeRoot()."/js/client_proj_task_javascript.js\"></script>\n";
+# any javascript files loaded like this become completely separate scripts, 
+# and they do not have access to any of the variables setuphere, so, instead
+# we need to just include the javascript file.
+# echo "<script type=\"text/javascript\" src=\"".Config::getRelativeRoot()."/js/client_proj_task_javascript.js\"></script>\n";
+
+include(Config::getDocumentRoot()."/js/client_proj_task_javascript.js");
+
+echo"</script>";
 
 ?>
