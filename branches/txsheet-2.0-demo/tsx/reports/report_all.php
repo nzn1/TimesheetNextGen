@@ -167,7 +167,7 @@ function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
 
 function make_user_link($uid, $string) {
 	global $ymdStr;
-	echo "<a href=\"".Config::getRelativeRoot()."/report_user?" . $ymdStr . "&amp;uid=$uid&amp;mode=&monthly\">" . 
+	echo "<a href=\"".Config::getRelativeRoot()."/report_user?" . $ymdStr . "&amp;uid=$uid&amp;mode=monthly\">" . 
 		$string .  "</a>&nbsp;"; 
 }
 

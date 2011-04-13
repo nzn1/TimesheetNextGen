@@ -3,7 +3,7 @@
 	$footer = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">
   <tr>
     <td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">TimesheetNextGen 
-      <br>
+      <br />
       <span style=\"font-size: 9px;\"><b>".JText::_('PAGE_GENERATED');
 	$date=strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'));  
 	$footer.=$date." ".JText::_('TIMEZONE')."</b>
@@ -25,7 +25,7 @@
 		</td>
 		<td> </td>
 		<td align="center" width="30%">
-			&copy; 2008-<?php $rt=gbl::getRealToday(); echo $rt['year']; ?> &nbsp;<a href="http://sourceforge.net/projects/tsheetx"><?php echo JText::_('DEVELOPMENT_TEAM') ?></a><br>
+			&copy; 2008-<?php $rt=gbl::getRealToday(); echo $rt['year']; ?> &nbsp;<a href="http://sourceforge.net/projects/tsheetx"><?php echo JText::_('DEVELOPMENT_TEAM') ?></a><br />
 		</td>
 		<td> </td>
 		<td align="right" width="30%">
