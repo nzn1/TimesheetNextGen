@@ -5,7 +5,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 
 PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/banner-no-menu.inc');
 
-Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:back()"));
+Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:back()"));
 
 //get the logged in user
 $loggedInUser = $_SESSION['loggedInUser'];

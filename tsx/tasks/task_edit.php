@@ -12,7 +12,7 @@ if (empty($loggedInUser))
 $task_id = gbl::getTaskId();
 
 //define the command menu
-Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
+Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 Site::getCommandMenu()->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
 Site::getCommandMenu()->add(new TextCommand("Copy Projects/Tasks between users", true, "user_clone.php"));
 

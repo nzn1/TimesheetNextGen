@@ -1,6 +1,7 @@
 <?php
 
 if(!class_exists('Site'))die('Restricted Access');
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('ADD_NEW_PROJECT')."</title>");
 
 // Authenticate
 if(!class_exists('Site')){
@@ -14,7 +15,7 @@ if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
 //define the command menu
-Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
+Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 
 //load client id from superglobals
 $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
@@ -30,7 +31,6 @@ $end_year = date("Y", $startDate);;
 ?>
 <html>
 <head>
-<title>Add New Project</title>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/projects/proj_action" method="post">
 <input type="hidden" name="action" value="add" />
@@ -38,13 +38,13 @@ $end_year = date("Y", $startDate);;
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="outer_table_heading">
-		<td>	<h1>Add New Project</h1>
+		<td>	<h1><?php echo JText::_('ADD_NEW_PROJECT'); ?></h1>
 		</td>
 	</tr>
 	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
 	<tr>
 				<!--  table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body" -->
-		<td align="right">Project Title:</td>
+		<td align="right"><?php echo JText::_('PROJECT_TITLE'); ?>:</td>
 		<td><input type="text" name="title" size="42" style="width: 100%;" maxlength="200" /></td>
 	</tr>
 	<tr>
@@ -56,15 +56,15 @@ $end_year = date("Y", $startDate);;
 		<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%;"></textarea></td>
 	</tr>
 	<tr>
-		<td align="right">Start Date:</td>
+		<td align="right"><?php echo JText::_('START_DATE'); ?>:</td>
 		<td><?php Common::day_button("start_day",0,0); Common::month_button("start_month", $start_month); Common::year_button("start_year", $start_year); ?></td>
 	</tr>
 	<tr>
-		<td align="right">Deadline:</td>
+		<td align="right"><?php echo JText::_('DUE_DATE'); ?>:</td>
 		<td><?php Common::day_button("end_day",0,0); Common::month_button("end_month", $end_month); Common::year_button("end_year", $end_year); ?></td>
 	</tr>
 	<tr>
-		<td align="right">Status:</td>
+		<td align="right"><?php echo JText::_('STATUS'); ?>:</td>
 		<td><?php Common::proj_status_list("proj_status", "Started"); ?></td>
 	</tr>
 	<tr>
@@ -72,17 +72,17 @@ $end_year = date("Y", $startDate);;
 		<td><input type="text" name="url" size="42" style="width: 100%;" /></td>
 	</tr>
 	<tr>
-		<td align="right" valign="top">Assignments:</td>
+		<td align="right" valign="top"><?php echo JText::_('ASSIGNED_USERS'); ?>:</td>
 		<td><?php Common::multi_user_select_list("assigned[]"); ?></td>
 	</tr>
 	<tr>
-		<td align="right">Project Leader:</td>
+		<td align="right"><?php echo JText::_('PROJECT_LEADER'); ?>:</td>
 		<td><?php Common::single_user_select_list("project_leader"); ?></td>
 	</tr>
 	<tr>
 			<!-- table width="100%" border="0" class="table_bottom_panel" -->
 		<td align="center">
-			<input type="submit" name="add" value="Add New Project" />
+			<input type="submit" name="add" value="<?php echo JText::_('ADD_NEW_PROJECT'); ?>" />
 		</td>
 	</tr>
 </table>

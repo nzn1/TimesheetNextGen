@@ -1,5 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('CLIENT_MANAGEMENT')."</title>");
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
@@ -13,7 +14,6 @@ $CLIENT_TABLE = tbl::getClientTable();
 
 <HTML>
 <head>
-<title><?php echo Config::getMainTitle()." - ".ucfirst(JText::_('CLIENT_MANAGEMENT'));?></title>
 
 <script type="text/javascript">
 
@@ -78,8 +78,8 @@ if ($num == 0) {
 		print "<td class=\"calendar_cell_middle\">$emailField</td>";
 		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
 		print "<td class=\"calendar_cell_disabled_right\">\n";
-		print "	<a href=\"client_edit?client_id=$data[client_id]\">Edit</a>,&nbsp;\n";
-		print "	<a href=\"javascript:delete_client($data[client_id]);\">Delete</a>\n";
+		print "	<a href=\"client_edit?client_id=$data[client_id]\">".JText::_('EDIT')."</a>,&nbsp;\n";
+		print "	<a href=\"javascript:delete_client($data[client_id]);\">".JText::_('DELETE')."</a>\n";
 		print "</td>\n";
 		$count++;
 	}
