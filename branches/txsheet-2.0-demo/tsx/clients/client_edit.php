@@ -1,5 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('EDIT_CLIENT')."</title>");
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
@@ -11,7 +12,7 @@ if (empty($loggedInUser))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 //define the command menu
-Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
+Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 
 //load local vars from superglobals
 $client_id = gbl::getClientId();
@@ -32,7 +33,6 @@ $data = dbResult($qh);
 ?>
 <html>
 <head>
-<title><?php echo Config::getMainTitle()." - ".ucfirst(JText::_('CLIENT_MANAGEMENT'));?></title>
 </head>
 <div id="inputArea">
 <form action="<?php echo Config::getRelativeRoot(); ?>/clients/client_action" method="post">

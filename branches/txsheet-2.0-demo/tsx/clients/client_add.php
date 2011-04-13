@@ -1,5 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('ADD_NEW_CLIENT')."</title>");
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
@@ -16,7 +17,6 @@ Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.ba
 ?>
 <html>
 <head>
-<title><?php echo Config::getMainTitle()." - ".ucfirst(JText::_('CLIENT_MANAGEMENT'));?></title>
 </head>
 <div id="inputArea">
 <form action="<?php echo Config::getRelativeRoot(); ?>/clients/client_action" method="post">
@@ -25,7 +25,7 @@ Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.ba
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="left" nowrap class="outer_table_heading" nowrap>
-			<h1><?php echo JText::_('ADD NEW CLIENT') ?></h1>
+			<h1><?php echo JText::_('ADD_NEW_CLIENT') ?></h1>
 		</td>
 	</tr>
 	<tr>

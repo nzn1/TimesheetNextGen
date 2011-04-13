@@ -10,7 +10,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 $proj_id = $_REQUEST['proj_id'];
 
 //define the command menu
-Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
+Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 
 ?>
 <title><?php echo Config::getMainTitle();?> - Task Add</title>

@@ -603,7 +603,7 @@ class Common{
 		while ($i <= 12) {
 			switch($i) {
 			case $month:
-				echo "<option value=\"$i\" selected=\"selected\" >" . date("M",mktime(0,0,0,$i,1,1999)) . "\n";
+				echo "<option value=\"$i\" selected=\"selected\" >" . strftime("%b",mktime(0,0,0,$i,1,1999)) . "\n";
 			break;
 			default:
 				echo "<option value=\"$i\">". date("M",mktime(0,0,0,$i,1,1999)) . "\n";
@@ -658,10 +658,10 @@ class Common{
 		list($qh, $num) = dbQuery($query);
 		if ($num > 0) {
 			if ($showSelect)
-				print "<option value=\"0\">Select User</option>\n";
+				print "<option value=\"0\">".JText::_('SELECT_USER')."</option>\n";
 
 			if($show_disabled) {
-				print "<optgroup label=\"Active Users\">";
+				print "<optgroup label=\"".JText::_('ACTIVE_USERS')."\">";
 				$found_disabled=0;
 			}
 
@@ -713,7 +713,7 @@ class Common{
 		list($qh, $num) = dbQuery($query);
 		print "<select name=\"$name\" multiple=\"multiple\" size=\"11\">\n";
 		if($show_disabled) {
-			print "<optgroup label=\"Active Users\">";
+			print "<optgroup label=\"".JText::_('ACTIVE_USERS')."\">";
 			$found_disabled=0;
 		}
 
@@ -772,7 +772,7 @@ class Common{
 		if ($showSelectClient)
 			print "<option value=\"0\">Select Client</option>\n";
 		else if ($showAllClients)
-			print "<option value=\"0\">All Clients</option>\n";
+			print "<option value=\"0\">".JText::_('ALL_CLIENTS')."</option>\n";
 
 		//should we show the 'No Client' option
 		if ($showNoClient) {
@@ -1088,13 +1088,13 @@ class Common{
 ?>
 	<select name="<?php echo $id; ?>" onchange="OnChange()" style="width: 100%;" id="<?php echo $id; ?>" <?php if ($disabled=='true') echo 'readonly'?>>
 	<option value="" <?php if ($selected == '') echo "selected=\"selected\"";?>></option>
-	<option value="Holiday" <?php if ($selected== 'Holiday') echo "selected=\"selected\"";?>>Holiday</option>
-	<option value="Sick" <?php if ($selected== 'Sick') echo "selected=\"selected\"";?>>Sick</option>
-	<option value="Military" <?php if ($selected== 'Military') echo "selected=\"selected\"";?>>Mil/Civ</option>
-	<option value="Training" <?php if ($selected== 'Training') echo "selected=\"selected\"";?>>Training</option>
-	<option value="Compensation" <?php if ($selected== 'Compensation') echo "selected=\"selected\"";?>>Compensation</option>
-	<option value="Other" <?php if ($selected== 'Other') echo "selected=\"selected\"";?>>Other</option>
-	<option value="Public" <?php if ($selected== 'Public') echo "selected=\"selected\"";?>>Public</option>
+	<option value="Holiday" <?php if ($selected== 'Holiday') echo "selected=\"selected\"";?>><?php echo JText::_('HOLIDAY'); ?></option>
+	<option value="Sick" <?php if ($selected== 'Sick') echo "selected=\"selected\"";?>><?php echo JText::_('SICK'); ?></option>
+	<option value="Military" <?php if ($selected== 'Military') echo "selected=\"selected\"";?>><?php echo JText::_('MILITARY'); ?></option>
+	<option value="Training" <?php if ($selected== 'Training') echo "selected=\"selected\"";?>><?php echo JText::_('TRAINING'); ?></option>
+	<option value="Compensation" <?php if ($selected== 'Compensation') echo "selected=\"selected\"";?>><?php echo JText::_('COMPENSATION'); ?></option>
+	<option value="Other" <?php if ($selected== 'Other') echo "selected=\"selected\"";?>><?php echo JText::_('OTHER'); ?></option>
+	<option value="Public" <?php if ($selected== 'Public') echo "selected=\"selected\"";?>><?php echo JText::_('PUBLIC_DAY'); ?></option>
 	</select>
 <?php
 	}
@@ -1221,10 +1221,10 @@ class Common{
 	public static function proj_status_list($name, $status='') {
 ?>
 	<select name="<?php echo $name ?>">
-	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>>Pending</option>
-	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>>Started</option>
-	<option value="Suspended" <?php if ($status == 'Suspended') echo "selected=\"selected\"";?>>Suspended</option>
-	<option value="Complete" <?php if ($status == 'Complete') echo "selected=\"selected\"";?>>Complete</option>
+	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>><?php echo JText::_('PENDING');?> </option>
+	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>><?php echo JText::_('STARTED');?></option>
+	<option value="Suspended" <?php if ($status == 'Suspended') echo "selected=\"selected\"";?>><?php echo JText::_('SUSPENDED');?></option>
+	<option value="Complete" <?php if ($status == 'Complete') echo "selected=\"selected\"";?>><?php echo JText::_('COMPLETE');?></option>
 	</select>
 <?php
 	}	
@@ -1232,11 +1232,11 @@ class Common{
 	public static function proj_status_list_filter($name, $status='', $onChange='submit();') {
 ?>
 	<select name="<?php echo $name ?>" onchange="<?php echo $onChange?>" >
-	<option value="All" <?php if ($status == 'All') echo "selected=\"selected\"";?>>All</option>
-	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>>Pending</option>
-	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>>Started</option>
-	<option value="Suspended" <?php if ($status == 'Suspended') echo "selected=\"selected\"";?>>Suspended</option>
-	<option value="Complete" <?php if ($status == 'Complete') echo "selected=\"selected\"";?>>Complete</option>
+	<option value="All" <?php if ($status == 'All') echo "selected=\"selected\"";?>><?php echo JText::_('ALL');?></option>
+	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>><?php echo JText::_('PENDING');?></option>
+	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>><?php echo JText::_('STARTED');?></option>
+	<option value="Suspended" <?php if ($status == 'Suspended') echo "selected=\"selected\"";?>><?php echo JText::_('SUSPENDED');?></option>
+	<option value="Complete" <?php if ($status == 'Complete') echo "selected=\"selected\"";?>><?php echo JText::_('COMPLETE');?></option>
 	</select>
 <?php
 	}

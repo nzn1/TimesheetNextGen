@@ -1,5 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('PROJECTS')."</title>");
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclProjects'))return;
 
@@ -93,7 +94,6 @@ function writePageLinks($page, $results_per_page, $num2) {
 ?>
 <html>
 <head>
-<title>Projects</title>
 
 <script type="text/javascript" type="text/javascript">
 function delete_project(clientId, projectId) {
@@ -189,7 +189,10 @@ function change_page(newPageValue) {
 					<td width="25%" nowrap>
 <?php
 			if (isset($data["start_date"]) && $data["start_date"] != '' && $data["deadline"] != '')
-				print "<span class=\"label\">".JText::_('START_DATE').":</span> $data[start_date]<br /><span class=\"label\">".JText::_('DUE_DATE').":</span> $data[deadline]";
+				{
+				print "<span class=\"label\">".JText::_('START_DATE').":</span>".strftime(JText::_('DFMT_MONTH_DAY_YEAR'),strtotime($data["start_date"]))."<br />";
+				print "<span class=\"label\">".JText::_('DUE_DATE').":</span>".strftime(JText::_('DFMT_MONTH_DAY_YEAR'),strtotime($data["deadline"]));
+				}
 			else
 				print "&nbsp;";
 ?>
@@ -231,7 +234,7 @@ function change_page(newPageValue) {
 									<span class="label">
 										<?php echo JText::_('TOTAL_BILL')?>:
 									</span> 
-									<b>$<?php echo (isset($bill_data["billed"]) ? sprintf("%01.2f",$bill_data["billed"]): "0.00"); ?></b>
+									<b><?php echo (isset($bill_data["billed"]) ? sprintf("%01.2f",$bill_data["billed"]): "0.00")." ".JText::_('CURRENCY'); ?></b>
 								</td>
 							</tr>
 							<tr><td>&nbsp;</td></tr>

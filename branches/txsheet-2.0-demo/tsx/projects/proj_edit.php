@@ -1,5 +1,6 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('EDIT_PROJECT')."</title>");
 
 // Authenticate
 
@@ -16,7 +17,7 @@ if (empty($loggedInUser))
 $proj_id = $_REQUEST['proj_id'];
 
 //define the command menu
-Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
+Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 Site::getCommandMenu()->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
 Site::getCommandMenu()->add(new TextCommand("Copy Projects/Tasks between users", true, Config::getRelativeRoot()."/user_clone"));
 
@@ -53,7 +54,6 @@ while ($datanext = dbResult($qh)) {
 	$i++;
 }
 
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
 ?>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/projects/proj_action" method="post">
@@ -64,13 +64,13 @@ PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::
 <table>
 	<tr>
 		<td class="outer_table_heading">
-			<h1>Edit Project: <?php echo stripslashes($data["title"]); ?> </h1>
+			<h1><?php echo JText::_('EDIT_PROJECT').": ".stripslashes($data["title"]); ?> </h1>
 		</td>
 	</tr>
 	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
 	<tr>
 				<!--  table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body" -->
-		<td align="right">Project Title:</td>
+		<td align="right"><?php echo JText::_('PROJECT_TITLE'); ?>:</td>
 		<td><input type="text" name="title" size="42" value="<?php echo stripslashes($data["title"]); ?>" style="width: 100%;" maxlength="200" /></td>
 	</tr>
 	<tr>
@@ -82,15 +82,15 @@ PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::
 		<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%;"><?php $data["description"] = stripslashes($data["description"]); echo $data["description"]; ?></textarea></td>
 	</tr>
 	<tr>
-		<td align="right">Start Date:</td>
+		<td align="right"><?php echo JText::_('START_DATE'); ?>:</td>
 		<td><?php Common::day_button("start_day",$data["start_stamp"],0); Common::month_button("start_month",$start_month); Common::year_button("start_year",$start_year); ?></td>
 	</tr>
 	<tr>
-		<td align="right">Deadline:</td>
+		<td align="right"><?php echo JText::_('DUE_DATE'); ?>:</td>
 		<td><?php Common::day_button("end_day",$data["end_stamp"],0); Common::month_button("end_month",$end_month); Common::year_button("end_year",$end_year); ?></td>
 	</tr>
 	<tr>
-		<td align="right">Status:</td>
+		<td align="right"><?php echo JText::_('STATUS'); ?>:</td>
 		<td><?php Common::proj_status_list("proj_status", $data["proj_status"]); ?></td>
 	</tr>
 	<tr>
@@ -98,17 +98,17 @@ PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::
 		<td><input type="text" name="url" size="42" value="<?php echo $data["http_link"]; ?>" style="width: 100%;" /></td>
 	</tr>
 	<tr>
-		<td align="right" valign="top">Assignments:</td>
+		<td align="right" valign="top"><?php echo JText::_('ASSIGNED_USERS'); ?>:</td>
 		<td><?php Common::multi_user_select_list("assigned[]",$selected_array); ?></td>
 	</tr>
 	<tr>
-		<td align="right">Project Leader:</td>
+		<td align="right"><?php echo JText::_('PROJECT_LEADER'); ?>:</td>
 		<td><?php Common::single_user_select_list("project_leader", $data["proj_leader"]); ?></td>
 	</tr>
 	<tr>
 			<!--  table width="100%" border="0" class="table_bottom_panel" -->
 		<td align="center">
-			<input type="submit" value="Update" />
+			<input type="submit" value="<?php echo JText::_('SUBMIT_CHANGES'); ?>" />
 		</td>
 	</tr>
 </table>
