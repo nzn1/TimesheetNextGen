@@ -13,21 +13,18 @@ if (empty($loggedInUser))
         errorPage("Could not determine the logged in user");
 
 
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
 	$uid = gbl::getContextUser();
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $month = gbl::getMonth();
 $day = gbl::getDay(); 
 $year = gbl::getYear();
 $last_day = isset($_REQUEST['last_day']) ? $_REQUEST['last_day']: "31";
 $action = isset($_REQUEST['action']) ? $_REQUEST['action']: 0;
-
-//set the return location
-$Location = Config::getRelativeRoot."/absences?month=$month&year=$year&day=$day&uid=$uid";
 
 if ($action!=0) {
 	$endMonth = $month + 1;
@@ -58,5 +55,7 @@ if ($action!=0) {
 		}
 	}
 }
+//set the return location
+$Location = Config::getRelativeRoot."/absences?month=$month&amp;year=$year&amp;day=$day&amp;uid=$uid";
 gotoLocation($Location);
 ?>

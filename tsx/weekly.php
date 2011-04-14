@@ -35,11 +35,6 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
-//$post="proj_id=".gbl::getProjId()."&amp;amp;task_id=".gbl::getTaskId()."&amp;amp;client_id=".gbl::getClientId()."";
-
-
-
-//include ("header.inc");
 PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser()."</title>");
 ob_start();
 
@@ -55,10 +50,10 @@ if (isset($popup)){
 	$str = "window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");";
 	PageElements::setBodyOnLoad($str);
 }	
-
-	$currentDate = $todayDate;
-	$fromPopup = "false";
-	//include("navcalnew/navcal+clockOnOff.inc"); 
+	
+	require_once("include/tsx/navcal/navcal.class.php");
+	$nav = new NavCal();
+	$nav->navCalClockOnOff($todayDate,false);
 ?>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">

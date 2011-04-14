@@ -13,7 +13,7 @@ if (empty($loggedInUser))
 
 
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $proj_id = $_REQUEST['proj_id'];
 
 //define the command menu

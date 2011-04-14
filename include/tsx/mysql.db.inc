@@ -12,12 +12,6 @@ if(!class_exists('Site'))die('Restricted Access');
 			//ppr(getShortDebugTrace(2));
 			return false;
 		}
-		
-		$GLOBALS["CONNECTED_MYSQL_DB_INC"] = 1;
-		global $DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_DB;
-		$dbh = @mysql_pconnect("$DATABASE_HOST","$DATABASE_USER","$DATABASE_PASS") or die("Unable to connect to SQL server: ". mysql_error());
-		mysql_select_db("$DATABASE_DB",$dbh) or die("Unable to select database: ".mysql_error());
-		return $dbh;
 	}
 
 	function MakeInsertString ( $data ) {

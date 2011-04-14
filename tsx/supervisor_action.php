@@ -5,13 +5,11 @@ if(!class_exists('Site'))die('Restricted Access');
 
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-//require_once(Config::getDocumentRoot()."/include/tsx/debuglog.php");
-//$debug = new logfile();
 	
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTasks'))return;
 
 // Config::getRelativeRoot()."submit.php?uid=peter&amp;orderby=project&amp;client_id=0&amp;mode=monthly&amp;year=2010&amp;month=8&amp;day=1"
-//load local vars from superglobals
+//load local vars from request/post/get
 $action = $_REQUEST["Modify"];
 
 	$name = $_REQUEST["name"];
@@ -24,7 +22,7 @@ $action = $_REQUEST["Modify"];
 	$uid = $_REQUEST["uid"];
 
 	if (isset($_REQUEST['Modify'])) {
-		//$debug->write("action = \" $action\" request modify = \"" . $_REQUEST['Modify'] . "\"" .  "\"\n");		
+		//LogFile::->write("action = \" $action\" request modify = \"" . $_REQUEST['Modify'] . "\"" .  "\"\n");		
 		
 	if (isset($_REQUEST['approve'])) {
 		//var_dump ($_REQUEST['sub']);
@@ -37,7 +35,7 @@ $action = $_REQUEST["Modify"];
 		}
 		list($qh, $num) = dbQuery("UPDATE ".tbl::getTimesTable()." SET status = \"Approved\"" .
 				" WHERE trans_num IN ( $transids )");
-		//$debug->write("update query transids = \" $transids\" qh = \"$qh\"  num=\"".$num. "\"\n");		
+		//LogFile::->write("update query transids = \" $transids\" qh = \"$qh\"  num=\"".$num. "\"\n");		
 		}
 	
 	if (isset($_REQUEST['reject'])) {
@@ -51,7 +49,7 @@ $action = $_REQUEST["Modify"];
 		}
 		list($qh, $num) = dbQuery("UPDATE ".tbl::getTimesTable()." SET status = \"Open\"" .
 				" WHERE trans_num IN ( $transids )");
-		//$debug->write("update query transids = \" $transids\" qh = \"$qh\"  num=\"".$num. "\"\n");		
+		//LogFile::->write("update query transids = \" $transids\" qh = \"$qh\"  num=\"".$num. "\"\n");		
 	}
 }
 	

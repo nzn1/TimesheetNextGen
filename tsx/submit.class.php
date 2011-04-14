@@ -30,10 +30,7 @@ public function make_daily_link($ymdStr, $proj_id, $string) {
 		$string .  "</a>&nbsp;"; 
 }
 
-public function printInfo($type, $data) {
-
-//	global $debug;
-	
+public function printInfo($type, $data) {	
 	if($type == "projectTitle") {
 		self::jsPopupInfoLink(Config::getRelativeRoot()."/client_info", "client_id", $data["client_id"], "Client_Info");
 		print stripslashes($data["clientName"])."</a> / ";
@@ -54,7 +51,7 @@ public function printInfo($type, $data) {
 		$dateValues = getdate($data["start_stamp"]);
 		//$hmStr = "&hour=".$dateValues["hours"] . "&mins=".$dateValues["minutes"];
 		$formattedTime = sprintf("%02d:%02d",$dateValues["hours"],$dateValues["minutes"]); 
-//	$debug->write("starttime start_stamp = \"" .  $data["start_stamp"]   ."\" hr =\"" .  $dateValues["hours"]   .
+//	LogFile::write("starttime start_stamp = \"" .  $data["start_stamp"]   ."\" hr =\"" .  $dateValues["hours"]   .
 //		"\" min =\"" .  $dateValues["minutes"] . "\" formattedtime =\"" .  $formattedTime . "\"\n");
 		print $formattedTime;
 				//else print "&nbsp;";

@@ -6,7 +6,7 @@ if(!class_exists('Site'))die('Restricted Access');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $action = $_REQUEST['action'];
 if ($action == "add" || $action == "edit") {
 	$assigned = isset($_REQUEST['assigned']) ? $_REQUEST['assigned']: array();

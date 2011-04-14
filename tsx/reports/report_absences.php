@@ -11,7 +11,7 @@ if (empty($loggedInUser))
         errorPage("Could not determine the logged in user");
 
 
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
@@ -54,7 +54,7 @@ function make_index($data,$order) {
 }
 
 $Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr";
-$post="uid=$uid";
+gbl::setPost("uid=$uid");
 
 ?>
 
@@ -83,7 +83,9 @@ function popupPrintWindow() {
 		echo ">\n";
 		
 		$motd = 0;  //don't want the motd printed
-		include("navcalnew/navcal_monthly.inc");
+		require_once("include/tsx/navcal/navcal.class.php");
+	  $nav = new NavCal();
+    $nav->navCalMonthly();
 	}
 
 

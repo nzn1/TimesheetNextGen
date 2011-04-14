@@ -33,7 +33,7 @@ if($export_excel){
 	$time_fmt = "time";
 
 
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
@@ -196,7 +196,7 @@ function make_index($data,$order) {
 }
 
 $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
-$post="&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
+gbl::setPost("&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode");
 
 if(!$export_excel) 
 	require("report_javascript.inc");
@@ -232,10 +232,15 @@ if(!$export_excel)
 		echo "<div id=\"header\">";
 		//include ("banner.inc");
 		$motd = 0;  //don't want the motd printed
-		if($mode=='weekly')
-			include("navcalnew/navcalendars.inc");
-		else
-			include("navcalnew/navcal_monthly.inc");
+		require_once("include/tsx/navcal/navcal.class.php");
+	  $nav = new NavCal();
+    
+    if($mode=='weekly'){
+			$nav->navCalNormal();
+		}
+		else{
+		    $nav->navCalMonthly();
+		}
 		echo "</div>";
 	}
 ?>

@@ -183,7 +183,7 @@ function make_index($data,$order) {
 }
 
 $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;orderby=$orderby&amp;proj_id=$proj_id&amp;mode=$mode";
-$post="&amp;orderby=$orderby&amp;proj_id=$proj_id&amp;mode=$mode";
+gbl::setPost("&amp;orderby=$orderby&amp;proj_id=$proj_id&amp;mode=$mode");
 
 if(!$export_excel) 
 	require("report_javascript.inc");
@@ -219,10 +219,13 @@ if(!$export_excel)
 		echo "<div id=\"header\">";
 		//include ("banner.inc");
 		$motd = 0;  //don't want the motd printed
+		require_once("include/tsx/navcal/navcal.class.php");
+	  $nav = new NavCal();
+    
 		if($mode=='weekly')
-			include("navcalnew/navcalendars.inc");
+			$nav->navCalNormal();
 		else
-			include("navcalnew/navcal_monthly.inc");
+			$nav->navCalMonthly();
 		echo "</div>";
 	}
 ?>

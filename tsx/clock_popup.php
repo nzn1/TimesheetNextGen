@@ -4,6 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclWeekly'))return;
 PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('CLOCK')." ".JText::_('FOR')." ".gbl::getContextUser()."</title>");
 
+PageElements::setTemplate('popup_template.php');
 
 //include date input classes
 include "include/tsx/form_input.inc";
@@ -59,8 +60,11 @@ ob_end_clean();
 
 <!-- include the timesheet face up until the next start section -->
 <?php 
-	$fromPopup = "true";
-	require(dirname(__FILE__)."/../include/tsx/clockOnOff_core_new.inc"); 
+        require("include/tsx/clocking.class.php");
+        $clock = new Clocking();
+        $clock->createClockOnOff(null,true,false);        
+	      //$fromPopup = "true";
+	      //require(dirname(__FILE__)."/../include/tsx/clockOnOff_core_new.inc"); 
 ?>
 
 

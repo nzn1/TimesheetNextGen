@@ -24,8 +24,6 @@ $tomorrowDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 days");
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
-$post="proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()."";   //THIS LINE ISN'T USED!!
-
 PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser()."</title>");
 ob_start();
 
@@ -48,7 +46,10 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <?php
 	$currentDate = $todayDate;
 	$fromPopup = "false";
-	include("include/tsx/clockOnOff.inc"); 
+	//include("include/tsx/clockOnOff.inc");
+  require("include/tsx/clocking.class.php");
+  $clock = new Clocking();
+  $clock->createClockOnOff(null,false,true); 
 ?>
 
 <form name="dayForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
@@ -279,4 +280,3 @@ else {
 ?>
 
 </form>
-<!-- ?php include("include/tsx/clockOnOff.inc"); ?-->

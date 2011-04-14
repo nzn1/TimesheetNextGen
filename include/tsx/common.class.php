@@ -22,16 +22,14 @@ class Common{
 	include_once("mysql.db.inc");
 	require("timezone.inc");
 
-	//get realToday's values
-	$realToday = getdate(time());
-	$realTodayDate = mktime(0, 0, 0, $realToday['mon'], $realToday['mday'], $realToday['year']);
-
 	self::$motd = 1;
 	//Useful constants
 	define("A_DAY", 24 * 60 * 60);  //seconds per day
 	define("WORK_DAY", 8); //hours per day
 	define("SECONDS_PER_HOUR", 60 * 60);
-	$BREAK_RATIO = (0);     // For an hour break every 8 hours this would be: (1/8)
+	
+	// For an hour break every 8 hours this would be: (1/8)
+	gbl::setBreakRatio(0);     
 
 	}
 	
@@ -564,7 +562,7 @@ class Common{
 	}
 
 	public static function day_button($name, $timeStamp=0, $limit=1) {
-		global $realToday, $month, $year;
+		$realToday = gbl::getRealToday();
 		if (!$timeStamp)
 			$timeStamp = $realToday[0];
 
@@ -592,7 +590,7 @@ class Common{
 	}
 
 	public static function month_button ($name, $month=0) {
-		global $realToday;
+		$realToday = gbl::getRealToday();
 		if(!$month)
 			$month = $realToday["mon"]; //date("m");
 
@@ -614,7 +612,7 @@ class Common{
 	}
 
 	public static function year_button ($name, $year=0) {
-		global $realToday;
+		$realToday = gbl::getRealToday();
 		if(!$year)
 			$year = $realToday["year"]; //date("Y");
 
@@ -1176,8 +1174,7 @@ class Common{
 
 
 	public static function present_log_message($action) {
-		global $check_in_time_hour, $check_out_time_hour,$check_in_time_min, $check_out_time_min, $year,
-		$month, $day, $projId, $taskId, $destination;
+		global $check_in_time_hour, $check_out_time_hour,$check_in_time_min, $check_out_time_min, $destination;
 	?>
 <HTML>
 <body bgcolor="#FFFFFF" >
@@ -1190,11 +1187,11 @@ class Common{
 		print "<input type=\"hidden\" name=check_out_time_hour value=\"$check_out_time_hour\" />\n";
 		print "<input type=\"hidden\" name=check_in_time_min value=\"$check_in_time_min\" />\n";
 		print "<input type=\"hidden\" name=check_out_time_min value=\"$check_out_time_min\" />\n";
-		print "<input type=\"hidden\" name=year value=\"$year\" />\n";
-		print "<input type=\"hidden\" name=month value=\"$month\" />\n";
-		print "<input type=\"hidden\" name=day value=\"$day\" />\n";
-		print "<input type=\"hidden\" name=proj_id value=\"$projId\" />\n";
-		print "<input type=\"hidden\" name=task_id value=\"$taskId\" />\n";
+		print "<input type=\"hidden\" name=year value=\"".gbl::getYear()."\" />\n";
+		print "<input type=\"hidden\" name=month value=\"".gbl::getMonth()."\" />\n";
+		print "<input type=\"hidden\" name=day value=\"".gbl::getDay()."\" />\n";
+		print "<input type=\"hidden\" name=proj_id value=\"".gbl::getProjId()."\" />\n";
+		print "<input type=\"hidden\" name=task_id value=\"".gbl::getTaskId()."\" />\n";
 		switch($action) {
 		case "inout":
 			print "<input type=\"hidden\" name=\"check_in_out_x\" value=\"1\" />\n";
@@ -1286,7 +1283,7 @@ class Common{
 
 
 	public static function errorPage($message, $from_popup = false) {
-		$targetWindowLocation = Config::getRelativeRoot().DS."error.php?errormsg=$message";
+		$targetWindowLocation = Config::getRelativeRoot()."/error?errormsg=$message";
 
 		if (!$from_popup)
 			gotoLocation($targetWindowLocation);

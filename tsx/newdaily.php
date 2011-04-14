@@ -26,8 +26,6 @@ $tomorrowStamp = strtotime(date("d M Y H:i:s",$todayStamp) . " +1 days");
 
 $layout = Common::getLayout();
 
-//$post="";
-
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 

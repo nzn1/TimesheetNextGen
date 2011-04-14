@@ -6,7 +6,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $task_id = $_REQUEST['task_id'];
 
 

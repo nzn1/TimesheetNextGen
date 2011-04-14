@@ -32,17 +32,16 @@ class MonthlyClass{
 			$pdayOfWeek=6;
 
 		$curDate = strtotime(date("d M Y H:i:s",$curDate) . " -$pdayOfWeek days");
-
 		$dateValues = getdate($curDate);
 		$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 		// Called from monthly.php to print out a line summing the hours worked in the past
 		// week.  index.phtml must set all global variables.
-		global $BREAK_RATIO, $client_id, $proj_id, $task_id;
+
 		print "</tr><tr>\n";
-		if ($BREAK_RATIO > 0) {
+		if (gbl::getBreakRatio() > 0) {
 			print "<td align=\"left\" colspan=\"3\">";
-			$break_sec =  floor($BREAK_RATIO*$seconds);
+			$break_sec =  floor(gbl::getBreakRatio()*$seconds);
 			$seconds -= $break_sec;
 			print "<font size=\"-1\">Break time: <font color=\"red\">". formatSeconds($break_sec);
 			print "</font></font></td><td align=\"right\" colspan=\"4\">";
@@ -52,7 +51,7 @@ class MonthlyClass{
 		if ($type=="monthly")
 			print JText::_('MONTHLY')." ".JText::_('TOTAL').": ";
 		else
-			print "<a href=\"".Config::getRelativeRoot()."/weekly?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id$ymdStr\">". JText::_('WEEKLY')." ".JText::_('TOTAL').": </a>";
+			print "<a href=\"".Config::getRelativeRoot()."/weekly?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."$ymdStr\">". JText::_('WEEKLY')." ".JText::_('TOTAL').": </a>";
 
 		print "<span class=\"calendar_total_value_$type\">". Common::formatMinutes($Minutes) ."</span></td>\n";
 	}

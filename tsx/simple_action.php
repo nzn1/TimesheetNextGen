@@ -36,15 +36,13 @@ ini_set('display_errors', false);
 
 $simple_debug=true;
 if($simple_debug) {
-	require(Config::getDocumentRoot()."/include/tsx/debuglog.php");
-	$debug = new logfile();
-
 	$test=http_build_query($_POST);
 	$tsize = strlen($test);
-
-	$debug->write("post size is $tsize\n");
-} else
+	LogFile::write("post size is $tsize\n");
+}
+else{
 	$debug=0;
+}
 
 
 $todayStamp = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
@@ -70,13 +68,13 @@ $startStr = date("Y-m-d H:i:s",$startDate);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 if($simple_debug) {
-	$debug->write(print_r($_POST, TRUE));
-	$debug->write("startStr = \"$startStr\"");
-	$debug->write("  endStr = \"$endStr\"\n");
+	LogFile::write(print_r($_POST, TRUE));
+	LogFile::write("startStr = \"$startStr\"");
+	LogFile::write("  endStr = \"$endStr\"\n");
 
-	$debug->write("  totalRows = \"$totalRows\"\n");
-	$debug->write("  totalRows = \"".$_POST["totalRows"]."\"\n");
-	$debug->write("  existingRows = \"".$_POST["existingRows"]."\"\n");
+	LogFile::write("  totalRows = \"$totalRows\"\n");
+	LogFile::write("  totalRows = \"".$_POST["totalRows"]."\"\n");
+	LogFile::write("  existingRows = \"".$_POST["existingRows"]."\"\n");
 }
 
 function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr, $simple_debug, $debug) {
@@ -90,14 +88,14 @@ function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr, $
 
 
 	if($simple_debug)
-		$debug->write("   Query = \"$queryString\"\n");
+		LogFile::write("   Query = \"$queryString\"\n");
 
 	dbQuery($queryString);
 }
 
 for ($i=0; $i<$totalRows; $i++) {
 	if($simple_debug)
-		$debug->write("working on row $i proj_id ". $_POST["projectSelect_row".$i]." task_id ".$_POST["taskSelect_row".$i]."\n");
+		LogFile::write("working on row $i proj_id ". $_POST["projectSelect_row".$i]." task_id ".$_POST["taskSelect_row".$i]."\n");
 
 	$projectId = $_POST["projectSelect_row" . $i];
 	$oprojectId = $_POST["project_row" . $i];
@@ -141,7 +139,7 @@ for ($i=0; $i<$totalRows; $i++) {
 		if($ohours != $hours || $omins != $mins || $oprojectId != $projectId || $otaskId != $taskId || $oworkDescription != $workDescription) {
 			//something changed for this entry
 			//if($simple_debug)
-			//	$debug->write(" changing opid=$oprojectId otid=$otaskId date=$stsStr\n");
+			//	LogFile::write(" changing opid=$oprojectId otid=$otaskId date=$stsStr\n");
 
 			//don't delete anything if this was a new set of entries
 			if($oprojectId != '' && $otaskId != '') 
@@ -167,7 +165,7 @@ for ($i=0; $i<$totalRows; $i++) {
 										"$projectId, $taskId, '$workDescription')";
 
 				if($simple_debug)
-					$debug->write("   Query = \"$queryString\"\n");
+					LogFile::write("   Query = \"$queryString\"\n");
 
 				list($qh,$num) = dbQuery($queryString);
 			}

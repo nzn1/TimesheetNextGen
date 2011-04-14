@@ -13,13 +13,14 @@ class gbl{
 	private static $post;
 	private static $contextUser;
 	private static $loggedInUser;	
-	
+	private static $breakRatio = 0;
+	private static $siteClosed = false;
 	
 	public static function initialize(){
 		//get todays values
 		self::$realToday = getdate(time());
 		
-		//load local vars from superglobals
+		//load local vars from request/post/get
 		self::$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: self::$realToday["year"];
 		self::$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: self::$realToday["mon"];
 		self::$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: self::$realToday["mday"];
@@ -78,7 +79,7 @@ class gbl{
 	}
 
 	
-}
+}    
 		
 
 		
@@ -88,7 +89,9 @@ class gbl{
 		self::$loggedInUser = strtolower($_SESSION['loggedInUser']);
 		
 		//check that project id is valid
-  if (self::$proj_id == 0)self::$task_id = 0;
+    if (self::$proj_id == 0)self::$task_id = 0;
+    
+    self::$post="year=".self::$year."&amp;month=".self::$month."&amp;day=".self::$day."&amp;proj_id=".self::$proj_id."&amp;task_id=".self::$task_id."&amp;client_id=".self::$client_id;
 		
 	}
 	
@@ -126,6 +129,13 @@ class gbl{
 	public static function getClientId(){
 		return self::$client_id;
 	}
+	
+	public static function getPost(){
+    return self::$post;
+  }
+  public static function setPost($s){
+    self::$post = $s;
+  }
 	public static function getContextUser(){
 		return self::$contextUser;
 	}
@@ -135,5 +145,18 @@ class gbl{
 	public static function getLoggedInUser(){
 		return self::$loggedInUser;
 	}
+	public static function getBreakRatio(){
+    return self::$breakRatio;
+  }
+  public static function setBreakRatio($s){
+    self::$breakRatio = $s;
+  }
+	public static function getSiteClosed(){
+    return self::$siteClosed;
+  }
+  public static function setSiteClosed($s){
+    self::$siteClosed = $s;
+  }
+  
 }
 ?>

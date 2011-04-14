@@ -3,7 +3,7 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : "";
 $cloneFrom = isset($_REQUEST['cloneFrom']) ? $_REQUEST['cloneFrom'] : "";
 $cloneTo = isset($_REQUEST['cloneTo']) ? $_REQUEST['cloneTo'] : "";
@@ -28,7 +28,7 @@ if($action!='performCopy') {
 	Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "$_SERVER[PHP_SELF]?cloneFrom=$cloneFrom&amp;cloneTo=$cloneTo"));
 }
 
-//$debug->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
+//LogFile::->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
 
 ?>
 <div id="header">

@@ -20,7 +20,6 @@ if (empty($loggedInUser))
 <?php
 $layout = Common::getLayout();
 
-//$post="";
 PageElements::setHead("<title>".Config::getMainTitle()." - Simple Weekly Timesheet for ".gbl::getContextUser()."</title>");
 
 if (isset($popup))

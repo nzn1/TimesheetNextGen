@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $action = $_REQUEST["action"];
 $uid = $_REQUEST["uid"];
 $first_name = $_REQUEST["first_name"];
@@ -16,7 +16,7 @@ $isAdministrator = isset($_REQUEST["isAdministrator"]) ? $_REQUEST["isAdministra
 $isManager = isset($_REQUEST["isManager"]) ? $_REQUEST["isManager"]: "false";
 $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIVE" : "INACTIVE") : "ACTIVE";
 
-//$debug->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
+//LogFile::->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
 

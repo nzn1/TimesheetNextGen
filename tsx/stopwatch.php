@@ -5,7 +5,7 @@ if(!class_exists('Site'))die('Restricted Access');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 PageElements::setTemplate('popup_template.php');
-//load local vars from superglobals
+//load local vars from request/post/get
 $proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 $task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
@@ -29,8 +29,8 @@ include("client_proj_task_javascript.php");
 
 <script type="text/javascript">
 function doClockonoff(clockon) {
-	document.mainForm.clockonoff.value = clockon;
-	onSubmit();
+	document.theForm.clockonoff.value = clockon;
+	validate();
 }
 
 function resizePopupWindow() {
@@ -76,9 +76,14 @@ PageElements::setBodyOnLoad("doOnLoad();");
 					</tr>
 				</table>
 <?php
-	$stopwatch = 1;
-	$fromPopup = "true";
-	include(dirname(__FILE__)."/../include/tsx/clockOnOff_core_new.inc");
+	//$stopwatch = 1;
+	//$fromPopup = "true";
+	//include(dirname(__FILE__)."/../include/tsx/clockOnOff_core_new.inc");
+	
+	require("include/tsx/clocking.class.php");
+  $clock = new Clocking();
+  $clock->createClockOnOff(null,true,false,true);
+        
 ?>
 			</td>
 		</tr>

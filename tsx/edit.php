@@ -9,7 +9,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $save_changes = isset($_REQUEST['save_changes']) ? $_REQUEST['save_changes']: false;
 $task_id = $_REQUEST['task_id'];
 $proj_id = $_REQUEST['proj_id'];

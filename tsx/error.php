@@ -13,7 +13,7 @@ $loggedInUser = $_SESSION['loggedInUser'];
 if (empty($loggedInUser))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $errormsg = stripslashes($_REQUEST['errormsg']);
 
 //define the command menu

@@ -3,9 +3,9 @@
 if(!class_exists('Site'))die('Restricted Access');
 
 if( file_exists( Config::getRelativeRoot() . "/siteclosed")) {
-	$siteclosed=1;
+	gbl::setSiteClosed(1);
 } else {
-	$siteclosed=0;
+	gbl::setSiteClosed(0);
 }
 	
 require("table_names.inc");
@@ -96,7 +96,6 @@ class AuthenticationManager {
 	*   each page to ensure that there is an authenticated user
 	*/
 	function login($username, $password) {
-		global $siteclosed;
 
 		//start/continue the session
 //		session_start();
@@ -151,7 +150,7 @@ class AuthenticationManager {
 									"FROM ".tbl::getUserTable()." WHERE username='$username'");
 		$data = dbResult($qh);
 
-		if($siteclosed && ($data["level"] < CLEARANCE_ADMINISTRATOR))
+		if(gbl::getSiteClosed() && ($data["level"] < CLEARANCE_ADMINISTRATOR))
 			return false;
 
 		//Fix session ID vulnerability: if someone installs this system locally, and creates the same username as an 
@@ -261,7 +260,7 @@ class AuthenticationManager {
 	*	returns true if the user is logged in
 	*/
 	function isLoggedIn() {
-		global $siteclosed;
+
 		require( "table_names.inc" );
 
 		//start/continue the session
@@ -276,7 +275,7 @@ class AuthenticationManager {
 		$data = dbResult( $qh );
 		if($data['session'] != $session_id) return false;
 
-		if($siteclosed && ($_SESSION['accessLevel'] < CLEARANCE_ADMINISTRATOR))
+		if(gbl::getSiteClosed() && ($_SESSION['accessLevel'] < CLEARANCE_ADMINISTRATOR))
 			return false;
 
 		return !empty($_SESSION['accessLevel']) && !empty($_SESSION['loggedInUser']) && !empty($_SESSION['contextUser']);
@@ -330,7 +329,7 @@ class AuthenticationManager {
 		//build up connection string
 		$connectionString = $this->ldapCfgInfo['LDAPurl'];
 
-		//$debug->write("connectionString = $connectionString\n");
+		//LogFile::write("connectionString = $connectionString\n");
 
 		//connect to server
 		//echo "connecting to server: $connectionString <p>";
@@ -397,7 +396,7 @@ class AuthenticationManager {
 		if ($this->ldapCfgInfo['LDAPSearchScope'] == "base") {
 			//search the directory returning records in the base dn
 			//echo "<p>searching base dn: $this->ldapCfgInfo[LDAPBaseDN]        with filter: $filter <p>";
-			//$debug->write("searching base ".$this->ldapCfgInfo['LDAPBaseDN']." for $filter\n");
+			//LogFile::write("searching base ".$this->ldapCfgInfo['LDAPBaseDN']." for $filter\n");
 			if (!($search = @ldap_read($connection, $this->ldapCfgInfo['LDAPBaseDN'], $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
@@ -407,7 +406,7 @@ class AuthenticationManager {
 		} else if ($this->ldapCfgInfo['LDAPSearchScope'] == "one") {
 			//search the directory returning records in the base dn
 			//echo "<p>searching base dn: $this->ldapCfgInfo[LDAPBaseDN]        with filter: $filter <p>";
-			//$debug->write("searching one ".$this->ldapCfgInfo['LDAPBaseDN']." for $filter\n");
+			//LogFile::write("searching one ".$this->ldapCfgInfo['LDAPBaseDN']." for $filter\n");
 			if (!($search = @ldap_list($connection, $this->ldapCfgInfo['LDAPBaseDN'], $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
@@ -417,7 +416,7 @@ class AuthenticationManager {
 		} else { //full subtree search
 			//search the directory returning records in the base dn
 			//echo "<p>searching base dn: $this->ldapCfgInfo[LDAPBaseDN]        with filter: $filter <p>";
-			//$debug->write("searching sub ".$this->ldapCfgInfo['LDAPBaseDN']." for $filter\n");
+			//LogFile::write("searching sub ".$this->ldapCfgInfo['LDAPBaseDN']." for $filter\n");
 			if (!($search = @ldap_search($connection, $this->ldapCfgInfo['LDAPBaseDN'], $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);

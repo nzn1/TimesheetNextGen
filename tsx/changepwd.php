@@ -12,7 +12,7 @@ $passwd1 = "";
 $passwd2 = "";
 $old_pass = "";
 
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_POST["action"])) {
 	if (!isset($_POST["passwd1"]) || !isset($_POST["passwd2"]) || !isset($_POST["old_pass"]))
 		errorPage("Please fill out all fields.");

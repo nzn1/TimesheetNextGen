@@ -32,9 +32,9 @@ if($export_excel){
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 
-//$debug = new logfile();
 
-//load local vars from superglobals
+
+//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
@@ -75,8 +75,8 @@ if ($mode == "weekly") {
 //Setup the variables so we can let the user choose how to order things...
 $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 
-//$debug->write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
-//$debug->write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
+//LogFile::write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
+//LogFile::write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
@@ -206,7 +206,7 @@ function make_index($data,$order) {
 }
 
 $Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
-$post="uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
+gbl::setPost("uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode");
 
 if(!$export_excel) 
 	require("report_javascript.inc");
@@ -241,12 +241,16 @@ if (isset($popup))
 		//include ("body.inc");
 		//echo ">\n";
 		//echo "<div id=\"header\">";
-		//include ("banner.inc");
-		//$motd = 0;  //don't want the motd printed
-		if($mode=='weekly')
-			//include("navcalnew/navcalendars.inc");
-		//else
-			//include("navcalnew/navcal_monthly.inc");
+
+		require_once("include/tsx/navcal/navcal.class.php");
+	  $nav = new NavCal();
+	
+		if($mode=='weekly'){
+      $nav->navCalNormal();
+    }
+		else{
+      $nav->navCalMonthly();
+    }
 		echo "</div>";
 	}
 ?>

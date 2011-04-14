@@ -4,16 +4,15 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $uid = isset($_REQUEST['uid']) ? $_REQUEST['uid']:gbl::getContextUser();
 
 $todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $ymdStr = "&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."";
 
-
-Common::setMotd(0);
-
-//include ("navcalnew/navcalendars.inc");
+require_once("include/tsx/navcal/navcal.class.php");
+$nav = new NavCal();
+$nav->navCalMonthly($todayDate,false);
 ?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

@@ -20,11 +20,11 @@ parent::$webmasterEmail = 'myaddress@tnsg.net';
  * Configure the database credentials.
  */  
 
-//parent::$dbServer 		= "localhost";
-//parent::$dbUser 		= "username";
-//parent::$dbPass 		= "password";
-//parent::$dbName 		= "my_tx_db";
-//parent::$dbPasswordFunction	= "PASSWORD";
+parent::$dbServer		= "localhost";
+parent::$dbUser 		= "root";
+parent::$dbPass			= "root";
+parent::$dbName			= "timesheet";
+parent::$dbPasswordFunction	= "SHA1";
 
 /**
  * for now, get the info from the database_credentials.inc 

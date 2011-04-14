@@ -6,7 +6,7 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 //require("class.CommandMenu.php");
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $action = $_REQUEST["action"];
 $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 $organisation = mysql_real_escape_string(isset($_POST["organisation"]) ? $_POST["organisation"]: "");
