@@ -8,7 +8,7 @@ include('submit.class.php');
 $sc = new SubmitClass();
 
 
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else {
@@ -100,8 +100,8 @@ if($export_excel){
 //Setup the variables so we can let the user choose how to order things...
 $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 
-//$debug->write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
-//$debug->write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
+//LogFile::->write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
+//LogFile::->write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
@@ -225,7 +225,7 @@ function make_index($data,$order) {
 }
 
 $Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode";
-$post="uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode";
+gbl::setPost("uid=$uid&orderby=$orderby&client_id=$client_id&mode=$mode");
 
 ?>
 

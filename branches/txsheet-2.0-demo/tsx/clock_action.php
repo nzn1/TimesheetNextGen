@@ -1,6 +1,7 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 trigger_error('WARNING - LOTS OF STUFF IN clock_action has not be converted to OO!');
+trigger_error('lots of globals are in here. this is a problem!');
 
 // Authenticate
 //require(Config::getDocumentRoot()."/include/tsx/debuglog.php");
@@ -12,18 +13,17 @@ if (!Site::getAuthenticationManager()->isLoggedIn()) {
 
 $GLOBALS["simple_debug"]=true;
 if($GLOBALS["simple_debug"]) {
-	require(Config::getDocumentRoot()."/include/tsx/debuglog.php");
-	$GLOBALS["debug"] = new logfile();
+
 
 	$test=http_build_query($_POST);
 	$tsize = strlen($test);
 
-	$GLOBALS["debug"]->write("post size is $tsize\n");
+	LogFile::write("post size is $tsize\n");
 } else
 	$GLOBALS["debug"]=0;
 
 if($GLOBALS["simple_debug"]) {
-	$GLOBALS["debug"]->write(print_r($_POST, TRUE));
+	LogFile::write(print_r($_POST, TRUE));
 }
 
 // Oh, bother, in OO mode, we're not at the "root" level of anything here, so, none of these
@@ -35,7 +35,7 @@ if($GLOBALS["simple_debug"]) {
  * To enable the "stop" link to work in the "Daily Timesheet" page
  * set a few default values in the list of local vars below
  */
-//load local vars from superglobals
+//load local vars from request/post/get
 $month = isset($_POST['month']) ? $_POST['month'] : false;
 $day = isset($_POST['day']) ? $_POST['day'] : false;
 $year = isset($_POST['year']) ? $_POST['year'] : false;
@@ -60,6 +60,9 @@ $clock_off_radio = isset($_POST['clock_off_radio']) ? $_POST['clock_off_radio']:
 if($fromPopupWindow == 'false')
 	$fromPopupWindow = false;
 
+
+//LogFile::write("destination = \"$destination\"\n");
+//LogFile::write("fromPopupWindow = \"$fromPopupWindow\"\n");
 
 /**
  * @todo the &var= stuff needs to be changed to &amp;var= BUT 
@@ -118,8 +121,8 @@ $info['onStamp']= mktime($clock_on_time_hour, $clock_on_time_min, 0, $month, $da
 $info['offStamp'] = mktime($clock_off_time_hour, $clock_off_time_min, 0, $month, $day, $year);
 
 if($GLOBALS["simple_debug"]) {
-	$GLOBALS["debug"]->write("onStamp = $onStamp");
-	$GLOBALS["debug"]->write("offStamp = $offStamp");
+	LogFile::write("onStamp = $onStamp");
+	LogFile::write("offStamp = $offStamp");
 }
 
 //call appropriate functions

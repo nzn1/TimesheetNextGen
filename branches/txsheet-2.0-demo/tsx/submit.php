@@ -14,9 +14,9 @@ $subcl = new SubmitClass();
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 
-//$debug = new logfile();
 
-//load local vars from superglobals
+
+//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
@@ -97,8 +97,8 @@ $subcl->setTimeFmt($time_fmt);
 //Setup the variables so we can let the user choose how to order things...
 $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 
-//$debug->write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
-//$debug->write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
+//LogFile::write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
+//LogFile::write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
@@ -201,7 +201,7 @@ if($orderby == "date") {
 }
 
 $Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
-$post="uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
+gbl::setPost("uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode");
 
 function make_index($data,$order) {
 	if($order == "date") {

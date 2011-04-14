@@ -19,8 +19,6 @@ class ClientProjTaskJavascript{
 	}
 
 	private function getUserClientsList(){
-		//include(Config::getDocumentRoot()."/include/tsx/debuglog.php");
-		//$debug=new logfile();
 		//Get list of clients and projects the contextUser is assigned to
 		$getUsersClientList = "SELECT ".tbl::getProjectTable().".proj_id, "
 		.tbl::getProjectTable().".client_id FROM "
@@ -34,7 +32,7 @@ class ClientProjTaskJavascript{
 
 		list($qh5, $num5) = dbQuery($getUsersClientList);
 
-		//$debug->write("found $num5 clients for gbl::getContextUser()\n");
+		//LogFile::write("found $num5 clients for gbl::getContextUser()\n");
 
 		for ($i=0; $i<$num5; $i++) {
 			$data = dbResult($qh5, $i);

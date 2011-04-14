@@ -4,15 +4,15 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
-//require(Config::getDocumentRoot()."/include/tsx/debuglog.php");
+
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=Administrator");
 	exit;
 }
 
-//$debug = new logfile();
 
-//load local vars from superglobals
+
+//load local vars from request/post/get
 $action = $_REQUEST["action"];
 $headerhtml = isset($_REQUEST["headerhtml"]) ? $_REQUEST["headerhtml"]: "";
 $bodyhtml = isset($_REQUEST["bodyhtml"]) ? $_REQUEST["bodyhtml"]: "";
@@ -67,7 +67,7 @@ $aclAbsences = $_REQUEST["aclAbsences"];
 $simpleTimesheetLayout = $_REQUEST["simpleTimesheetLayout"];
 $startPage = $_REQUEST["startPage"];
 
-//$debug->write("startPage is $startPage\n");
+//LogFile::write("startPage is $startPage\n");
 
 	function resetConfigValue($fieldName) {
 		include("table_names.inc");
@@ -135,7 +135,7 @@ elseif ($action == "edit") {
 		"simpleTimesheetLayout= '$simpleTimesheetLayout', " .
 		"startPage='$startPage' " .
 		"WHERE config_set_id='1';";
-	//$debug->write("$query\n");
+	//LogFile::write("$query\n");
 	list($qh,$num) = dbquery($query);
 
 	if ($headerReset == true)

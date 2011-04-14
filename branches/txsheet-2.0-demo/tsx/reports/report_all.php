@@ -30,7 +30,7 @@ if($export_excel){
 } else
 	$time_fmt = "time";
 
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_REQUEST['print']))
 	$print = true;
 else
@@ -68,7 +68,7 @@ if ($mode == "weekly") {
 	$endStr = date("Y-m-d H:i:s",$endDate);
 }
 
-//$debug = new logfile();
+
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
@@ -222,7 +222,7 @@ function make_index($data,$order) {
 }
 
 $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;orderby=$orderby";
-$post="&amp;orderby=$orderby";
+gbl::setPost("&amp;orderby=$orderby");
 
 if(!$export_excel) 
 	require("report_javascript.inc");
@@ -252,7 +252,9 @@ PageElements::setHead("<title>".Config::getMainTitle()." - All hours this month<
 		echo "<div id=\"header\">";
 		//include ("banner.inc");
 		$motd = 0;  //don't want the motd printed
-		include("navcalnew/navcal_monthly.inc");
+		require_once("include/tsx/navcal/navcal.class.php");
+	  $nav = new NavCal();
+		$nav->navCalMonthly();
 		echo "</div>";
 	}
 ?>
@@ -361,7 +363,7 @@ $query = "SELECT tt.proj_id, ".
 		"end_time < '".date('Y-m-1',$next_month)."' ".
 	"ORDER BY $orderby";
 
-//$debug->write("Query: $query\n");
+//LogFile::write("Query: $query\n");
 
 	list ($qh,$num) = dbQuery($query);
 */

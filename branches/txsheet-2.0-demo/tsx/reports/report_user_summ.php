@@ -30,7 +30,7 @@ $client_id =  gbl::getClientId();
 $year = gbl::getYear();
 $month = gbl::getMonth();
 $day = gbl::getDay();
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
@@ -102,7 +102,7 @@ function format_time($time,$time_fmt) {
 }
 
 $Location="$_SERVER[PHP_SELF]?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=$start_day&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
-$post="uid=$uid&amp;time_fmt=$time_fmt";
+gbl::setPost("uid=$uid&amp;time_fmt=$time_fmt");
 
 if(!$export_excel) {
 	require("report_javascript.inc");
@@ -164,9 +164,10 @@ function init(){
 		//include ("body.inc");
 		echo ">\n";
 		echo "<div id=\"header\">";
-		//include ("banner.inc");
-		$motd = 0;  //don't want the motd printed
-		include("navcalnew/navcal_monthly_with_end_dates.inc");
+
+		require_once("include/tsx/navcal/navcal.class.php");
+  	$nav = new NavCal();
+	  $nav->navCalWithEndDates($start_time,$end_time,$start_month);  
 		echo "</div>";
 	}
 ?>

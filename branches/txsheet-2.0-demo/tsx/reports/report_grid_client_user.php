@@ -33,7 +33,7 @@ if ($client_id == 0)
 	//get the first project
 	$client_id = Common::getFirstClient();
 
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
@@ -47,15 +47,15 @@ else
 //get start and end dates for the calendars
 
 $start_day   = isset($_GET['start_day'])   && $_GET['start_day']   ? (int)$_GET['start_day']   : 1;
-$start_month = isset($_GET['start_month']) && $_GET['start_month'] ? (int)$_GET['start_month'] : $month;
-$start_year  = isset($_GET['start_year'])  && $_GET['start_year']  ? (int)$_GET['start_year']  : $year;
+$start_month = isset($_GET['start_month']) && $_GET['start_month'] ? (int)$_GET['start_month'] : gbl::getMonth();
+$start_year  = isset($_GET['start_year'])  && $_GET['start_year']  ? (int)$_GET['start_year']  : gbl::getYear();
 
-$end_day     = isset($_GET['end_day'])     && $_GET['start_day']   ? (int)$_GET['end_day']     : date('t',strtotime("$year-$month-15"));
-$end_month   = isset($_GET['end_month'])   && $_GET['start_month'] ? (int)$_GET['end_month']   : $month;
-$end_year    = isset($_GET['end_year'])    && $_GET['start_year']  ? (int)$_GET['end_year']    : $year;
+$end_day     = isset($_GET['end_day'])     && $_GET['start_day']   ? (int)$_GET['end_day']     : date('t',strtotime(gbl::getYear()."-".gbl::getMonth()."-15"));
+$end_month   = isset($_GET['end_month'])   && $_GET['start_month'] ? (int)$_GET['end_month']   : gbl::getMonth();
+$end_year    = isset($_GET['end_year'])    && $_GET['start_year']  ? (int)$_GET['end_year']    : gbl::getYear();
 
 if(!checkdate($end_month,$end_day,$end_year)) {
-	$end_day=get_last_day($end_month,$end_year);
+	$end_day=Common::get_last_day($end_month,$end_year);
 }
 
 //define working variables
@@ -197,8 +197,10 @@ $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;client_id=$client_id";
 		echo ">\n";
 		echo "<div id=\"header\">";
 		//include ("banner.inc");
-		$motd = 0;  //don't want the motd printed
-		include("navcalnew/navcal_monthly_with_end_dates.inc");
+		
+		require_once("include/tsx/navcal/navcal.class.php");
+	  $nav = new NavCal();
+    $nav->navCalWithEndDates($start_time,$end_time,$start_month);
 		echo "</div>";
 	}
 ?>

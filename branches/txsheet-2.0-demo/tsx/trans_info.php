@@ -9,7 +9,7 @@ if (!$authenticationManager->isLoggedIn()) {
 }
 
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $trans_num = $_REQUEST['trans_num'];
 
 //get the timeformat

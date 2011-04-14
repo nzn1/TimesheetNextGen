@@ -1,8 +1,9 @@
 <?php
-if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc');
-// navigational calendar functions
+if(!class_exists('Site'))die('Restricted Access');
 
-	function getNextMonth($time,$orig_day=0,$need_ldom=-1) {
+// navigational calendar functions
+class NavCalCommon{
+	protected function getNextMonth($time,$orig_day=0,$need_ldom=-1) {
 		$dti=getdate($time);
 		$next_month = $dti["mon"] + 1;
 		$next_mon_year = $dti["year"];
@@ -35,7 +36,7 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 		return mktime(0,0,0,$next_month,$nmday,$next_mon_year);
 	}
 
-	function getPrevNextMonth($time,$need_ldom=-1) {
+	protected function getPrevNextMonth($time,$need_ldom=-1) {
 		$dti=getdate($time);
 		// Calculate the previous month.
 		$last_month = $dti["mon"] - 1;
@@ -79,7 +80,7 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 					 mktime(0,0,0,$next_month,$nmday,$next_mon_year));
 	}
 
-	function getPrevNextYear($time,$need_ldom=-1) {
+	protected function getPrevNextYear($time,$need_ldom=-1) {
 		$dti=getdate($time);
 
 		$month = $dti["mon"];
@@ -110,30 +111,25 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 					 mktime(0,0,0,$month,$nyday,$next_year));
 	}
 
-	function __print_month_name($entry,$post) {
-		global $month, $year;
+	protected function __print_month_name($entry,$post) {
 		$dti=getdate($entry);
 		print "\t<td valign=\"top\" align=\"center\" class=\"calendar_cell_middle\" style=\"font-size: 11\">";
-		if($dti["mon"] == $month && $dti["year"] == $year) {
+		if($dti["mon"] == gbl::getMonth() && $dti["year"] == gbl::getYear()) {
 			print "\t<font color=\"#CC9900\"><b>".strftime("%b",$entry)."</b></font></td>\n";
 		} else {
-			print "\t<a href=\"" . $_SERVER["PHP_SELF"] . "?$post";
-			print 	"&amp;year=".$dti["year"] .	
-					"&amp;month=".$dti["mon"] .
-					"&amp;day=".$dti["mday"] .
-					"\">" . strftime("%b",$entry) . "</a></td>\n";
+			echo "\t<a href=\"".Rewrite::getShortUri()."?$post";
+			echo "&amp;year=".$dti["year"]."&amp;month=".$dti["mon"]."&amp;day=".$dti["mday"]."\">" . strftime("%b",$entry) . "</a></td>\n";
 		}
 	}
 
-	function draw_month_year_navigation($navyear,$orient="tall") {
+	protected function draw_month_year_navigation($navyear,$orient="tall") {
 
-		global $day, $month, $year, $post;
-		if(!isset($post)) $post = "";
+		$post = gbl::getPost();
 		$navmon = 1;
-		$navday = $day;
+		$navday = gbl::getDay();
 
-		$curDate = mktime(0,0,0,$month,$day,$navyear);
-		$contextDate = mktime(0,0,0,$month,$day,$year);
+		$curDate = mktime(0,0,0,gbl::getMonth(),gbl::getDay(),$navyear);
+		$contextDate = mktime(0,0,0,gbl::getMonth(),gbl::getDay(),gbl::getYear());
 
 		//determine if our context date is on the last day of the month
 		$need_ldom=0;
@@ -167,8 +163,8 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 				echo '<td align="left" nowrap="nowrap" class="navcal_header" style="font-size: 10">';
 			}
 					
-			list($prev_year,$next_year) = getPrevNextYear($curDate,$need_ldom);
-			echo "<a href=\"$_SERVER[PHP_SELF]?$post";
+			list($prev_year,$next_year) = $this->getPrevNextYear($curDate,$need_ldom);
+			echo "<a href=\"".Rewrite::getShortUri()."?$post";
 			$dti=getdate($prev_year);
 			echo 	"&amp;year=".$dti["year"].	
 					"&amp;month=".$dti["mon"].
@@ -193,7 +189,7 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 						}
 						
 
-						echo "<a href=\"$_SERVER[PHP_SELF]?$post";
+						echo "<a href=\"".Rewrite::getShortUri()."?$post";
 						$dti=getdate($next_year);
 						echo "&amp;year=".$dti["year"].	
 								"&amp;month=".$dti["mon"].
@@ -220,14 +216,14 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 								//print tall format, 2 columns by 6 rows
 								for($i=0; $i<12; $i++) {	
 									$stampsary[]=$curDate;
-									$curDate=getNextMonth($curDate,$navday,$need_ldom);
+									$curDate=$this->getNextMonth($curDate,$navday,$need_ldom);
 								}
 
 								for($i=0; $i<6; $i++) {	
 									$dti=getdate($stampsary[$i]);
 									print "<tr>\n";
-									__print_month_name($stampsary[$i],$post);
-									__print_month_name($stampsary[$i+6],$post);
+									$this->__print_month_name($stampsary[$i],$post);
+									$this->__print_month_name($stampsary[$i+6],$post);
 									print   "</tr>\n";
 								} 
 							} 
@@ -236,8 +232,8 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 								for($i=0; $i<3; $i++) {	
 									echo "<tr>\n";
 									for($j=0; $j<4; $j++) {	
-										__print_month_name($curDate,$post);
-										$curDate=getNextMonth($curDate,$navday,$need_ldom);
+										$this->__print_month_name($curDate,$post);
+										$curDate=$this->getNextMonth($curDate,$navday,$need_ldom);
 									}
 									echo "</tr>\n";
 								} 
@@ -254,7 +250,7 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 <?php 
 	}  //end of function
 
-	function __print_month_name_with_end_date($start,$end,$post) {
+	protected function __print_month_name_with_end_date($start,$end,$post) {
 		global $start_time;
 		$sdti=getdate($start);
 		$edti=getdate($end);
@@ -274,10 +270,9 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 		}
 	}
 
-	function draw_month_year_navigation_with_end_dates($startDate,$endDate,$orient="tall") {
+	protected function draw_month_year_navigation_with_end_dates($startDate,$endDate,$orient="tall") {
 
-		global $post;
-		if(!isset($post)) $post = "";
+		$post = gbl::getPost();
 
 		$sdti=getdate($startDate);
 		$edti=getdate($endDate);
@@ -336,9 +331,9 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 							<td align="left" nowrap="nowrap" class="navcal_header" style="font-size: 10">
 						<?php endif; ?>
 								<?php 
-								list($sprev_year,$snext_year) = getPrevNextYear($startDate,$s_need_ldom);
-								list($eprev_year,$enext_year) = getPrevNextYear($endDate,$e_need_ldom);
-								print "<a href=\"$_SERVER[PHP_SELF]?$post";
+								list($sprev_year,$snext_year) = $this->getPrevNextYear($startDate,$s_need_ldom);
+								list($eprev_year,$enext_year) = $this->getPrevNextYear($endDate,$e_need_ldom);
+								print "<a href=\"".Rewrite::getShortUri()."?$post";
 								$sdti=getdate($sprev_year);
 								$edti=getdate($eprev_year);
 								print 	"&amp;start_year=".$sdti["year"].	
@@ -363,7 +358,7 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 							<td align="right" nowrap="nowrap" class="navcal_header" style="font-size: 10">
 						<?php endif; ?>
 								<?php
-								print "<a href=\"$_SERVER[PHP_SELF]?$post";
+								print "<a href=\"".Rewrite::getShortUri()."?$post";
 								$sdti=getdate($snext_year);
 								$edti=getdate($enext_year);
 								print 	"&amp;start_year=".$sdti["year"].	
@@ -395,14 +390,14 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 										for($i=0; $i<12; $i++) {	
 											$startary[]=$curStartDate;
 											$endary[]=$curEndDate;
-											$curStartDate=getNextMonth($curStartDate,$orig_sday,$s_need_ldom);
-											$curEndDate=getNextMonth($curEndDate,$orig_eday,$e_need_ldom);
+											$curStartDate=$this->getNextMonth($curStartDate,$orig_sday,$s_need_ldom);
+											$curEndDate=$this->getNextMonth($curEndDate,$orig_eday,$e_need_ldom);
 										}
 
 										for($i=0; $i<6; $i++) {	
 											print "<tr>\n";
-											__print_month_name_with_end_date($startary[$i],$endary[$i],$post);
-											__print_month_name_with_end_date($startary[$i+6],$endary[$i+6],$post);
+											$this->__print_month_name_with_end_date($startary[$i],$endary[$i],$post);
+											$this->__print_month_name_with_end_date($startary[$i+6],$endary[$i+6],$post);
 											print   "</tr>\n";
 										} 
 									} else {
@@ -410,9 +405,9 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 										for($i=0; $i<3; $i++) {	
 											print "<tr>\n";
 											for($j=0; $j<4; $j++) {	
-												__print_month_name_with_end_date($curStartDate,$curEndDate,$post);
-												$curStartDate=getNextMonth($curStartDate,$orig_sday,$s_need_ldom);
-												$curEndDate=getNextMonth($curEndDate,$orig_eday,$e_need_ldom);
+												$this->__print_month_name_with_end_date($curStartDate,$curEndDate,$post);
+												$curStartDate=$this->getNextMonth($curStartDate,$orig_sday,$s_need_ldom);
+												$curEndDate=$this->getNextMonth($curEndDate,$orig_eday,$e_need_ldom);
 											}
 											print "</tr>\n";
 										} 
@@ -428,6 +423,6 @@ if(class_exists('Site'))die('Error: old file.  please use navcalnew/common.inc')
 		</table>
 <?php 
 	}  //end of function
+}
 
-// vim:ai:ts=4:sw=4:filetype=php
 ?>

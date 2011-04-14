@@ -22,7 +22,7 @@ class Debug{
 		
 	private static $hideDebugData    = 0;        //hide debug data if not logged in
 
-	private static $sendToConsole	   = 0;
+	private static $sendToConsole	   = 1;
 	private static $sendToScreen	   = 1;
 
 	private static $location         = 1;        //display location headers
@@ -51,7 +51,7 @@ class Debug{
 	private static $authFull         = 0;        //display user authorisation data detailed
 	private static $authBasic        = 0;        //display user authorisation data basic
 	private static $rewrite          = 0;        //display php rewrite information
-	private static $pprTrace         = 1;        //display the trace log for all ppr commands
+	private static $pprTrace         = 0;        //display the trace log for all ppr commands
 
 	/*END DEBUG*/
 

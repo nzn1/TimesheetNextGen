@@ -7,17 +7,13 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
+require_once('simple.class.php');
+$simple = new SimplePage();
+
 if (empty($loggedInUser))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
-//bug fix - we must display all projects
-$proj_id = 0;
-$task_id = 0;
-
 //get the passed date (context date)
-$month = gbl::getMonth();
-$day = gbl::getDay();
-$year = gbl::getYear();
 $todayStamp = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $todayValues = getdate($todayStamp);
 $curDayOfWeek = $todayValues["wday"];
@@ -37,10 +33,8 @@ $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 //$configData = dbResult($qh2);
 $layout = Common::getLayout();
 
-//$post="";
-
 if (isset($popup))
-	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&amp;task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
 ob_start();
 ?>
@@ -62,9 +56,9 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 ?>
 
 <form name="simpleForm" action="<?php echo Config::getRelativeRoot(); ?>/simple_action" method="post">
-<input type="hidden" name="year" value="<?php echo $year; ?>" />
-<input type="hidden" name="month" value="<?php echo $month; ?>" />
-<input type="hidden" name="day" value="<?php echo $day; ?>" />
+<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
+<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
+<input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
 <input type="hidden" name="startStamp" value="<?php echo $startDate; ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -144,200 +138,11 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	//$startDateStr = strftime("%D", $startDate);
 	//$endDateStr = strftime("%D", $endDate);
 	//print "<p>WEEK start: $startDateStr WEEK end: $endDateStr</p>";
- require("include/tsx/class.Pair.php");
 
-	class TaskInfo extends Pair {
-		var $clientId;
-		var $projectId;
-		var $projectTitle;
-		var $taskName;
-		var $workDescription;
 
-		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $workDescription) {
-			parent::Pair($value1, $value2);
-			$this->projectId = $projectId;
-			$this->projectTitle = $projectTitle;
-			$this->taskName = $taskName;
-			$this->workDescription = $workDescription;
-		}
-	}
 
-	function printSpaceColumn() {
-		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
-	}
 
-	/*=======================================================================
-	 ==================== Function PrintFormRow =============================
-	 =======================================================================*/
 
-	// taskId = $matchedPair->value1, daysArray = $matchedPair->value2
-	// $allTasksDayTotals = int[7] and sums up the minutes for all tasks at one day
-	// usage: provide an index to generate an empty row or ALL parameters to prefill the row
-	function printFormRow($rowIndex, $layout, $projectId = "", $taskId = "", $workDescription = "", $startDate = null, $daysArray = NULL) {
-		// print project, task and optionally work description
-		global $allTasksDayTotals; //global because of PHP4 thing about passing by reference?
-		$clientId="";
-		?>
-		<tr id="row<?php echo $rowIndex; ?>">
-			<td class="calendar_cell_middle" valign="top">
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr id="clientProjectTaskDescrArea<?php echo $rowIndex;?>">
-					<?php
-						switch ($layout) {
-							case "no work description field":
-								?>
-								<td align="left" style="width:33%;">
-									<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
-									<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onchange="onchangeClientSelect(this.id);" style="width: 100%;"></select>
-								</td>
-								<td align="left" style="width:33%;">
-									<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
-									<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onchange="onchangeProjectSelect(this.id);" style="width: 100%;"></select>
-								</td>
-								<td align="left" style="width:33%;">
-									<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
-									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onchangeTaskSelect(this.id);" style="width: 100%;"></select>
-								</td>
-								<?php
-								break;
-
-							case "big work description field":
-								// big work description field
-								?>
-								<td align="left" style="width:50px;">
-									<p>Client:</p>                  
-									<p>Project:</p>					
-									<p>Task:</p>
-								</td>
-								<td align="left" style="width:160px;">
-									<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
-									<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
-                  <input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
-									<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onchange="onchangeClientSelect(this.id);" style="width: 100%;"></select>
-                  <br />
-									<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onchange="onchangeProjectSelect(this.id);" style="width: 100%;"></select>
-									<br />									
-									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onchangeTaskSelect(this.id);" style="width: 100%;"></select>
-								</td>								
-								<td align="left" style="width:auto;">
-									<input type="hidden" id="odescription_row<?php echo $rowIndex; ?>" name="odescription_row<?php echo $rowIndex; ?>" value="<?php echo $workDescription; ?>" />
-									<textarea rows="2" cols="4" style="width:98%;" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onkeyup="onchangeWorkDescription(this.id);"><?php echo $workDescription; ?></textarea>
-								</td>
-								<?php
-								break;
-
-							case "small work description field":
-							default:
-								// small work description field = default layout
-								?>
-								<td align="left" style="width:100px;">
-									<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
-									<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onchange="onchangeClientSelect(this.id);" style="width: 100%;"></select>
-								</td>
-								<td align="left" style="width:100px;">
-									<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
-									<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onchange="onchangeProjectSelect(this.id);" style="width: 100%;"></select>
-								</td>
-								<td align="left" style="width:140px;">
-									<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
-									<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onchangeTaskSelect(this.id);" style="width: 100%;"></select>
-								</td>
-								<td align="left" style="width:auto;">
-									<input type="hidden" id="odescription_row<?php echo $rowIndex; ?>" name="odescription_row<?php echo $rowIndex; ?>" value="<?php echo $workDescription; ?>" />
-									<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onchange="onchangeWorkDescription(this.id);" value="<?php echo $workDescription; ?>" style="width: 100%;" />
-								</td>
-								<?php
-								break;
-						}
-
-					?>
-					</tr>
-				</table>
-			</td>
-		<?php
-
-		printSpaceColumn();
-
-		$weeklyTotal = 0;
-		$isEmptyRow = ($daysArray == null);
-
-		//print_r($daysArray); print "<br />";
-
-		//print hours and minutes input field for each day
-
-		for ($currentDay = 0; $currentDay < 7; $currentDay++) {
-			//open the column
-			print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\">";
-
-			//while we are printing times set the style
-			print "<span class=\"task_time_small\">";
-
-			//declare current days vars
-			$curDaysTotal = 0;
-			$curDaysHours = "";
-			$curDaysMinutes = "";
-
-			// if there is an $daysArray calculate current day's minutes and hours
-
-			if (!$isEmptyRow) {
-				$currentDayArray = $daysArray[$currentDay];
-
-				foreach ($currentDayArray as $taskDuration) {
-					$curDaysTotal += $taskDuration;
-				}
-				$curDaysHours = floor($curDaysTotal / 60 );
-				$curDaysMinutes = $curDaysTotal - ($curDaysHours * 60);
-			}
-
-			// write summary and totals of this row
-
-			//create a string to be used in form input names
-			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay+1);
-			$disabled = $isEmptyRow?'disabled="disabled" ':'';
-
-			print "<input type=\"hidden\" id=\"ohours".$rowCol."\" name=\"ohours".$rowCol."\" value=\"$curDaysHours\" />";
-			print "<input type=\"hidden\" id=\"omins".$rowCol."\" name=\"omins".$rowCol."\" value=\"$curDaysMinutes\" />";
-			print "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>";
-			print "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>";
-
-			//close the times class
-			print "</span>";
-
-			//end the column
-			print "</td>";
-
-			//add this days total to the weekly total
-			$weeklyTotal += $curDaysTotal;
-
-			// add this days total to the all tasks total for this day
-			// if an array is provided by the caller
-			if ($allTasksDayTotals != null) {
-				$allTasksDayTotals[$currentDay] += $curDaysTotal;
-			}
-		}
-
-		printSpaceColumn();
-
-		//format the weekly total
-		$weeklyTotalStr = Common::formatMinutes($weeklyTotal);
-
-		//print the total column
-		print "<td class=\"calendar_totals_line_weekly subtotal\" valign=\"bottom\" align=\"right\">";
-		print "<span class=\"calendar_total_value_weekly\" style=\"text-align:right;\" id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
-
-		printSpaceColumn();
-
-		// print delete button
-		print "<td class=\"calendar_delete_cell subtotal\" >";
-		print "<a id=\"delete_row$rowIndex\" href=\"#\" onclick=\"onDeleteRow(this.id); return false;\">x</a></td>\n";
-
-		//end the row
-		print "</tr>";
-	}
-
-	/*=======================================================================
-	 ================ end Function PrintFormRow =============================
-	 =======================================================================*/
 
 	// Get the Weekly user data.
 	$startStr = date("Y-m-d H:i:s",$startDate);
@@ -460,7 +265,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 	//set vars
 	$previousProjectId = -1;
-	$allTasksDayTotals = array(0,0,0,0,0,0,0); //totals for each day
+	$simple->setAllTasksDayTotals(array(0,0,0,0,0,0,0)); //totals for each day
 
 /*	$previousTaskId = -1;
 	$thisTaskId = -1;
@@ -474,16 +279,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	for ($rowIndex = 0; $rowIndex<$count; $rowIndex++) {
 		$matchedPair = &$structuredArray[$rowIndex];
 
-
-		printFormRow($rowIndex, $layout,
-					 $matchedPair->projectId,
-					 $matchedPair->value1,
-					 $matchedPair->workDescription,
-					 $startDate,
-					 $matchedPair->value2,
-					 $allTasksDayTotals);
-
-
+		$simple->printFormRow($rowIndex, $layout,$matchedPair->projectId,$matchedPair->value1,$matchedPair->workDescription,$startDate,$matchedPair->value2);
 
 		//store the previous task and project ids
 		$previousTaskId = $matchedPair->value1;
@@ -494,7 +290,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	//add an extra row for new data entry
 	/////////////////////////////////////////
 
-	printFormRow($count, $layout, -1, -1);
+	$simple->printFormRow($count, $layout, -1, -1);
 
 	////////////////////////////////////////////////////
 	//Changes reequired to enter data on form -define 10 entry rows
@@ -517,7 +313,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	//iterate through day totals for all tasks
 	$grandTotal = 0;
 	$col = 0;
-	foreach ($allTasksDayTotals as $currentAllTasksDayTotal) {
+	foreach ($simple->getAllTasksDayTotals() as $currentAllTasksDayTotal) {
 		$col++;
 		$grandTotal += $currentAllTasksDayTotal;
 		$formattedTotal = Common::formatMinutes($currentAllTasksDayTotal);

@@ -1,6 +1,6 @@
 <?php
-class logfile{
-	function write($the_string ) {
+class LogFile{
+	public static function write($the_string ) {
 		if( $fh = @fopen("/tmp/php-debug.log", "a+" ) ) {
 			fputs( $fh, $the_string, strlen($the_string) );
 			fclose( $fh );

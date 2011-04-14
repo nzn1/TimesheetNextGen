@@ -4,9 +4,6 @@ if(!class_exists('Site'))die('Restricted Access');
 if(!isset($realToday))
 	$realToday = getdate(time());
 
-
-if(empty($post)) $post="year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()."";
-
 if(class_exists('Site')){
 	if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR))
 		if(isset($_REQUEST["contextuid"])) 
@@ -42,17 +39,17 @@ $popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelative
 
 //                 Language string			Access Rights	need relative root?  script			icon file
 $menuArray[] = array('STOPWATCH',			'aclStopwatch',		0, $popup_href,					'icon_stopwatch.gif');
-$menuArray[] = array('DAILY_TIMESHEET',		'aclDaily',			1, "daily?$post",				'icon_daily.gif');
-$menuArray[] = array('WEEKLY_TIMESHEET',	'aclWeekly',		1, "weekly?$post",				'icon_daily.gif');
-$menuArray[] = array('SIMPLE_TIMESHEET',	'aclSimple',		1, "simple?$post",				'icon_daily.gif');
-$menuArray[] = array('VIEW_MONTH',			'aclMonthly',		1, "monthly?$post",				'icon_calendar.gif');
-$menuArray[] = array('SUBMIT_TIMES',		'aclSubmit',		1, "submit?$post",				'icon_submit.gif');
-$menuArray[] = array('ABSENCES',			'aclAbsences',		1, "absences?$post",			'icon_calendar.gif');
+$menuArray[] = array('DAILY_TIMESHEET',		'aclDaily',			1, "daily?".gbl::getPost()."",				'icon_daily.gif');
+$menuArray[] = array('WEEKLY_TIMESHEET',	'aclWeekly',		1, "weekly?".gbl::getPost()."",				'icon_daily.gif');
+$menuArray[] = array('SIMPLE_TIMESHEET',	'aclSimple',		1, "simple?".gbl::getPost()."",				'icon_daily.gif');
+$menuArray[] = array('VIEW_MONTH',			'aclMonthly',		1, "monthly?".gbl::getPost()."",				'icon_calendar.gif');
+$menuArray[] = array('SUBMIT_TIMES',		'aclSubmit',		1, "submit?".gbl::getPost()."",				'icon_submit.gif');
+$menuArray[] = array('ABSENCES',			'aclAbsences',		1, "absences?".gbl::getPost()."",			'icon_calendar.gif');
 $menuArray[] = array('CLIENTS',				'aclClients',		1, "clients/client_maint",		'icon_clients.gif');
 $menuArray[] = array('PROJECTS',			'aclProjects',		1, "projects/proj_maint",		'icon_projects.gif');
 $menuArray[] = array('TASKS',				'aclTasks',			1, "tasks/task_maint",			'icon_tasks.gif');
 $menuArray[] = array('PROJECT_RATES',		'aclRates',			1, "projects/project_rates",	'icon_rates.gif');
-$menuArray[] = array('REPORTS',				'aclReports',		1, "reports/reports?$post",		'icon_reports.gif');
+$menuArray[] = array('REPORTS',				'aclReports',		1, "reports/reports?".gbl::getPost()."",		'icon_reports.gif');
 $menuArray[] = array('USERS',				'aclUsers',			1, "users/user_maint",			'icon_users.gif');
 $menuArray[] = array('USER_RATES',			'aclRates',			1, "users/rate_maint",			'icon_rates.gif');
 $menuArray[] = array('SUPERVISORS',			'aclSupervisor',	1, "supervisor",				'icon_supervisor.gif');
@@ -90,27 +87,27 @@ if (Site::getAuthenticationManager()->hasAccess('aclStopwatch'))
 
 $menuStr = JText::_('DAILY_TIMESHEET');
 if (Site::getAuthenticationManager()->hasAccess('aclDaily'))
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/daily?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/daily?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_daily.gif"));
 
 $menuStr = JText::_('WEEKLY_TIMESHEET');
 if (Site::getAuthenticationManager()->hasAccess('aclWeekly'))
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/weekly?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/weekly?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_daily.gif"));
 
 $menuStr = JText::_('SIMPLE_TIMESHEET');
 if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/simple?$post", Config::getRelativeRoot()."/images/icon_daily.gif"));
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/simple?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_daily.gif"));
 
 $menuStr = JText::_('VIEW_MONTH');
 if (Site::getAuthenticationManager()->hasAccess('aclMonthly'))
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/monthly?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/monthly?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 
 $menuStr = JText::_('SUBMIT_TIMES');
 if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/submit?$post", Config::getRelativeRoot()."/images/icon_submit.gif"));
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/submit?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_submit.gif"));
 
 $menuStr = JText::_('ABSENCES');
 if (Site::getAuthenticationManager()->hasAccess('aclAbsences'))
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/absences?$post", Config::getRelativeRoot()."/images/icon_calendar.gif"));
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/absences?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 
 $menuStr = JText::_('CLIENTS');
 if (Site::getAuthenticationManager()->hasAccess('aclClients'))
@@ -130,7 +127,7 @@ if (Site::getAuthenticationManager()->hasAccess('aclTasks'))
 
 $menuStr = JText::_('REPORTS');
 if (Site::getAuthenticationManager()->hasAccess('aclReports'))
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/reports/reports?$post", Config::getRelativeRoot()."/images/icon_reports.gif"));
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/reports/reports?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_reports.gif"));
 
 if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	$menuStr = JText::_('USERS');
@@ -155,6 +152,8 @@ if (!Site::getAuthenticationManager()->ldapCfgInfo['useLDAP']==1)
 $menuStr = JText::_('LOGOUT');
 Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/logout?logout=true", Config::getRelativeRoot()."/images/icon_logout.gif"));
 
+$menuStr = JText::_('LOGIN');
+Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/login", Config::getRelativeRoot()."/images/icon_logout.gif"));
 // !!!! Delete to here once we have all the needed ACLs defined !!!!
 
 if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {

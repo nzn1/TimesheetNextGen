@@ -34,13 +34,13 @@ $loggedInUser = strtolower($_SESSION['loggedInUser']);
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
 	$uid = gbl::getContextUser();
 
-//load local vars from superglobals
+//load local vars from request/post/get
 if (isset($_REQUEST['print']))
 	$print = true;
 else
@@ -64,7 +64,8 @@ $endDate = Common::getMonthlyEndDate($dateValues);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 $Location="$_SERVER[PHP_SELF]?&amp;uid=$uid$ymdStr";
-//$post="&amp;uid=$uid";
+
+gbl::setPost("&amp;uid=$uid");
 
 $orderby="date";
 

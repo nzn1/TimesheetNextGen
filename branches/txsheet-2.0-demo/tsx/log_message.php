@@ -3,7 +3,7 @@ if(!class_exists('Site'))die('Restricted Access');
 	
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $month = $_REQUEST['month'];
 $day = $_REQUEST['day'];
 $year = $_REQUEST['year'];

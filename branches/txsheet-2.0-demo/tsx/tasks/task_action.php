@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $action = $_REQUEST["action"];
 $task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 $proj_id = $_REQUEST["proj_id"];

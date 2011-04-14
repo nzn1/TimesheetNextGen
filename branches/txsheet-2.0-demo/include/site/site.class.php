@@ -49,6 +49,7 @@ class Site {
 
 		require('include/debug.class.php');
 		require('include/common_functions.php');
+		require_once('include/tsx/debuglog.php');
 		$timeStart = getmicrotime();
 
 		require('include/errorhandler.class.php');
@@ -104,8 +105,10 @@ class Site {
 		}
 
 
+    require_once("include/tsx/globals.class.php");	
 		require_once("include/tsx/common.class.php");
 		new Common();
+		gbl::initialize();
 
 		require("include/tsx/authenticationManager.class.php");
 		self::$authenticationManager = new AuthenticationManager();
@@ -114,8 +117,7 @@ class Site {
 		require("include/tsx/commandmenu.class.php");
 		self::$commandMenu = new CommandMenu();
 
-		require("include/tsx/globals.class.php");
-		gbl::initialize();
+
 
 		Rewrite::__init();
 		//check for installed modules

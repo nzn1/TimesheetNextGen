@@ -8,7 +8,7 @@ $loggedInUser = strtolower($_SESSION['loggedInUser']);
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
-//load local vars from superglobals
+//load local vars from request/post/get
 $task_id = gbl::getTaskId();
 
 //define the command menu
