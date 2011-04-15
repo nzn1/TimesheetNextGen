@@ -72,7 +72,7 @@ $end_year = date("Y", $startDate);;
 		<td><input type="text" name="url" size="42" style="width: 100%;" /></td>
 	</tr>
 	<tr>
-		<td align="right" valign="top"><?php echo JText::_('ASSIGNED_USERS'); ?>:</td>
+		<td align="right" valign="top"><?php echo JText::_('PROJECT_MEMBERS'); ?>:</td>
 		<td><?php Common::multi_user_select_list("assigned[]"); ?></td>
 	</tr>
 	<tr>

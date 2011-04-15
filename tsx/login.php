@@ -39,7 +39,7 @@ function printMessage($message) {
 
 $redirect = isset($_REQUEST["redirect"]) ? $_REQUEST["redirect"] : "";
 
-PageElements::setHead("<title>".Config::getMainTitle()." - Login</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." - " .JText::_('LOGIN')."</title>");
 PageElements::setBodyOnLoad("document.loginForm.username.focus();");
 ?>
 
@@ -64,11 +64,11 @@ PageElements::setBodyOnLoad("document.loginForm.username.focus();");
   } 
 ?>
 
-			<h1> Timesheet Login</h1>
+			<h1> <?php echo JText::_('TIMESHEET_LOGIN') ?></h1>
 			<tr>
-				<td class="label">Username:<br /><input type="text" name="username" size="25" maxlength="25" /></td>
-				<td class="label">Password:<br /><input type="password" name="password" size="25" maxlength="25" /></td>
-				<td class="label"><br /><input type="submit" name="Login" value="Login" /></td>
+				<td class="label"><?php echo JText::_('USERNAME') ?>:<br /><input type="text" name="username" size="25" maxlength="25" /></td>
+				<td class="label"><?php echo JText::_('PASSWORD') ?>:<br /><input type="password" name="password" size="25" maxlength="25" /></td>
+				<td class="label"><br /><input type="submit" name="Login" value="<?php echo JText::_('LOGIN') ?>" /></td>
 			</tr>
 			<?php	if (isset($loginFailure))
 						printMessage(Site::getAuthenticationManager()->getErrorMessage());

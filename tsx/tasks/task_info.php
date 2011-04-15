@@ -34,11 +34,10 @@ $query_project = "SELECT DISTINCT title, description,".
 		"FROM  ".tbl::getProjectTable()."  ".
 		"WHERE proj_id=$proj_id";
 
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASK_INFO')."</title>");
 ?>
 <html>
 <head>
-<title><?php echo Config::getMainTitle();?> - Task Information </title>
-
 </head>
 
 <table border="0" width="100%" height="100%" align="center" valign="center">
@@ -61,7 +60,7 @@ $query_project = "SELECT DISTINCT title, description,".
 					</tr>
 					<tr>
 						<td align="left" colspan="2" align="top">
-							<span class="label">Assigned persons:</span><br />
+							<span class="label"><?php echo JText::_('TASK_MEMBERS'); ?>:</span><br />
 <?php
 			//get assigned users
 			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM  ".tbl::getTaskAssignmentsTable()."  WHERE task_id=$data_task[task_id]");
