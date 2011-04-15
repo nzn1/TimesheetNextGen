@@ -112,7 +112,7 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 									<td>
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
-												<td><table width="50"><tr><td>Client:</td></tr></table></td>
+												<td><table width="50"><tr><td><?php echo (JText::_('CLIENT')) ?>:</td></tr></table></td>
 												<td width="100%"><?php Common::client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
 											</tr>
 											<tr>
@@ -124,7 +124,7 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 									<td>
 										<table width="100%" border="0" cellspacing="0" cellpadding="0">
 											<tr>
-												<td><table width="50"><tr><td>Project:</td></tr></table></td>
+												<td><table width="50"><tr><td><?php echo (JText::_('PROJECT')) ?>:</td></tr></table></td>
 												<td width="100%"><?php Common::project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false); ?></td>
 											</tr>
 											<tr>
@@ -137,14 +137,14 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 							</table>
 						</td>
 						<td align="center" class="outer_table_heading" nowrap>
-							Tasks
+							<?php echo (JText::_('TASKS')) ?>
 						</td>
 						<td>
 							<?php writePageLinks($page, $results_per_page, $num_task_page); ?>
 						</td>
 						<td align="right" nowrap>
 							<?php if ($proj_id != 0) { ?>
-							<a href="task_add?proj_id=<?php echo $proj_id; ?>">Add new task</a>
+							<a href="task_add?proj_id=<?php echo $proj_id; ?>"><?php echo (JText::_('ADD_NEW_TASK')) ?></a>
 							<?php } else { ?>
 								<span class="disabledLink">Add new task</span>
 							<?php } ?>
@@ -196,13 +196,13 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 						</td>
 						<td align="right" valign="top" nowrap>
 							<span class="label">Actions:</span>
-							<a href="task_edit?task_id=<?php echo $data_task["task_id"]; ?>">Edit</a>,
-							<a href="javascript:delete_task(<?php echo $proj_id; ?>,<?php echo $data_task["task_id"]; ?>);">Delete</a>
+							<a href="task_edit?task_id=<?php echo $data_task["task_id"]; ?>"><?php echo (JText::_('EDIT')) ?></a>,
+							<a href="javascript:delete_task(<?php echo $proj_id; ?>,<?php echo $data_task["task_id"]; ?>);"><?php echo (JText::_('DELETE')) ?></a>
 						</td>
 					</tr>
 					<tr>
 						<td align="left" colspan="2" align="top">
-							<span class="label">Assigned persons:</span><br />
+							<span class="label"><?php echo JText::_('TASK_MEMBERS'); ?>:</span><br />
 <?php
 			//get assigned users
 			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM ".tbl::getTaskAssignmentsTable()." WHERE task_id=$data_task[task_id]");

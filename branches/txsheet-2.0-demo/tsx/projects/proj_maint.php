@@ -252,7 +252,7 @@ function change_page(newPageValue) {
 					print "<font size=\"-1\">".JText::_('NO_USERS_FOR_PROJECT')."</font>\n";
 				} else {
 					$workers = '';
-					print "<span class=\"label\">".ucwords(JText::_('ASSIGNED_USERS')).":</span> ";
+					print "<span class=\"label\">".ucwords(JText::_('PROJECT_MEMBERS')).":</span> ";
 					for ($k = 0; $k < $num_workers; $k++) {
 						$worker = dbResult($qh2);
 						$workers .= "$worker[username], ";

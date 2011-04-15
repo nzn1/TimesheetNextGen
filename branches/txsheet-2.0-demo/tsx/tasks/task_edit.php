@@ -29,7 +29,7 @@ while ($datanext = dbResult($qh)) {
 	$i++;
 }
 
-PageElements::setHead("<title>".Config::getMainTitle()." | Edit Task | ".$data["name"]."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_TASK') ." | ".$data["name"]."</title>");
 ?>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/tasks/task_action" method="post">
@@ -40,25 +40,25 @@ PageElements::setHead("<title>".Config::getMainTitle()." | Edit Task | ".$data["
 <table align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td colspan="2" class="outer_table_heading">
-			<h1>Edit Task: <?php echo $data["name"]; ?> </h1>
+			<h1><?php echo JText::_('EDIT_TASK').": ".$data["name"]; ?> </h1>
 		</td>
 	</tr>
 	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
 	<tr>
 				<!--  table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body" -->
-		<td align="right"><label for="name">Task Name:</label></td>
+		<td align="right"><label for="name"><?php echo JText::_('TASK_NAME'); ?>:</label></td>
 		<td><input type="text" name="name" id="name" size="42" value="<?php echo $data["name"]; ?>" style="width: 100%" /></td>
 	</tr>
 	<tr>
-		<td align="right" valign="top">Description:</td>
+		<td align="right" valign="top"><?php echo JText::_('DESCRIPTION'); ?>:</td>
 		<td><textarea name="description" rows="4" cols="40" style="width: 100%"><?php $data["description"] = stripslashes($data["description"]); echo $data["description"]; ?></textarea></td>
 	</tr>
 	<tr>
-		<td align="right">Status:</td>
+		<td align="right"><?php echo JText::_('STATUS'); ?>:</td>
 		<td><?php Common::proj_status_list("task_status", $data["status"]); ?></td>
 	</tr>
 	<tr>
-		<td align="right" valign="top">Assignments:</td>
+		<td align="right" valign="top"><?php echo JText::_('TASK_MEMBERS'); ?>:</td>
 		<td><?php Common::multi_user_select_list("assigned[]",$selected_array); ?></td>
 	</tr>
 	<tr>
