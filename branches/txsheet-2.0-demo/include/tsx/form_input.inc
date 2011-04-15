@@ -14,6 +14,7 @@
 	//Base class for a <select...> input. Defines functions which print the start/end tags
 	class SelectInput extends FormInput {
 		function printSelect() {
+
 			//print the input
 			echo "<select name=\"" . $this->name . "\" id=\"" . $this->name . "\">";
 		}

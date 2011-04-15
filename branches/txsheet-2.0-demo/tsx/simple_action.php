@@ -40,9 +40,6 @@ if($simple_debug) {
 	$tsize = strlen($test);
 	LogFile::write("post size is $tsize\n");
 }
-else{
-	$debug=0;
-}
 
 
 $todayStamp = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
@@ -77,7 +74,7 @@ if($simple_debug) {
 	LogFile::write("  existingRows = \"".$_POST["existingRows"]."\"\n");
 }
 
-function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr, $simple_debug, $debug) {
+function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr, $simple_debug) {
 	
 	$queryString = "DELETE FROM ".tbl::getTimesTable()." " . 
 						"WHERE uid='$uid' AND " .
@@ -143,7 +140,7 @@ for ($i=0; $i<$totalRows; $i++) {
 
 			//don't delete anything if this was a new set of entries
 			if($oprojectId != '' && $otaskId != '') 
-				delete_time_entries(gbl::getContextUser(), $stsStr, $etsStr, $oprojectId, $otaskId, $oworkDescription, $simple_debug, $debug);
+				delete_time_entries(gbl::getContextUser(), $stsStr, $etsStr, $oprojectId, $otaskId, $oworkDescription, $simple_debug);
 
 			if ((!empty($hours) && $hours != 0) || (!empty($mins) && $mins != 0)) {
 
