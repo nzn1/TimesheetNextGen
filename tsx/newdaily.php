@@ -42,6 +42,7 @@ ob_start();
 //and we can't separate that php stuff from the javascript file either, or the javascript can't
 //see the hash table that is created by the php stuff.
 require("js/newdaily.js");
+include("include/tsx/form_input.inc");
 
 PageElements::setHead(ob_get_contents());
 ob_end_clean();
@@ -61,7 +62,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		</td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
 			<?php
-				$sdStr = date(JText::_('DFMT_MONTH_DAY_YEAR'),$todayStamp);
+				$sdStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$todayStamp);
 				echo ucfirst(JText::_('DAILY')).": $sdStr";
 			?>
 		</td>
@@ -101,7 +102,9 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 						print "<td class=\"inner_table_column_heading\" align=\"center\" width=\"65\">" . JText::_('CLOCK_ON_NOW') .  "</td>";
 						print "<td class=\"inner_table_column_heading\" align=\"center\" width=\"65\">" . JText::_('CLOCK_OFF_NOW') .  "</td>";
 						print "<td class=\"inner_table_column_heading\" align=\"center\" width=\"65\">" . JText::_('START_TIME') .  "</td>";
+						print "<td class=\"inner_table_column_heading\" align=\"center\" width=\"65\">" . JText::_('START_DATE') .  "</td>";
 						print "<td class=\"inner_table_column_heading\" align=\"center\" width=\"65\">" . JText::_('END_TIME') .  "</td>";
+						print "<td class=\"inner_table_column_heading\" align=\"center\" width=\"65\">" . JText::_('END_DATE') .  "</td>";
 						?>
 						<td align="center" width="2">&nbsp;</td>
 						<td class="inner_table_column_heading" align="center" width="50">
@@ -256,51 +259,76 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		<?php
 
 		printSpaceColumn();
-
-		$currentDay=0;
-		//open the column
-
-		print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"center\">o</td>";
-		print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"center\">o</td>";
-
-		$CfgTimeFormat = Common::getTimeFormat();
-		if ($CfgTimeFormat == "12") {
-			$formattedStartTime = date("g:iA",$startStamp);
-			$formattedEndTime = date("g:iA",$endStamp);
-		} else {
-			$formattedStartTime = date("G:i",$startStamp);
-			$formattedEndTime = date("G:i",$endStamp);
-		}
-		if($startStamp==0)
-			$formattedStartTime='';
-		if($endStamp==0)
-			$formattedEndTime='';
-
-		print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\">";
-		////print "<span class=\"task_time_small\">";
-
-		$curTaskHours = floor($duration / 60 );
-		$curTaskMinutes = $duration - ($curTaskHours * 60);
-
-		$isEmptyRow=!isset($data["duration"]);
-
 		//create a string to be used in form input names
 		$row = "_row" . $rowIndex;
+
+		$currentDay=0;
+		$isEmptyRow=!isset($data["duration"]);
+		$do_display = $isEmptyRow?'style="display:none;" ':'';
+		$canClockOn=!isset($data["duration"])?'':'disabled="disabled"';
+		$canClockOff=($data["duration"]==0)?'':'disabled="disabled"';
 		$disabled = $isEmptyRow?'disabled="disabled" ':'';
+		//open the column
 
-		print "<input type=\"hidden\" id=\"obt".$row."\" name=\"obt".$row."\" value=\"$formattedStartTime\" />";
-		print "<span nowrap><input type=\"text\" id=\"hours" . $row . "\" name=\"hours" . $row . "\" size=\"8\" value=\"$formattedStartTime\" onchange=\"recalculateAll(this.id)\" onKeyDown=\"setDirty()\" $disabled />"."</span></span></td>";
+		$str = "clk_on_now".$row;
+		print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"center\">";
+			print "<span id=\"starttime".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<input type=\"checkbox\" $canClockOn name=\"$str\" id=\"$str\" ";
+		print"</span></td>\n";
+		$str = "clk_off_now".$row;
+		print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"center\">";
+			print "<span id=\"starttime".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<input type=\"checkbox\" $canClockOff name=\"$str\" id=\"$str\" ";
+		print"</span></td>\n";
+
+		print "<td class=\"calendar_cell_middle\" nowrap=\"nowrap\" valign=\"top\" align=\"left\">\n";
+			print "<span id=\"starttime".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<input type=\"hidden\" id=\"osh".$row."\" name=\"osh".$row."\" value=\"".date("G",$startStamp)."\" />\n";
+			print "<input type=\"hidden\" id=\"osm".$row."\" name=\"osm".$row."\" value=\"".date("i",$startStamp)."\" />\n";
+			$str = "sthr".$row;
+			$hourInput = new HourInput($str);
+			$hourInput->create(date("G", $startStamp)); 
+			print ":";
+			$str = "stmn".$row;
+			$minuteInput = new MinuteInput($str);
+			$minuteInput->create(date("i", $startStamp)); 
+		print"</span></td>\n";
+
+		$str = "stdt".$row;
+		print "<td class=\"calendar_cell_middle\" nowrap=\"nowrap\" valign=\"top\" align=\"left\">\n";
+			print "<span id=\"startdate".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<input id=\"$str\" name=\"$str\"".$row." type=\"text\" size=\"15\" onclick=\"javascript:NewCssCal('$str', 'ddmmmyyyy')\"";
+			print "value=\"" . date('d-M-Y', $startStamp). "\" />";
+		print"</span></td>\n";
+
+		print "<td class=\"calendar_cell_middle\" nowrap=\"nowrap\" valign=\"top\" align=\"left\">\n";
+			print "<span id=\"endtime".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<input type=\"hidden\" id=\"osh".$row."\" name=\"osh".$row."\" value=\"".date("G",$endStamp)."\" />\n";
+			print "<input type=\"hidden\" id=\"osm".$row."\" name=\"osm".$row."\" value=\"".date("i",$endStamp)."\" />\n";
+			$str = "endhr".$row;
+			$hourInput = new HourInput($str);
+			$hourInput->create(date("G", $endStamp)); 
+			print ":";
+			$str = "endmn".$row;
+			$minuteInput = new MinuteInput($str);
+			$minuteInput->create(date("i", $endStamp)); 
+		print"</span></td>\n";
+
+		$str = "enddt".$row;
+		print "<td class=\"calendar_cell_middle\" nowrap=\"nowrap\" valign=\"top\" align=\"left\">\n";
+			print "<span id=\"enddate".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<input id=\"$str\" name=\"$str\"".$row." type=\"text\" size=\"15\" onclick=\"javascript:NewCssCal('$str', 'ddmmmyyyy')\"";
+			print "value=\"" . date('d-M-Y', $endStamp). "\" />";
+		print"</span></td>\n";
 		
-		print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\">";
-		//print "<span class=\"task_time_small\">";
-		print "<input type=\"hidden\" id=\"oet".$row."\" name=\"oet".$row."\" value=\"$formattedEndTime\" />";
-		print "<span nowrap><input type=\"text\" id=\"mins" . $row . "\" name=\"mins" . $row . "\" size=\"8\" value=\"$formattedEndTime\" onchange=\"recalculateAll(this.id)\" onKeyDown=\"setDirty()\" $disabled />"."</span></span></td>";
-
 
 		printSpaceColumn();
 
 		//format the weekly total
-		$taskDurationStr = Common::formatMinutes($duration);
+		if (!$isEmptyRow)
+			$taskDurationStr = Common::formatMinutes($duration);
+		else
+			$taskDurationStr = "&nbsp;";
 
 		//print the total column
 		print "<td class=\"calendar_totals_line_weekly subtotal\" valign=\"bottom\" align=\"right\">";
@@ -310,7 +338,9 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 		// print delete button
 		print "<td class=\"calendar_delete_cell subtotal\">";
-		print "<a id=\"delete_row$rowIndex\" href=\"#\" onclick=\"onDeleteRow(this.id); return false;\">x</a></td>\n";
+			print "<span id=\"delete".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<a id=\"delete_row$rowIndex\" href=\"#\" onclick=\"onDeleteRow(this.id); return false;\">x</a>\n";
+		print"</span></td>\n";
 
 		//end the row
 		print "</tr>";
@@ -361,7 +391,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	print "<tr id=\"totalsRow\">\n";
 	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
 	print ucwords(JText::_('TOTAL_HOURS')).":</td>\n";
-	print "<td class=\"calendar_cell_disabled_middle\" colspan=\"6\">&nbsp;</td>\n";
+	print "<td class=\"calendar_cell_disabled_middle\" colspan=\"8\">&nbsp;</td>\n";
 
 	//store a hidden form field containing the number of existing rows
 	print "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"$rowIndex\" />";
