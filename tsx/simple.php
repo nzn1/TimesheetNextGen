@@ -76,11 +76,10 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			?>
 		</td>
 		<td nowrap="nowrap" align="center">
-			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-			value="<?php echo date('d-M-Y', $startDate); ?>" />
+			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;
-			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
-		</td>
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+			</td>
 		<td align="right" nowrap="nowrap">
 			<!--prev / next buttons used to be here -->
 		</td>
