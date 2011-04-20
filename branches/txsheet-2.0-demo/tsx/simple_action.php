@@ -171,7 +171,11 @@ for ($i=0; $i<$totalRows; $i++) {
 	}
 }
 
-$Location = Config::getRelativeRoot()."/simple?year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay();
+// date1 contains the date redirection in the format dd-mm-yyyy
+
+$date1 = $_POST["date1"];
+$newdate = explode("-", $date1);
+$Location = Config::getRelativeRoot()."/simple?year=".$newdate[2]."&amp;month=".$newdate[1]."&amp;day=".$newdate[0];
 gotoLocation($Location);
 exit;
 // vim:ai:ts=4:sw=4

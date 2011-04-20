@@ -550,5 +550,10 @@
 
 		document.simpleForm.submit();
 	}
+	
+	function CallBack_WithNewDateSelected(strDate) 
+		{
+		validate();
+		}
 	//]]>
 </script>
