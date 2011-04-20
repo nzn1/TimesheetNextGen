@@ -10,7 +10,9 @@ PageElements::setTemplate('popup_template.php');
 include "include/tsx/form_input.inc";
 
 ob_start();
-include("client_proj_task_javascript.php");
+include('tsx/client_proj_task_javascript.class.php');
+$js = new ClientProjTaskJavascript();
+$js->printJavascript();
 ?>
 <script type="text/javascript">
 

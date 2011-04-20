@@ -24,7 +24,9 @@ ob_start();
 
 <title><?php echo Config::getMainTitle() - gbl::getContextUser(); ?> Stopwatch</title>
 <?php
-include("client_proj_task_javascript.php");
+include('tsx/client_proj_task_javascript.class.php');
+$js = new ClientProjTaskJavascript();
+$js->printJavascript();
 ?>
 
 <script type="text/javascript">
