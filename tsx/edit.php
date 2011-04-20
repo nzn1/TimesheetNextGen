@@ -75,7 +75,9 @@ include("include/tsx/form_input.inc");
 <head>
 <title>Edit Work Log Record for <?php echo gbl::getContextUser(); ?></title>
 <?php
-include("client_proj_task_javascript.php");
+include('tsx/client_proj_task_javascript.class.php');
+$js = new ClientProjTaskJavascript();
+$js->printJavascript();
 ?>
 </head>
 <body  onload="doOnLoad();">
