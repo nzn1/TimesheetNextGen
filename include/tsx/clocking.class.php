@@ -45,6 +45,8 @@ class Clocking{
 
   private function stopWatchClockForm($currentDate,$fromPopup,$stopwatch,$destination){
   
+  ppr($currentDate);
+  ppr(Common::getRealTodayDate());
   require_once('form_input.inc');
 ?>
 
@@ -105,7 +107,7 @@ class Clocking{
 								</tr>
 								<tr>
 									<td>
-									<?php if(isset($stopwatch)) { ?>
+									<?php if($stopwatch) { ?>
 										<table width="100%" height="100%" border="0" cellpadding="0" cellaspacing="0">
 											<tr height="100%">
 												<td valign="center">
