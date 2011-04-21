@@ -45,8 +45,6 @@ class Clocking{
 
   private function stopWatchClockForm($currentDate,$fromPopup,$stopwatch,$destination){
   
-  ppr($currentDate);
-  ppr(Common::getRealTodayDate());
   require_once('form_input.inc');
 ?>
 
