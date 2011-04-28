@@ -2,7 +2,7 @@
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('level2'))return;
 
-PageElements::setHead("<title>".Config::getMainTitle()." - Blank</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | Blank</title>");
 
 
 // trigger some errors, first define a mixed array with a non-numeric item

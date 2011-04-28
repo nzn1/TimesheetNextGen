@@ -138,7 +138,7 @@ class NavCal extends NavCalCommon{
 	<table width="100%">
 		<tr>
 			<td width="25%" style="vertical-align:top;">
-			 <p><a href="javascript:void(0)" onclick="javascript:navcalShowHide('navCal')">Show / Hide Calendar</a></p>
+			 <p><a href="javascript:void(0)" onclick="javascript:navcalShowHide('navCal')"><?php echo JText::_('SHOW_HIDE_CALENDAR'); ?></a></p>
 			 <script type="text/javascript">
 			    function navcalShowHide(id){
             obj = document.getElementById(id);
@@ -199,7 +199,7 @@ class NavCal extends NavCalCommon{
   
   <!-- Monthly Navigation Calendars > -->
 
-  <p><a href="javascript:void(0)" onclick="javascript:navcalShowHide('navCal')">Show / Hide Calendar</a></p>
+  <p><a href="javascript:void(0)" onclick="javascript:navcalShowHide('navCal')"><?php echo JText::_('SHOW_HIDE_CALENDAR'); ?></a></p>
   <script type="text/javascript">
     function navcalShowHide(id){
       obj = document.getElementById(id);
@@ -246,7 +246,7 @@ class NavCal extends NavCalCommon{
   ?>
   
   <!-- Monthly Navigation Calendars > -->
-  <p><a href="javascript:void(0)" onclick="javascript:navcalShowHide('navCal')">Show / Hide Calendar</a></p>
+  <p><a href="javascript:void(0)" onclick="javascript:navcalShowHide('navCal')"><?php echo JText::_('SHOW_HIDE_CALENDAR'); ?></a></p>
   <script type="text/javascript">
     function navcalShowHide(id){
       obj = document.getElementById(id);
@@ -293,7 +293,7 @@ class NavCal extends NavCalCommon{
   ?>
   
   <!-- Navigation Calendars -->
-  <p><a href="javascript:void(0)" onclick="javascript:navcalShowHide('navCal')">Show / Hide Calendar</a></p>
+  <p><a href="javascript:void(0)" onclick="javascript:navcalShowHide('navCal')"><?php echo JText::_('SHOW_HIDE_CALENDAR'); ?></a></p>
   <script type="text/javascript">
     function navcalShowHide(id){
       obj = document.getElementById(id);

@@ -601,10 +601,10 @@ class Common{
 		while ($i <= 12) {
 			switch($i) {
 			case $month:
-				echo "<option value=\"$i\" selected=\"selected\" >" . strftime("%b",mktime(0,0,0,$i,1,1999)) . "\n";
+				echo "<option value=\"$i\" selected=\"selected\" >" . utf8_encode(strftime("%b",mktime(0,0,0,$i,1,1999))) . "\n";
 			break;
 			default:
-				echo "<option value=\"$i\">". date("M",mktime(0,0,0,$i,1,1999)) . "\n";
+				echo "<option value=\"$i\">". utf8_encode(strftime("%b",mktime(0,0,0,$i,1,1999))) . "\n";
 			}
 			$i++;
 		}
@@ -768,7 +768,7 @@ class Common{
 
 		//should we show the 'Select Client' option
 		if ($showSelectClient)
-			print "<option value=\"0\">Select Client</option>\n";
+			print "<option value=\"0\">".JText::_('SELECT_CLIENT')."</option>\n";
 		else if ($showAllClients)
 			print "<option value=\"0\">".JText::_('ALL_CLIENTS')."</option>\n";
 
@@ -867,7 +867,7 @@ class Common{
 
 		if ($currentClientId == 0 && $needsClient) {
 			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
-			print "  <option>Please select a client</option>\n";
+			print "  <option>".JText::_('SELECT_CLIENT')."</option>\n";
 			print "</select>\n";
 			return;
 		}
@@ -899,7 +899,7 @@ class Common{
 				return;
 			}
 			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
-			print "  <option>There are no projects for this client</option>\n";
+			print "  <option>".JText::_('NO_PROJECTS_FOR_CLIENT')."</option>\n";
 			print "</select>\n";
 			return;
 		}
@@ -911,13 +911,13 @@ class Common{
 
 		//should we show the 'Select Project' option
 		if ($showSelectProject)
-			print "<option value=\"0\">Select Project</option>\n";
+			print "<option value=\"0\">".JText::_('SELECT_PROJECT')."</option>\n";
 
 		if ($showAllProjects) {
 			print "<option value=\"0\"";
 			if ($currentProjectId == 0)
 				print " selected=\"selected\"";
-			print ">All Projects</option>\n";
+			print ">".JText::_('ALL_PROJECTS')."</option>\n";
 		}
 
 		if ($num > 0) {
@@ -937,7 +937,7 @@ class Common{
 
 		if ($currentProjectId == 0) {
 			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
-			print "  <option>Please select a project</option>\n";
+			print "  <option>".JText::_('SELECT_PROJECT')."</option>\n";
 			print "</select>\n";
 			return;
 		}
@@ -1205,7 +1205,7 @@ class Common{
 		print "<input type=\"hidden\" name=\"log_message_presented\" value=\"1\" />\n";
 }?>
 
-	<tr><td>Please Enter Log message: (max 255 characters)</td></tr>
+	<tr><td><?php echo JText::_('ENTER_LOG_MESSAGE'); ?></td></tr>
 	<tr><td><TEXTAREA name=log_message COLS=60 ROWS=4></TEXTAREA></td></tr>
 	<tr><td><input type="submit" value="Done" /></td></tr>
 </table>
@@ -1336,7 +1336,7 @@ class Common{
 					</script>
 				</head>
 				<body onLoad="javascript:loadAndClose();">
-					You do not have javascript enabled. Javascript is required for TimesheetNextGen
+					<?php echo JText::_('JAVASCRIPT_REQUIRED');?>
 				</body>
 			</html>
 		<?php

@@ -30,8 +30,8 @@ if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
 ob_start();
+
 ?>
-<title><?php echo Config::getMainTitle()." - ".ucfirst(JText::_('SIMPLE'));?></title>
 
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 
@@ -47,6 +47,8 @@ include("include/tsx/form_input.inc");
 PageElements::setHead(ob_get_contents());
 ob_end_clean();
 PageElements::setBodyOnLoad('populateExistingSelects();');
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('NEW_DAILY_TIMESHEET')."</title>");
+
 ?>
 
 <form name="dailyForm" action="<?php echo Config::getRelativeRoot(); ?>/daily_action" method="post">
@@ -58,12 +60,14 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="left" nowrap="nowrap" class="outer_table_heading">
-			<?php echo JText::_('TIMESHEET'); ?>
+			<?php echo JText::_('NEW_DAILY_TIMESHEET'); ?>
 		</td>
+	</tr>
+	<tr>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
 			<?php
 				$sdStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$todayStamp);
-				echo ucfirst(JText::_('DAILY')).": $sdStr";
+				echo JText::_('DAY').": $sdStr";
 			?>
 		</td>
 		<td nowrap="nowrap" align="center">

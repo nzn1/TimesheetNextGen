@@ -1,7 +1,7 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
-PageElements::setHead("<title>".Config::getMainTitle()." - Blank</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | Blank</title>");
 
 ?>
 

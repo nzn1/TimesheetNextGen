@@ -14,7 +14,7 @@ class Clocking{
   <!-- clock on/off form -->
   <?php
   if(true == $enableShowHideLink){
-    echo "<p><a href=\"javascript:void(0)\" onclick=\"javascript:clockingShowHide('clockOnOffTable');\">Show/Hide Clock on off Box</a></p>";
+    echo "<p><a href=\"javascript:void(0)\" onclick=\"javascript:clockingShowHide('clockOnOffTable');\">".JText::_('SHOW_HIDE_CLOCK')."</a></p>";
     $style = "style=\"display:none;\"";
   }
   else $style = ''; 

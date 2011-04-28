@@ -1,6 +1,5 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('PROJECTS')."</title>");
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclProjects'))return;
 
@@ -89,6 +88,7 @@ function writePageLinks($page, $results_per_page, $num2) {
 }
 
 ob_start();
+
 ?>
 
 <script type="text/javascript" type="text/javascript">
@@ -106,6 +106,7 @@ function change_page(newPageValue) {
 <?php
  $head = ob_get_contents();
  PageElements::setHead($head);
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS')."</title>");
 ?>
 
 <form method="post" name="projectFilter" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
@@ -115,6 +116,8 @@ function change_page(newPageValue) {
 			<td align="center" nowrap class="outer_table_heading">
 				<?php echo ucwords(JText::_('PROJECTS'))?>
 			</td>
+		</tr>
+		<tr>
 			<td align="right">&nbsp;<?php echo ucwords(JText::_('CLIENT'))?>:&nbsp;</td>
 			<td><?php Common::client_select_list(gbl::getClientId(), 0, false, false, true, false, "submit();", false); ?></td>
 			<td align="right">&nbsp;<?php echo ucwords(JText::_('STATUS'))?>:&nbsp;</td><td><?php Common::proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>

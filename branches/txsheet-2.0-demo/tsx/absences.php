@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('ABSENCE_ENTRY')." ".JText::_('FOR')." ".gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ABSENCE_ENTRY')." | ".gbl::getContextUser()."</title>");
 
 
 
@@ -71,7 +71,12 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-			<?php print "$day $month $year"; ?>
+	<td align="left" nowrap class="outer_table_heading">
+	<?php echo JText::_('ABSENCE_ENTRY'); ?>
+	</td>
+	</tr>
+	<tr>
+		<!--	<?php print "$day $month $year"; ?> -->
 		<?php if($canChangeUser) : ?>
 			<td align="left" width="38%" nowrap class="outer_table_heading"><?php echo JText::_('USER'); ?>: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
 		<?php else : ?>
@@ -86,11 +91,11 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 				value="<?php echo date('d-M-Y', $startDate); ?>" />
 		</td>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE')?>"></input>
 		</td>
 		
 		<td align="right">
-			<input type="button" value="Save Changes" name="save" id="save" onclick="onSubmit();" />
+			<input type="button" value="<?php echo JText::_('SAVE_CHANGES')?>" name="save" id="save" onclick="onSubmit();" />
 		</td>
 	</tr>
 </table>

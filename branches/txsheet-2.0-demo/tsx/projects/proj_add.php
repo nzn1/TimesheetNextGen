@@ -1,7 +1,7 @@
 <?php
 
 if(!class_exists('Site'))die('Restricted Access');
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('ADD_NEW_PROJECT')."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ADD_NEW_PROJECT')."</title>");
 
 // Authenticate
 if(!class_exists('Site')){

@@ -52,7 +52,7 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('MONTHLY_TIMESHEET')." | ".gbl::getContextUser()."</title>");
 
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
@@ -69,8 +69,10 @@ if (isset($popup))
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="left" nowrap class="outer_table_heading">
-			<?php echo ucwords(JText::_('MONTHLY_VIEW')); ?>
+			<?php echo JText::_('MONTHLY_TIMESHEET'); ?>
 		</td>
+	</tr>
+	<tr>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 		<td nowrap align="center">

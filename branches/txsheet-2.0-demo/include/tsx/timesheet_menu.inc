@@ -39,10 +39,10 @@ $popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelative
 
 //                 Language string			Access Rights	need relative root?  script			icon file
 $menuArray[] = array('STOPWATCH',			'aclStopwatch',		0, $popup_href,					'icon_stopwatch.gif');
-$menuArray[] = array('DAILY_TIMESHEET',		'aclDaily',			1, "daily?".gbl::getPost()."",				'icon_daily.gif');
-$menuArray[] = array('WEEKLY_TIMESHEET',	'aclWeekly',		1, "weekly?".gbl::getPost()."",				'icon_daily.gif');
-$menuArray[] = array('SIMPLE_TIMESHEET',	'aclSimple',		1, "simple?".gbl::getPost()."",				'icon_daily.gif');
-$menuArray[] = array('VIEW_MONTH',			'aclMonthly',		1, "monthly?".gbl::getPost()."",				'icon_calendar.gif');
+$menuArray[] = array('DAY',		'aclDaily',			1, "daily?".gbl::getPost()."",				'icon_daily.gif');
+$menuArray[] = array('WEEK',	'aclWeekly',		1, "weekly?".gbl::getPost()."",				'icon_daily.gif');
+$menuArray[] = array('SIMPLE_WEEK',	'aclSimple',		1, "simple?".gbl::getPost()."",				'icon_daily.gif');
+$menuArray[] = array('MONTH',			'aclMonthly',		1, "monthly?".gbl::getPost()."",				'icon_calendar.gif');
 $menuArray[] = array('SUBMIT_TIMES',		'aclSubmit',		1, "submit?".gbl::getPost()."",				'icon_submit.gif');
 $menuArray[] = array('ABSENCES',			'aclAbsences',		1, "absences?".gbl::getPost()."",			'icon_calendar.gif');
 $menuArray[] = array('CLIENTS',				'aclClients',		1, "clients/client_maint",		'icon_clients.gif');
@@ -85,19 +85,19 @@ $menuStr = JText::_('STOPWATCH');
 if (Site::getAuthenticationManager()->hasAccess('aclStopwatch'))	
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, $popup_href, Config::getRelativeRoot()."/images/icon_stopwatch.gif"));
 
-$menuStr = JText::_('DAILY_TIMESHEET');
+$menuStr = JText::_('DAY');
 if (Site::getAuthenticationManager()->hasAccess('aclDaily'))
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/daily?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_daily.gif"));
 
-$menuStr = JText::_('WEEKLY_TIMESHEET');
+$menuStr = JText::_('WEEK');
 if (Site::getAuthenticationManager()->hasAccess('aclWeekly'))
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/weekly?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_daily.gif"));
 
-$menuStr = JText::_('SIMPLE_TIMESHEET');
+$menuStr = JText::_('SIMPLE_WEEK');
 if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/simple?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_daily.gif"));
 
-$menuStr = JText::_('VIEW_MONTH');
+$menuStr = JText::_('MONTH');
 if (Site::getAuthenticationManager()->hasAccess('aclMonthly'))
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/monthly?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 

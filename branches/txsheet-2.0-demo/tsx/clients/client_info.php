@@ -82,4 +82,4 @@ PageElements::addFile('tsx_footer','themes/'.PageElements::getTheme().'/popups.i
 	}
 ?>
 
-	</table></center
+	</table></center>
