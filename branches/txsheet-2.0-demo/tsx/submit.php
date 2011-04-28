@@ -239,7 +239,8 @@ function submitAll (chk) {
 }
 </script>
 
-<?php PageElements::setHead("<title>".Config::getMainTitle()." | Timesheet for ".gbl::getContextUser()."</title>");
+<?php 
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('SUBMIT_TIMES')." | ".gbl::getContextUser()."</title>");
 ob_start();
 	//if(!$export_excel) include ("header.inc");
 	//else {
@@ -272,12 +273,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
 									<tr>
-										<td align="right" width="0" class="outer_table_heading">Client:</td>
+										<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('CLIENT') ?>:</td>
 										<td align="left" width="100%">
 											<?php Common::client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
 										</td>
 									</tr>
-									<td align="right" width="0" class="outer_table_heading">User:</td>
+									<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('USER') ?>:</td>
 									<td align="left" width="100%">
 											<?php Common::user_select_droplist($uid, false,"100%"); ?>
 									</td>
@@ -289,16 +290,16 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						value="<?php echo date('d-M-Y', $startDate); ?>" />
 					</td>
 					<td align="center" nowrap="nowrap" class="outer_table_heading">
-					<input id="sub" type="submit" name="Change Date" value="Change Date"></input>
+					<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 					</td>
 
 						<?php if (!$print): ?>
 							<td  align="center" width="10%" >
-							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
+							<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;<?php echo JText::_('EXCEL_EXPORT') ?> </a>
 							</td>
 							<td  align="center" >
 							<?php 
-								print "<button onClick=\"popupPrintWindow()\">Print Report</button></td>\n"; 
+								print "<button onClick=\"popupPrintWindow()\">".JText::_('PRINT_REPORT')."</button></td>\n"; 
 							?>
 							</td>
 						<?php endif; ?>
@@ -306,7 +307,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						// add submission and check all button
 						if (!$print): ?>
 							<td  align="center" >
-							<input type="submit" name="Submit" value="Submit"> 
+							<input type="submit" name="Submit" value="<?php echo JText::_('SUBMIT') ?>"> 
 							</td><td  align="center" >
 							<input type="checkbox" name="Check All" onclick="submitAll(document.subtimes['sub[]']);">
 							</td>
@@ -329,24 +330,24 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						$projPost="uid=$uid$ymdStr&amp;orderby=project&amp;client_id=$client_id&amp;mode=$mode";
 						$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
 						if($orderby== 'project'): ?>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading">Task</td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
-							<td class="inner_table_column_heading">Start Time</td>
-							<td class="inner_table_column_heading">End Time</td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('CLIENT')."/".JText::_('PROJECT') ?></a></td>
+							<td class="inner_table_column_heading"><?php echo JText::_('TASK') ?></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE') ?></a></td>
+							<td class="inner_table_column_heading"><?php echo JText::_('START_TIME') ?></td>
+							<td class="inner_table_column_heading"><?php echo JText::_('END_TIME') ?></td>
 							
 						<?php else: ?>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE') ?></a></td>
 	
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading">Task</td>
-							<td class="inner_table_column_heading">Start Time</td>
-							<td class="inner_table_column_heading">End Time</td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('CLIENT')."/".JText::_('PROJECT') ?></a></td>
+							<td class="inner_table_column_heading"><?php echo JText::_('TASK') ?></td>
+							<td class="inner_table_column_heading"><?php echo JText::_('START_TIME') ?></td>
+							<td class="inner_table_column_heading"><?php echo JText::_('END_TIME') ?></td>
 						<?php endif; ?>
-						<td class="inner_table_column_heading">Log Entry</td>
-						<td class="inner_table_column_heading">Status</td>
-						<td class="inner_table_column_heading">Duration</td>
-						<td class="inner_table_column_heading">Submit</td>
+						<td class="inner_table_column_heading"><?php echo JText::_('LOG_ENTRY') ?></td>
+						<td class="inner_table_column_heading"><?php echo JText::_('STATUS') ?></td>
+						<td class="inner_table_column_heading"><?php echo JText::_('DURATION') ?></td>
+						<td class="inner_table_column_heading"><?php echo JText::_('SUBMIT') ?></td>
 					</tr>
 <?php
 	$dati_total=array();
@@ -357,7 +358,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	if ($num == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
-		print "			<i><br>No hours recorded.<br><br></i>\n";
+		print "			<i><br>".JText::_('NO_TIME_RECORDED')."<br><br></i>\n";
 		print "		</td>\n";
 		print "	</tr>\n";
 	} else {
@@ -496,15 +497,15 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <?php if ($print): ?>
 	<table width="100%" border="1" cellspacing="0" cellpadding="0">
 		<tr>
-			<td width="30%"><table><tr><td>Employee Signature:</td></tr></table></td>
+			<td width="30%"><table><tr><td><?php echo JText::_('EMPLOYEE_SIGNATURE') ?>:</td></tr></table></td>
 			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
 		</tr>
 		<tr>
-			<td width="30%"><table><tr><td>Manager Signature:</td></tr></table></td>
+			<td width="30%"><table><tr><td><?php echo JText::_('MANAGER_SIGNATURE') ?>:</td></tr></table></td>
 			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
 		</tr>
 		<tr>
-			<td width="30%"><table><tr><td>Client Signature:</td></tr></table></td>
+			<td width="30%"><table><tr><td><?php echo JText::_('CLIENT_SIGNATURE') ?>:</td></tr></table></td>
 			<td width="70%"><img src="images/spacer.gif" width="150" height="1" /></td>
 		</tr>
 	</table>		

@@ -5,23 +5,35 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_RATES')." | ".gbl::getContextUser()."</title>");
 
 ?>
-<head><title>Rates Management Page</title>
+<head>
+
 
 </head>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="left" nowrap class="outer_table_heading">
-				All Projects:
+				<?php echo JText::_('PROJECT_RATES') ?>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td align="left" nowrap class="outer_table_heading">
+				<?php echo JText::_('ALL_PROJECTS') ?>
 		</td>
 	</tr>
 
 	<tr class="inner_table_head">
-		<td class="inner_table_column_heading">&nbsp;Title</td>
-		<td class="inner_table_column_heading">&nbsp;Client</td>
-		<td class="inner_table_column_heading">&nbsp;<i>Actions</i></td>
+		<td class="inner_table_column_heading">&nbsp;<?php echo JText::_('PROJECT_TITLE') ?></td>
+		<td class="inner_table_column_heading">&nbsp;<?php echo JText::_('CLIENT') ?></td>
+		<td class="inner_table_column_heading">&nbsp;<i><?php echo JText::_('ACTIONS') ?></i></td>
 	</tr>
 <?php
 
@@ -42,8 +54,8 @@ while ($data = dbResult($qh)) {
 			print "<tr>\n";
 	print "<td class=\"calendar_cell_middle\">&nbsp;$titleField</td>";
 	print "<td class=\"calendar_cell_middle\">&nbsp;$organisationField</td>";
-	print "<td class=\"calendar_cell_disabled_right\">";
-	print "	<a href=\"project_user_rates_action?proj_id=$data[proj_id]&amp;action=show_users\">&nbsp;Edit Rates</a>\n";
+	print "<td class=\"calendar_cell_middle\">";
+	print "	<a href=\"project_user_rates_action?proj_id=$data[proj_id]&amp;action=show_users\">&nbsp;".JText::_('EDIT_RATES')."</a>\n";
 	print "</td>\n";
 	print "</tr>\n";
 	$n++;
