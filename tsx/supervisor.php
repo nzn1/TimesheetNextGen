@@ -251,7 +251,7 @@ function submitAll (chk) {
 //-->
 </script>
 <?php } //end if !export_excel 
-PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | Timesheet for ".gbl::getContextUser()."</title>");
 ob_start();
 
 PageElements::setHead(PageElements::getHead().ob_get_contents());

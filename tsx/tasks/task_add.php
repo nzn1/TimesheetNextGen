@@ -12,8 +12,9 @@ $proj_id = $_REQUEST['proj_id'];
 //define the command menu
 Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ADD_NEW_TASK')."</title>");
+
 ?>
-<title><?php echo Config::getMainTitle();?> - Task Add</title>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/tasks/task_action" method="post">
 <input type="hidden" name="action" value="add" />
@@ -22,28 +23,28 @@ Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="outer_table_heading">
-			<h1>Add New Task:</h1>
+			<h1><?php echo (JText::_('ADD_NEW_TASK')) ?>:</h1>
 		</td>
 	</tr>
 	<tr>
-		<td align="right">Task Name:</td>
+		<td align="right"><?php echo (JText::_('TASK_NAME')) ?>:</td>
 		<td><input type="text" name="name" size="42" style="width: 100%" /></td>
 	</tr>
 	<tr>
-		<td align="right" valign="top">Description:</td>
+		<td align="right" valign="top"><?php echo (JText::_('DESCRIPTION')) ?>:</td>
 		<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%"></textarea></td>
 	</tr>
 	<tr>
-		<td align="right">Status:</td>
+		<td align="right"><?php echo (JText::_('STATUS')) ?>:</td>
 		<td><?php Common::proj_status_list("task_status", "Started"); ?></td>
 	</tr>
 	<tr>
-		<td align="right" valign="top">Assignments:</td>
+		<td align="right" valign="top"><?php echo (JText::_('TASK_MEMBERS')) ?>:</td>
 		<td><?php Common::multi_user_select_list("assigned[]"); ?></td>
 	</tr>
 	<tr>
 		<td align="center">
-			<input type="submit" value="Add New Task" />
+			<input type="submit" value="<?php echo (JText::_('ADD_NEW_TASK')) ?>" />
 		</td>
 	</tr>
 

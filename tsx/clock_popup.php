@@ -2,7 +2,7 @@
 
 if(!class_exists('Site'))die('Restricted Access');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclWeekly'))return;
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('CLOCK')." ".JText::_('FOR')." ".gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('CLOCK')." | ".gbl::getContextUser()."</title>");
 
 PageElements::setTemplate('popup_template.php');
 

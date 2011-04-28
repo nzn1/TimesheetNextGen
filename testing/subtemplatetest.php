@@ -1,6 +1,6 @@
 <?php 
 echo "<hr />";
-PageElements::setHead("<title>".Config::getMainTitle()." - Sub Template Test</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | Sub Template Test</title>");
 		require_once(Config::getDocumentRoot()."/include/templateparser/templateparser.class.php");
 
 		$tp = new templateParser();

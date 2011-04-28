@@ -24,7 +24,7 @@ $tomorrowDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 days");
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('DAILY_TIMESHEET')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
 include('tsx/client_proj_task_javascript.class.php');
@@ -61,10 +61,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading" nowrap>
-			<?php echo ucwords(JText::_('DAILY_TIMESHEET')); ?>
+		<td align="center" nowrap class="outer_table_heading" nowrap>
+			<?php echo JText::_('DAILY_TIMESHEET'); ?>
 		</td>
-		<td align="left" nowrap class="outer_table_heading">
+	</tr>
+	<tr>
+		<td align="left" colspan="2" nowrap class="outer_table_heading">
 			<?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate); ?>
 		</td>
 		<td align="right" nowrap>

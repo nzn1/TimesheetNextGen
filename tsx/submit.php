@@ -239,7 +239,7 @@ function submitAll (chk) {
 }
 </script>
 
-<?php PageElements::setHead("<title>".Config::getMainTitle()." - Timesheet for ".gbl::getContextUser()."</title>");
+<?php PageElements::setHead("<title>".Config::getMainTitle()." | Timesheet for ".gbl::getContextUser()."</title>");
 ob_start();
 	//if(!$export_excel) include ("header.inc");
 	//else {

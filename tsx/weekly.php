@@ -35,7 +35,7 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('TIMESHEET_FOR').gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('WEEKLY_TIMESHEET')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
 include('tsx/client_proj_task_javascript.class.php');
@@ -71,6 +71,8 @@ if (isset($popup)){
 		<td align="left" nowrap class="outer_table_heading">
 			<?php echo JText::_('WEEKLY_TIMESHEET'); ?>
 		</td>
+	</tr>
+	<tr>
 		<td>&nbsp;</td>
 		<td>&nbsp;</td>
 		<td nowrap align="center">

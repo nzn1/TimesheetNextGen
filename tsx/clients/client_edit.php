@@ -1,6 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('EDIT_CLIENT')."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_CLIENT')."</title>");
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 

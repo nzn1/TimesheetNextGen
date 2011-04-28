@@ -226,7 +226,7 @@ gbl::setPost("&amp;orderby=$orderby");
 
 if(!$export_excel) 
 	require("report_javascript.inc");
-PageElements::setHead("<title>".Config::getMainTitle()." - All hours this month</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | All hours this month</title>");
 
 	if(!$export_excel) ; //include ("header.inc");
 	else {

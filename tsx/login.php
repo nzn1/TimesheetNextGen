@@ -39,7 +39,7 @@ function printMessage($message) {
 
 $redirect = isset($_REQUEST["redirect"]) ? $_REQUEST["redirect"] : "";
 
-PageElements::setHead("<title>".Config::getMainTitle()." - " .JText::_('LOGIN')."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | " .JText::_('LOGIN')."</title>");
 PageElements::setBodyOnLoad("document.loginForm.username.focus();");
 ?>
 
@@ -53,6 +53,7 @@ PageElements::setBodyOnLoad("document.loginForm.username.focus();");
 		?>
 		<td style="padding-top: 40;">
 			<font face="Verdana, Arial, Helvetica, sans-serif">
+			
 			<p align="center"><font color="red"><strong>The Site is temporarily closed.</strong></font></p>
 			<p align="center">The timesheet system is temporarily closed for maintenance.</p>
 			<p align="center">If you are not an Administrator, you will not be allowed to login; please check back later.</p>

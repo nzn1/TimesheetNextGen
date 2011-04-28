@@ -1,6 +1,6 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('EDIT_PROJECT')."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_PROJECT')."</title>");
 
 // Authenticate
 

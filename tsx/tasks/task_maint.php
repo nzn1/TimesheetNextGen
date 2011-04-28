@@ -75,11 +75,12 @@ $query_task_page = "SELECT DISTINCT task_id, name, description,status, ".
 		"ORDER BY t.task_id ";
 
 list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASKS')."</title>");
+
 ?>
 
 <html>
 <head>
-	<title>Tasks</title>
 
 <script type="text/javascript">
 
@@ -101,6 +102,12 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 <form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
 <input type="hidden" name="page" />
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+							<td align="center" class="outer_table_heading" nowrap>
+							<?php echo (JText::_('TASKS')) ?>
+						</td>
+
+	</tr>
 	<tr>
 		<td width="100%" class="face_padding_cell">
 
@@ -136,9 +143,6 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 								</tr>
 							</table>
 						</td>
-						<td align="center" class="outer_table_heading" nowrap>
-							<?php echo (JText::_('TASKS')) ?>
-						</td>
 						<td>
 							<?php writePageLinks($page, $results_per_page, $num_task_page); ?>
 						</td>
@@ -146,10 +150,10 @@ list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 							<?php if ($proj_id != 0) { ?>
 							<a href="task_add?proj_id=<?php echo $proj_id; ?>"><?php echo (JText::_('ADD_NEW_TASK')) ?></a>
 							<?php } else { ?>
-								<span class="disabledLink">Add new task</span>
+								<span class="disabledLink"><?php echo JText::_('ADD_NEW_TASK') ?></span>
 							<?php } ?>
 							<br /><br />
-							<a href="assign-proj-mbrs-to-all-tasks">Assign Mbrs all tasks</a>
+							<a href="assign-proj-mbrs-to-all-tasks"><?php echo JText::_('ASSIGN_ALLTASKS_ALLPROJECTMEMBERS') ?></a>
 						</td>
 					</tr>
 				</table>

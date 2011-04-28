@@ -33,12 +33,13 @@ $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 //$configData = dbResult($qh2);
 $layout = Common::getLayout();
 
+
+
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
 ob_start();
 ?>
-<title><?php echo Config::getMainTitle()." - ".ucfirst(JText::_('SIMPLE'));?></title>
 
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 
@@ -53,6 +54,7 @@ require("js/simple.js");
 PageElements::setHead(ob_get_contents());
 ob_end_clean();
 PageElements::setBodyOnLoad('populateExistingSelects();');
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('SIMPLE_WEEK')." | ".gbl::getContextUser()."</title>");
 ?>
 
 <form name="simpleForm" action="<?php echo Config::getRelativeRoot(); ?>/simple_action" method="post">
@@ -64,11 +66,13 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td align="left" nowrap="nowrap" class="outer_table_heading">
-			<?php echo JText::_('TIMESHEET'); ?>
+			<?php echo JText::_('SIMPLE_WEEKLY_TIMESHEET'); ?>
 		</td>
+	</tr>
+	<tr>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
 			<?php
-				$sdStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
+				$sdStr = utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate));
 				//just need to go back 1 second most of the time, but DST
 				//could mess things up, so go back 6 hours...
 				$edStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
@@ -84,7 +88,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			<!--prev / next buttons used to be here -->
 		</td>
 		<td align="right" nowrap="nowrap">
-			<input type="button" name="saveButton" id="saveButton" value="<?php echo ucwords(JText::_('SAVE_CHANGES'))?>" disabled="disabled" onclick="validate();" />
+			<input type="button" name="saveButton" id="saveButton" value="<?php echo JText::_('SAVE_CHANGES')?>" disabled="disabled" onclick="validate();" />
 		</td>
 	</tr>
 </table>

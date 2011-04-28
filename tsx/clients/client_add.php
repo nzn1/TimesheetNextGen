@@ -1,6 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
-PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('ADD_NEW_CLIENT')."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ADD_NEW_CLIENT')."</title>");
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
@@ -12,7 +12,7 @@ if (empty($loggedInUser))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 //define the command menu
-Site::getCommandMenu()->add(new TextCommand("Back", true, "javascript:history.back()"));
+Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 
 ?>
 <html>
