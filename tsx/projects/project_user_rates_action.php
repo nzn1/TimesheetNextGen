@@ -82,9 +82,9 @@ if ($action == "show_users") {
 	gotoLocation(Config::getRelativeRoot()."/project_user_rates");
 	exit(0);
 }
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_USER_RATES_SELECTION')." | ".gbl::getContextUser()."</title>");
 
 ?>
-<head><title>Project-User-Rates Management Page</title>
 
 <script>
 	function updateRate() {
@@ -111,7 +111,12 @@ if ($action == "show_users") {
 		<table width="100%" border="0">
 			<tr>
 			<td align="left" nowrap class="outer_table_heading">
-				Users assigned on <?php print "$proj_title ($client_name)"; ?>
+			<?php echo JText::_('PROJECT_USER_RATES_SELECTION') ?>
+			</td>
+			</tr>
+			<tr>
+			<td align="left" nowrap class="outer_table_heading">
+				<?php echo JText::_('PROJECT_MEMBERS')." ".$proj_title." (".JText::_('CLIENT').": ".$client_name.")"; ?>
 			</td>
 			</tr>
 		</table>
@@ -122,8 +127,8 @@ if ($action == "show_users") {
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 				<tr class="inner_table_head">
 					<td class="inner_table_column_heading"><i>&nbsp;</i></td>
-					<td class="inner_table_column_heading">&nbsp;User</td>
-					<td class="inner_table_column_heading">Billing Rate (per hour)</td>
+					<td class="inner_table_column_heading">&nbsp;<?php echo JText::_('USER') ?></td>
+					<td class="inner_table_column_heading"><?php echo JText::_('BILLING_RATE_BYHOUR') ?></td>
 				</tr>
 <?php
 
@@ -162,7 +167,7 @@ while ($idx < $len) {
 		$rateid = "";
 	}
 
-	print "<tr><td align=\"center\" class=\"calendar_cell_middle\">$count.</td><td class=\"calendar_cell_middle\">&nbsp;$firstname_array[$idx] $lastname_array[$idx] ($username_array[$idx])</td><td class=\"calendar_cell_middle\">" . Common::build_uni_select($rate, $rate_array, $rateid) . "</td></tr>\n";
+	print "<tr><td align=\"center\" class=\"calendar_cell_middle\">$count.</td><td class=\"calendar_cell_middle\">&nbsp;$firstname_array[$idx] $lastname_array[$idx] ($username_array[$idx])</td><td class=\"calendar_cell_middle\">" . Common::build_uni_select($rate, $rate_array, $rateid) .JText::_('CURRENCY') ."</td></tr>\n";
 	print "<input type=\"hidden\" name=\"$user\" value=\"$username_array[$idx]\" />\n";
 
 	$idx++;
@@ -170,8 +175,8 @@ while ($idx < $len) {
 ?>
 				<tr>
 					<td colspan=3 align="center">
-					<input type="button" name="update" value="Update Rates" onclick="javascript:updateRate()" class="bottom_panel_button" />
-					<input type="button" name="back" value="Cancel" onclick="javascript:goBack()" class="bottom_panel_button" />
+					<input type="button" name="update" value="<?php echo JText::_('SUBMIT') ?>" onclick="javascript:updateRate()" class="bottom_panel_button" />
+					<input type="button" name="back" value="<?php echo JText::_('CANCEL') ?>" onclick="javascript:goBack()" class="bottom_panel_button" />
 					</td>
 				</tr>
 				</table>
