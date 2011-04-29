@@ -35,6 +35,8 @@ $layout = Common::getLayout();
 
 
 
+
+
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
@@ -63,25 +65,22 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('SIMPLE_WE
 <input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
 <input type="hidden" name="startStamp" value="<?php echo $startDate; ?>" />
 
+<h1><?php echo JText::_('SIMPLE_WEEKLY_TIMESHEET'); ?></h1>
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td align="left" nowrap="nowrap" class="outer_table_heading">
-			<?php echo JText::_('SIMPLE_WEEKLY_TIMESHEET'); ?>
-		</td>
-	</tr>
 	<tr>
 		<td align="center" nowrap="nowrap" class="outer_table_heading">
 			<?php
 				$sdStr = utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate));
 				//just need to go back 1 second most of the time, but DST
 				//could mess things up, so go back 6 hours...
-				$edStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
-				echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr";
+				$edStr = utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60));
+				echo JText::_('CURRENT_WEEK').': <span style="color:#00066F;">'.$sdStr.' - '.$edStr.'</span>';
 			?>
 		</td>
-		<td nowrap="nowrap" align="center">
+		<td nowrap="nowrap" class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
 			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
 			</td>
 		<td align="right" nowrap="nowrap">
@@ -90,6 +89,9 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('SIMPLE_WE
 		<td align="right" nowrap="nowrap">
 			<input type="button" name="saveButton" id="saveButton" value="<?php echo JText::_('SAVE_CHANGES')?>" disabled="disabled" onclick="validate();" />
 		</td>
+	</tr>
+	<tr>
+		<td >&nbsp;</td>
 	</tr>
 </table>
 
@@ -141,6 +143,10 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('SIMPLE_WE
 	//$startDateStr = strftime("%D", $startDate);
 	//$endDateStr = strftime("%D", $endDate);
 	//print "<p>WEEK start: $startDateStr WEEK end: $endDateStr</p>";
+
+
+
+
 
 
 
@@ -281,6 +287,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('SIMPLE_WE
 	unset($matchedPair);
 	for ($rowIndex = 0; $rowIndex<$count; $rowIndex++) {
 		$matchedPair = &$structuredArray[$rowIndex];
+
 
 		$simple->printFormRow($rowIndex, $layout,$matchedPair->projectId,$matchedPair->value1,$matchedPair->workDescription,$startDate,$matchedPair->value2);
 

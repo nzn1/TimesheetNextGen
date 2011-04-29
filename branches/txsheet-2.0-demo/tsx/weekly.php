@@ -1,3 +1,4 @@
+<h1><?php echo JText::_('WEEKLY_TIMESHEET'); ?></h1>
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclWeekly'))return;
@@ -68,9 +69,7 @@ if (isset($popup)){
 <!-- date selection table -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading">
-			<?php echo JText::_('WEEKLY_TIMESHEET'); ?>
-		</td>
+		<td>&nbsp;</td>
 	</tr>
 	<tr>
 		<td>&nbsp;</td>
@@ -87,11 +86,11 @@ if (isset($popup)){
 	<tr>
 		<td align="center" nowrap class="outer_table_heading">
 			<?php
-				$sdStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate);
+				$sdStr = utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate));
 				//just need to go back 1 second most of the time, but DST 
 				//could mess things up, so go back 6 hours...
-				$edStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60);
-				echo ucfirst(JText::_('WEEK')).": $sdStr - $edStr"; 
+				$edStr = utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60));
+				echo JText::_('CURRENT_WEEK').': <span style="color:#00066F;">'.$sdStr.' - '.$edStr.'</span>';
 			?>
 		</td>
 		<td width="10%" align="right"><?php echo JText::_('FILTER')?>:</td>
@@ -106,6 +105,9 @@ if (isset($popup)){
 		</td>
 		<td width="25%"align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
 		<td width="10%">&nbsp;</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
 	</tr>
 </table>
 
@@ -208,6 +210,8 @@ if (isset($popup)){
 		$currentProjectId = $data["proj_id"];
 		$currentClientName = $data["clientName"];
 		$currentClientId = $data["client_id"];
+
+
 
 
 		//find the current task id in the array

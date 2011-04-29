@@ -198,13 +198,14 @@ function make_index($data,$order) {
 $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
 gbl::setPost("&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode");
 
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('CLIENT_REPORT')." | ".gbl::getContextUser()."</title>");
+
 if(!$export_excel) 
 	require("report_javascript.inc");
 ?>
 
 <html>
 <head>
-<title>Client Report</title>
 <?php 
 	if(!$export_excel) ; //include ("header.inc");
 	else {
@@ -214,6 +215,8 @@ if(!$export_excel)
 	}
 ?>
 </head>
+<h1><?php echo JText::_('CLIENT_REPORT'); ?></h1>
+
 <?php
 	if($print) {
 		echo "<body width=\"100%\" height=\"100%\"";
@@ -265,7 +268,7 @@ if(!$export_excel)
 						<td align="left" nowrap width="35%">
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
-									<td align="right" width="0" class="outer_table_heading">Client:</td>
+									<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('CLIENT'); ?>:</td>
 									<td align="left" width="100%">
 											<?php Common::client_select_droplist($client_id, false, !$print); ?>
 									</td>
@@ -281,13 +284,12 @@ if(!$export_excel)
 								$edStr = date("M d, Y",$endDate - 6*60*60); 
 								echo "Week: $sdStr - $edStr"; 
 							} else
-								echo date('F Y',$startDate);
-						?>
+								echo JText::_('CURRENT_MONTH').': <span style="color:#00066F;">'.utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)).'</span>' ;						?>
 						</td>
 						<?php if (!$print): ?>
 							<td  align="right" width="15%" nowrap >
-								<button name="export_excel" onclick="reload2Export()" value="1"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
-								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
+								<button name="export_excel" onclick="reload2Export()" value="1"><img src="../images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="../images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>
 						<?php endif; ?>
 					</tr>
@@ -321,16 +323,16 @@ else {  //create Excel header
 						$projPost="$ymdStr&amp;orderby=project&amp;client_id=$client_id&amp;mode=$mode";
 						$datePost="$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
 						if($orderby== 'project'): ?>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Project</a></td>
-							<td class="inner_table_column_heading">Task</td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('PROJECT'); ?></a></td>
+							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
 						<?php else: ?>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading">Date</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Project</a></td>
-							<td class="inner_table_column_heading">Task</td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('PROJECT'); ?></a></td>
+							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
 						<?php endif; ?>
-						<td class="inner_table_column_heading">Log Entry</td>
-						<td class="inner_table_column_heading">Duration</td>
+						<td class="inner_table_column_heading"><?php echo JText::_('DESCRIPTION'); ?></td>
+						<td class="inner_table_column_heading"><?php echo JText::_('DURATION'); ?></td>
 					</tr>
 <?php
 	$darray=array();
@@ -467,11 +469,11 @@ else {  //create Excel header
 <?php if ($print) { ?>
 	<table width="100%" border="1" cellspacing="0" cellpadding="0">
 		<tr>
-			<td width="30%"><table><tr><td>Manager Signature:</td></tr></table></td>
+			<td width="30%"><table><tr><td><?php echo JText::_('MANAGER_SIGNATURE'); ?>:</td></tr></table></td>
 			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 		</tr>
 		<tr>
-			<td width="30%"><table><tr><td>Client Signature:</td></tr></table></td>
+			<td width="30%"><table><tr><td><?php echo JText::_('CLIENT_SIGNATURE'); ?>:</td></tr></table></td>
 			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
 		</tr>
 	</table>		

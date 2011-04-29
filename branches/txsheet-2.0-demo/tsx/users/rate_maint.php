@@ -16,7 +16,7 @@ if (empty($loggedInUser))
 //define the command menu
 
 ?>
-<head><title>Rates Management Page</title>
+<head>
 <?php
 $layout = Common::getLayout();
 
@@ -24,6 +24,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | Simple Weekly Timeshe
 
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"clock_popup.php?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USER_RATES')."</title>");
 
 ?>
 <script type="text/javascript" type="text/javascript">
@@ -53,12 +54,9 @@ if (isset($popup))
 <input type="hidden" name="action" value="" />
 <input type="hidden" name="rate_id" value="" />
 
+<h1><?php echo JText::_('USER_RATES'); ?>:</h1>
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td width="100%" class="face_padding_cell">
-			<h1>Rates:</h1>
-		</td>
-	</tr>
 	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
 	<tr class="inner_table_head">
 		<td class="inner_table_column_heading">&nbsp;Rate Id</td>

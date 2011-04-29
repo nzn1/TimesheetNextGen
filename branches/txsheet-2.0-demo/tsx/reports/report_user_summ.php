@@ -104,6 +104,8 @@ function format_time($time,$time_fmt) {
 $Location="$_SERVER[PHP_SELF]?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=$start_day&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
 gbl::setPost("uid=$uid&amp;time_fmt=$time_fmt");
 
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USER_SUMMARY')." | ".gbl::getContextUser()."</title>");
+
 if(!$export_excel) {
 	require("report_javascript.inc");
 ?>
@@ -139,7 +141,6 @@ function init(){
 
 <html>
 <head>
-<title>User Summary Report</title>
 <?php 
 	if(!$export_excel) ;
 	else {
@@ -149,6 +150,8 @@ function init(){
 	}
 ?>
 </head>
+<h1><?php echo JText::_('USER_SUMMARY'); ?></h1>
+
 <?php
 	if($print) {
 		echo "<body width=\"100%\" height=\"100%\"";
@@ -186,16 +189,16 @@ function init(){
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap>
-							<b>User:</b>&nbsp;
+							<b><?php echo JText::_('USER'); ?>:</b>&nbsp;
 							<?php Common::user_select_droplist($uid, false); ?>
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
 						<?php
-							echo date("F", $start_time)." ";
+							echo utf8_encode(strftime("%B", $start_time))." ";
 							Common::day_button("start_day",$start_time);
-							echo "&nbsp;&nbsp;to&nbsp;&nbsp;";
+							echo "&nbsp;&nbsp;-&nbsp;&nbsp;";
 							Common::day_button("end_day",$end_time);
-							echo ", $end_year";
+							echo " $end_year";
 						?> 
 						</td>
 						<?php if (!$print): ?>
@@ -210,12 +213,12 @@ function init(){
 								$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=1&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=15";
 								$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=16&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=".date('t',strtotime("$end_year-$end_month-15"));
 							?>
-								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p1post; ?>" class="outer_table_action">Bi-monthly period 1</a><br />
-								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p2post; ?>" class="outer_table_action">Bi-monthly period 2</a>
+								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p1post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_1'); ?></a><br />
+								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p2post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_2'); ?></a>
 							</td>
 							<td  align="right" width="15%" nowrap >
-								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
-								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="../images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="../images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>
 						<?php endif; ?>
 					</tr>

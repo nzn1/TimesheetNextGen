@@ -101,13 +101,10 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASKS')."
 
 <form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
 <input type="hidden" name="page" />
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-							<td align="center" class="outer_table_heading" nowrap>
-							<?php echo (JText::_('TASKS')) ?>
-						</td>
 
-	</tr>
+<h1> <?php echo (JText::_('TASKS')) ?> </h1>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 

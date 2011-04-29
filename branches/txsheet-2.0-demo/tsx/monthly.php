@@ -65,41 +65,43 @@ if (isset($popup))
 <!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
 <input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
 
+<h1><?php echo JText::_('MONTHLY_TIMESHEET'); ?></h1>
+
 <!-- Overall table covering month cells, client and project and date -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading">
-			<?php echo JText::_('MONTHLY_TIMESHEET'); ?>
-		</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td nowrap align="center">
+		<td >&nbsp;</td>
+		<td nowrap  colspan="8" class="outer_table_heading">
+			<?php echo JText::_('CURRENT_DATE').": "; ?>
 			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
 			value="<?php echo date('d-M-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;
 			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td >&nbsp;</td>
 	</tr>
 	<tr>
 		<td align="center" nowrap class="outer_table_heading">
-			<span><?php echo strftime(JText::_('DFMT_MONTH_YEAR'), $startDate); ?></span>
+			<?php echo JText::_('CURRENT_MONTH').": "; ?><span style="color:#00066F;"><?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)); ?> </span> 
 		</td>
-		<td width="10%" align="right"><?php echo JText::_('FILTER')?>:</td>
-		<td width="10%" align="right">
-				<?php echo ucfirst(JText::_('CLIENT')).':'; ?>
+		<td nowrap class="outer_table_heading"><?php echo JText::_('FILTER')?>:</td>
+		<td nowrap class="outer_table_heading">
+				<span style="color:#00066F;"><?php echo JText::_('CLIENT').': '; ?></span>
 		</td>
-		<td width="25%" align="left">
+		<td align="left">
 			<?php Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?>
 		</td>
-		<td width="10%"align="right">
-			<?php echo ucfirst(JText::_('PROJECT')).':'; ?>
+		<td >&nbsp;</td>
+		<td nowrap class="outer_table_heading">
+			<span style="color:#00066F;"><?php echo JText::_('PROJECT').': '; ?></span>
 		</td>
-		<td width="25%"align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
-		<td width="10%">&nbsp;</td>
+		<td align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
+		<td >&nbsp;</td>
+	</tr>
+	<tr>
+		<td >&nbsp;</td>
 	</tr>
 </table><!-- end of the client, project select table and the current month -->
 

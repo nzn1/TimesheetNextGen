@@ -25,11 +25,10 @@ if (empty($loggedInUser))
 </head>
 <form action="<?php echo Config::getRelativeRoot(); ?>/clients/client_action" method="post">
 
+<h1><?php echo JText::_('CLIENTS'); ?></h1>
+
 	<table width="100%" border="0">
 		<tr>
-		<td align="left" nowrap class="outer_table_heading">
-			<?php echo JText::_('CLIENTS') ?>
-		</td>
 		<td align="right">
 			<a href="client_add" class="outer_table_action"><?php echo JText::_('ADD_NEW_CLIENT')?></a>
 		</td>

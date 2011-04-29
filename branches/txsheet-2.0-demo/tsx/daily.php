@@ -1,3 +1,4 @@
+<h1><?php echo JText::_('DAILY_TIMESHEET'); ?></h1>
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
@@ -61,13 +62,8 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="center" nowrap class="outer_table_heading" nowrap>
-			<?php echo JText::_('DAILY_TIMESHEET'); ?>
-		</td>
-	</tr>
-	<tr>
 		<td align="left" colspan="2" nowrap class="outer_table_heading">
-			<?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate); ?>
+			<?php echo JText::_('CURRENT_DATE').': '?><span style="color:#00066F;"><?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate); ?></span>
 		</td>
 		<td align="right" nowrap>
 			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
