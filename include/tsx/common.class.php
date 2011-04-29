@@ -761,7 +761,7 @@ class Common{
 						"FROM ".tbl::getClientTable()." ORDER BY organisation");
 		}
 
-		print "<select name=\"client_id\" onchange=\"$onChange\" style=\"width:100%;\"";
+		print "<select name=\"client_id\" onchange=\"$onChange\"";
 		if ($isMultiple)
 			print "multiple size=\"4\"";
 		print ">\n";
@@ -866,7 +866,7 @@ class Common{
 	public static function project_select_list($currentClientId, $needsClient, $currentProjectId, $contextUser, $showSelectProject, $showAllProjects, $onChange="", $disabled=false) {
 
 		if ($currentClientId == 0 && $needsClient) {
-			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
+			print "<select name=\"dummy\" disabled=\"disabled\" >\n";
 			print "  <option>".JText::_('SELECT_CLIENT')."</option>\n";
 			print "</select>\n";
 			return;
@@ -893,7 +893,7 @@ class Common{
 		list($qh, $num) = dbQuery($query);
 		if ($num == 0) {
 			if (!empty($contextUser)) {
-				print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
+				print "<select name=\"dummy\" disabled=\"disabled\" >\n";
 				print "  <option>There are no projects assigned to you</option>\n";
 				print "</select>\n";
 				return;

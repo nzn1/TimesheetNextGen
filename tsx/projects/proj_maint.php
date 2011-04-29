@@ -111,16 +111,14 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS'
 
 <form method="post" name="projectFilter" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
 	<input type="hidden" name="page" value="English" />
+
+<h1><?php echo JText::_('PROJECTS'); ?></h1>
+
 	<table width="100%" border="0" class="section_body">
 		<tr>
-			<td align="center" nowrap class="outer_table_heading">
-				<?php echo ucwords(JText::_('PROJECTS'))?>
-			</td>
-		</tr>
-		<tr>
-			<td align="right">&nbsp;<?php echo ucwords(JText::_('CLIENT'))?>:&nbsp;</td>
+			<td class="outer_table_heading">&nbsp;<?php echo JText::_('CLIENT')?>:&nbsp;</td>
 			<td><?php Common::client_select_list(gbl::getClientId(), 0, false, false, true, false, "submit();", false); ?></td>
-			<td align="right">&nbsp;<?php echo ucwords(JText::_('STATUS'))?>:&nbsp;</td><td><?php Common::proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>
+			<td class="outer_table_heading">&nbsp;<?php echo JText::_('STATUS')?>:&nbsp;</td><td><?php Common::proj_status_list_filter('proj_status', $proj_status, "submit();"); ?></td>
 			</td>
 			<td>
 				<?php writePageLinks($page, $results_per_page, $num2);?>

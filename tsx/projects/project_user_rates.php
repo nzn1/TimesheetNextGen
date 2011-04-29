@@ -13,21 +13,15 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_R
 
 </head>
 
+<h1><?php echo JText::_('PROJECT_RATES'); ?></h1>
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td align="left" nowrap class="outer_table_heading">
-				<?php echo JText::_('PROJECT_RATES') ?>
-		</td>
-	</tr>
-	<tr>
-		<td>
-		&nbsp;
-		</td>
-	</tr>
-	<tr>
 		<td align="left" nowrap class="outer_table_heading">
 				<?php echo JText::_('ALL_PROJECTS') ?>
 		</td>
+	</tr>
+	<tr>
+		<td >&nbsp;</td>
 	</tr>
 
 	<tr class="inner_table_head">

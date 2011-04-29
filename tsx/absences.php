@@ -69,12 +69,9 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 <input type="hidden" name="action" id="action" value=<?php echo $action; ?> />
 <input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>" />
 
+<h1><?php echo JText::_('ABSENCE_ENTRY'); ?></h1>
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-	<td align="left" nowrap class="outer_table_heading">
-	<?php echo JText::_('ABSENCE_ENTRY'); ?>
-	</td>
-	</tr>
 	<tr>
 		<!--	<?php print "$day $month $year"; ?> -->
 		<?php if($canChangeUser) : ?>
@@ -83,7 +80,7 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 			<td width="38%" nowrap><?php echo JText::_('USER'); ?>: &nbsp; <?php echo "<b>$uid</b>"; ?></td>
 		<?php endif; ?>
 		<td align="center" nowrap class="outer_table_heading">
-			<?php echo strftime(JText::_('DFMT_MONTH_YEAR'), mktime(0,0,0,$month, 1, $year)); ?>
+			<?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), mktime(0,0,0,$month, 1, $year))); ?>
 		</td>
 		<td align="right">&nbsp; </td>
 				<td align="center" nowrap="nowrap" class="outer_table_heading">
@@ -97,6 +94,9 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 		<td align="right">
 			<input type="button" value="<?php echo JText::_('SAVE_CHANGES')?>" name="save" id="save" onclick="onSubmit();" />
 		</td>
+	</tr>
+	<tr>
+		<td >&nbsp;</td>
 	</tr>
 </table>
 

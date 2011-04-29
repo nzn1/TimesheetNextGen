@@ -35,18 +35,18 @@ class NavCal extends NavCalCommon{
 							$dti=getdate($prev_month);
 							echo "<a href=\"".Rewrite::getShortUri()."?".gbl::getPost()
               ."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()
-              ."&amp;year=".$dti["year"]."&amp;month=".$dti["mon"]."&amp;day=".$dti["mday"]."\">Prev</a>";
+              ."&amp;year=".$dti["year"]."&amp;month=".$dti["mon"]."&amp;day=".$dti["mday"]."\">".JText::_('PREVIOUS_SHORT')."</a>";
 							?>
 						</td>
 						<td align="center" nowrap class="navcal_header">
-							<?php echo date('M Y',$startDateCalendar); ?>
+							<?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'),$startDateCalendar)); ?>
 						</td>
 						<td align="right" nowrap class="navcal_header">
 							<?php
 							$dti=getdate($next_month);
               echo "<a href=\"".Rewrite::getShortUri()."?".gbl::getPost()
               ."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()
-							."&amp;year=".$dti["year"]."&amp;month=".$dti["mon"]."&amp;day=".$dti["mday"]."\">Next</a>";
+							."&amp;year=".$dti["year"]."&amp;month=".$dti["mon"]."&amp;day=".$dti["mday"]."\">".JText::_('NEXT_SHORT')."</a>";
 							?>
 						</td>
 					</tr>

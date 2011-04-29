@@ -115,10 +115,10 @@ class NavCalCommon{
 		$dti=getdate($entry);
 		print "\t<td valign=\"top\" align=\"center\" class=\"calendar_cell_middle\" style=\"font-size: 11\">";
 		if($dti["mon"] == gbl::getMonth() && $dti["year"] == gbl::getYear()) {
-			print "\t<font color=\"#CC9900\"><b>".strftime("%b",$entry)."</b></font></td>\n";
+			print "\t<font color=\"#CC9900\"><b>".utf8_encode(strftime("%b",$entry))."</b></font></td>\n";
 		} else {
 			echo "\t<a href=\"".Rewrite::getShortUri()."?$post";
-			echo "&amp;year=".$dti["year"]."&amp;month=".$dti["mon"]."&amp;day=".$dti["mday"]."\">" . strftime("%b",$entry) . "</a></td>\n";
+			echo "&amp;year=".$dti["year"]."&amp;month=".$dti["mon"]."&amp;day=".$dti["mday"]."\">" . utf8_encode(strftime("%b",$entry)) . "</a></td>\n";
 		}
 	}
 
@@ -257,7 +257,7 @@ class NavCalCommon{
 		$cdti=getdate($start_time);
 		print "\t<td valign=\"top\" align=\"center\" class=\"calendar_cell_middle\" style=\"font-size: 11\">";
 		if($sdti["mon"] == $cdti["mon"] && $sdti["year"] == $cdti["year"]) {
-			print "\t<font color=\"#CC9900\"><b>".strftime("%b",$start)."</b></font></td>\n";
+			print "\t<font color=\"#CC9900\"><b>".utf8_encode(strftime("%b",$start))."</b></font></td>\n";
 		} else {
 			print "\t<a href=\"" . $_SERVER["PHP_SELF"] . "?$post";
 			print 	"&amp;start_year=".$sdti["year"] .	
@@ -266,7 +266,7 @@ class NavCalCommon{
 				 	"&amp;end_year=".$edti["year"] .	
 					"&amp;end_month=".$edti["mon"] .
 					"&amp;end_day=".$edti["mday"] .
-					"\">" . strftime("%b",$start) . "</a></td>\n";
+					"\">" . utf8_encode(strftime("%b",$start)) . "</a></td>\n";
 		}
 	}
 
