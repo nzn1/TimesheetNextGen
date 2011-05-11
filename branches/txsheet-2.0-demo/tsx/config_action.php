@@ -123,7 +123,7 @@ elseif ($action == "edit") {
 		"LDAPFallback='$LDAPFallback', " .
 		"aclStopwatch='$aclStopwatch', " .
 		"aclDaily='$aclDaily', " .
-		"aclWeekly='$aclStopwatch', " .
+		"aclWeekly='$aclWeekly', " .
 		"aclMonthly='$aclMonthly', " .
 		"aclSimple='$aclSimple', " .
 		"aclClients='$aclClients', " .
