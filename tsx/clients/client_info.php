@@ -20,7 +20,7 @@ PageElements::addFile('tsx_footer','themes/'.PageElements::getTheme().'/popups.i
 				"username, contact_email, phone_number, fax_number, gsm_number, ".
 				"http_url ".
 			"FROM ".tbl::getClientTable()." ct ".
-			"WHERE ct.client_id=".gbl::getClientId().";
+			"WHERE ct.client_id=".gbl::getClientId();
 
 
 
