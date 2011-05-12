@@ -560,7 +560,45 @@ class Common{
       		return null;
     	}
 	}
+	
+	/**
+ 	* Routine to produce a selection list of employees
+ 	* @params String $name - the name of the html selection list
+ 	* @params String Array $emparray - a list of employee names
+ 	* @params String $default - if set enables the existing employee to be pre-selected in the list
+ 	*/
+	public static function emp_button($name, $emparray, $default='') {
+		echo "<select name=\"$name\" style=\"width:100%\">\n";
 
+		foreach($emparray as $emp) {
+			echo "<option value=\"$emp\"";
+				if ($default == $emp) print " selected ";
+			echo "> $emp </option> \n";
+		}
+
+		echo "</select>";
+	}
+
+	/**
+ 	* Routine to produce a selection list of employees who are supervisors, designated as managers in the user table
+ 	* @params String $name - the name of the html selection list
+ 	* @params String Array $svruid - a list of employee's uids who are noted as managers
+ 	* @params String Array $svrname - a list of employee's names who are noted as managers
+ 	* * @params String $default - if set enables the existing supervisor to be pre-selected in the list
+ 	*/
+	public static function svr_button($name, $svruid, $svrname, $default='') {
+		echo "<select name=\"$name\" style=\"width:100%\">\n";
+		print "<option value=\"none\"";
+			if ($default == "none" | $default == "") print " selected ";
+			print ">None</option>\n";
+			for ($i=0; $i<count($svruid); $i++)  {
+				print "<option value=\"$svruid[$i]\"";
+				if ($default == $svruid[$i]) print " selected ";
+					print ">$svrname[$i]</option>\n";
+			}
+		echo "</select>";
+	}
+	
 	public static function day_button($name, $timeStamp=0, $limit=1) {
 		$realToday = gbl::getRealToday();
 		if (!$timeStamp)
@@ -744,16 +782,17 @@ class Common{
 	public static function client_select_list($currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange="", $restrictedList=true) {
 
 		if ($restrictedList) {
-				list($qh,$num) = dbQuery(
-						"SELECT ".tbl::getClientTable().".client_id, ".tbl::getClientTable().".organisation, ".
+				$dbquery = "SELECT ".tbl::getClientTable().".client_id, ".tbl::getClientTable().".organisation, ".
 						"".tbl::getProjectTable().".client_id, ".tbl::getProjectTable().".proj_id, ".
 						"".tbl::getAssignmentsTable().".proj_id, ".tbl::getAssignmentsTable().".username ".
 						"FROM ".tbl::getClientTable().", ".tbl::getProjectTable().", ".tbl::getAssignmentsTable()." ".
 						"WHERE ".tbl::getClientTable().".client_id=".tbl::getProjectTable().".client_id ".
-						"AND ".tbl::getProjectTable().".proj_id=".tbl::getAssignmentsTable().".proj_id ".
-						"AND ".tbl::getAssignmentsTable().".username='$contextUser' ".
-						"GROUP BY ".tbl::getClientTable().".client_id ".
-						"ORDER BY organisation");
+						"AND ".tbl::getProjectTable().".proj_id=".tbl::getAssignmentsTable().".proj_id ";
+				if ($contextUser > 0) 
+					$dbquery .=	"AND ".tbl::getAssignmentsTable().".username='$contextUser' ";
+					$dbquery .=	"GROUP BY ".tbl::getClientTable().".client_id ". 
+								"ORDER BY organisation";
+			list($qh,$num) = dbQuery($dbquery);
 		}
 		else {
 				list($qh,$num) = dbQuery(
@@ -814,7 +853,7 @@ class Common{
 		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
 			// show disabled users at bottom of list
 			$show_disabled=1;
-			$query = "SELECT uid, last_name, first_name, status FROM ".tbl::getUserTable(). 
+			$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getUserTable(). 
 				" WHERE (SELECT uid FROM " .tbl::getUserTable(). " s WHERE s.username = '$username') = supervisor " .
 				" ORDER BY status DESC, last_name, first_name";
 		} else {
