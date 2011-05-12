@@ -21,7 +21,7 @@ $query = "SELECT client_id, organisation, description, address1, address2,".
 			"username, contact_email, phone_number, fax_number, gsm_number, ".
 			"http_url ".
 		"FROM ".tbl::getClientTable()." ct ".
-		"WHERE ct.client_id=".gbl::getClientId().";
+		"WHERE ct.client_id=".gbl::getClientId();
 
 //run the query
 list($qh, $num) = dbQuery($query);
