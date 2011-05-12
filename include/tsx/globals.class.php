@@ -10,6 +10,7 @@ class gbl{
 	private static $proj_id;
 	private static $task_id;
 	private static $client_id;
+	private static $uid;
 	private static $post;
 	private static $contextUser;
 	private static $loggedInUser;	
@@ -28,7 +29,8 @@ class gbl{
 		self::$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 		self::$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 		self::$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;		
-
+		self::$uid = isset($_REQUEST["uid"]) ? $_REQUEST["uid"]: "";	
+		
 	if(isset($_REQUEST['date1'])){
 //if the date variable exists
 
@@ -77,11 +79,7 @@ class gbl{
 			break;
 			
 	}
-
-	
 }    
-		
-
 		
 		if (isset($_SESSION['contextUser']))
 			self::$contextUser = strtolower($_SESSION['contextUser']);
@@ -94,8 +92,7 @@ class gbl{
     self::$post="year=".self::$year."&amp;month=".self::$month."&amp;day=".self::$day."&amp;proj_id=".self::$proj_id."&amp;task_id=".self::$task_id."&amp;client_id=".self::$client_id;
 		
 	}
-	
-	
+		
 	public static function getRealToday(){
 		return self::$realToday;
 	}
@@ -129,13 +126,15 @@ class gbl{
 	public static function getClientId(){
 		return self::$client_id;
 	}
-	
+	public static function getUId(){
+		return self::$uid;
+	}
 	public static function getPost(){
-    return self::$post;
-  }
-  public static function setPost($s){
-    self::$post = $s;
-  }
+    	return self::$post;
+  	}
+  	public static function setPost($s){
+    	self::$post = $s;
+  	}
 	public static function getContextUser(){
 		return self::$contextUser;
 	}
@@ -147,15 +146,15 @@ class gbl{
 	}
 	public static function getBreakRatio(){
     return self::$breakRatio;
-  }
-  public static function setBreakRatio($s){
-    self::$breakRatio = $s;
-  }
+  	}
+  	public static function setBreakRatio($s){
+    	self::$breakRatio = $s;
+  	}
 	public static function getSiteClosed(){
-    return self::$siteClosed;
-  }
-  public static function setSiteClosed($s){
-    self::$siteClosed = $s;
+    	return self::$siteClosed;
+  	}
+  	public static function setSiteClosed($s){
+    	self::$siteClosed = $s;
   }
   
 }
