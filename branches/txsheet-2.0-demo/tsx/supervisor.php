@@ -7,13 +7,11 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
 include('submit.class.php');
 $sc = new SubmitClass();
 
-
-//load local vars from request/post/get
 if (isset($_REQUEST['uid']))
-	$uid = $_REQUEST['uid'];
+	$uid = gbl::getUid();
 else {
-	// need to find the first user managed by this supervisor, otherwise we display the supervisor's times
-	//$query = "SELECT uid, last_name, first_name, status FROM ".tbl::getuserTable()." " .
+	// need to find the first user managed by this supervisor, contextuser, otherwise we display the supervisor's times
+	//$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getuserTable()." " .
 	//		" WHERE (select uid from ts1_user s WHERE s.username = 'peter') = supervisor ORDER BY status DESC, last_name, first_name";
 	list($qh, $num) = Common::get_users_for_supervisor(gbl::getContextUser());
 	if ($num > 0) {
@@ -21,6 +19,7 @@ else {
 		$uid = $data['uid'];
 	}
 	else
+	// no user
 		$uid = "0";
 }
 
