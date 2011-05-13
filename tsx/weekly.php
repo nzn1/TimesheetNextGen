@@ -59,7 +59,13 @@ if (isset($popup)){
 	$nav->navCalClockOnOff($todayDate,false);
 ?>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+<script type="text/javascript">
+function CallBack_WithNewDateSelected(strDate) 
+{
+	document.subtimes.submit();
+}
+</script>
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="subtimes">
 <input type="hidden" name="month" value=<?php echo gbl::getMonth(); ?> />
 <input type="hidden" name="year" value=<?php echo gbl::getYear(); ?> />
 <input type="hidden" name="day" value=<?php echo gbl::getDay(); ?> />
@@ -68,21 +74,7 @@ if (isset($popup)){
 
 <!-- date selection table -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td nowrap align="center">
-			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-			value="<?php echo date('d-M-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;
-			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
-		</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-	</tr>
+
 	<tr>
 		<td align="center" nowrap class="outer_table_heading">
 			<?php
@@ -92,6 +84,12 @@ if (isset($popup)){
 				$edStr = utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$endDate - 6*60*60));
 				echo JText::_('CURRENT_WEEK').': <span style="color:#00066F;">'.$sdStr.' - '.$edStr.'</span>';
 			?>
+		</td>
+		<td>&nbsp;</td>
+		<td nowrap align="center">
+		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
+			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
 		</td>
 		<td width="10%" align="right"><?php echo JText::_('FILTER')?>:</td>
 		<td width="10%" align="right">
