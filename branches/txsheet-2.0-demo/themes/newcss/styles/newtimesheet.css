@@ -1,0 +1,146 @@
+.headerwrap {
+	position: relative;
+	background-color: #ffffff;
+	text-align: left;
+	margin-bottom: 10px;
+	width: 100%;
+	overflow:hidden;
+}
+.content {
+    position:relative;
+    text-align: left;
+    width: 100%;
+	color: #000000;
+    background: #ffffff;   /*this is required here so that highlighting in mozilla works */
+
+}
+
+body {
+    margin: 0;
+    background-color:#FFFFFF;
+  }
+
+
+table {
+    background-color : #ffffff;
+    color : #ffffff;
+    font-family : verdana,Arial,sas-serif;
+    font-size : 11px;
+    font-weight : normal;
+    width : 100%;
+  }
+
+
+tr.borderbottom td {
+    background-color : #F2F3FF;
+    color : #00066F;
+    border-bottom-color : #5271CC;
+    border-bottom-style : solid;
+    border-bottom-width : 1px;
+  }
+
+.tablehead {
+    background-color : #00066f;
+    color : #A4A4C7;
+    font-weight : bold;
+    cursor : default;
+    font-family : Verdana,Arial,sans-serif;
+    font-size : 12px;
+}
+thead {
+    cursor : default;
+    font-family : Verdana,Arial,sans-serif;
+    font-size : 12px;
+  }
+
+
+tbody {
+    background-color : #F2F3FF;
+  }
+
+
+tr {
+    background-color : #F2F3FF;
+    border-bottom-color : #5271CC;
+    border-bottom-style : solid;
+    border-bottom-width : 1px;
+  }
+
+
+td {
+    color : #00066f;
+  }
+
+
+a:link {
+    color: #417BE4;
+    font-weight: bold;
+    font-family: Verdana, Arial, sans-serif;
+    text-decoration: none;
+  }
+
+
+a:hover {
+    text-decoration: underline;
+  }
+
+
+th {
+    background-color : #00066f;
+    color : #A4A4C7;
+    font-weight : bold;
+  }
+
+
+.selectable {
+    color : #ffffff;
+    text-decoration: none;
+  }
+
+
+.texttotal {
+    color : red;
+    font-size : 12px;
+    text-align : right;
+  }
+
+
+.textproject {
+    color : red;
+    font-size : 12px;
+    font-weight : bold;
+    text-align : right;
+  }
+
+
+.tasktotal {
+    color : #000000;
+  }
+
+
+.projecttotal {
+    color : #000000;
+    font-weight : bold;
+    font-size : 12px;
+  }
+
+
+.totalr {
+    background-color: #eaeaea;
+  }
+
+
+.mtotalr {
+    background-color: #fff0f0;
+  }
+
+#wrap {
+	position: relative;
+	clear: both;
+	padding: 0;
+	margin: 20px auto;
+	/*width: 1000px;*/
+	width:98%;
+	/* max-width:1000px; */
+}
+
