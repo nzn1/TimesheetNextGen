@@ -238,6 +238,8 @@ CREATE TABLE __TABLE_PREFIX__user (
   time_stamp timestamp(14),
   status enum('INACTIVE','ACTIVE') DEFAULT 'ACTIVE' NOT NULL,
   uid int(11) NOT NULL auto_increment,
+  supervisor int(11) DEFAULT NULL,
+  employee_type enum('Contractor','Employee') NOT NULL DEFAULT 'Employee',
   session varchar(32),
   PRIMARY KEY (username),
   KEY uid (uid)

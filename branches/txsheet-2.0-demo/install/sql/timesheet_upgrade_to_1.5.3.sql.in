@@ -26,3 +26,6 @@ insert into __TABLE_PREFIX__configuration values ('LDAPReferrals',(select (LDAPR
 insert into __TABLE_PREFIX__configuration values ('LDAPBindUsername',(select (LDAPBindUsername) from __TABLE_PREFIX__config where config_set_id=1));
 insert into __TABLE_PREFIX__configuration values ('LDAPBindPassword',(select (LDAPBindPassword) from __TABLE_PREFIX__config where config_set_id=1));
 insert into __TABLE_PREFIX__configuration values ('LDAPBindByUser',(select (LDAPBindByUser) from __TABLE_PREFIX__config where config_set_id=1));
+/* new fields */
+ALTER TABLE __TABLE_PREFIX__user  ADD   employee_type enum('Contractor','Employee') NOT NULL DEFAULT 'Employee';
+ALTER TABLE __TABLE_PREFIX__user  ADD supervisor int(11) DEFAULT NULL;
