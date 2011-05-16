@@ -734,7 +734,7 @@ class Common{
 		return array($data['first_name'], $data['last_name'], $data['status']);
 	}
 
-	public static function multi_user_select_list($name, $selected_array=array()) {
+	public static function multi_user_select_list($name, $selected_array=array(), $size='11') {
 
 		$authenticationManager = Site::getAuthenticationManager();
 	
@@ -747,7 +747,7 @@ class Common{
 			$query = "SELECT uid, username, last_name, first_name FROM ".tbl::getUserTable()." where status='ACTIVE' ORDER BY last_name, first_name";
 		}
 		list($qh, $num) = dbQuery($query);
-		print "<select name=\"$name\" multiple=\"multiple\" size=\"11\">\n";
+		print "<select name=\"$name\" multiple=\"multiple\" size=\"$size\">\n";
 		if($show_disabled) {
 			print "<optgroup label=\"".JText::_('ACTIVE_USERS')."\">";
 			$found_disabled=0;
@@ -1254,9 +1254,9 @@ class Common{
 <?php
 	}
 
-	public static function proj_status_list($name, $status='') {
+	public static function proj_status_list($name, $status='',$size='') {
 ?>
-	<select name="<?php echo $name ?>">
+	<select name="<?php echo $name; if ($size != '') echo "size=".$size; ?>">
 	<option value="Pending" <?php if ($status == 'Pending') echo "selected=\"selected\"";?>><?php echo JText::_('PENDING');?> </option>
 	<option value="Started" <?php if ($status == 'Started') echo "selected=\"selected\"";?>><?php echo JText::_('STARTED');?></option>
 	<option value="Suspended" <?php if ($status == 'Suspended') echo "selected=\"selected\"";?>><?php echo JText::_('SUSPENDED');?></option>
