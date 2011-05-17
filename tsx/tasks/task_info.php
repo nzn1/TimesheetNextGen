@@ -35,12 +35,21 @@ $query_project = "SELECT DISTINCT title, description,".
 		"WHERE proj_id=$proj_id";
 
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASK_INFO')."</title>");
+PageElements::setTheme('newcss');
 ?>
-<html>
-<head>
-</head>
+
 
 <table border="0" width="100%" height="100%" align="center" valign="center">
+	<thead>
+		<tr>
+			<th><?php echo JText::_('TASK_NAME') ?></th>
+			<th><?php echo JText::_('STATUS') ?></th>
+			<th><?php echo JText::_('DESCRIPTION') ?></th>
+			<th><?php echo JText::_('ASSIGNED_USERS') ?></th>
+		</tr>
+	</thead>
+	<tbody>
+
 <?php
 
 		list($qh, $num) = dbQuery($query_task);
@@ -50,17 +59,16 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASK_INFO
 ?>
 		<tr>
 			<td>
-				<table width="100%" border="0" class="section_body">
-					<tr>
-						<td valign="center">
-							<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
-							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br />
-								<?php echo stripslashes($data_task["description"]); ?>
-						</td>
-					</tr>
-					<tr>
-						<td align="left" colspan="2" align="top">
-							<span class="label"><?php echo JText::_('TASK_MEMBERS'); ?>:</span><br />
+				<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
+			</td>
+			<td>
+				<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span>
+			</td>
+			<td>
+				<?php echo stripslashes($data_task["description"]); ?>
+			</td>
+			<td align="left" colspan="2" align="top">
+				<span class="label"><?php echo JText::_('TASK_MEMBERS'); ?>:</span><br />
 <?php
 			//get assigned users
 			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM  ".tbl::getTaskAssignmentsTable()."  WHERE task_id=$data_task[task_id]");
@@ -73,11 +81,10 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASK_INFO
 				print "<i>None</i>";
 			}
 ?>
-						</td>
-					<tr>
-				</table>
 			</td>
-		</tr>
+		<tr>
+	</table>
+	
 
 <?php
 	}

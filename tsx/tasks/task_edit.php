@@ -9,8 +9,8 @@ if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
 //load local vars from request/post/get
-$task_id = gbl::getTaskId();
-
+//$task_id = gbl::getTaskId();
+$task_id =  $_REQUEST['task_id'];
 //define the command menu
 Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 Site::getCommandMenu()->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
@@ -30,6 +30,7 @@ while ($datanext = dbResult($qh)) {
 }
 
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_TASK') ." | ".$data["name"]."</title>");
+PageElements::setTheme('newcss');
 ?>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/tasks/task_action" method="post">
