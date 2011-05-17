@@ -22,23 +22,64 @@ $time_string = date("Y-m-d H:i:00");
 if (!isset($action))
 	gotoLocation($HTTP_REFERER);
 elseif ($action == "add") {
-	$name = addslashes($name);
-	$description = addslashes($description);
-
-	list($qh, $num) = dbQuery("INSERT INTO ".tbl::getTaskTable()." (proj_id, name, description, assigned, started, status) VALUES ".
-						"('$proj_id', '$name','$description', ".
-						"'$time_string', '$time_string', '$task_status')");
-	//$task_id = dbLastID($dbh);
-	list($qhqt, $numt) = dbQuery("SELECT task_id FROM ".tbl::getTaskTable().
-				" WHERE proj_id= '$proj_id' AND name = '$name' AND description = '$description' ".
-				" AND started = '$time_string' AND status= '$task_status'");
-	$data = dbResult($qhqt);
-	$task_id = $data['task_id'];		
-
-	if (isset($assigned)) {
-		while (list(,$username) = each($assigned))
-			dbQuery("INSERT INTO ".tbl::getTaskAssignmentsTable()." (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
+	if ($_REQUEST['name'] != "" && isset($_REQUEST['name'])) {
+	
+		$name = addslashes($name);
+		$description = addslashes($description);
+	
+		list($qh, $num) = dbQuery("INSERT INTO ".tbl::getTaskTable()." (proj_id, name, description, assigned, started, status) VALUES ".
+							"('$proj_id', '$name','$description', ".
+							"'$time_string', '$time_string', '$task_status')");
+		//$task_id = dbLastID($dbh);
+		list($qhqt, $numt) = dbQuery("SELECT task_id FROM ".tbl::getTaskTable().
+					" WHERE proj_id= '$proj_id' AND name = '$name' AND description = '$description' ".
+					" AND started = '$time_string' AND status= '$task_status'");
+		$data = dbResult($qhqt);
+		$task_id = $data['task_id'];		
+	
+		if (isset($assigned)) {
+			while (list(,$username) = each($assigned))
+				dbQuery("INSERT INTO ".tbl::getTaskAssignmentsTable()." (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
+		}
 	}
+			// Now copy any selected standard tasks to the task table and assign to this project
+		// first, get a count of standard tasks
+		$query = "SELECT COUNT(task_id) AS numtasks FROM ". tbl::getStdTaskTable();
+
+		list($qx, $num) = dbQuery($query);
+		$data = dbResult($qx);
+		$numtasks = $data['numtasks'];
+		if($numtasks > 0) {
+			for($i = 0; $i < $numtasks; $i++) {	
+				// check which standard tasks have been selected, using the tasK_id field
+				if (isset($_REQUEST["add$i"])) {
+					$id = $_REQUEST["id$i"]; 
+					$task_status = $_REQUEST["task_status$i"];
+					
+					// retrieve the standard task details
+					list($qh, $num) = dbQuery("SELECT name, description from ". tbl::getStdTaskTable().
+						" WHERE task_id = $id");
+					$results = dbResult($qh);
+					$name = $results["name"];
+					$description = $results["description"];
+					
+					// now add standard task to task table for this project
+					list($qh, $num) = dbQuery("INSERT INTO " . tbl::getTaskTable() ." (proj_id, name, description, assigned, started, status) VALUES ".
+						"('$proj_id', '$name','$description', ".
+					"'$time_string', '$time_string', '$task_status')");
+					$task_id = dbLastID();
+					
+					// now add assignments for the task
+					if(isset($_REQUEST["stdassigned$i"])) {
+						$stdassigned = $_REQUEST["stdassigned$i"];
+						while (list(,$username) = each($stdassigned))
+							dbQuery("INSERT INTO " . tbl::getTaskAssignmentsTable() ." (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
+					}
+										
+				}
+			}
+		}
+	
 
 	// redirect to the task management page (we're done)
 	gotoLocation(Config::getRelativeRoot()."/tasks/task_maint?proj_id=$proj_id");

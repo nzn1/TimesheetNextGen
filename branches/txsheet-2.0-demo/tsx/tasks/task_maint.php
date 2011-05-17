@@ -74,9 +74,11 @@ $query_task_page = "SELECT DISTINCT task_id, name, description,status, ".
 		"WHERE t.proj_id=$proj_id ".
 		"ORDER BY t.task_id ";
 
+//$qh_task_page = Database::getInstance()->sql($query_task_page,true, Database::TYPE_OBJECT);
+//$num_task_page = Database::getNumRows();
 list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASKS')."</title>");
-
+PageElements::setTheme('newcss');
 ?>
 
 <html>
@@ -106,61 +108,42 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASKS')."
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
+		<td><?php echo (JText::_('CLIENT')) ?>:</td>
+		<td><?php Common::client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
+		<td><?php echo (JText::_('PROJECT')) ?>:</td>
+		<td><?php Common::project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false); ?></td>
+		<td>
+			<?php writePageLinks($page, $results_per_page, $num_task_page); ?>
+		</td>
+		<td>
+			<?php if ($proj_id != 0) { ?>
+				<a href="task_add?proj_id=<?php echo $proj_id; ?>"><?php echo (JText::_('ADD_NEW_TASK')) ?></a>
+			<?php } else { ?>
+				<span class="disabledLink"><?php echo JText::_('ADD_NEW_TASK') ?></span>
+			<?php } ?>
+			
+		</td>
+		<td>
+			<a href="assign-proj-mbrs-to-all-tasks"><?php echo JText::_('ASSIGN_ALLTASKS_ALLPROJECTMEMBERS') ?></a>
+		</td>
+	</tr>
+</table>
 
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap>
-							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
-								<tr>
-									<td>
-										<table width="100%" border="0" cellspacing="0" cellpadding="0">
-											<tr>
-												<td><table width="50"><tr><td><?php echo (JText::_('CLIENT')) ?>:</td></tr></table></td>
-												<td width="100%"><?php Common::client_select_list($client_id, 0, false, false, true, false, "submit();", false); ?></td>
-											</tr>
-											<tr>
-												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-											</tr>
-										</table>
-									</td>
-									<td>
-										<table width="100%" border="0" cellspacing="0" cellpadding="0">
-											<tr>
-												<td><table width="50"><tr><td><?php echo (JText::_('PROJECT')) ?>:</td></tr></table></td>
-												<td width="100%"><?php Common::project_select_list($client_id, false, $proj_id, 0, false, false, "submit();", false); ?></td>
-											</tr>
-											<tr>
-												<td height="1"></td>
-												<td height="1"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-						</td>
-						<td>
-							<?php writePageLinks($page, $results_per_page, $num_task_page); ?>
-						</td>
-						<td align="right" nowrap>
-							<?php if ($proj_id != 0) { ?>
-							<a href="task_add?proj_id=<?php echo $proj_id; ?>"><?php echo (JText::_('ADD_NEW_TASK')) ?></a>
-							<?php } else { ?>
-								<span class="disabledLink"><?php echo JText::_('ADD_NEW_TASK') ?></span>
-							<?php } ?>
-							<br /><br />
-							<a href="assign-proj-mbrs-to-all-tasks"><?php echo JText::_('ASSIGN_ALLTASKS_ALLPROJECTMEMBERS') ?></a>
-						</td>
-					</tr>
-				</table>
-
-			<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-				<tr>
-					<td>
-						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-<?php
+<table>
+	<thead>
+		<tr>
+			<th><?php echo JText::_('TASK_NAME') ?></th>
+			<th><?php echo JText::_('STATUS') ?></th>
+			<th><?php echo JText::_('DESCRIPTION') ?></th>
+			<th><?php echo JText::_('ASSIGNED_USERS') ?></th>
+			<th><?php echo JText::_('ACTIONS') ?></th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php
 	//execute query
+	//$data_task = Database::getInstance()->newQuery($query_task);
+	//$num_task = Database::getNumRows();
 	list($qh_task, $num_task) = dbQuery($query_task);
 
 	//were there any results
@@ -183,42 +166,37 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASKS')."
 	else {
 		//iterate through tasks
 		for ($j=0; $j<$num_task; $j++) {
+		//foreach($data_task as $data) {
 			$data_task = dbResult($qh_task);
 			//start the row
 ?>
 		<tr>
+			<td valign="center">
+				<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
+			</td>		
 			<td>
-				<table width="100%" border="0"<?php if ($j+1<$num_task) print "class=\"section_body\""; ?>>
-					<tr>
-						<td valign="center">
-							<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
-							&nbsp;<span class="project_status">&lt;<?php echo $data_task["status"]; ?>&gt;</span><br />
-								<?php echo stripslashes($data_task["description"]); ?>
-						</td>
-						<td align="right" valign="top" nowrap>
-							<span class="label">Actions:</span>
-							<a href="task_edit?task_id=<?php echo $data_task["task_id"]; ?>"><?php echo (JText::_('EDIT')) ?></a>,
-							<a href="javascript:delete_task(<?php echo $proj_id; ?>,<?php echo $data_task["task_id"]; ?>);"><?php echo (JText::_('DELETE')) ?></a>
-						</td>
-					</tr>
-					<tr>
-						<td align="left" colspan="2" align="top">
-							<span class="label"><?php echo JText::_('TASK_MEMBERS'); ?>:</span><br />
-<?php
-			//get assigned users
-			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM ".tbl::getTaskAssignmentsTable()." WHERE task_id=$data_task[task_id]");
-			if ($num_3 > 0) {
-				while ($data_3 = dbResult($qh3)) {
-					print "$data_3[username] ";
-				}
-			}
-			else {
-				print "<i>None</i>";
-			}
-?>
-						</td>
-					<tr>
-				</table>
+				<span class="project_status"><?php echo $data_task["status"]; ?></span>
+			</td>
+			<td>
+				<?php echo stripslashes($data_task["description"]); ?>
+			</td>
+			<td>
+				<?php
+					//get assigned users
+					list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM ".tbl::getTaskAssignmentsTable()." WHERE task_id=$data_task[task_id]");
+					if ($num_3 > 0) {
+						while ($data_3 = dbResult($qh3)) {
+							print "$data_3[username] ";
+						}
+					}
+					else {
+						print "<i>None</i>";
+					}
+					?>
+			</td>
+			<td align="right" valign="top" nowrap>
+				<a href="task_edit?task_id=<?php echo $data_task["task_id"]; ?>"><?php echo (JText::_('EDIT')) ?></a>,
+				<a href="javascript:delete_task(<?php echo $proj_id; ?>,<?php echo $data_task["task_id"]; ?>);"><?php echo (JText::_('DELETE')) ?></a>
 			</td>
 		</tr>
 
