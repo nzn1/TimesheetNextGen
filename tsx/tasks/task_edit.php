@@ -32,6 +32,7 @@ while ($datanext = dbResult($qh)) {
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_TASK') ." | ".$data["name"]."</title>");
 PageElements::setTheme('newcss');
 ?>
+<h1><?php echo JText::_('EDIT_TASK').": ".$data["name"]; ?> </h1>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/tasks/task_action" method="post">
 <input type="hidden" name="action" value="edit" />
@@ -41,7 +42,6 @@ PageElements::setTheme('newcss');
 <table align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td colspan="2" class="outer_table_heading">
-			<h1><?php echo JText::_('EDIT_TASK').": ".$data["name"]; ?> </h1>
 		</td>
 	</tr>
 	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
@@ -65,7 +65,7 @@ PageElements::setTheme('newcss');
 	<tr>
 		<td></td>
 		<td>
-			<input type="submit" value="Update" />
+			<input type="submit" value="<?php echo JText::_('CONFIRM'); ?>" />
 		</td>
 	</tr>
 </table>

@@ -35,7 +35,7 @@ $js->printJavascript();
 <script type="text/javascript">
 
 	function delete_entry(transNum) {
-		if (confirm('Are you sure you want to delete this time entry?'))
+		if (confirm("<?php echo JText::_('JS_CONFIRM_DELETE_TIME'); ?>"))
 			location.href = '<?php echo Config::getRelativeRoot(); ?>/delete?month=<?php echo gbl::getMonth(); ?>&amp;year=<?php echo gbl::getYear(); ?>&amp;day=<?php echo gbl::getDay(); ?>&amp;client_id=<?php echo gbl::getClientId(); ?>&amp;proj_id=<?php echo gbl::getProjId(); ?>&amp;task_id=<?php echo gbl::getTaskId(); ?>&amp;trans_num=' + transNum;
 	}
 

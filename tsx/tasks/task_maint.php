@@ -87,9 +87,7 @@ PageElements::setTheme('newcss');
 <script type="text/javascript">
 
 	function delete_task(projectId, taskId) {
-		if (confirm('Deleting a task which has been used in the past will make those timesheet ' +
-				'entries invalid, and may cause errors. This action is not recommended. ' +
-				'Are you sure you want to delete this task?'))
+		if (confirm("<?php echo JText::_('JS_CONFIRM_DELETE_TASK')?>"))
 			location.href = 'task_action?proj_id=' + projectId + '&task_id=' + taskId + '&action=delete';
 	}
 
@@ -100,11 +98,11 @@ PageElements::setTheme('newcss');
 	}
 </script>
 </head>
+<h1> <?php echo (JText::_('TASKS')) ?> </h1>
 
 <form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
 <input type="hidden" name="page" />
 
-<h1> <?php echo (JText::_('TASKS')) ?> </h1>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -135,7 +133,7 @@ PageElements::setTheme('newcss');
 			<th><?php echo JText::_('TASK_NAME') ?></th>
 			<th><?php echo JText::_('STATUS') ?></th>
 			<th><?php echo JText::_('DESCRIPTION') ?></th>
-			<th><?php echo JText::_('ASSIGNED_USERS') ?></th>
+			<th><?php echo JText::_('TASK_MEMBERS') ?></th>
 			<th><?php echo JText::_('ACTIONS') ?></th>
 		</tr>
 	</thead>

@@ -40,7 +40,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USER_RATE
 	{
 		//validation
 		if (document.rateForm.bill_rate.value == "")
-			alert("You must enter a billing rate.");
+			alert("<?php echo JText::_('JS_ALERT_ADD_BILLING_RATE')?>");
 		else
 		{
 			document.rateForm.action.value = "addupdate";

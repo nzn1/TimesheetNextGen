@@ -17,7 +17,7 @@ if (empty($loggedInUser))
 <script type="text/javascript">
 
 	function delete_client(clientId) {
-				if (confirm("<?php echo JText::_('CONFIRM_DELETE_CLIENT'); ?>"))
+				if (confirm("<?php echo JText::_('JS_CONFIRM_DELETE_CLIENT'); ?>"))
 					location.href = '<?php echo Config::getRelativeRoot(); ?>/clients/client_action?client_id=' + clientId + '&action=delete';
 	}
 
