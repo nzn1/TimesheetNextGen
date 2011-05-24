@@ -93,7 +93,7 @@ ob_start();
 
 <script type="text/javascript" type="text/javascript">
 function delete_project(clientId, projectId) {
-	if (confirm("<?php echo JText::_('CONFIRM_DELETE_PROJECT')?>"))
+	if (confirm("<?php echo JText::_('JS_CONFIRM_DELETE_PROJECT')?>"))
 		location.href = 'proj_action?client_id=' + clientId + '&proj_id=' + projectId + '&action=delete';
 }
 	

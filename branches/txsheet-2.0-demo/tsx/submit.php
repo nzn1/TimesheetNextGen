@@ -270,7 +270,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		// add submission and check all button
 		if (!$print): ?>
 		<td>
-			<input type="submit" name="Submit" value="submit"> 
+			<input type="submit" name="Submit" value="<?php echo JText::_('CONFIRM')?>" > 
 		</td>
 		<td>
 			<input type="checkbox" name="Check All" onclick="submitAll(document.subtimes['sub[]']);">
@@ -303,7 +303,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			<th><?php echo JText::_('WORK_DESCRIPTION');?></td>
 			<th><?php echo JText::_('STATUS');?></td>
 			<th><?php echo JText::_('DURATION');?></td>
-			<th><?php echo JText::_('SUBMIT');?></td>
+			<th><?php echo JText::_('CONFIRM');?></td>
 		</tr>
 	</thead>
 <?php

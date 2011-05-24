@@ -97,6 +97,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_U
 	}
 </script>
 </head>
+<h1><?php echo JText::_('PROJECT_USER_RATES_SELECTION') ?></h1>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/projects/project_user_rates_action" name="userRateForm" method="post">
 
@@ -109,11 +110,6 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_U
 
 
 		<table width="100%" border="0">
-			<tr>
-			<td align="left" nowrap class="outer_table_heading">
-			<?php echo JText::_('PROJECT_USER_RATES_SELECTION') ?>
-			</td>
-			</tr>
 			<tr>
 			<td align="left" nowrap class="outer_table_heading">
 				<?php echo JText::_('PROJECT_MEMBERS')." ".$proj_title." (".JText::_('CLIENT').": ".$client_name.")"; ?>
@@ -175,7 +171,7 @@ while ($idx < $len) {
 ?>
 				<tr>
 					<td colspan=3 align="center">
-					<input type="button" name="update" value="<?php echo JText::_('SUBMIT') ?>" onclick="javascript:updateRate()" class="bottom_panel_button" />
+					<input type="button" name="update" value="<?php echo JText::_('CONFIRM') ?>" onclick="javascript:updateRate()" class="bottom_panel_button" />
 					<input type="button" name="back" value="<?php echo JText::_('CANCEL') ?>" onclick="javascript:goBack()" class="bottom_panel_button" />
 					</td>
 				</tr>
