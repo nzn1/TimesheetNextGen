@@ -33,30 +33,73 @@ $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 //$configData = dbResult($qh2);
 $layout = Common::getLayout();
 
-
-
-
+//$post="";
 
 if (isset($popup))
-	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
 
-ob_start();
+	
+	
+ob_start();	
 ?>
-
+<title><?php echo Config::getMainTitle();?> - Simple Weekly Timesheet for <?php echo gbl::getContextUser();?></title>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
+<script type="text/javascript">
+	//define the hash table
+	var projectTasksHash = {};
+	
+<?php
+$PROJECT_TABLE = tbl::getProjectTable();
+$CLIENT_TABLE = tbl::getClientTable();
+$TASK_TABLE = tbl::getTaskTable();
+//get all of the projects and put them into the hashtable
+$getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
+							"$PROJECT_TABLE.title, " .
+							"$PROJECT_TABLE.client_id, " .
+							"$CLIENT_TABLE.client_id, " .
+							"$CLIENT_TABLE.organisation " .
+						"FROM $PROJECT_TABLE, " .tbl::getAssignmentsTable(). ", $CLIENT_TABLE " .
+						"WHERE $PROJECT_TABLE.proj_id=" .tbl::getAssignmentsTable().".proj_id AND ".
+							"" .tbl::getAssignmentsTable(). ".username='".gbl::getContextUser()."' AND ".
+							"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
+						"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
-<?php 
-//The following line won't work:
-//  echo "<script type=\"text/javascript\" src=\"".Config::getRelativeRoot()."/js/simple.js\"></script>\n";
-//because there's php code in the js file, so, we can't load it like it's a straight javascript file
-//and we can't separate that php stuff from the javascript file either, or the javascript can't
-//see the hash table that is created by the php stuff.
-require("js/simple.js");
+list($qh3, $num3) = dbQuery($getProjectsQuery);
+
+//iterate through results
+for ($i=0; $i<$num3; $i++) {
+	//get the current record
+	$data = dbResult($qh3, $i);
+	print("projectTasksHash['" . $data["proj_id"] . "'] = {};\n");
+	print("projectTasksHash['" . $data["proj_id"] . "']['name'] = '". addslashes($data["title"]) . "';\n");
+	print("projectTasksHash['" . $data["proj_id"] . "']['clientId'] = '". $data["client_id"] . "';\n");
+	print("projectTasksHash['" . $data["proj_id"] . "']['clientName'] = '". addslashes($data["organisation"]) . "';\n");
+	print("projectTasksHash['" . $data["proj_id"] . "']['tasks'] = {};\n");
+}
+
+//get all of the tasks and put them into the hashtable
+$getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
+						"$TASK_TABLE.task_id, " .
+						"$TASK_TABLE.name " .
+					"FROM $TASK_TABLE, " .tbl::getTaskAssignmentsTable(). " ".
+					"WHERE $TASK_TABLE.task_id = " .tbl::getTaskAssignmentsTable().".task_id AND ".
+						"".tbl::getTaskAssignmentsTable().".username='".gbl::getContextUser()."' ".
+					"ORDER BY $TASK_TABLE.name";
+
+list($qh4, $num4) = dbQuery($getTasksQuery);
+//iterate through results
+for ($i=0; $i<$num4; $i++) {
+	//get the current record
+	$data = dbResult($qh4, $i);
+	print("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
+	print("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
+}
+echo"</script>";
+echo "<script type=\"text/javascript\" src=\"".Config::getRelativeRoot()."/js/simple.js\"></script>\n";
 
 PageElements::setHead(ob_get_contents());
 ob_end_clean();
 PageElements::setBodyOnLoad('populateExistingSelects();');
-PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('SIMPLE_WEEK')." | ".gbl::getContextUser()."</title>");
 ?>
 
 <form name="simpleForm" action="<?php echo Config::getRelativeRoot(); ?>/simple_action" method="post">
