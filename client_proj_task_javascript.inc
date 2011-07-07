@@ -179,6 +179,24 @@ for ($i=0; $i<$num4; $i++) {
 		}
 	}
 
+	function sortSelect(selElem) {
+		var tmpAry = new Array();
+		for (var i=0;i<selElem.options.length;i++) {
+			tmpAry[i] = new Array();
+			tmpAry[i][0] = selElem.options[i].text;
+			tmpAry[i][1] = selElem.options[i].value;
+		} 
+		tmpAry.sort();
+		while (selElem.options.length > 0) {
+			selElem.options[0] = null;
+		}
+		for (var i=0;i<tmpAry.length;i++) {
+			var op = new Option(tmpAry[i][0], tmpAry[i][1]);
+			selElem.options[i] = op;
+		}
+		return;
+	}
+
 	function populateClientSelect(selectedClientId) {
 		//get the client select
 		var clientSelect = document.getElementById('clientSelect');
@@ -199,6 +217,7 @@ for ($i=0; $i<$num4; $i++) {
 			if (clientKey == selectedClientId)
 				clientSelect.options[clientSelect.options.length-1].selected = true;
 		}
+		sortSelect(clientSelect);
 	}
 
 	function populateProjectSelect(clientId, selectedProjectId) {
@@ -239,6 +258,7 @@ for ($i=0; $i<$num4; $i++) {
 				if (currentProjectId == selectedProjectId)
 					projectSelect.options[projectSelect.options.length-1].selected = true;
 			}
+			sortSelect(projectSelect);
 		}
 
 		//if there were no projects then disable the field
@@ -274,6 +294,7 @@ for ($i=0; $i<$num4; $i++) {
 				if (taskKey == selectedTaskId)
 					taskSelect.options[taskSelect.options.length-1].selected = true;
 			}
+			sortSelect(taskSelect);
 		}
 
 		//if there were no tasks then disable the field

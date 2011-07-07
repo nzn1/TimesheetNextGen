@@ -66,18 +66,12 @@ elseif ($action == "add") {
 	while (list(,$username) = each($assigned)) {
 		if ($username == $project_leader)
 			$leader_added = true;
-		/*
-		 * Had to add '0.00' to make the query match up to the database
-		 */
-		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1,'0.00')");
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$username', 1)");
 		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
 	}
 	if (!$leader_added) {
 		// Add the project leader.
-		/*
-		 * Had to add '0.00' to make the query match up to the database
-		 */
-		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$project_leader', 1,'0.00')");
+		dbQuery("INSERT INTO $ASSIGNMENTS_TABLE VALUES ($proj_id, '$project_leader', 1)");
 		dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE(proj_id, task_id, username) VALUES ($proj_id, $task_id, '$project_leader')");
 	}
 

@@ -1175,7 +1175,10 @@ function upgrade_tables($db_prefix, $db_pass_func) {
 		$result = update_db_version($db_prefix, '1.5.1');
 		if($result === false) return $result;
 	case '1.5.1' :
-		$result = update_db_version($db_prefix, '1.5.2');
+	case '1.5.2' :
+		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.5.3.sql.in');
+		if($result === false) return $result;
+		$result = update_db_version($db_prefix, '1.5.3');
 		if($result === false) return $result;
 	}
 	return $result;
