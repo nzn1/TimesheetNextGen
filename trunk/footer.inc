@@ -16,7 +16,7 @@ parse_and_echo(stripslashes($configData["footerhtml"]));
 		</td>
 		<td> </td>
 		<td align="center" width="30%">
-			&copy; 2008-2010 <a href="http://sourceforge.net/projects/tsheetx">Tsheetx Development Team</a><br />
+			&copy; 2008-2011 <a href="http://sourceforge.net/projects/tsheetx">Tsheetx Development Team</a><br />
 		</td>
 		<td> </td>
 		<td align="right" width="30%">

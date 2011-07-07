@@ -152,6 +152,22 @@ INSERT INTO __TABLE_PREFIX__config (config_set_id,
 
 #--------------------------------------------------------
 #
+# Table structure for new table 'configuration'
+#
+DROP TABLE IF EXISTS __TABLE_PREFIX__configuration;
+CREATE TABLE __TABLE_PREFIX__configuration (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `value` longtext NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) AUTO_INCREMENT=2 ;
+
+INSERT INTO __TABLE_PREFIX__configuration (`id`, `name`, `value`) VALUES
+(1, 'version', '1.5.3');
+
+#--------------------------------------------------------
+#
 # Table structure for table 'project'
 #
 DROP TABLE IF EXISTS __TABLE_PREFIX__project;
@@ -218,6 +234,7 @@ CREATE TABLE __TABLE_PREFIX__times (
   proj_id int(11) DEFAULT '1' NOT NULL,
   task_id int(11) DEFAULT '1' NOT NULL,
   log_message TEXT,
+  status enum('Open','Submitted','Approved') NOT NULL DEFAULT 'Open',
   KEY uid (uid,trans_num),
   UNIQUE trans_num (trans_num)
 );
@@ -237,6 +254,8 @@ CREATE TABLE __TABLE_PREFIX__user (
   time_stamp timestamp,
   status enum('INACTIVE','ACTIVE') DEFAULT 'ACTIVE' NOT NULL,
   uid int(11) NOT NULL auto_increment,
+  supervisor int(11) DEFAULT NULL,
+  employee_type enum('Contractor','Employee') NOT NULL DEFAULT 'Employee',
   session varchar(32),
   PRIMARY KEY (username),
   KEY uid (uid)

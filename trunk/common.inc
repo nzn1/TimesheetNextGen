@@ -1327,13 +1327,13 @@ if (!defined("COMMON_INC")) {
 
 	function getVersion() {
 		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT version FROM $CONFIG_TABLE WHERE config_set_id = '1'");
+		list($qh, $num) = dbQuery("SELECT value FROM $NEW_CONFIG_TABLE WHERE name = 'version'");
 		if ($num == 0)
 			return 0;
 
 		//get the first result
 		$data = dbResult($qh);
-		return $data["version"];
+		return $data["value"];
 	}
 
 	function getWeeklyStartEndDates($time) {
