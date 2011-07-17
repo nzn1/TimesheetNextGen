@@ -873,7 +873,7 @@ class Common{
 		if ($num > 0) {
 
 			if($show_disabled) {
-				$drop_list_string .= "<optgroup label=\"Active Users\">";
+				$drop_list_string .= "<optgroup label=\"".JText::_('ACTIVE_USERS')."\">";
 				$found_disabled=0;
 			}
 
@@ -1076,7 +1076,7 @@ class Common{
 		if ($num > 0) {
 
 			if($show_disabled) {
-				$drop_list_string .= "<optgroup label=\"Active Users\">";
+				$drop_list_string .= "<optgroup label=\"".JText::_('ACTIVE_USERS')."\">";
 				$found_disabled=0;
 			}
 

@@ -187,7 +187,7 @@
 
 		//if there were no projects then disable the field
 		if (empty) {
-			projectSelect.options[projectSelect.options.length] = new Option("None assigned to you", -1);
+			projectSelect.options[projectSelect.options.length] = new Option(None_to_you, -1);
 			enableProjectSelect(false);
 		} else
 			enableProjectSelect(true);
@@ -225,7 +225,7 @@
 
 		//if there were no tasks then disable the field
 		if (empty) {
-			taskSelect.options[taskSelect.options.length] = new Option("None assigned to you", -1);
+			taskSelect.options[taskSelect.options.length] = new Option(None_to_you, -1);
 			enableTaskSelect(false);
 		}
 		else

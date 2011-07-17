@@ -173,7 +173,7 @@ PageElements::setTheme('newcss');
 				<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
 			</td>		
 			<td>
-				<span class="project_status"><?php echo $data_task["status"]; ?></span>
+				<span class="project_status"><?php echo JText::_($data_task["status"]); ?></span>
 			</td>
 			<td>
 				<?php echo stripslashes($data_task["description"]); ?>
