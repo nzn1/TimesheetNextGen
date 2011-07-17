@@ -24,9 +24,9 @@
 			var taskSelect = document.getElementById('taskSelect_row' + i);
 
 			//add None to the selects
-			clientSelect.options[clientSelect.options.length] = new Option('None', '-1');
-			projectSelect.options[projectSelect.options.length] = new Option('None', '-1');
-			taskSelect.options[taskSelect.options.length] = new Option('None', '-1');
+			clientSelect.options[clientSelect.options.length] = new Option(None_option, '-1');
+			projectSelect.options[projectSelect.options.length] = new Option(None_option, '-1');
+			taskSelect.options[taskSelect.options.length] = new Option(None_option, '-1');
 
 			//add the clients
 			//var clientId = -1;

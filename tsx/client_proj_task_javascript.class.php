@@ -145,7 +145,10 @@ class ClientProjTaskJavascript{
 	
 	public function printJavascript(){
 	   ?>
-    <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/client_proj_task_javascript.js"></script>
+   <script type="text/javascript">
+   echo "var None_to_you = '".JText::_('NONE_ASSIGNED_TO_YOU')."';";
+  </script>
+     <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/client_proj_task_javascript.js"></script>
 
     <script type="text/javascript">
     	//set initial values
