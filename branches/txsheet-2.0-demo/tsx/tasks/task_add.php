@@ -63,7 +63,7 @@ PageElements::setTheme('newcss');
 	<?php 
 		// add standard tasks to the selection list
 		// get all the standard tasks
-		$query = "SELECT task_id, name, description from " .tbl::getStdTaskTable()." ORDER BY name";
+		$query = "SELECT task_id, name, description from " .tbl::getTaskTable()." ORDER BY name";
 
 		list($stdtasks, $numtasks) = dbQuery($query);
 		$noneSelected = array();

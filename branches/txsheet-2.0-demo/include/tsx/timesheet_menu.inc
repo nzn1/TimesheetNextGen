@@ -163,7 +163,7 @@ if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 		$uid='unknown';
 	//Site::getCommandMenu()->add(new Command("&nbsp; &nbsp; &nbsp; <nobr>context user:&nbsp".user_select_droplist_string('contextuid',$uid)."</nobr></form>",true,false));
 	//<NOBR> is not a valid tag.  Removed for now
-	Site::getCommandMenu()->add(new Command("&nbsp; &nbsp; &nbsp; <div class=\"nobr\">".JText::_('CONTEXT_USER').":&nbsp".Common::user_select_droplist_string('contextuid',$uid)."</div></form>",true,false));
+	Site::getCommandMenu()->add(new Command("&nbsp; &nbsp; &nbsp; <div class=\"nobr\">".JText::_('CONTEXT_USER').":&nbsp;".Common::user_select_droplist_string('contextuid',$uid)."</div></form>",true,false));
 }
 
 //disable yourself

@@ -42,6 +42,7 @@ function resizePopupWindow() {
 <?php 
 PageElements::setHead(PageElements::getHead().ob_get_contents());
 ob_end_clean();
+PageElements::setBodyOnLoad("doOnLoad();");
 
 ?>
 

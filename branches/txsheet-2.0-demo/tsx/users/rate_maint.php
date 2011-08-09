@@ -50,7 +50,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USER_RATE
 </script>
 </head>
 
-<form action="<?php echo Config::getRelativeRoot(); ?>/rate_action" name="rateForm" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/users/rate_action" name="rateForm" method="post">
 <input type="hidden" name="action" value="" />
 <input type="hidden" name="rate_id" value="" />
 

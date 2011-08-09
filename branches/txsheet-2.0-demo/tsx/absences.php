@@ -105,7 +105,7 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 			<td>
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 				<tr>
-<!--					<td class="calendar_cell_disabled_right">&nbsp</td> -->
+<!--					<td class="calendar_cell_disabled_right">&nbsp;</td> -->
 					<td align="center" colspan="2" rowspan="2" class="calendar_cell_disabled_right"><b><?php echo JText::_('JOUR'); ?></b></td>
 					<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('MORNING'); ?></b></td>
 					<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('AFTERNOON'); ?></b></td>

@@ -127,7 +127,7 @@ function popupPrintWindow() {
 
 	<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 		<tr class="table_body">
-			<td class="calendar_cell_disabled_right">&nbsp</td>
+			<td class="calendar_cell_disabled_right">&nbsp;</td>
 			<td align="center" class="calendar_cell_disabled_right"><b>Day</b></td>
 			<td align="center" class="calendar_cell_disabled_right"><b>Morning</b></td>
 			<td align="center" class="calendar_cell_disabled_right"><b>Afternoon</b></td>

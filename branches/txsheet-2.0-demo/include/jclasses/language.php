@@ -218,7 +218,7 @@ class JLanguage
 		}
 
 		//help find where JText is missing
-		$string="j".$string;
+		if(Debug::getLanguage())$string="j".$string;
 		return $string;
 	}
 

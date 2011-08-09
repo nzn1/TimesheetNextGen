@@ -51,8 +51,9 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	$fromPopup = "false";
 	//include("include/tsx/clockOnOff.inc");
   require("include/tsx/clocking.class.php");
-  $clock = new Clocking();
-  $clock->createClockOnOff(null,false,true); 
+  $clock = new Clocking();           
+  //($currentDate,$fromPopup=false,$enableShowHideLink = true,$stopwatch=false
+  $clock->createClockOnOff(null,false,true,false); 
 ?>
 
 <form name="dayForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">

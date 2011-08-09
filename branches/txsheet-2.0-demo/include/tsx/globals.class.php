@@ -114,6 +114,9 @@ class gbl{
 	public static function getProjId(){
 		return self::$proj_id;
 	}
+	public static function setProjId($id){
+    self::$proj_id = $id;
+  }
 	public static function getTaskId(){
 		return self::$task_id;
 	}
@@ -126,6 +129,9 @@ class gbl{
 	public static function getClientId(){
 		return self::$client_id;
 	}
+	public static function setClientId($id){
+    self::$client_id = $id;
+  }
 	public static function getUId(){
 		return self::$uid;
 	}

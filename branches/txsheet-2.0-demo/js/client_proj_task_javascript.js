@@ -310,8 +310,8 @@
 		initialTaskId = getValidTaskIdForProject(initialProjectId, initialTaskId);
 		populateTaskSelect(initialProjectId, initialTaskId);
 
-		if (window.resizePopupWindow)
-			resizePopupWindow();
+		//if (window.resizePopupWindow)
+		//	resizePopupWindow();
 	}
 
 	/**

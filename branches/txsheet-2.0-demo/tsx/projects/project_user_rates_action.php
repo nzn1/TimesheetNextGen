@@ -45,7 +45,7 @@ if ($action == "show_users") {
 	$usercount = $_REQUEST["usercount"];
 	$proj_id = $_REQUEST["proj_id"];
 	if (empty($proj_id) || empty($usercount)) {
-		gotoLocation(Config::getRelativeRoot()."/project_user_rates");
+		gotoLocation(Config::getRelativeRoot()."/projects/project_user_rates");
 		exit(0);
 	}
 
@@ -75,11 +75,11 @@ if ($action == "show_users") {
 	}
 
 	//redirect back to the rate management page
-	gotoLocation(Config::getRelativeRoot()."/project_user_rates");
+	gotoLocation(Config::getRelativeRoot()."/projects/project_user_rates");
 	exit(0);
 } else {
 	//redirect back to the rate management page
-	gotoLocation(Config::getRelativeRoot()."/project_user_rates");
+	gotoLocation(Config::getRelativeRoot()."/projects/project_user_rates");
 	exit(0);
 }
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_USER_RATES_SELECTION')." | ".gbl::getContextUser()."</title>");
