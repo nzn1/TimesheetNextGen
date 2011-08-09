@@ -91,7 +91,7 @@ while ($data = dbResult($qh)) {
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<!--  td width="100%" class="face_padding_cell" -->
-		<td align="left" nowrap class="outer_table_heading">
+		<td align="left" class="outer_table_heading">
 			<a name="AddEdit">	Add/Update Rates:</a>
 		</td>
 	</tr>

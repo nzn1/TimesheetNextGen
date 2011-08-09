@@ -23,7 +23,7 @@ $nav->navCalMonthly($todayDate,false);
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap class="outer_table_heading">
+						<td align="left" class="outer_table_heading">
 							<?php echo JText::_('CURRENT_DATE').': '?><span style="color:#00066F;"><?php echo utf8_encode(strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate)); ?></span>
 						</td>
 					</tr>

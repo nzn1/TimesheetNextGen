@@ -175,7 +175,7 @@ and make sure that they are writeable by the webserver</p>
 		<td width="80" align="center"> <?php draw_ok_or_not_image($db_inc_write); ?> </td>
 	</tr>
 </table>
-<br><p style="font-weight: bold; color: red">Please fix the issues and <a href="./">refresh</a> this page, when they are all fixed you'll proceed to step two.</p>
+<br /><p style="font-weight: bold; color: red">Please fix the issues and <a href="./">refresh</a> this page, when they are all fixed you'll proceed to step two.</p>
 <?php 
 }
 
@@ -383,9 +383,9 @@ It'll just take a few more minutes to get it installed and working on your syste
 	</tr>
 </table>
 		<?php if($table_inc_exists && $table_inc_write && $db_inc_exists && $db_inc_write) {
-			echo '<br><table><tr><td width=\"90"></td><td><a href="?step=up-one">Proceed to step 2</a></td></tr></table>';
+			echo '<br /><table><tr><td width=\"90"></td><td><a href="?step=up-one">Proceed to step 2</a></td></tr></table>';
 		} else { ?>
-			<br><p style="font-weight: bold; color: red">Please fix the issues and <a href="./">refresh</a> this page.</p>
+			<br /><p style="font-weight: bold; color: red">Please fix the issues and <a href="./">refresh</a> this page.</p>
 		<?php }
 }
 
@@ -531,7 +531,7 @@ function create_database_one() {
 			$_ERROR .= get_db_error(mysql_error(),$sql);
 			return get_dba_info($db_host, $db_name, $db_prefix, $db_user, $db_pass, $db_pass_func, $admin_user, $admin_pass);
 		}
-		//echo "<br>No database found with that name - Good!<br>\n";
+		//echo "<br />No database found with that name - Good!<br />\n";
 	} else {
 		if(mysql_num_rows($result) > 0) {
 			if($db_purge!="on"){
@@ -560,9 +560,9 @@ function create_database_one() {
 						$_ERROR .= 'The database &quot;'.$db_name.'&quot; already exists, but it doesn\'t look like a timesheet database, you\'ll need to delete that DB manually if you really want to use that name.<br />';
 						return display_install_step_2(); 
 					}
-					echo "<br><font color=\"orangered\"><b>A Database already with the name &quot;$db_name&quot; already exists, and it appears to be a timesheet database</b></font><br>\n";
+					echo "<br /><font color=\"orangered\"><b>A Database already with the name &quot;$db_name&quot; already exists, and it appears to be a timesheet database</b></font><br />\n";
 				} else {
-					echo "<br><font color=\"orangered\"><b>A timesheet database with the name &quot;$db_name&quot; already exists</b></font><br>\n";
+					echo "<br /><font color=\"orangered\"><b>A timesheet database with the name &quot;$db_name&quot; already exists</b></font><br />\n";
 				}
 				$need_validation=1;
 				?>
@@ -575,7 +575,7 @@ function create_database_one() {
 						or, if you need to upgrade, go copy the database_credentials.inc file from the existing installation, then
 						<a href="<?php echo $_SERVER['PHP_SELF']; ?>">click here</a></td>
 					<?php } ?>
-					</table><br>
+					</table><br />
 				<?php
 			}
 		}
@@ -591,14 +591,14 @@ function create_database_one() {
 		}
 
 		if(mysql_num_rows($result) > 0) {
-			echo "<br><font color=\"orangered\"><b>A DB user with the name &quot;$db_user&quot; already exists, we have two options:</b></font><br>\n";
+			echo "<br /><font color=\"orangered\"><b>A DB user with the name &quot;$db_user&quot; already exists, we have two options:</b></font><br />\n";
 			if(!$need_validation) print "<form method=\"post\">";
 			$need_validation=1;
 			?>
 				<input type="hidden" name="user_exists" value="yes"> 
 				<table> <tr> <td width="20">&nbsp;</td> <td>
 				<input type="radio" name="user_purge" value="no" <?php if ($user_purge=='no') echo "checked"; ?>></td><td>
-				leave the existing user, password, and it's existing DB permissions alone, but grant it rights to the timesheet database, or<br>
+				leave the existing user, password, and it's existing DB permissions alone, but grant it rights to the timesheet database, or<br />
 				</td></tr> <tr> <td width="20">&nbsp;</td> <td>
 				<input type="radio" name="user_purge" value="yes" <?php if ($user_purge=='yes') echo "checked"; ?>></td><td>
 				<b>delete</b> the existing user, it's existing DB permissions, and create a new instance with the specified password and rights to the timesheet database.
@@ -623,7 +623,7 @@ function create_database_one() {
 			<input type="hidden" name="admin_user" value="<?php echo$admin_user?>"> 
 			<input type="hidden" name="admin_pass" value="<?php echo$admin_pass?>"> 
 			<input type="hidden" name="step" value="two-two" />
-			<br><br><table><tr><td width="20">&nbsp;</td><td><input type="submit" value="continue"></td></tr></table>
+			<br /><br /><table><tr><td width="20">&nbsp;</td><td><input type="submit" value="continue"></td></tr></table>
 		</form>
 	<?php 
 	} else {
@@ -845,7 +845,7 @@ function display_install_success() {
 <p>Installation was successful</p>
 <h3>Final Bits</h3>
 <p>There are just a few things to do before you can start using Timesheet Next Gen</p>
-<p>Both the <?php echo "$db_inc_file and $table_inc_file"; ?></td>s should be made <stong>Read Only</strong><br>and the install directory and all its contents need to be removed from the web site directory</p>
+<p>Both the <?php echo "$db_inc_file and $table_inc_file"; ?></td>s should be made <stong>Read Only</strong><br />and the install directory and all its contents need to be removed from the web site directory</p>
 
 <table border="1">
 	<tr>
@@ -877,7 +877,7 @@ function display_install_success() {
 function upgrade_installation() {
 	global $_ERROR;
 
-echo "<h2>Attempting upgrade</h2><br>";
+echo "<h2>Attempting upgrade</h2><br />";
 	// get the passed data
 	$db_host = (isset($_REQUEST['db_host']) && $_REQUEST['db_host']) ? $_REQUEST['db_host'] : false;
 	$db_name = (isset($_REQUEST['db_name']) && $_REQUEST['db_name']) ? $_REQUEST['db_name'] : false;
@@ -900,21 +900,21 @@ echo "<h2>Attempting upgrade</h2><br>";
 	if(!database_connect($db_host, $db_name, $db_user, $db_pass)) { 
 		return display_upgrade_step_2(); 
 	} else {
-		echo "Connection to the database successful<br>";
+		echo "Connection to the database successful<br />";
 	}
 
 	// now create the tables
 	if(!upgrade_tables($db_prefix, $db_pass_func)) { 
 		return display_upgrade_step_2(); 
 	} else {
-		echo "Tables updated successfully<br>";
+		echo "Tables updated successfully<br />";
 	}
 
 	// finally write the include files
 	if(!create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func)) {
 		return display_fatal_error();
 	} else {
-		echo "Include files updated successfully<br>";
+		echo "Include files updated successfully<br />";
 	}
 	return display_install_success();
 }

@@ -123,7 +123,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS'
 			<td>
 				<?php writePageLinks($page, $results_per_page, $num2);?>
 			</td>
-			<td align="right" nowrap>
+			<td align="right">
 				<a href="proj_add?client_id=<?php echo gbl::getClientId(); ?>"><?php echo JText::_('ADD_NEW_PROJECT')?></a>
 			</td>
 		</tr>
@@ -137,10 +137,10 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS'
 	if ($num == 0) {
 		if (gbl::getClientId() != 0) {
 			print "<tr><td align=\"center\"><br />".JText::_('NO_PROJECTS_FOR_CLIENT')." &nbsp; ";
-			print "<a href=\"proj_add?client_id=".gbl::getClientId()."\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
+			print "<a href=\"proj_add?client_id=".gbl::getClientId()."\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br /><br /></td></tr>";
 		} else {
 			print "<tr><td align=\"center\"><br />".JText::_('NO_PROJECTS')." &nbsp; ";
-			print "<a href=\"proj_add?client_id=".gbl::getClientId()."\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
+			print "<a href=\"proj_add?client_id=".gbl::getClientId()."\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br /><br /></td></tr>";
 		}
 	} else {
 		//iterate through results
@@ -181,13 +181,13 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS'
 			if ($data["http_link"] != "")
 				print "</a>";
 
-			print "<br><span class=\"project_title\">".ucwords(JText::_('CLIENT')).": </span>".$data['organisation'];
+			print "<br /><span class=\"project_title\">".ucwords(JText::_('CLIENT')).": </span>".$data['organisation'];
 ?>
 					</td>
-					<td align="right" valign="top" nowrap>
+					<td align="right" valign="top">
 						<?php print "<span class=\"project_status\">&lt;".ucwords(JText::_("$data[proj_status]"))."&gt;&nbsp;&nbsp;&nbsp;</span>" ?>
 					</td>
-					<td width="25%" nowrap>
+					<td width="25%">
 <?php
 			if (isset($data["start_date"]) && $data["start_date"] != '' && $data["deadline"] != '')
 				{
@@ -198,7 +198,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS'
 				print "&nbsp;";
 ?>
 					</td>
-					<td width="30%"align="right" valign="top" nowrap>
+					<td width="30%"align="right" valign="top">
 						<span class="label">
 							<?php echo ucwords(JText::_('ACTIONS'))?>:
 						</span>
@@ -213,7 +213,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS'
 						<span class="label">
 							<?php echo ucwords(JText::_('DESCRIPTION')).": "?>
 						</span>
-						<?php echo $data['description'] ?><br>
+						<?php echo $data['description'] ?><br />
 					</td>
 				</tr>
 				<?php }?>
@@ -245,7 +245,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS'
 										<?php echo JText::_('PROJECT_LEADER')?>:
 									</span> 
 									<?php echo $data['proj_leader'] ?>
-									<br>
+									<br />
 	<?php
 				//display assigned users
 				list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM ".tbl::getAssignmentsTable()." WHERE proj_id = $data[proj_id]");

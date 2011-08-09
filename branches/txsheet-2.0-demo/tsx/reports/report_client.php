@@ -265,7 +265,7 @@ if(!$export_excel)
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap width="35%">
+						<td align="left" width="35%">
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
 									<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('CLIENT'); ?>:</td>
@@ -275,7 +275,7 @@ if(!$export_excel)
 								</tr>
 							</table>
 						</td>
-						<td align="center" nowrap class="outer_table_heading">
+						<td align="center" class="outer_table_heading">
 						<?php
 							if ($mode == "weekly") {
 								$sdStr = date("M d, Y",$startDate);
@@ -287,7 +287,7 @@ if(!$export_excel)
 								echo JText::_('CURRENT_MONTH').': <span style="color:#00066F;">'.utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)).'</span>' ;						?>
 						</td>
 						<?php if (!$print): ?>
-							<td  align="right" width="15%" nowrap >
+							<td  align="right" width="15%" >
 								<button name="export_excel" onclick="reload2Export()" value="1"><img src="../images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
 								<button onclick="popupPrintWindow()"><img src="../images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>

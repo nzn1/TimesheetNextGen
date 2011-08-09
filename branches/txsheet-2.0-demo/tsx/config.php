@@ -208,7 +208,7 @@ function onSubmit() {
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading" nowrap>
+		<td align="left" class="outer_table_heading" >
 				Configuration Parameters:
 		</td>
 		<td align="right">
@@ -240,7 +240,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">&nbsp;</td>
+				<td align="left" class="label" width="90">&nbsp;</td>
 				<td align="left" width="100%">
 					<fieldset>
 						<legend>Connection Details</legend>
@@ -248,7 +248,7 @@ function onSubmit() {
 							<tr>
 								<td>
 									<b>&nbsp;Data entry style:</b>
-									<select id="LDAPEntryMethod" name="LDAPEntryMethod" onChange="onChangeLDAPEntryMethod();">
+									<select id="LDAPEntryMethod" name="LDAPEntryMethod" onchange="onChangeLDAPEntryMethod();">
 										<option value="normal" selected="selected">Normal</option>
 										<option value="advanced">RFC 2255 URL</option>
 									</select>
@@ -282,8 +282,8 @@ function onSubmit() {
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
 														<tr>
-															<td nowrap>
-																<span class="label" nowrap>LDAP search base (Distinguished Name):</span>
+															<td >
+																<span class="label" >LDAP search base (Distinguished Name):</span>
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
@@ -297,8 +297,8 @@ function onSubmit() {
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
 														<tr>
-															<td nowrap>
-																<span class="label" nowrap>Username attribute to query:</span>
+															<td >
+																<span class="label" >Username attribute to query:</span>
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
@@ -312,8 +312,8 @@ function onSubmit() {
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
 														<tr>
-															<td nowrap>
-																<span class="label" nowrap>Search scope:</span>
+															<td >
+																<span class="label" >Search scope:</span>
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
@@ -331,8 +331,8 @@ function onSubmit() {
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
 														<tr>
-															<td nowrap>
-																<span class="label" nowrap>Filter:</span>
+															<td>
+																<span class="label">Filter:</span>
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
@@ -346,8 +346,8 @@ function onSubmit() {
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
 														<tr>
-															<td nowrap>
-																<span class="label" nowrap>Protocol Version:</span>
+															<td>
+																<span class="label">Protocol Version:</span>
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
@@ -357,8 +357,8 @@ function onSubmit() {
 																	<option value="1" <?php if ($resultset["LDAPProtocolVersion"] == "1") echo "selected=\"selected\""; ?>>1</option>
 																</select>
 															</td>
-															<td nowrap>
-																<span class="label" nowrap>Use LDAP Referrals:</span>
+															<td>
+																<span class="label">Use LDAP Referrals:</span>
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
@@ -366,8 +366,8 @@ function onSubmit() {
 																<input type="hidden" name="LDAPReferrals" id="LDAPReferrals" />
 															</td>
 															<td>&nbsp;</td>
-															<td nowrap>
-																<span class="label" nowrap>Fallback to local Authentication on fail:</span>
+															<td>
+																<span class="label">Fallback to local Authentication on fail:</span>
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
@@ -382,8 +382,8 @@ function onSubmit() {
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
 														<tr>
-															<td nowrap>
-																<span class="label_grey" nowrap><i>The following fields are normally only required for Microsoft's Active Directory LDAP Server:</i></span>
+															<td>
+																<span class="label_grey"><i>The following fields are normally only required for Microsoft's Active Directory LDAP Server:</i></span>
 															</td>
 														</tr>
 													</table>
@@ -396,8 +396,8 @@ function onSubmit() {
 															<td width="50%">
 																<table width="100%" cellpadding="0" cellspacing="0" border="0">
 																	<tr>
-																		<td nowrap>
-																			<span class="label" nowrap>Use LDAP by user authentication:</span>
+																		<td>
+																			<span class="label">Use LDAP by user authentication:</span>
 																		</td>
 																		<td width="5">&nbsp;</td>
 																		<td width="100%">
@@ -408,15 +408,15 @@ function onSubmit() {
 																</table>
 																<table width="100%" cellpadding="0" cellspacing="0" border="0">
 																	<tr>
-																		<td nowrap>
-																			<span class="label" nowrap>Bind Username:</span>
+																		<td>
+																			<span class="label">Bind Username:</span>
 																		</td>
 																		<td width="5">&nbsp;</td>
 																		<td width="50%">
 																			<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<?php echo $resultset["LDAPBindUsername"]; ?>" style="width:100%;" />
 																		</td>
-																		<td nowrap>
-																			<span class="label" nowrap>&nbsp;&nbsp;&nbsp;Bind Password:</span>
+																		<td>
+																			<span class="label">&nbsp;&nbsp;&nbsp;Bind Password:</span>
 																		</td>
 																		<td width="5">&nbsp;</td>
 																		<td width="50%">
@@ -438,8 +438,8 @@ function onSubmit() {
 												<td colspan="3">
 													<table width="100%" cellpadding="0" cellspacing="0">
 														<tr>
-															<td nowrap>
-																<span class="label" nowrap>RFC 2255 URL:</span>
+															<td>
+																<span class="label">RFC 2255 URL:</span>
 															</td>
 															<td>&nbsp;</td>
 															<td width="100%">
@@ -471,7 +471,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -480,17 +480,17 @@ function onSubmit() {
     		  *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
     		  */       	        
         ?>
-					<div class="nobr left"><span class="label" nowrap>Stopwatch:</span><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Daily:</span><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Weekly:</span><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Monthly:</span><?php Common::acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Simple:</span><?php Common::acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Clients:</span><?php Common::acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Projects:</span><?php Common::acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Tasks:</span><?php Common::acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Reports:</span><?php Common::acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Rates:</span><?php Common::acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label" nowrap>Absences:</span><?php Common::acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Stopwatch:</span><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Daily:</span><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Weekly:</span><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Monthly:</span><?php Common::acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Simple:</span><?php Common::acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Clients:</span><?php Common::acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Projects:</span><?php Common::acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Tasks:</span><?php Common::acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Reports:</span><?php Common::acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Rates:</span><?php Common::acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</div>
+					<div class="nobr left"><span class="label">Absences:</span><?php Common::acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</div>
 				</td>
 			</tr>
 
@@ -507,7 +507,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);"  />Reset
 				</td>
 				<td align="left" width="100%">
@@ -532,7 +532,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -559,7 +559,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="localeReset" value="off" valign="absmiddle" onclick="document.configurationForm.locale.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -580,7 +580,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="timezoneReset" value="off" onclick="document.configurationForm.timezone.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -603,7 +603,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="timeformatReset" value="off" onclick="document.configurationForm.timeformat.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -633,7 +633,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="weekStartDayReset" value="off" onclick="document.configurationForm.weekstartday.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -673,7 +673,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="projectItemsPerPageReset" value="off" onclick="document.configurationForm.projectItemsPerPage.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -694,7 +694,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="taskItemsPerPageReset" value="off" onclick="document.configurationForm.taskItemsPerPage.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -716,7 +716,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="headerReset" value="off" onclick="document.configurationForm.headerhtml.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -737,7 +737,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="bodyReset" value="off" onclick="document.configurationForm.bodyhtml.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -758,7 +758,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="bannerReset" value="off" onclick="document.configurationForm.bannerhtml.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -779,7 +779,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="footerReset" value="off" onclick="document.configurationForm.footerhtml.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -800,7 +800,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="errorReset" value="off" onclick="document.configurationForm.errorhtml.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">
@@ -822,7 +822,7 @@ function onSubmit() {
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="label" nowrap width="90">
+				<td align="left" class="label" width="90">
 					<input type="checkbox" name="tableReset" value="off" onclick="document.configurationForm.tablehtml.disabled=(this.checked);" />Reset
 				</td>
 				<td align="left" width="100%">

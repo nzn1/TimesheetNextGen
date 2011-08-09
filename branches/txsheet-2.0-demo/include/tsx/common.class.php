@@ -800,7 +800,7 @@ class Common{
 						"FROM ".tbl::getClientTable()." ORDER BY organisation");
 		}
 
-		print "<select name=\"client_id\" onchange=\"$onChange\"";
+		print "<select name=\"client_id\" onchange=\"$onChange\" style=\"width:100%;\"";
 		if ($isMultiple)
 			print "multiple size=\"4\"";
 		print ">\n";
@@ -862,7 +862,7 @@ class Common{
 				" ORDER BY last_name, first_name";
 		}
 
-		$drop_list_string = "<select name=\"uid\" onChange=\"submit()\" ";
+		$drop_list_string = "<select name=\"uid\" onchange=\"submit()\" ";
 		if (!empty($width))
 			$drop_list_string.= "style=\"width: $width;\" ";
 		if ($disabled == 'true')
@@ -1598,7 +1598,7 @@ class Common{
 				$endStamp = $tomorrowStamp;
 				$curStamp = $data["start_stamp"];
 			} else {
-				print "Error: time booleans are in a confused state<br>\n";
+				print "Error: time booleans are in a confused state<br />\n";
 				continue;
 			}
 

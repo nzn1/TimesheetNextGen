@@ -30,7 +30,7 @@ function do_query($sql) {
 
 			<table width="100%" border="0">
 				<tr>
-					<td align="center" nowrap>
+					<td align="center">
 						<h2>Explaination of Assign all Tasks to all Project Members</h2>
 					</td>
 				</tr>

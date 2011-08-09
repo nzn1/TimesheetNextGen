@@ -71,7 +71,7 @@ if (isset($popup))
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td >&nbsp;</td>
-		<td nowrap  colspan="8" class="outer_table_heading">
+		<td  colspan="8" class="outer_table_heading">
 			<?php echo JText::_('CURRENT_DATE').": "; ?>
 			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
 			value="<?php echo date('d-M-Y', $startDate); ?>" />
@@ -83,18 +83,18 @@ if (isset($popup))
 		<td >&nbsp;</td>
 	</tr>
 	<tr>
-		<td align="center" nowrap class="outer_table_heading">
+		<td align="center" class="outer_table_heading">
 			<?php echo JText::_('CURRENT_MONTH').": "; ?><span style="color:#00066F;"><?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)); ?> </span> 
 		</td>
-		<td nowrap class="outer_table_heading"><?php echo JText::_('FILTER')?>:</td>
-		<td nowrap class="outer_table_heading">
+		<td class="outer_table_heading"><?php echo JText::_('FILTER')?>:</td>
+		<td class="outer_table_heading">
 				<span style="color:#00066F;"><?php echo JText::_('CLIENT').': '; ?></span>
 		</td>
 		<td align="left">
 			<?php Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?>
 		</td>
 		<td >&nbsp;</td>
-		<td nowrap class="outer_table_heading">
+		<td class="outer_table_heading">
 			<span style="color:#00066F;"><?php echo JText::_('PROJECT').': '; ?></span>
 		</td>
 		<td align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
@@ -147,7 +147,8 @@ if (isset($popup))
 
 		// New Week.
 		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
-			$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
+			print "</tr><tr>\n";
+      $mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 			$weeklyTotal = 0;
 			print "</tr>\n<!-- --><tr>\n";
 		} else
@@ -367,6 +368,7 @@ if (isset($popup))
 		$dayCol++;
 	}
 	// Print the rest of the calendar.
+	echo '<!-- print the rest of the calendar-->';
 	while (($dayCol % 7) != 0) {
 		if (($dayCol % 7) == 6)
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</td>\n ";
@@ -374,6 +376,7 @@ if (isset($popup))
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
+	print "</tr><tr>\n";
 	$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 	$weeklyTotal = 0;
 	print "</tr>\n<tr>\n";
@@ -382,13 +385,5 @@ if (isset($popup))
 ?>
 					</tr>
 				</table>
-			</td>
-		</tr>
-	</table>
-
-		</td>
-	</tr>
-</table>
-
-</form>
+      </form>
 

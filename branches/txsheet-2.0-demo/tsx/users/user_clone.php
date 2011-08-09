@@ -124,7 +124,7 @@ if($action!='performCopy') {
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap class="outer_table_heading">
+						<td align="left" class="outer_table_heading">
 								Copy Project and Task Assignments &nbsp; &nbsp;From: 
 						<?php
 							Common::single_user_select_list('cloneFrom',$cloneFrom,'',true);
@@ -134,7 +134,7 @@ if($action!='performCopy') {
 							Common::single_user_select_list('cloneTo',$cloneTo,'',true);
 						?>
 						</td>
-						<td align="right" nowrap class="outer_table_heading">
+						<td align="right" class="outer_table_heading">
 						<?php
 							echo "&nbsp; &nbsp;<input type=\"button\" name=\"cloneUser\" value=\"Copy Assignments\" onclick=\"javascript:onClone()\" disabled=\"disabled\" class=\"bottom_panel_button\" /> ";
 						?>
@@ -217,7 +217,7 @@ if($action!='performCopy') {
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap class="outer_table_heading">
+						<td align="left" class="outer_table_heading">
 							Copying Project and Task Assignments &nbsp; &nbsp;From: 
 							<?php echo $cloneFrom; ?>
 							&nbsp; &nbsp; &nbsp;To: 

@@ -177,9 +177,9 @@ function printInfo($type, $data) {
 	if($type == "uid") {
 		make_user_link($data["uid"],$data["uid"]);
 		print "</td>";
-		print "<td valign=\"top\" class=\"calendar_cell_middle\" nowrap>";
+		print "<td valign=\"top\" class=\"calendar_cell_middle\">";
 		print $data["first_name"]."&nbsp;</td>";
-		print "<td valign=\"top\" class=\"calendar_cell_middle\" nowrap>";
+		print "<td valign=\"top\" class=\"calendar_cell_middle\">";
 		print $data["last_name"]."&nbsp;\n";
 	} else if($type == "proj_id") {
 		jsPopupInfoLink(Config::getRelativeRoot()."/client_info", "client_id", $data["client_id"], "Client_Info");
@@ -197,9 +197,9 @@ function printInfo($type, $data) {
 function printBlanks($type) {
 	if($type == "uid") {
 		print "&nbsp;</td>";
-		print "<td valign=\"top\" class=\"calendar_cell_middle\" nowrap>";
+		print "<td valign=\"top\" class=\"calendar_cell_middle\">";
 		print "&nbsp;</td>";
-		print "<td valign=\"top\" class=\"calendar_cell_middle\" nowrap>";
+		print "<td valign=\"top\" class=\"calendar_cell_middle\">";
 		print "&nbsp;";
 	} else if($type == "proj_id") {
 		print "&nbsp;";
@@ -268,11 +268,11 @@ PageElements::setHead("<title>".Config::getMainTitle()." | All hours this month<
 				<table width="100%" border="0">
 					<tr>
 						<td width="15%">&nbsp;</td>
-						<td align="left" nowrap class="outer_table_heading">
+						<td align="left" class="outer_table_heading">
 						<?php echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
 						</td>
 						<?php if (!$print): ?>
-							<td  align="right" width="15%" nowrap >
+							<td  align="right" width="15%" >
 								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
 								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>

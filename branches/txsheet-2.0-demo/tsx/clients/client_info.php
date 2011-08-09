@@ -2,18 +2,8 @@
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
-
-PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/popups.inc');
-PageElements::addFile('tsx_footer','themes/'.PageElements::getTheme().'/popups.inc');
-
-
-?>
-<HTML>
-<head>
-<title>TSX v<?php echo Config::getVersion()." - ".JText::_('CLIENT_INFO')?></title>
-</head>
-
-<?php
+PageElements::setTemplate('popup_template.php');
+PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('CLIENT_INFO')."</title>");
 
 	$query = "SELECT organisation, description, address1, address2,".
 				"city, country, postal_code, contact_first_name, contact_last_name,".

@@ -24,7 +24,7 @@ class Clocking{
 		<td width="100%" class="face_padding_cell">
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap class="outer_table_heading" nowrap>
+						<td align="left" class="outer_table_heading" >
 							<?php echo JText::_('CLOCK_ON_OFF'); ?>
 						</td>
 					</tr>
@@ -47,9 +47,7 @@ class Clocking{
   
   require_once('form_input.inc');
 ?>
-
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<form action="<?php echo Config::getRelativeRoot(); ?>/clock_action" method="post" name="theForm" id="theForm">
+  <form action="<?php echo Config::getRelativeRoot(); ?>/clock_action" method="post" name="theForm" id="theForm">
 		<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
 		<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
 		<input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
@@ -60,7 +58,7 @@ class Clocking{
 		<input type="hidden" name="fromPopupWindow" value="<?php echo $fromPopup; ?>" />
 		<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>" />
 		<input type="hidden" name="destination" value="<?php echo $destination; ?>" />
-
+	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
@@ -68,24 +66,24 @@ class Clocking{
 						<td>
 							<table width="100%" border="0">
 								<tr>
-									<td align="left" width="100%" nowrap>
+									<td align="left" width="100%" >
 											<table width="100%" border="0" cellspacing="0" cellpadding="0">
 												<tr>
 													<td><table width="50"><tr><td><?php echo JText::_('CLIENT')?>:</td></tr></table></td>
 													<td width="100%">
-														<select id="clientSelect" name="clientSelect" onChange="onChangeClientSelect();" style="width: 100%;" />
+														<select id="clientSelect" name="clientSelect" onchange="onChangeClientSelect();" style="width: 100%;"><option value="0">&nbsp;</option></select>
 													</td>
 												</tr>
 											</table>
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="100%" nowrap>
+									<td align="left" width="100%" >
 											<table width="100%" border="0" cellspacing="0" cellpadding="0">
 												<tr>
 													<td><table width="50"><tr><td><?php echo JText::_('PROJECT')?>:</td></tr></table></td>
 													<td width="100%">
-														<select id="projectSelect" name="projectSelect" onChange="onChangeProjectSelect();" style="width: 100%;" />
+														<select id="projectSelect" name="projectSelect" onchange="onChangeProjectSelect();" style="width: 100%;"><option value="0">&nbsp;</option></select>
 													</td>
 												</tr>
 											</table>
@@ -97,7 +95,7 @@ class Clocking{
 												<tr>
 													<td><table width="50"><tr><td><?php echo JText::_('TASK')?>:</td></tr></table></td>
 													<td width="100%">
-														<select id="taskSelect" name="taskSelect" onChange="onChangeTaskSelect();" style="width: 100%;" />
+														<select id="taskSelect" name="taskSelect" onchange="onChangeTaskSelect();" style="width: 100%;"><option value="0">&nbsp;</option></select>
 													</td>
 												</tr>
 											</table>
@@ -106,21 +104,21 @@ class Clocking{
 								<tr>
 									<td>
 									<?php if($stopwatch) { ?>
-										<table width="100%" height="100%" border="0" cellpadding="0" cellaspacing="0">
-											<tr height="100%">
-												<td valign="center">
-													<table width="100%" height="100%" border="0" cellpadding="0" cellaspacing="0">
-														<tr height="100%">
+										<table width="100%" border="0" cellpadding="0" cellspacing="0">
+											<tr>
+												<td>
+													<table width="100%" border="0" cellpadding="0" cellspacing="0">
+														<tr>
 															<td align="right">
-																<a href="javascript:doClockonoff('clockonnow')"><img src="images/clock-green.gif" alt="" width="48" height="48" border="0" align="absmiddle" /></a>
+																<a href="javascript:doClockonoff('clockonnow')"><img src="images/clock-green.gif" alt="" width="48" height="48" border="0"  /></a>
 															</td>
-															<td nowrap>
+															<td >
 																<a href="javascript:doClockonoff('clockonnow')"><font size="4" color="#0DB400" face="Arial"><?php echo JText::_('CLOCK_ON_NOW')?></font></a>
 															</td>
 															<td align="right">
-																<a href="javascript:doClockonoff('clockoffnow')"><img src="images/clock-red.gif" width="48" height="48" border="0" align="absmiddle" alt="" /></a>
+																<a href="javascript:doClockonoff('clockoffnow')"><img src="images/clock-red.gif" width="48" height="48" border="0" alt="" /></a>
 															</td>
-															<td nowrap>
+															<td >
 																<a href="javascript:doClockonoff('clockoffnow')"><font size="4" color="#E81500" face="Arial"><?php echo JText::_('CLOCK_OFF_NOW')?></font></a>
 															</td>
 														</tr>
@@ -215,12 +213,9 @@ class Clocking{
 				</table>
 			</td>
 		</tr>
-		</form>
-	</table>
-	<?php
-  
+	 </table>
+	</form>
+	<?php  
   }
-
 }
-
 ?>

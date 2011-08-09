@@ -188,11 +188,11 @@ function init(){
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap>
+						<td align="left">
 							<b><?php echo JText::_('USER'); ?>:</b>&nbsp;
 							<?php Common::user_select_droplist($uid, false); ?>
 						</td>
-						<td align="center" nowrap class="outer_table_heading">
+						<td align="center" class="outer_table_heading">
 						<?php
 							echo utf8_encode(strftime("%B", $start_time))." ";
 							Common::day_button("start_day",$start_time);
@@ -202,13 +202,13 @@ function init(){
 						?> 
 						</td>
 						<?php if (!$print): ?>
-							<td align="right" width="10%" nowrap>
+							<td align="right" width="10%">
 								<input type="radio" name="time_fmt" value="decimal" onclick="this.form.submit()"
 									<?php if($time_fmt == "decimal") print " checked=\"checked\""; ?> /> Hrs.dec&nbsp;<br />
 								<input type="radio" name="time_fmt" value="hrsMins" onclick="this.form.submit()"
 									<?php if($time_fmt != "decimal") print " checked=\"checked\""; ?> /> Hrs:Min&nbsp;
 							</td>
-							<td align="right" nowrap>
+							<td align="right">
 							<?php
 								$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=1&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=15";
 								$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=16&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=".date('t',strtotime("$end_year-$end_month-15"));
@@ -216,7 +216,7 @@ function init(){
 								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p1post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_1'); ?></a><br />
 								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p2post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_2'); ?></a>
 							</td>
-							<td  align="right" width="15%" nowrap >
+							<td  align="right" width="15%" >
 								<button name="export_excel" onclick="reload2Export(this.form)"><img src="../images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
 								<button onclick="popupPrintWindow()"><img src="../images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>

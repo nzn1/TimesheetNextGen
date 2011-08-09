@@ -17,9 +17,7 @@ if (empty($loggedInUser))
 //define the command menu
 Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 
-//load client id from superglobals
-$client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
-
+//load client id from REQUEST variables
 $startDate = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
 $start_day = 1;
 $start_month = date("n", $startDate);
@@ -29,8 +27,6 @@ $end_month = date("n", $startDate);;
 $end_year = date("Y", $startDate);;
 
 ?>
-<html>
-<head>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/projects/proj_action" method="post">
 <input type="hidden" name="action" value="add" />
@@ -49,7 +45,7 @@ $end_year = date("Y", $startDate);;
 	</tr>
 	<tr>
 		<td align="right">Client:</td>
-		<td><?php Common::client_select_list($client_id, 0, false, false, false, true, "", false); ?></td>
+		<td><?php Common::client_select_list(gbl::getClientId(), 0, false, false, false, true, "", false); ?></td>
 	</tr>
 	<tr>
 		<td align="right" valign="top">Description:</td>

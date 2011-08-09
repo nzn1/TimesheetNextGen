@@ -66,17 +66,17 @@ function CallBack_WithNewDateSelected(strDate)
 }
 </script>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="subtimes">
-<input type="hidden" name="month" value=<?php echo gbl::getMonth(); ?> />
-<input type="hidden" name="year" value=<?php echo gbl::getYear(); ?> />
-<input type="hidden" name="day" value=<?php echo gbl::getDay(); ?> />
-<input type="hidden" name="task_id" value=<?php echo gbl::getTaskId(); ?> />
+<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
+<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
+<input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
+<input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
 
 
 <!-- date selection table -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 	<tr>
-		<td align="center" nowrap class="outer_table_heading">
+		<td width="30%" align="center" class="outer_table_heading">
 			<?php
 				$sdStr = utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate));
 				//just need to go back 1 second most of the time, but DST 
@@ -85,30 +85,28 @@ function CallBack_WithNewDateSelected(strDate)
 				echo JText::_('CURRENT_WEEK').': <span style="color:#00066F;">'.$sdStr.' - '.$edStr.'</span>';
 			?>
 		</td>
-		<td>&nbsp;</td>
-		<td nowrap align="center">
-		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+		<td width="15%" align="center">
+  		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
+  			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
+  			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
 		</td>
-		<td width="10%" align="right"><?php echo JText::_('FILTER')?>:</td>
-		<td width="10%" align="right">
-				<?php echo ucfirst(JText::_('CLIENT')).':'; ?>
+		<td width="5%" align="right"><?php echo JText::_('FILTER')?>:</td>
+
+		<td width="25%" align="left">
+		<?php 
+      echo ucfirst(JText::_('CLIENT')).':';
+      Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?>
 		</td>
 		<td width="25%" align="left">
-			<?php Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?>
-		</td>
-		<td width="10%"align="right">
-			<?php echo ucfirst(JText::_('PROJECT')).':'; ?>
-		</td>
-		<td width="25%"align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
-		<td width="10%">&nbsp;</td>
+      <?php 
+      echo ucfirst(JText::_('PROJECT')).':';
+      Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();");
+      ?>
+    </td>
 	</tr>
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
-</table>
+</table><!-- end date selection table -->
 
+<div>&nbsp;</div>
  <!--  data table -->
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr class="inner_table_head">
@@ -131,16 +129,14 @@ function CallBack_WithNewDateSelected(strDate)
 						$currentDate = $startDate;
 						for ($i=0; $i<7; $i++) {
 							$currentDayStr = strftime("%A %d", $currentDate);
-							print "	<td class=\"inner_table_column_heading\" align=\"center\" width=\"10%\">$currentDayStr</td>";
+							print "<td class=\"inner_table_column_heading\" align=\"center\" width=\"10%\">$currentDayStr</td>\n";
 							$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 days"); // increment date to next day
 						}
 						?>
 						<td align="center">&nbsp;</td>
-						<td class="inner_table_column_heading" align="center">
-							<?php echo ucfirst(JText::_('TOTAL')) ?>
-						</td>
+						<td class="inner_table_column_heading" align="center"><?php echo ucfirst(JText::_('TOTAL'));?></td>
 					</tr>
-					<tr>
+					<!--<tr>-->
 <?php
 
 	//debug
@@ -148,24 +144,7 @@ function CallBack_WithNewDateSelected(strDate)
 	//$endDateStr = strftime("%D", $endDate);
 	//print "<p>WEEK start: $startDateStr WEEK end: $endDateStr</p>";
 
-	require("include/tsx/class.Pair.php");
-	
-	class TaskInfo extends Pair {
-		var $projectId;
-		var $projectTitle;
-		var $taskName;
-		var $clientName;
-		var $clientId;
-
-		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $clientName, $clientId) {
-			parent::Pair($value1, $value2);
-			$this->projectId = $projectId;
-			$this->projectTitle = $projectTitle;
-			$this->taskName = $taskName;
-			$this->clientName = $clientName;
-			$this->clientId = $clientId;
-		}
-	}
+	require("include/tsx/taskinfo.class.php");
 
 	// Get the Weekly data.
 	$order_by_str = "".tbl::getClientTable().".organisation, ".tbl::getProjectTable().".title, ".tbl::getTaskTable().".name";
@@ -258,7 +237,7 @@ function CallBack_WithNewDateSelected(strDate)
 											$currentProjectTitle,
 											$currentTaskName,
 											$currentClientName,
-											$currentClientId);
+											$currentClientId,'');
 
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
@@ -365,7 +344,7 @@ function CallBack_WithNewDateSelected(strDate)
 						$emptyCell = false;
 					else
 						//print a break for the next entry
-						print "&nbsp;"; //"<br>";
+						print "&nbsp;"; //"<br />";
 
 					//format printable times
 					if ($CfgTimeFormat == "12") {
@@ -402,7 +381,7 @@ function CallBack_WithNewDateSelected(strDate)
 
 			//Put a popup link in the cell
 			$dateValues = getdate($currentDate);
-			$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
+			$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 				"?client_id=$matchedPair->clientId".
 				"&amp;proj_id=$matchedPair->projectId".
 				"&amp;task_id=$matchedPair->value1".
@@ -410,7 +389,7 @@ function CallBack_WithNewDateSelected(strDate)
 				"&amp;month=".$dateValues["mon"].
 				"&amp;day=".$dateValues["mday"].
 				"&amp;destination=$_SERVER[PHP_SELF]".
-				"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+				"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 			print "<a href=\"$popup_href\" class=\"action_link\">".
 				"<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\" alt=\"\" />".
 				"</a>";
@@ -421,7 +400,7 @@ function CallBack_WithNewDateSelected(strDate)
 			if (!$emptyCell) {
 				//print todays total
 				$todaysTotalStr = Common::formatMinutes($todaysTotal);
-				print "<br><span class=\"task_time_total_small\">$todaysTotalStr</span>";
+				print "<br /><span class=\"task_time_total_small\">$todaysTotalStr</span>";
 			}
 
 			//end the column
@@ -437,17 +416,17 @@ function CallBack_WithNewDateSelected(strDate)
 		}
 
 		//print the spacer column
-		print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>";
+		echo "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 
 		//format the weekly total
 		$weeklyTotalStr = Common::formatMinutes($weeklyTotal);
 
 		//print the total column
-		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\">";
-		print "<span class=\"calendar_total_value_weekly\" align=\"right\">$weeklyTotalStr</span></td>";
+		echo "<td class=\"calendar_totals_line_weekly subtotal\" valign=\"bottom\" align=\"right\" >\n";
+		echo "<span class=\"calendar_total_value_weekly\" style=\"text-align:right\">$weeklyTotalStr</span></td>\n";
 
 		//end the row
-		print "</tr>";
+		echo "</tr>\n";
 
 		//store the previous task and project ids
 		$previousTaskId = $currentTaskId;
@@ -455,20 +434,20 @@ function CallBack_WithNewDateSelected(strDate)
 	}
 
 	//create an actions row
-	print "<tr>\n";
+	print "<tr><!--create an actions row-->\n";
 	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">".ucfirst(JText::_('ACTIONS')).":</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	$currentDate = $startDate;
 	for ($i=0; $i<7; $i++) {
 		$dateValues = getdate($currentDate);
 		$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
-		$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
+		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".
 											"$ymdStr".
 											"&amp;destination=$_SERVER[PHP_SELF]".
-											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 		print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
 		print "<a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>,";
 		print "<a href=\"daily?$ymdStr\">".ucfirst(JText::_('EDIT'))."</a></td>\n";
@@ -480,7 +459,7 @@ function CallBack_WithNewDateSelected(strDate)
 
 
 	//create a new totals row
-	print "<tr>\n";
+	print "<tr><!--new totals row-->\n";
 	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">".ucwords(JText::_('TOTAL')." ".JText::_('HOURS')).":</td>\n";
 	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 
@@ -496,15 +475,13 @@ function CallBack_WithNewDateSelected(strDate)
 
 	//print grand total
 	$formattedGrandTotal = Common::formatMinutes($grandTotal);
-	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
+	echo "<!-- print grand total-->";
+  print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	print "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
 	print "<span class=\"calendar_total_value_monthly\">$formattedGrandTotal</span></td>";
 	print "</tr>";
 
 ?>
 
-		</td>
-	</tr>
-</table>
-
+  </table>
 </form>

@@ -60,20 +60,20 @@ if (!empty($errormsg)) {
 <div id="inputArea">
 <table width="436" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading" nowrap>
+		<td align="left" class="outer_table_heading" >
 			Change Password:
 		</td>
 	</tr>
 	<tr>
-		<td width="150" align="right" nowrap>Old Password:</td>
+		<td width="150" align="right" >Old Password:</td>
 		<td><input type="password" name="old_pass" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td width="150" align="right" nowrap>New Password:</td>
+			<td width="150" align="right" >New Password:</td>
 			<td><input type="password" name="passwd1" style="width: 100%; AUTOCOMPLETE="OFF"" /></td>
 		</tr>
 		<tr>
-			<td width="150" align="right" nowrap>New Password (again):</td>
+			<td width="150" align="right" >New Password (again):</td>
 			<td><input type="password" name="passwd2" style="width: 100%; AUTOCOMPLETE="OFF"" /></td>
 		</tr>
 		<tr>

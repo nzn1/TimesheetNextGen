@@ -52,10 +52,10 @@ PageElements::setBodyOnLoad("doOnLoad();");
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap class="outer_table_heading" nowrap>
+						<td align="left"  class="outer_table_heading" >
 							<?php echo JText::_('CLOCK_ON_OFF')?>
 						</td>
-						<td align="right" nowrap class="outer_table_heading">
+						<td align="right"  class="outer_table_heading">
 							<?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), mktime(0,0,0,gbl::getMonth(), gbl::getDay(), gbl::getYear())); ?>
 						</td>
 					</tr>

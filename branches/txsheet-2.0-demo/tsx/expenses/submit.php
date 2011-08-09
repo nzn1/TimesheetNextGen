@@ -254,12 +254,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		<td>
 		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
 			
 			</td>
 	<?php if (!$print): ?>
 		<td>
-			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
+			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br />&rArr;&nbsp;Excel </a>
 		</td>
 		<td>
 			<?php print "<button onClick=\"popupPrintWindow()\">" .ucfirst(JText::_('PRINT_REPORT'))."</button></td>\n"; ?>
@@ -314,7 +314,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	if ($num == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
-		print "			<i><br>".JText::_('NO_TIME_RECORDED') ." ".date("Y-m-d",$startDate).".<br><br></i>\n";
+		print "			<i><br />".JText::_('NO_TIME_RECORDED') ." ".date("Y-m-d",$startDate).".<br /><br /></i>\n";
 		print "		</td>\n";
 		print "	</tr>\n";
 	} else {

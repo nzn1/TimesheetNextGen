@@ -24,7 +24,7 @@ Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:
 
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap class="outer_table_heading" nowrap>
+		<td align="left" class="outer_table_heading" >
 			<h1><?php echo JText::_('ADD_NEW_CLIENT') ?></h1>
 		</td>
 	</tr>

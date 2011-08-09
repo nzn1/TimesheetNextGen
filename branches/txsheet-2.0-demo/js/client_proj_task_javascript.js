@@ -125,7 +125,7 @@
 		var clientSelect = document.getElementById('clientSelect');
 
 		//clientSelect.options[clientSelect.options.length] = new Option("All Clients", 0);
-
+    clientSelect.options.length = 0;
 		//add the clients
 		for (clientKey in clientProjectsHash) {
 			//alert("client:" + clientKey + ", name: " + clientProjectsHash[clientKey].name);
