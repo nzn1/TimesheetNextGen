@@ -171,7 +171,7 @@ class ClockAction{
 		}
 
 		//check that we are not already clocked on
-		$querystring = "SELECT times.start_time, tt.name FROM ".
+		$querystring = "SELECT timest.start_time, tt.name FROM ".
   			"".tbl::getTimesTable()." timest, ".tbl::getTaskTable()." tt WHERE ".
   			"uid='".gbl::getContextUser()."' AND ".
   			"end_time='0' AND ".

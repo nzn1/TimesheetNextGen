@@ -99,12 +99,12 @@ function popupPrintWindow() {
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<!--  td align="left" nowrap width="200" -->
+		<!--  td align="left" width="200" -->
 				<!--  table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2" -->
 			<td align="right" width="0" class="outer_table_heading">User:</td>
 			<td align="left" width="100%"> <?php Common::user_select_droplist($uid, false); ?>
 			</td>
-			<td align="center" nowrap class="outer_table_heading">
+			<td align="center" class="outer_table_heading">
 				<?php echo date('F Y',$todayDate); ?>
 			</td>
 			<?php if (!$print): 
@@ -118,7 +118,7 @@ function popupPrintWindow() {
 			?>
 			</td>
 			<?php endif; ?>
-			<td align="right" nowrap>
+			<td align="right">
 			</td>
 	</tr>
 	</table>

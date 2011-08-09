@@ -36,9 +36,9 @@ if ($action == "saveChanges") {
 	$clock_on_time_string = "$clock_on_date_year-$clock_on_date_month-$clock_on_date_day $clock_on_time_hour:$clock_on_time_min:00";
 	$clock_off_time_string = "$clock_off_date_year-$clock_off_date_month-$clock_off_date_day $clock_off_time_hour:$clock_off_time_min:00";
 
-	$duration = get_duration(strtotime($clock_on_time_string),strtotime($clock_off_time_string));
+	$duration = Common::get_duration(strtotime($clock_on_time_string),strtotime($clock_off_time_string));
 
-	$queryString = "UPDATE ".tbl::getTimesTables()." SET start_time='$clock_on_time_string', ".
+	$q = "UPDATE ".tbl::getTimesTable()." SET start_time='$clock_on_time_string', ".
 								"end_time='$clock_off_time_string', ".
 								"duration=$duration, " .
 								"log_message='$log_message', ".
@@ -47,7 +47,13 @@ if ($action == "saveChanges") {
 								"WHERE ".
 								"trans_num='$trans_num'";
 
-	list($qh,$num) = dbQuery($queryString);
+	 if(debug::getSqlStatement()==1)ppr($q,'SQL');
+	 $retval['status'] = Database::getInstance()->query($q);
+	 $retval['id'] = mysql_insert_id(Database::getInstance()->getConnection());
+
+	 if($retval['status'] == false && debug::getSqlError()==1){
+	   Debug::ppr(mysql_error(),'sqlError');
+	 }
 
 	gotoLocation(Config::getRelativeRoot()."/daily?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;month=$month&amp;year=$year&amp;day=$day");
 	exit;
@@ -70,18 +76,25 @@ if ($action != "saveChanges") {
 
 include("include/tsx/form_input.inc");
 
-?>
-<html>
-<head>
-<title>Edit Work Log Record for <?php echo gbl::getContextUser(); ?></title>
-<?php
+PageElements::setHead("<title>".Config::getMainTitle()." | Edit Work Log Record for ".gbl::getContextUser()."</title>");
+
+ob_start();
 include('tsx/client_proj_task_javascript.class.php');
 $js = new ClientProjTaskJavascript();
 $js->printJavascript();
 ?>
-</head>
-<body  onload="doOnLoad();">
+<script type="text/javascript">
+	function onSubmit() {
+		//set the action
+		document.editForm.submit();
+	}
+</script>
+<?php
+PageElements::setHead(PageElements::getHead().ob_get_contents());
+ob_end_clean();
+PageElements::setBodyOnLoad("doOnLoad();");
 
+?>
 
 <table width="500" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -90,14 +103,11 @@ $js->printJavascript();
 
 				<table width="100%" border="0" class="table_head">
 					<tr>
-						<td align="left" nowrap class="outer_table_heading" nowrap>
+						<td align="left" class="outer_table_heading">
 							Edit Work Log Record:
 						</td>
 					</tr>
 				</table>
-
-
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
 		<form name="editForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" id="theForm">
 		<input type="hidden" name="year" value="<?php echo $year; ?>" />
@@ -108,6 +118,9 @@ $js->printJavascript();
 		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>" />
 		<input type="hidden" name="trans_num" value="<?php echo $trans_num; ?>" />
 		<input type="hidden" name="action" value="saveChanges" />
+	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
+
+
 
 		<tr>
 			<td>
@@ -116,24 +129,24 @@ $js->printJavascript();
 						<td align="left">
 							<table width="100%" border="0">
 								<tr>
-									<td align="left" width="100%" nowrap>
+									<td align="left" width="100%">
 											<table width="100%" border="0" cellspacing="0" cellpadding="0">
 												<tr>
 													<td><table width="50"><tr><td>Client:</td></tr></table></td>
 													<td width="100%">
-														<select id="clientSelect" name="clientSelect" onChange="onChangeClientSelect();" style="width: 100%;" />
+														<select id="clientSelect" name="clientSelect" onchange="onChangeClientSelect();" style="width: 100%;" />
 													</td>
 												</tr>
 											</table>
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="100%" nowrap>
+									<td align="left" width="100%">
 											<table width="100%" border="0" cellspacing="0" cellpadding="0">
 												<tr>
 													<td><table width="50"><tr><td>Project:</td></tr></table></td>
 													<td width="100%">
-														<select id="projectSelect" name="projectSelect" onChange="onChangeProjectSelect();" style="width: 100%;" />
+														<select id="projectSelect" name="projectSelect" onchange="onChangeProjectSelect();" style="width: 100%;" />
 													</td>
 												</tr>
 											</table>
@@ -145,7 +158,7 @@ $js->printJavascript();
 												<tr>
 													<td><table width="50"><tr><td>Task:</td></tr></table></td>
 													<td width="100%">
-														<select id="taskSelect" name="taskSelect" onChange="onChangeTaskSelect();" style="width: 100%;" />
+														<select id="taskSelect" name="taskSelect" onchange="onChangeTaskSelect();" style="width: 100%;" />
 													</td>
 												</tr>
 											</table>
@@ -161,10 +174,10 @@ $js->printJavascript();
 									<td>
 										<table class="clock_on_box">
 											<tr>
-												<td align="left" class="clock_on_text" nowrap>
+												<td align="left" class="clock_on_text">
 													Start time:
 												</td>
-												<td align="left" nowrap>
+												<td align="left">
 													<?php $hourInput = new HourInput("clock_on_time_hour");
 														$hourInput->create(date("G", $trans_info["start_stamp"])); ?>
 													:
@@ -180,14 +193,14 @@ $js->printJavascript();
 													<input type="text" name="clock_on_date_year" size="4" value="<?php echo date("Y", $trans_info["start_stamp"]); ?>" />
 												</td>
 												<td align="left">
-													<img src="images/clock-green-sml.gif" alt="" >
+													<img src="images/clock-green-sml.gif" alt="" />
 												</td>
 											</tr>
 											<tr>
-												<td align="left" class="clock_off_text" nowrap>
+												<td align="left" class="clock_off_text">
 													End time:
 												</td>
-												<td align="left" nowrap>
+												<td align="left">
 													<?php $hourInput = new HourInput("clock_off_time_hour");
 														$hourInput->create(date("G", $trans_info["end_stamp"])); ?>
 															:
@@ -203,7 +216,7 @@ $js->printJavascript();
 													<input type="text" name="clock_off_date_year" size="4" value="<?php echo date("Y", $trans_info["end_stamp"]); ?>" />
 												</td>
 												<td align="left">
-													<img src="images/clock-red-sml.gif" alt="" >
+													<img src="images/clock-red-sml.gif" alt="" />
 												</td>
 											</tr>
 										</table>
@@ -236,9 +249,9 @@ $js->printJavascript();
 				</table>
 			</td>
 		</tr>
-		</form>
-	</table>
 
+	</table>
+		</form>
 
 		</td>
 	</tr>

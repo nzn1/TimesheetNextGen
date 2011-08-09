@@ -1,8 +1,6 @@
 <?php 
             
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
-trigger_error('WARNING - LOTS OF STUFF IN clock_action has not be converted to OO!');
-trigger_error('lots of globals are in here. this is a problem!');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 

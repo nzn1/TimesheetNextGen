@@ -111,7 +111,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_U
 
 		<table width="100%" border="0">
 			<tr>
-			<td align="left" nowrap class="outer_table_heading">
+			<td align="left" class="outer_table_heading">
 				<?php echo JText::_('PROJECT_MEMBERS')." ".$proj_title." (".JText::_('CLIENT').": ".$client_name.")"; ?>
 			</td>
 			</tr>

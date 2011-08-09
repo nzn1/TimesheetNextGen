@@ -215,7 +215,7 @@ $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;client_id=$client_id";
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap width="25%">
+						<td align="left" width="25%">
 							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">Client:</td>
@@ -233,21 +233,21 @@ $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;client_id=$client_id";
 						</td>
 						<td width="25%">
 							<table border="0" cellpadding="1" cellspacing="2">
-								<tr nowrap>
+								<tr>
 									<td align="right" width="0" class="outer_table_heading">Start Date:</td>
 									<td align="left"><?php Common::day_button("start_day",$start_time); Common::month_button("start_month",$start_month); Common::year_button("start_year",$start_year); ?></td>
 								</tr>
-								<tr nowrap>
+								<tr>
 									<td align="right" width="0" class="outer_table_heading">End Date:</td>
 									<td align="left"><?php Common::day_button("end_day",$end_time); Common::month_button("end_month",$end_month); Common::year_button("end_year",$end_year); ?></td>
 								</tr>
 							</table>
 						</td>
-						<td align="center" nowrap class="outer_table_heading" width="10%">
+						<td align="center" class="outer_table_heading" width="10%">
 							<?php echo date('F Y',strtotime($start_year . '/' . $start_month . '/' . $start_day));?>
 						</td>
 						<?php if (!$print): ?>
-							<td  align="right" width="15%" nowrap >
+							<td  align="right" width="15%" >
 								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
 								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>

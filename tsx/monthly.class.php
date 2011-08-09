@@ -4,7 +4,8 @@ class MonthlyClass{
 	public function __construct(){}
 
 	public function print_totals($Minutes, $type="", $pyear, $pmonth, $pday) {
-
+     echo '<!-- print totals-->';
+      //print "</tr><tr>\n";
 		/**
 		 * Bug fix by robsearles 26 Jan 2008
 		 * Strange bug I noticed whilst fixing bug below. If a month starts
@@ -36,9 +37,7 @@ class MonthlyClass{
 		$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 		// Called from monthly.php to print out a line summing the hours worked in the past
-		// week.  index.phtml must set all global variables.
-
-		print "</tr><tr>\n";
+		// week.
 		if (gbl::getBreakRatio() > 0) {
 			print "<td align=\"left\" colspan=\"3\">";
 			$break_sec =  floor(gbl::getBreakRatio()*$seconds);
@@ -53,6 +52,6 @@ class MonthlyClass{
 		else
 			print "<a href=\"".Config::getRelativeRoot()."/weekly?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."$ymdStr\">". JText::_('WEEKLY')." ".JText::_('TOTAL').": </a>";
 
-		print "<span class=\"calendar_total_value_$type\">". Common::formatMinutes($Minutes) ."</span></td>\n";
+		print "<span class=\"calendar_total_value_$type\">". Common::formatMinutes($Minutes) ."</span></td><!--end print totals-->\n";
 	}
 }

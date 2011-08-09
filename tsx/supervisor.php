@@ -267,11 +267,11 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			<td>	
 				<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
 				&nbsp;<?php echo ucfirst(JText::_('CHANGE_DATE')).':'; ?>&nbsp;
-				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
 			</td>
 			<?php if (!$print): ?>
 		<td  align="center" width="10%" >
-			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
+			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br />&rArr;&nbsp;Excel </a>
 		</td>
 		<td align="center">
 			<?php 
@@ -279,7 +279,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		 endif; 
 		// add submit button
 		if (!$print): ?>
-		<td align="right" nowrap>
+		<td align="right">
 		</td>
 		<td align="center">
 			<input type="submit" name="Modify" value="<?php echo ucfirst(JText::_('SAVE_CHANGES')); ?>"> 
@@ -335,7 +335,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	if ($num == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
-		print "			<i><br>".JText::_('NO_TIME_RECORDED') .date("Y-m-d",$startDate).".<br><br></i>\n";
+		print "			<i><br />".JText::_('NO_TIME_RECORDED') .date("Y-m-d",$startDate).".<br /><br /></i>\n";
 		print "		</td>\n";
 		print "	</tr>\n";
 	} else {

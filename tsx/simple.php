@@ -125,7 +125,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		<td nowrap="nowrap" class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
 			</td>
 		<td align="right" nowrap="nowrap">
 			<!--prev / next buttons used to be here -->
@@ -273,8 +273,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			//create a new pair
 			$matchedPair = new TaskInfo($currentTaskId, $daysArray,
 										$currentProjectId, $currentProjectTitle,
-										$currentTaskName, $currentWorkDescription
-										);
+										$currentTaskName, '','',$currentWorkDescription);
 
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;

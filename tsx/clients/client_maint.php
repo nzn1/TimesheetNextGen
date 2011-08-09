@@ -45,7 +45,7 @@ list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getClientTable()." ORDER BY organ
 //are there any results?
 if ($num == 0) {
 	print "<tr><td align=\"center\" colspan=\"5\"><br />".JText::_('NO_CLIENTS')." &nbsp; ";
-	print "<a href=\"client_add\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br><br></td></tr>";
+	print "<a href=\"client_add\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br /><br /></td></tr>";
 } else {
 
 	print "<tr class=\"inner_table_head\">";

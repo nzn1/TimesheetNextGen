@@ -96,7 +96,7 @@ list($qh, $num) = dbQuery($query_categories);
 			</td>		
 
 			</td>
-			<td align="right" valign="top" nowrap>
+			<td align="right" valign="top">
 				<a href="cat_edit?cat_id=<?php echo $data_cat["cat_id"]; ?>"><?php echo (JText::_('EDIT')) ?></a>,
 				<a href="javascript:delete_task(<?php echo $data_cat["cat_id"]; ?>);"><?php echo (JText::_('DELETE')) ?></a>
 			</td>

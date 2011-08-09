@@ -22,7 +22,7 @@ class Debug{
 		
 	private static $hideDebugData    = 0;        //hide debug data if not logged in
 
-	private static $sendToConsole	   = 1;
+	private static $sendToConsole	   = 0;
 	private static $sendToScreen	   = 1;
 
 	private static $location         = 1;        //display location headers

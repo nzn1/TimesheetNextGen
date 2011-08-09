@@ -7,11 +7,6 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ABSENCE_ENTRY')." | ".gbl::getContextUser()."</title>");
 
 
-
-
-
-
-
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
@@ -42,22 +37,23 @@ $ihol = 0;
 $last_day = Common::get_last_day($month, $year);
 $startDate = mktime(0,0,0, $month, 1, $year);
 
+ob_start();
 ?>
-<html>
-<head>
+
 
 <script type="text/javascript">
-
 	function onSubmit() {
 		//set the action
 		document.getElementById('action').value = 1;
 		document.theForm.submit();
 	}
-
-
 </script>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
-</head>
+
+<?php
+PageElements::setHead(PageElements::getHead().ob_get_contents());
+ob_end_clean();
+?>
 
 
 
@@ -75,11 +71,11 @@ $startDate = mktime(0,0,0, $month, 1, $year);
 	<tr>
 		<!--	<?php print "$day $month $year"; ?> -->
 		<?php if($canChangeUser) : ?>
-			<td align="left" width="38%" nowrap class="outer_table_heading"><?php echo JText::_('USER'); ?>: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
+			<td align="left" width="38%" class="outer_table_heading"><?php echo JText::_('USER'); ?>: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
 		<?php else : ?>
-			<td width="38%" nowrap><?php echo JText::_('USER'); ?>: &nbsp; <?php echo "<b>$uid</b>"; ?></td>
+			<td width="38%" ><?php echo JText::_('USER'); ?>: &nbsp; <?php echo "<b>$uid</b>"; ?></td>
 		<?php endif; ?>
-		<td align="center" nowrap class="outer_table_heading">
+		<td align="center"  class="outer_table_heading">
 			<?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), mktime(0,0,0,$month, 1, $year))); ?>
 		</td>
 		<td align="right">&nbsp; </td>

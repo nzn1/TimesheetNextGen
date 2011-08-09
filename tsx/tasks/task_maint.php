@@ -192,7 +192,7 @@ PageElements::setTheme('newcss');
 					}
 					?>
 			</td>
-			<td align="right" valign="top" nowrap>
+			<td align="right" valign="top">
 				<a href="task_edit?task_id=<?php echo $data_task["task_id"]; ?>"><?php echo (JText::_('EDIT')) ?></a>,
 				<a href="javascript:delete_task(<?php echo $proj_id; ?>,<?php echo $data_task["task_id"]; ?>);"><?php echo (JText::_('DELETE')) ?></a>
 			</td>

@@ -78,19 +78,19 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USERS')."
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<!--  td width="100%" class="face_padding_cell" -->
-		<td align="left" nowrap class="outer_table_heading">
+		<td align="left" class="outer_table_heading">
 			<?php echo JText::_('EMPLOYEES_CONTRACTORS_LIST'); ?>
 		</td>
-		<td align="right" nowrap >
+		<td align="right" >
 			&nbsp;
 		</td>
 	</tr>
 	<tr>
 		<!--  td width="100%" class="face_padding_cell" -->
-		<td align="left" nowrap class="outer_table_heading">
+		<td align="left" class="outer_table_heading">
 			&nbsp;
 		</td>
-		<td align="right" nowrap >
+		<td align="right" >
 			<a href="javascript:goClone()">Copy Projects/Tasks between users</a>
 		</td>
 	</tr>
@@ -145,22 +145,22 @@ while ($data = dbResult($qh)) {
 		</td>
 	</tr>
 </table>
-<br><br>
+<br /><br />
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <!--  table width="100%" border="0" cellspacing="0" cellpadding="0" -->
 	<tr>
-		<td align="left" nowrap class="outer_table_heading">
+		<td align="left" class="outer_table_heading">
 			<a name="AddEdit">	<?php echo JText::_('ADD_UPDATE_USER'); ?>:</a>
 		</td>
-		<td align="right" nowrap >
+		<td align="right" >
 			&nbsp;
 		</td>
 	</tr>
 	<tr>
-		<td align="left" nowrap class="outer_table_heading">
+		<td align="left" class="outer_table_heading">
 			&nbsp;
 		</td>
-		<td align="right" nowrap >
+		<td align="right" >
 			<a href="javascript:goClone()">Copy Projects/Tasks between users</a>
 		</td>
 	</tr>
@@ -169,8 +169,8 @@ while ($data = dbResult($qh)) {
 	<tr>
 		<!-- table width="100%" border="0" class="table_body" -->
 	<tr>
-		<td><?php echo JText::_('FIRST_NAME'); ?>:<br><input size="20" name="first_name" style="width: 100%;"></td>
-		<td><?php echo JText::_('LAST_NAME'); ?>:<br><input size="20" name="last_name" style="width: 100%;"></td>
+		<td><?php echo JText::_('FIRST_NAME'); ?>:<br /><input size="20" name="first_name" style="width: 100%;"></td>
+		<td><?php echo JText::_('LAST_NAME'); ?>:<br /><input size="20" name="last_name" style="width: 100%;"></td>
 		<td><?php echo JText::_('USERNAME'); ?>:<br /><input size="15" name="username" style="width: 100%;" /></td>
 		<td><?php echo JText::_('EMAIL_ADDRESS'); ?>:<br /><input size="35" name="email_address" style="width: 100%;" /></td>
 		<td><?php echo JText::_('PASSWORD'); ?>:<br /><input type="password" size="20" name="password" style="width: 100%;" AUTOCOMPLETE="OFF" /></td>

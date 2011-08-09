@@ -1,4 +1,4 @@
-﻿//Javasript name: My Date Time Picker
+//Javasript name: My Date Time Picker
 //Date created: 16-Nov-2003 23:19
 //Creator: TengYong Ng
 //Website: http://www.rainforestnet.com
@@ -596,7 +596,7 @@ function RenderCssCal(bNewCal)
 
 	if (Cal.Scroller === "DROPDOWN")
 	{
-	    vCalHeader += "<td align='center'><select name='MonthSelector' onChange='javascript:Cal.SwitchMth(this.selectedIndex);RenderCssCal();'>";
+	    vCalHeader += "<td align='center'><select name='MonthSelector' onchange='javascript:Cal.SwitchMth(this.selectedIndex);RenderCssCal();'>";
 		for (i = 0; i < 12; i += 1)
 		{
 			if (i === Cal.Month)
@@ -613,7 +613,7 @@ function RenderCssCal(bNewCal)
 		vCalHeader += "</select></td>";
 		//Year selector
 
-		vCalHeader += "<td align='center'><select name='YearSelector' size='1' onChange='javascript:Cal.SwitchYear(this.value);RenderCssCal();'>";
+		vCalHeader += "<td align='center'><select name='YearSelector' size='1' onchange='javascript:Cal.SwitchYear(this.value);RenderCssCal();'>";
 		for (i = StartYear; i <= (dtToday.getFullYear() + EndYear); i += 1)
 		{
 			if (i === Cal.Year)
@@ -832,7 +832,7 @@ function RenderCssCal(bNewCal)
 			SelectPm = (Cal.AMorPM === "PM") ? "Selected" : "";
 
 			vCalTime += "</td><td>";
-			vCalTime += "<select name=\"ampm\" onChange=\"javascript:Cal.SetAmPm(this.options[this.selectedIndex].value);\">\n";
+			vCalTime += "<select name=\"ampm\" onchange=\"javascript:Cal.SetAmPm(this.options[this.selectedIndex].value);\">\n";
 			vCalTime += "<option " + SelectAm + " value=\"AM\">AM</option>";
 			vCalTime += "<option " + SelectPm + " value=\"PM\">PM<option>";
 			vCalTime += "</select>";

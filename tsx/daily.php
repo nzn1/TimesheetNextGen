@@ -33,12 +33,15 @@ $js = new ClientProjTaskJavascript();
 $js->printJavascript();
 ?>
 <script type="text/javascript">
-
+<![CDATA[
 	function delete_entry(transNum) {
 		if (confirm("<?php echo JText::_('JS_CONFIRM_DELETE_TIME'); ?>"))
-			location.href = '<?php echo Config::getRelativeRoot(); ?>/delete?month=<?php echo gbl::getMonth(); ?>&amp;year=<?php echo gbl::getYear(); ?>&amp;day=<?php echo gbl::getDay(); ?>&amp;client_id=<?php echo gbl::getClientId(); ?>&amp;proj_id=<?php echo gbl::getProjId(); ?>&amp;task_id=<?php echo gbl::getTaskId(); ?>&amp;trans_num=' + transNum;
+			location.href = '<?php echo Config::getRelativeRoot()."/delete?month=".gbl::getMonth()
+      ."&year=".gbl::getYear()."&day=".gbl::getDay()
+      ."&client_id=".gbl::getClientId()."&proj_id=".gbl::getProjId()
+      ."&task_id=".gbl::getTaskId();?> &trans_num=' + transNum;
 	}
-
+]]>
 </script>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <?php 
@@ -63,14 +66,14 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" colspan="2" nowrap class="outer_table_heading">
+		<td align="left" colspan="2" class="outer_table_heading">
 			<?php echo JText::_('CURRENT_DATE').': '?><span style="color:#00066F;"><?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate); ?></span>
 		</td>
-		<td align="right" nowrap>
+		<td align="right">
 			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
 				value="<?php echo date('d-M-Y', $todayDate);  ?>" />
 		</td>
-		<td align="center" nowrap class="outer_table_heading">
+		<td align="center" class="outer_table_heading">
 			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
 	</tr>
@@ -106,13 +109,13 @@ if ($num == 0) {
 	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
 	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
 	print "		<td class=\"calendar_cell_disabled_right\" width=\"15%\">&nbsp;</td>\n";
-	$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
+	$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 								"?client_id=".gbl::getClientId()."".
 								"&amp;proj_id=".gbl::getProjId()."".
 								"&amp;task_id=".gbl::getTaskId()."".
 								"$ymdStrSd".
 								"&amp;destination=$_SERVER[PHP_SELF]".
-								"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+								"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 	print "	<td class=\"calendar_cell_disabled_right\" width=\"15%\"><a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;</td>\n";
 	
 	print "	</tr>\n";
@@ -219,7 +222,7 @@ else {
 				print Common::formatMinutes($data["duration"]) . "</td>\n";
 			}
 
-			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
+			print "<td class=\"calendar_cell_disabled_right\" align=\"right\">\n";
 			if ($data['subStatus'] == "Open") {
 				print "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">".ucfirst(JText::_('EDIT'))."</a>,&nbsp;\n";
 				//print "	<a href=\"".Config::getRelativeRoot()."/delete?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete, </a>\n";
@@ -228,13 +231,13 @@ else {
 				// submitted or approved times cannot be edited
 				print  $data['subStatus'] . "&nbsp;\n";
 			}
-			$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
+			$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".
 											"$ymdStrSd".
 											"&amp;destination=$_SERVER[PHP_SELF]".
-											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 			print "	<a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;\n";
 			print "</td>";
 
@@ -252,7 +255,7 @@ else {
 			print "&nbsp;</td>\n";
 			$dc->open_cell_middle_td(); //<td....>
 			print "&nbsp;</td>\n";
-			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
+			print "<td class=\"calendar_cell_disabled_right\" align=\"right\">\n";
 			/**
 			 * Update by robsearles 26 Jan 2008
 			 * Added a "Clock Off" link to make it easier to stop timing a task
@@ -273,8 +276,8 @@ else {
 	}
 	print "<tr>\n";
 	print "	<td class=\"calendar_totals_line_weekly_right\" colspan=\"7\" align=\"right\">";
-	print " Daily Total: <span class=\"calendar_total_value_weekly\" nowrap>" . Common::formatMinutes($todaysTotal) . "</span></td>\n";
-	print "	<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>&nbsp;</td>\n";
+	print " Daily Total: <span class=\"calendar_total_value_weekly\">" . Common::formatMinutes($todaysTotal) . "</span></td>\n";
+	print "	<td class=\"calendar_cell_disabled_right\" align=\"right\">&nbsp;</td>\n";
 	print "</tr>\n";
 	print "</table>";
 }

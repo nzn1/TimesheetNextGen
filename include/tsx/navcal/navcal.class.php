@@ -20,7 +20,7 @@ class NavCal extends NavCalCommon{
 
 ?>
 
-	<table width="224" border="1" bordercolor="black" cellspacing="0" cellpadding="0">
+	<table width="224" border="1" cellspacing="0" cellpadding="0">
 		<tr>
 			<td width="100%" class="face_padding_cell" style="background-color: #000788">
 
@@ -28,7 +28,7 @@ class NavCal extends NavCalCommon{
 
 				<table width="100%" border="0">
 					<tr >
-						<td align="left" nowrap class="navcal_header">
+						<td align="left"  class="navcal_header">
 							<?php 
 							list($prev_month,$next_month) = $this->getPrevNextMonth($todayDate);
 							
@@ -38,10 +38,10 @@ class NavCal extends NavCalCommon{
               ."&amp;year=".$dti["year"]."&amp;month=".$dti["mon"]."&amp;day=".$dti["mday"]."\">".JText::_('PREVIOUS_SHORT')."</a>";
 							?>
 						</td>
-						<td align="center" nowrap class="navcal_header">
+						<td align="center"  class="navcal_header">
 							<?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'),$startDateCalendar)); ?>
 						</td>
-						<td align="right" nowrap class="navcal_header">
+						<td align="right"  class="navcal_header">
 							<?php
 							$dti=getdate($next_month);
               echo "<a href=\"".Rewrite::getShortUri()."?".gbl::getPost()
@@ -63,48 +63,56 @@ class NavCal extends NavCalCommon{
 										$currentDayDate = $firstPrintedDate;
 										for ($i=0; $i<7; $i++) {
 											$currentDayStr = strftime("%a", $currentDayDate);
-											print " <td width=\"25px\" class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>\n";
+											echo " <td width=\"25\" class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>\n";
 											$currentDayDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
 										}
 									?>
-								</tr>
+								</tr><!--end row of Mon-Sun-->
 								<tr>
-									<?php {
+									<?php
 
 										//define the variable dayRow
 										$dayRow = 0;
 
 										// Print last months' days spots.
 										for ($i=0; $i<$leadInDays; $i++) {
-											print "<td width=\"25px\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
+											echo "<td width=\"25\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td><!--lead in day-->\n";
 											$dayRow++;
 										}
-
+										
+										//this line has been added as otherwise there is a <tr></tr> without any content which is not valid XHTML.
+										//not a perfect fix however!
+                    if($i == 0){
+                      echo '<td></td><!-- no lead in days-->';
+                    }
 										$i=0; $navday = 1;
 										while (checkdate(gbl::getMonth(), $navday, gbl::getYear())) {
 
 											// New Week.
 											if ((($dayRow % 7) == 0) && ($dowForFirstOfMonth != 0)) {
-												print "</tr>\n<tr>\n";
-											} else
+												echo "</tr>\n<tr>\n";
+											} 
+                      else{
 												$dowForFirstOfMonth = 1;
+											}
 
 											//define subtable
 											if (($dayRow % 7) == 6)
-												print "<td width=\"25px\" height=\"25%\" align=\"center\" valign=\"top\" class=\"calendar_cell_right\">";
+												echo "<td width=\"25\" height=\"25%\" align=\"center\" valign=\"top\" class=\"calendar_cell_right\">";
 											else
-												print "<td width=\"25px\" height=\"25%\" align=\"center\" valign=\"top\" class=\"calendar_cell_middle\">";
+												echo "<td width=\"25\" height=\"25%\" align=\"center\" valign=\"top\" class=\"calendar_cell_middle\">";
 
-											if($navday == gbl::getDay()) 
-												print "<font color=\"#CC9900\"><b>$navday</b></font>";
+											if($navday == gbl::getDay()){ 
+												echo "<font color=\"#CC9900\"><b>$navday</b></font>";
+											}
 											else{
-											//
-											echo "<a href=\"".Rewrite::getShortUri()."?".gbl::getPost()											
-                      ."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()
-                      ."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=$navday\">$navday</a>";	
+  											//
+  											echo "<a href=\"".Rewrite::getShortUri()."?".gbl::getPost()											
+                        ."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;client_id=".gbl::getClientId()
+                        ."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=$navday\">$navday</a>";	
 											}
 
-											print " </td>\n";
+											echo " </td>\n";
 
 											$navday++;
 											$dayRow++;
@@ -112,13 +120,13 @@ class NavCal extends NavCalCommon{
 										// Print the rest of the calendar.
 										while (($dayRow % 7) != 0) {
 											if (($dayRow % 7) == 6)
-												print " <td width=\"25px\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</td>\n ";
+												echo " <td width=\"25\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</td>\n ";
 											else
-												print " <td width=\"25px\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
+												echo " <td width=\"25\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 											$dayRow++;
 										}
-									} ?>
-								</tr>
+?>
+								</tr><!--end of dates-->
 							</table>
 						</td>
 					</tr>

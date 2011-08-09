@@ -10,7 +10,7 @@ public function make_daily_link($ymdStr, $projId, $string) {
 }
 
 public function open_cell_middle_td() {
-	echo "<td class=\"calendar_cell_middle\" align=\"right\" nowrap>";
+	echo "<td class=\"calendar_cell_middle\" align=\"right\">";
 }
 	
 }

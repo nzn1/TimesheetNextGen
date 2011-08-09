@@ -142,7 +142,7 @@ function make_index($data,$order) {
 
 			<table width="100%" border="0">
 				<tr>
-					<td align="left" nowrap width="35%">
+					<td align="left" width="35%">
 						<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 							<tr>
 								<td align="right" width="0" class="outer_table_heading">User:</td>
@@ -152,14 +152,14 @@ function make_index($data,$order) {
 							</tr>
 						</table>
 					</td>
-					<td align="center" nowrap class="outer_table_heading" width="30%">
+					<td align="center" class="outer_table_heading" width="30%">
 						<?php echo date('Y',$todayDate); ?>
 					</td>
 					<?php if(!$print): ?>
 						<td  align="center" width="15%">
 							<button onclick="popupPrintWindow()">Print Report</button>
 						</td> 
-						<td align="right" nowrap width="20%">select year:&nbsp;
+						<td align="right" width="20%">select year:&nbsp;
 							<?php
 								Common::year_button("year",$year);
 							?>

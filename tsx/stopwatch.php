@@ -30,6 +30,8 @@ $js->printJavascript();
 ?>
 
 <script type="text/javascript">
+<![CDATA[
+
 function doClockonoff(clockon) {
 	document.theForm.clockonoff.value = clockon;
 	validate();
@@ -55,28 +57,19 @@ function resizePopupWindow() {
 	var newHeight = outerTable.offsetHeight + outerHeight - innerHeight;
 	window.resizeTo(newWidth, newHeight);
 }
-
+]]>
 </script>
 <?php
 
 $head = ob_get_contents();
 PageElements::setHead($head);
-
+ob_end_clean();                                             
 PageElements::setBodyOnLoad("doOnLoad();");
 ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
 		<tr>
 			<td width="100%" class="face_padding_cell">
-
-
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" nowrap class="outer_table_heading" nowrap>
-							Clock On / Off Now
-						</td>
-					</tr>
-				</table>
 <?php
 	//$stopwatch = 1;
 	//$fromPopup = "true";
@@ -90,10 +83,3 @@ PageElements::setBodyOnLoad("doOnLoad();");
 			</td>
 		</tr>
 	</table>
-
-
-</body>
-</html>
-<?php
-// vim:ai:ts=4:sw=4
-?>
