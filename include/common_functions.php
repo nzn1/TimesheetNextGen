@@ -263,6 +263,7 @@ function arrayToObject($d) {
  * @param string $url
  */
 function gotoLocation($url){
+  //ppr($_POST);
 	if($url == ''){
 		$url = '/';
 	}

@@ -36,7 +36,7 @@ class Debug{
 	private static $_server          = 0;        //display server data
 	private static $_cookie          = 0;        //display cookie data
 	private static $templateTags     = 0;        //display template tags
-	private static $errors			 = 1;		 //show error debug data
+	private static $errors			     = 1;		 //show error debug data
 	
 	private static $formFiles        = 0;        //display form file related debug data	
 	private static $formRules        = 0;
@@ -52,6 +52,8 @@ class Debug{
 	private static $authBasic        = 0;        //display user authorisation data basic
 	private static $rewrite          = 0;        //display php rewrite information
 	private static $pprTrace         = 0;        //display the trace log for all ppr commands
+	
+	private static $language         = 0;
 
 	/*END DEBUG*/
 
@@ -193,6 +195,9 @@ class Debug{
 	}
 	public static function getErrors(){
 		return self::$errors;
+	} 
+	public static function getLanguage(){
+		return self::$language;
 	} 
 	
 /**

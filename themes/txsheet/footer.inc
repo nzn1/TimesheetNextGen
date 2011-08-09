@@ -15,7 +15,7 @@
 ?>
 <table width="100%" class="grey_area">
 	<tr>
-		<td width="10px"> </td>
+		<td> </td>
 		<td class="timesheet_logo" width="30%">
 			<?php 
 				$ver = Common::getVersion();
@@ -31,6 +31,6 @@
 		<td align="right" width="30%">
 			<?php echo JText::_('USAGE_TERMS') ?> <a href="http://www.gnu.org/copyleft/gpl.html"><?php echo JText::_('GPL') ?></a>.
 		</td>
-		<td width="10px"> </td>
+		<td> </td>
 	</tr>
 </table>

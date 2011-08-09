@@ -204,7 +204,7 @@ if (isset($popup))
 
 		$ymdStr = "&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".$curDay;
 
-		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/popup".
+		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".

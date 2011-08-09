@@ -4,44 +4,31 @@ if(!class_exists('Site'))die('Restricted Access');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
 //load local vars from request/post/get
-$month = $_REQUEST['month'];
-$day = $_REQUEST['day'];
-$year = $_REQUEST['year'];
-$client_id = $_REQUEST['client_id'];
-$proj_id = $_REQUEST['proj_id'];
-$task_id = $_REQUEST['task_id'];
-$origin = $_REQUEST["origin"];
-$destination = $_REQUEST["destination"];
-$clock_on_time_hour = $_REQUEST['clock_on_time_hour'];
-$clock_on_time_min = $_REQUEST['clock_on_time_min'];
-$clock_off_time_hour = $_REQUEST['clock_off_time_hour'];
-$clock_off_time_min = $_REQUEST['clock_off_time_min'];
-$clockonoff = $_REQUEST['clockonoff'];
+
+
+require_once Config::getDocumentRoot().'/tsx/clock_action.class.php';
+$ca = new ClockAction();
 
 // create the command menu cancel option
-Site::getCommandMenu()->add(new TextCommand("Cancel", true, "$destination?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;year=$year&amp;month=$month&amp;day=$day"));
+Site::getCommandMenu()->add(new TextCommand("Cancel", true, $ca->getDestination()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()));
 
+PageElements::setHead("<title>".Config::getMainTitle()." | Clock off - Enter log message</title>");
 ?>
-<html>
-<head>
-	<title>Clock off - Enter log message</title>
-<
-</head>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/clock_action" method="post">
-	<input type="hidden" name="origin" value="<?php echo $origin; ?>" />
-	<input type="hidden" name="destination" value="<?php echo $destination; ?>" />
-	<input type="hidden" name="clock_on_time_hour" value="<?php echo $clock_on_time_hour; ?>" />
-	<input type="hidden" name="clock_off_time_hour" value="<?php echo $clock_off_time_hour; ?>" />
-	<input type="hidden" name="clock_on_time_min" value="<?php echo $clock_on_time_min; ?>" />
-	<input type="hidden" name="clock_off_time_min" value="<?php echo $clock_off_time_min; ?>" />
-	<input type="hidden" name="year" value="<?php echo $year ?>" />
-	<input type="hidden" name="month" value="<?php echo $month; ?>" />
-	<input type="hidden" name="day" value="<?php echo $day; ?>" />
-	<input type="hidden" name="client_id" value="<?php echo $client_id; ?>" />
-	<input type="hidden" name="proj_id" value="<?php echo $proj_id; ?>" />
-	<input type="hidden" name="task_id" value="<?php echo $task_id; ?>" />
-	<input type="hidden" name="clockonoff" value="<?php echo $clockonoff; ?>" />
+	<input type="hidden" name="origin" value="<?php echo $ca->getOrigin(); ?>" />
+	<input type="hidden" name="destination" value="<?php echo $ca->getDestination(); ?>" />
+	<input type="hidden" name="clock_on_time_hour" value="<?php echo $ca->getClockOnTimeHour(); ?>" />
+	<input type="hidden" name="clock_off_time_hour" value="<?php echo $ca->getClockOffTimeHour(); ?>" />
+	<input type="hidden" name="clock_on_time_min" value="<?php echo $ca->getClockOnTimeMin(); ?>" />
+	<input type="hidden" name="clock_off_time_min" value="<?php echo $ca->getClockOffTimeMin(); ?>" />
+	<input type="hidden" name="year" value="<?php echo gbl::getYear() ?>" />
+	<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
+	<input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
+	<input type="hidden" name="client_id" value="<?php echo gbl::getClientId(); ?>" />
+	<input type="hidden" name="proj_id" value="<?php echo gbl::getProjId(); ?>" />
+	<input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
+	<input type="hidden" name="clockonoff" value="<?php echo $ca->getClockOnOff(); ?>" />
 	<input type="hidden" name="log_message_presented" value="1" />
 
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
@@ -50,7 +37,7 @@ Site::getCommandMenu()->add(new TextCommand("Cancel", true, "$destination?client
 
 				<table width="100%" border="0">
 					<tr>
-						<td align="left" nowrap class="outer_table_heading" nowrap>
+						<td align="left" class="outer_table_heading">
 							Enter Log Message
 						</td>
 					</tr>
@@ -83,8 +70,6 @@ Site::getCommandMenu()->add(new TextCommand("Cancel", true, "$destination?client
 			</td>
 		</tr>
 	</table>
-
-
 		</td>
 	</tr>
 </table>

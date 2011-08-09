@@ -174,7 +174,7 @@ function make_index($data,$order) {
 			<td>
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 				<tr>
-					<td class="calendar_cell_disabled_right">&nbsp</td>
+					<td class="calendar_cell_disabled_right">&nbsp;</td>
 <?php
 	//Since we're iterating through the months anyway, we're going to collect the month date stamps in an array structure.
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
@@ -186,7 +186,7 @@ function make_index($data,$order) {
 	
 	$monthStamps[]=mktime(0,0,0,1,1,$year+1); //also need the first stamp for next year...
 ?>
-					<td class="calendar_cell_disabled_right">&nbsp</td>
+					<td class="calendar_cell_disabled_right">&nbsp;</td>
 				</tr>
 				<tr><td class="calendar_cell_middle"><b>Hours in month</b></td>
 <?php

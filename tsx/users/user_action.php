@@ -1,7 +1,6 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
-
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
 //load local vars from request/post/get

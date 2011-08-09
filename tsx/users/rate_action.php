@@ -1,13 +1,9 @@
 <?php
-die('NOT CONVERTED TO OO YET');
+
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=Administrator");
-	exit;
-}
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+//N.B. This page should be authorised to administrators only!
 
 //load local vars from request/post/get
 $action = $_REQUEST["action"];
@@ -15,8 +11,6 @@ $rate_id = $_REQUEST["rate_id"];
 $bill_rate = $_REQUEST["bill_rate"];
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
-
-include("table_names.inc");
 	
 if ($action == "addupdate") {
 	if ($rate_id == 1) {
@@ -42,7 +36,6 @@ if ($action == "addupdate") {
 } 
 
 //redirect back to the rate management page
-Header("Location: rate_maint.php");
+gotoLocation(Config::getRelativeRoot."/users/rate_maint");
 
-// vim:ai:ts=4:sw=4
 ?>
