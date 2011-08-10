@@ -3,6 +3,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+$loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 //load local vars from request/post/get
 $proj_id = $_REQUEST['proj_id'];
@@ -11,14 +12,14 @@ $proj_id = $_REQUEST['proj_id'];
 			"DATE_FORMAT(start_date, '%M %d, %Y') as start_date,".
 			"DATE_FORMAT(deadline, '%M %d, %Y') as deadline,".
 			"proj_status, proj_leader ".
-		"FROM  ".tbl::getProjectTable()."  ".
-		"WHERE p.proj_id=$proj_id";
+		" FROM  ".tbl::getProjectTable()."  ".
+		" WHERE p.proj_id=$proj_id";
 
 	$query = "SELECT DISTINCT p.title, p.proj_id, p.client_id, c.organisation, ".
 			"p.description, DATE_FORMAT(start_date, '%M %d, %Y') as start_date, DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 			"p.proj_status, http_link ".
-		"FROM  ".tbl::getProjectTable()." ,  p".tbl::getClientTable()." c, ".tbl::getUserTable().
-		"WHERE p.proj_id=$proj_id  ";
+		" FROM  ".tbl::getProjectTable()." p, ".tbl::getClientTable()." c, ".tbl::getUserTable().
+		" WHERE p.proj_id=$proj_id  ";
 
 //set up query
 $query = "SELECT DISTINCT p.title, p.proj_id, p.client_id, ".
@@ -26,19 +27,18 @@ $query = "SELECT DISTINCT p.title, p.proj_id, p.client_id, ".
 						"DATE_FORMAT(start_date, '%M %d, %Y') as start_date, " .
 						"DATE_FORMAT(deadline, '%M %d, %Y') as deadline, ".
 						"p.proj_status, http_link, proj_leader ".
-					"FROM  ".tbl::getProjectTable()." ,  ".tbl::getClientTable()." ,  ".tbl::getUserTable().
-					"WHERE p.proj_id=$proj_id AND ".
+					" FROM  ".tbl::getProjectTable()." p,  ".tbl::getClientTable()." c,  ".tbl::getUserTable().
+					" WHERE p.proj_id=$proj_id AND ".
 						"c.client_id=p.client_id ".
-					"ORDER BY p.proj_id";
+					" ORDER BY p.proj_id";
+
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_INFO')." | ".gbl::getContextUser()."</title>");
+ob_start();
+
+PageElements::setTheme('newcss');
+ob_end_clean();
 ?>
-<html>
-<head>
-<title>Project Info</title>
-<?php
-include ("header.inc");
-?>
-</head>
-<body width="100%" height="100%" style="margin: 0px;" <?php include ("body.inc"); ?> >
+<h2><?php echo JText::_('PROJECT_INFO');?></h2>
 <table border="0" width="100%" height="100%" align="center" valign="center">
 <?php
 		list($qh, $num) = dbQuery($query);
@@ -51,76 +51,80 @@ include ("header.inc");
 			$data["title"] = stripslashes($data["title"]);
 			$data["organisation"] = stripslashes($data["organisation"]);
 			$data["description"] = stripslashes($data["description"]);
+			$proj_id = $data["proj_id"];
 
 			list($billqh, $bill_num) = dbquery(
 					"SELECT sum(unix_timestamp(end_time) - unix_timestamp(start_time)) as total_time, ".
-						"sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))) as billed ".
+						"format(sum(bill_rate * ((unix_timestamp(end_time) - unix_timestamp(start_time))/(60*60))),2) as billed ".
 						"FROM ".tbl::getTimesTable()." tt, ".tbl::getAssignmentsTable()." at, ".tbl::getRateTable()." rt ".
-						"WHERE end_time > 0 AND rt.proj_id = $data[proj_id] ".
-						"AND at.proj_id = $data[proj_id] ".
+						"WHERE end_time > 0 AND tt.proj_id = $proj_id ".
+						"AND at.proj_id = $proj_id ".
 						"AND at.rate_id = rt.rate_id ".
 						"AND at.username = tt.uid ");
 			$bill_data = dbResult($billqh);
 
 			//start the row
 ?>
-								<tr>
-									<td>
-										<table width="100%" border="0" class="section_body">
-											<tr>
-												<td valign="center">
+			<tr>
+				<td valign="center" colspan="2" align="center">
 <?php
 			if ($data["http_link"] != "")
 				print "<a href=\"$data[http_link]\"><span class=\"project_title\">$data[title]</span></a>";
 			else
 				print "<span class=\"project_title\">$data[title]</span>";
 
-			print "&nbsp;&nbsp;<span class=\"project_status\">&lt;$data[proj_status]&gt;</span>"
+			print "</td></tr><tr><td><span class=\"label\">". JText::_('STATUS') ."</span></td>";
+			print "<td>" .$data['proj_status']. "</td></tr>";
 ?>
-												</td>
-												<td align="right">
+			<tr>
+				</td>
+			<tr>
+				<td align="right">
 <?php
-			if (isset($data["start_date"]) && $data["start_date"] != '' && $data["deadline"] != '')
-				print "<span class=\"label\">Start:</span> $data[start_date]<br /><span class=\"label\">Deadline:</span> $data[deadline]";
+			if (isset($data["start_date"]) && $data["start_date"] != '' && $data["deadline"] != '') {
+				print  JText::_('START_DATE'). "</td><td> $data[start_date]</td></tr>";
+				print "<tr><td  align=\"right\">". JText::_('END_DATE') ."</td><td> $data[deadline]";
+			}
 			else
 				print "&nbsp;";
 ?>
-												</td>
-											</tr>
-											<tr>
-												<td><?php echo $data["description"]; ?><br /></td>
-												<td valign="top" align="right"><span class="label">Client:</span> <?php echo $data["organisation"]; ?></td>
-											</tr>
-											<tr>
-												<td colspan="2" width="100%">
-													<table width="100%" border="0" cellpadding="0" cellspacing="0">
-														<tr>
-															<td width="70%">
-																<table border="0" cellpadding="0" cellspacing="0">
-																	<tr>
-																		<td>
-																			<span class="label">Total time:</span> <?php echo (isset($bill_data["total_time"]) ? formatSeconds($bill_data["total_time"]): "0h 0m"); ?>
-																			<?php if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) { ?>
-																			<br /><span class="label">Total bill:</span> <b>$<?php echo (isset($bill_data["billed"]) ? $bill_data["billed"]: "0.00"); ?></b>
-																			<?php } ?>
-																		</td>
-																	</tr>
-																	<tr><td>&nbsp;</td></tr>
-
+				</td>
+			</tr>
+			<tr>
+				<td  align="right"><?php echo JText::_('CLIENT'); ?><br /></td>
+				<td> <?php echo $data["organisation"]; ?></td>
+			</tr>
+			<tr>
+				<td  align="right"><?php echo JText::_('DESCRIPTION'); ?><br /></td>
+				<td><?php echo $data["description"] ; ?></td>
+			</tr>
+			<tr>
+				<td align="right">
+					<?php echo JText::_('TOTAL_TIME'); ?></td><td>
+					<?php echo (isset($bill_data["total_time"]) ? Common::formatSeconds($bill_data["total_time"]): "0h 0m"); ?>
+					</td></tr>
+					<?php //TODO fix manager clearance
+						 if (Auth::ACCESS_GRANTED == $this->requestPageAuth('aclSimple')) { ?>
+							<tr><td align="right">
+							<?php echo JText::_('TOTAL_BILL'); ?></td><td>$<?php echo (isset($bill_data["billed"]) ? $bill_data["billed"]: "0.00"); ?></b>
+					<?php } ?>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
 
 <?php
 
 			//display project leader
-			print "<tr><td><span class=\"label\">Project Leader:</span> $data[proj_leader] </td></tr>";
+			print "<tr><td>" .JText::_('PROJECT_LEADER'). ":</td><td> $data[proj_leader] </td></tr>";
 
 			//display assigned users
 			list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM ".tbl::getAssignmentsTable()." WHERE proj_id = $data[proj_id]");
 			if ($num_workers == 0) {
-				print "<tr><td><font size=\"-1\">Nobody assigned to this project</font></td></tr>\n";
+				print "<td><font size=\"-1\">Nobody assigned to this project</font></td>\n";
 			}
 			else {
 				$workers = '';
-				print "<tr><td><span class=\"label\">Assigned Users:</span> ";
+				print "<td align=\"right\">" . JText::_('TASK_MEMBERS'). "</td><td>";
 				for ($k = 0; $k < $num_workers; $k++) {
 					$worker = dbResult($qh2);
 					$workers .= "$worker[username], ";
@@ -133,13 +137,10 @@ include ("header.inc");
 
 ?>
 
-
-																</table>
-															</td>
-															<td width="30%">
-																<div class="project_task_list">
-																	<a href="<?php echo Config::getRelativeRoot(); ?>/task_maint?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
-<?php
+				</td>
+					<td width="30%">
+						<a href="<?php echo Config::getRelativeRoot(); ?>/task_maint?proj_id=<?php echo $data["proj_id"]; ?>"><?php echo JText::_('TASKS'); ?></a></td><td>
+		<?php
 			//get tasks
 			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM ".tbl::getTaskTable()." WHERE proj_id=$data[proj_id]");
 
@@ -153,22 +154,11 @@ include ("header.inc");
 			else
 				print "None.";
 ?>
-																</div>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-
+							</div>
+						</td>
+					</tr>
+	
 <?php
 		}
 ?>
-				</table>
-</body>
-</HTML>
-<?php
-// vim:ai:ts=4:sw=4
-?>
+		</table>
