@@ -83,7 +83,7 @@ if ($action == "show_users") {
 	exit(0);
 }
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_USER_RATES_SELECTION')." | ".gbl::getContextUser()."</title>");
-
+PageElements::setTheme('newcss');
 ?>
 
 <script>
@@ -106,10 +106,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_U
 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
 
-
-		<table width="100%" border="0">
 			<tr>
 			<td align="left" class="outer_table_heading">
 				<?php echo JText::_('PROJECT_MEMBERS')." ".$proj_title." (".JText::_('CLIENT').": ".$client_name.")"; ?>
@@ -117,15 +114,15 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_U
 			</tr>
 		</table>
 
-		<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
+		<table>
+		<thead>
 			<tr>
-			<td>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
-				<tr class="inner_table_head">
-					<td class="inner_table_column_heading"><i>&nbsp;</i></td>
-					<td class="inner_table_column_heading">&nbsp;<?php echo JText::_('USER') ?></td>
-					<td class="inner_table_column_heading"><?php echo JText::_('BILLING_RATE_BYHOUR') ?></td>
-				</tr>
+				<th><i>&nbsp;</i></th>
+				<th>&nbsp;<?php echo JText::_('USER') ?></th>
+				<th><?php echo JText::_('BILLING_RATE_BYHOUR') ?></th>
+			</tr>
+			</thead>
+			<tbody>
 <?php
 
 list($qh,$num) = dbQuery("SELECT rate_id, bill_rate FROM  ".tbl::getRateTable()." ORDER BY bill_rate");

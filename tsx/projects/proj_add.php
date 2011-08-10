@@ -2,7 +2,7 @@
 
 if(!class_exists('Site'))die('Restricted Access');
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ADD_NEW_PROJECT')."</title>");
-
+PageElements::setTheme('newcss');
 // Authenticate
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');
@@ -27,11 +27,17 @@ $end_month = date("n", $startDate);;
 $end_year = date("Y", $startDate);;
 
 ?>
+<<<<<<< .mine
+
+=======
+>>>>>>> .r341
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/projects/proj_action" method="post">
 <input type="hidden" name="action" value="add" />
 <div id="inputArea">
-<table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
+
+<table class="noborder">
+	<tbody class="nobground">
 	<tr>
 		<td class="outer_table_heading">
 		<td>	<h1><?php echo JText::_('ADD_NEW_PROJECT'); ?></h1>
@@ -41,15 +47,15 @@ $end_year = date("Y", $startDate);;
 	<tr>
 				<!--  table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body" -->
 		<td align="right"><?php echo JText::_('PROJECT_TITLE'); ?>:</td>
-		<td><input type="text" name="title" size="42" style="width: 100%;" maxlength="200" /></td>
+		<td><input type="text" name="title" size="42" maxlength="200" /></td>
 	</tr>
 	<tr>
-		<td align="right">Client:</td>
+		<td align="right"><?php echo JText::_('CLIENT'); ?>:</td>
 		<td><?php Common::client_select_list(gbl::getClientId(), 0, false, false, false, true, "", false); ?></td>
 	</tr>
 	<tr>
-		<td align="right" valign="top">Description:</td>
-		<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%;"></textarea></td>
+		<td align="right" valign="top"><?php echo JText::_('DESCRIPTION'); ?>:</td>
+		<td><textarea name="description" rows="4" cols="40" wrap="virtual"></textarea></td>
 	</tr>
 	<tr>
 		<td align="right"><?php echo JText::_('START_DATE'); ?>:</td>
@@ -64,8 +70,8 @@ $end_year = date("Y", $startDate);;
 		<td><?php Common::proj_status_list("proj_status", "Started"); ?></td>
 	</tr>
 	<tr>
-		<td align="right">URL:</td>
-		<td><input type="text" name="url" size="42" style="width: 100%;" /></td>
+		<td align="right"><?php echo JText::_('URL'); ?>:</td>
+		<td><input type="text" name="url" size="42" /></td>
 	</tr>
 	<tr>
 		<td align="right" valign="top"><?php echo JText::_('PROJECT_MEMBERS'); ?>:</td>

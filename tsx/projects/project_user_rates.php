@@ -6,7 +6,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_RATES')." | ".gbl::getContextUser()."</title>");
-
+PageElements::setTheme('newcss');
 ?>
 <head>
 
@@ -15,7 +15,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_R
 
 <h1><?php echo JText::_('PROJECT_RATES'); ?></h1>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table>
 		<td align="left" class="outer_table_heading">
 				<?php echo JText::_('ALL_PROJECTS') ?>
 		</td>
@@ -23,11 +23,13 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_R
 	<tr>
 		<td >&nbsp;</td>
 	</tr>
-
-	<tr class="inner_table_head">
-		<td class="inner_table_column_heading">&nbsp;<?php echo JText::_('PROJECT_TITLE') ?></td>
-		<td class="inner_table_column_heading">&nbsp;<?php echo JText::_('CLIENT') ?></td>
-		<td class="inner_table_column_heading">&nbsp;<i><?php echo JText::_('ACTIONS') ?></i></td>
+	</table>
+	<table>
+	<thead>
+	<tr>
+		<td>&nbsp;<?php echo JText::_('PROJECT_TITLE') ?></td>
+		<td>&nbsp;<?php echo JText::_('CLIENT') ?></td>
+		<td>&nbsp;<i><?php echo JText::_('ACTIONS') ?></i></td>
 	</tr>
 <?php
 
