@@ -68,7 +68,7 @@ PageElements::setTheme('newcss');
 				<?php echo stripslashes($data_task["description"]); ?>
 			</td>
 			<td align="left" colspan="2" align="top">
-				<span class="label"><?php echo JText::_('TASK_MEMBERS'); ?>:</span><br />
+				
 <?php
 			//get assigned users
 			list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM  ".tbl::getTaskAssignmentsTable()."  WHERE task_id=$data_task[task_id]");

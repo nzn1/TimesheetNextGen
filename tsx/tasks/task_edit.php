@@ -14,7 +14,7 @@ $task_id =  $_REQUEST['task_id'];
 //define the command menu
 Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 Site::getCommandMenu()->add(new TextCommand("&nbsp; &nbsp; &nbsp;", false, ""));
-Site::getCommandMenu()->add(new TextCommand("Copy Projects/Tasks between users", true, "user_clone.php"));
+Site::getCommandMenu()->add(new TextCommand("Copy Projects/Tasks between users", true, Config::getRelativeRoot(). "/users/user_clone.php"));
 
 //query database for existing task values
 
@@ -39,20 +39,19 @@ PageElements::setTheme('newcss');
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 <input type="hidden" name="task_id" value="<?php echo $data["task_id"]; ?>" />
 <div id="inputArea">
-<table align="center" border="0" cellspacing="0" cellpadding="0">
-	<tr>
+<table class="noborder">
+	<tbody class="nobground">
 		<td colspan="2" class="outer_table_heading">
 		</td>
 	</tr>
-	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
+
 	<tr>
-				<!--  table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body" -->
 		<td align="right"><label for="name"><?php echo JText::_('TASK_NAME'); ?>:</label></td>
-		<td><input type="text" name="name" id="name" size="42" value="<?php echo $data["name"]; ?>" style="width: 100%" /></td>
+		<td><input type="text" name="name" id="name" size="42" value="<?php echo $data["name"]; ?>"/></td>
 	</tr>
 	<tr>
 		<td align="right" valign="top"><?php echo JText::_('DESCRIPTION'); ?>:</td>
-		<td><textarea name="description" rows="4" cols="40" style="width: 100%"><?php $data["description"] = stripslashes($data["description"]); echo $data["description"]; ?></textarea></td>
+		<td><textarea name="description" rows="4" cols="40"><?php $data["description"] = stripslashes($data["description"]); echo $data["description"]; ?></textarea></td>
 	</tr>
 	<tr>
 		<td align="right"><?php echo JText::_('STATUS'); ?>:</td>
