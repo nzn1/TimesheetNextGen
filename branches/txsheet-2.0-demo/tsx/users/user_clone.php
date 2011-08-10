@@ -30,12 +30,9 @@ if($action!='performCopy') {
 
 //LogFile::->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
 
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('COPY_HDG')." | ".gbl::getContextUser()."</title>");
+ob_start();
 ?>
-<div id="header">
-<head>
-	<title>Copy Project and Task Assignments</title> 
-
-
 	<script type="text/javascript">
 	<!--
 	//gets a DOM object by it's name
@@ -100,10 +97,10 @@ if($action!='performCopy') {
 		}
 	//-->
 	</script>
-</head>
-
-
-<?php
+<?php 
+PageElements::setHead(PageElements::getHead().ob_get_contents());
+PageElements::setTheme('newcss');
+ob_end_clean();
 print "</div>";
 
 //print "Action: $action<br />";
@@ -114,7 +111,7 @@ if($action!='performCopy') {
 //we need to display the copy setup form
 //==========================================================================================
 ?>
-<form action="<?php echo Config::getRelativeRoot(); ?>/user_clone" name="userForm" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/users/user_clone" name="userForm" method="post">
 <input type="hidden" name="action" id="action" value="" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -125,18 +122,19 @@ if($action!='performCopy') {
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" class="outer_table_heading">
-								Copy Project and Task Assignments &nbsp; &nbsp;From: 
 						<?php
+								print JText::_('COPY_HDG'). " &nbsp; &nbsp;" . JText::_('CFROM'); 
+						
 							Common::single_user_select_list('cloneFrom',$cloneFrom,'',true);
-						?>
-								&nbsp; &nbsp; &nbsp;To: 
-						<?php
+						
+								print "&nbsp; &nbsp; &nbsp;" . JText::_('CTO'); 
+					
 							Common::single_user_select_list('cloneTo',$cloneTo,'',true);
 						?>
 						</td>
 						<td align="right" class="outer_table_heading">
 						<?php
-							echo "&nbsp; &nbsp;<input type=\"button\" name=\"cloneUser\" value=\"Copy Assignments\" onclick=\"javascript:onClone()\" disabled=\"disabled\" class=\"bottom_panel_button\" /> ";
+							echo "&nbsp; &nbsp;<input type=\"button\" name=\"cloneUser\" value=\"" . JText::_('COPY_ASSG') . "\" onclick=\"javascript:onClone()\" disabled=\"disabled\" class=\"bottom_panel_button\" /> ";
 						?>
 						</td>
 					</tr>
@@ -145,14 +143,21 @@ if($action!='performCopy') {
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
 			<td>
-				Copy selected (checked) projects and their associated task assignments from <?php echo $cfs; ?> to <?php echo $cts; ?><br />
-				Any projects un-checked below will not be assigned to <?php echo $cts; ?>. (But they won't be removed if already assigned to them.)<br />
-				<table width="100%" border="1" cellspacing="0" cellpadding="3" class="table_body">
-					<tr class="inner_table_head">
-						<td>&nbsp;</td>
-						<td class="inner_table_column_heading">Project</td>
-						<td class="inner_table_column_heading">Tasks</td>
-					</tr>
+			<?php 
+				print JText::_('COPY_MSG1'). $cfs. $cts ."<br>" . JText::_('COPY_MSG2'). $cts . "<br />"; 
+			?>
+			</td>
+		</tr>
+	</table>
+	<table>
+		<thead>
+			<tr>
+				<th><?php print JText::_('SELECT'); ?></</td>
+				<th><?php print JText::_('PROJECT'); ?></td>
+				<th><?php print JText::_('TASKS'); ?></td>
+			</tr>
+		</thead>
+		<tbody>
 <?php
 	function get_task_name($task_id) {
 		$sql = "SELECT name FROM ".tbl::getTaskTable()." WHERE task_id=$task_id";
@@ -166,7 +171,7 @@ if($action!='performCopy') {
 	list($qh,$num) = dbQuery(" SELECT * FROM ".tbl::getAssignmentsTable()." WHERE username = '$cloneFrom' AND  proj_id!=1");
 	while ($data = dbResult($qh)) {
 		$p_id=$data['proj_id'];
-		$p_name=get_project_name($p_id);
+		$p_name=Common::get_project_name($p_id);
 		$proj_list[$p_name]=$p_id;
 	}
 	ksort($proj_list);
@@ -218,26 +223,29 @@ if($action!='performCopy') {
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" class="outer_table_heading">
-							Copying Project and Task Assignments &nbsp; &nbsp;From: 
-							<?php echo $cloneFrom; ?>
-							&nbsp; &nbsp; &nbsp;To: 
-							<?php echo $cloneTo; ?>
+														<?php 
+								print JText::_('COPY_HDG'). $cloneFrom . $cloneTo; 
+							?>
 						</td>
+				</tr>
+				<tr>
+				<td>
+			<?php 
+				print JText::_('COPYING_MSG1'). $cloneFrom. $cloneTo ."<br>" . JText::_('COPYING_MSG2'); 
+			?>
+			</td>
 					</tr>
 				</table>
 
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-				Copying the selected projects and their associated task assignments from <?php echo $cloneFrom; ?> to <?php echo $cloneTo; ?><br />
-				Project op (P op) = means project already existed for the user, + means project was added<br />
-				Tasks ignored means user was already assigned that task, added means those tasks were assigned to the user
-				<table width="100%" border="1" cellspacing="0" cellpadding="3" class="table_body">
-					<tr class="inner_table_head">
-						<td class="inner_table_column_heading">Project</td>
-						<td class="inner_table_column_heading">P op</td>
-						<td class="inner_table_column_heading">Tasks</td>
-					</tr>
+	<table>
+		<thead>
+			<tr>
+				<th><?php JText::_('PROJECT'); ?></td>
+				<th><?php JText::_('OPERATION'); ?></td>
+				<th><?php JText::_('TASKS'); ?></td>
+			</tr>
+			</thead>
+			<tbody>
 <?php
 	function get_task_name($task_id) {
 		$sql = "SELECT name FROM ".tbl::getTaskTable()." WHERE task_id=$task_id";
@@ -260,7 +268,7 @@ if($action!='performCopy') {
 		$added=0;
 		$ignstr='';
 		$addstr='';
-		$p_name = get_project_name($p_id);
+		$p_name = Common::get_project_name($p_id);
 		print "<tr><td>$p_name</td><td> ";
 		if(in_array($p_id,$proj_list)) { //if user is already a member of the project, we must check task assignments...
 			$sql = "SELECT * FROM  ".tbl::getTaskAssignmentsTable()." WHERE username ='$cloneTo' AND proj_id=$p_id";
@@ -269,10 +277,10 @@ if($action!='performCopy') {
 				$t_id=$data['task_id'];
 				$task_list[]=$t_id;
 			}
-			print "=</td><td>";
+			print JText::_('ADDED') . "</td><td>";
 		} else {
 			//dbquery("INSERT INTO ".tbl::getAssignmentsTable()." VALUES ('$p_id','$cloneTo', 1)");
-			print "+</td><td>";
+			print JText::_('EXISTING') . "</td><td>";
 		}
 
 		$sql = "SELECT * FROM  ".tbl::getTaskAssignmentsTable()." WHERE username ='$cloneFrom' AND proj_id=$p_id";
@@ -296,8 +304,8 @@ if($action!='performCopy') {
 				$addstr .= get_task_name($t_id);
 			}
 		}
-		print "ignored $ignored: $ignstr<br />";
-		print "added &nbsp; $added: $addstr</td>";
+		print  JText::_('IGNORED') . "$ignored: $ignstr<br />";
+		print  JText::_('ADDED') . "&nbsp; $added: $addstr</td>";
 		print "</tr>";
 	}
 ?>

@@ -4,7 +4,8 @@
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USERS')."</title>");
-
+ob_start();	
+PageElements::setTheme('newcss');
 ?>
 
 <script type="text/javascript">
@@ -69,13 +70,16 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USERS')."
 	}
 
 </script>
-</head>
+<?php 
+	PageElements::setHead(ob_get_contents());
+	ob_end_clean(); 
+?>
 <h1><?php echo JText::_('USERS'); ?></h1>
 <form action="user_action" name="userForm" method="post">
 <input type="hidden" name="action" value="" />
 <input type="hidden" name="uid" value="" />
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table>
 	<tr>
 		<!--  td width="100%" class="face_padding_cell" -->
 		<td align="left" class="outer_table_heading">
@@ -91,20 +95,23 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USERS')."
 			&nbsp;
 		</td>
 		<td align="right" >
-			<a href="javascript:goClone()">Copy Projects/Tasks between users</a>
+			<a href="javascript:goClone()"><?php print JText::_('COPY_TASKS'); ?></a>
 		</td>
 	</tr>
-		<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
-				<!--  table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body" -->
-	<tr class="inner_table_head">
-		<td class="inner_table_column_heading"><?php echo JText::_('FIRST_NAME'); ?></td>
-		<td class="inner_table_column_heading"><?php echo JText::_('LAST_NAME'); ?></td>
-		<td align="center" class="inner_table_column_heading"><?php echo JText::_('ACTIVE'); ?></td>
-		<td class="inner_table_column_heading"><?php echo JText::_('ROLE'); ?></td>
-		<td class="inner_table_column_heading"><?php echo JText::_('USERNAME'); ?></td>
-		<td class="inner_table_column_heading"><?php echo JText::_('EMAIL_ADDRESS'); ?></td>
-		<td class="inner_table_column_heading"><i><?php echo JText::_('ACTIONS'); ?></i></td>
+</table>
+<table>
+<thead>
+	<tr>
+		<th><?php echo JText::_('FIRST_NAME'); ?></th>
+		<th><?php echo JText::_('LAST_NAME'); ?></th>
+		<th align="center"><?php echo JText::_('ACTIVE'); ?></th>
+		<th><?php echo JText::_('ROLE'); ?></th>
+		<th><?php echo JText::_('USERNAME'); ?></th>
+		<th><?php echo JText::_('EMAIL_ADDRESS'); ?></th>
+		<th><i><?php echo JText::_('ACTIONS'); ?></i></th>
 	</tr>
+	</thead>
+	<tbody>
 <?php
 
 list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getuserTable()." WHERE username!='guest' ORDER BY status desc, last_name, first_name");
@@ -146,8 +153,8 @@ while ($data = dbResult($qh)) {
 	</tr>
 </table>
 <br /><br />
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<!--  table width="100%" border="0" cellspacing="0" cellpadding="0" -->
+<table>
+
 	<tr>
 		<td align="left" class="outer_table_heading">
 			<a name="AddEdit">	<?php echo JText::_('ADD_UPDATE_USER'); ?>:</a>
@@ -156,14 +163,35 @@ while ($data = dbResult($qh)) {
 			&nbsp;
 		</td>
 	</tr>
+</table>
+<table>
+	<thead>
 	<tr>
+<<<<<<< .mine
+		<th><?php echo JText::_('FIRST_NAME'); ?></th>
+		<th><?php echo JText::_('LAST_NAME'); ?></th>
+		<th><?php echo JText::_('USERNAME'); ?></th>
+		<th><?php echo JText::_('EMAIL_ADDRESS'); ?></th>
+		<th><?php echo JText::_('PASSWORD'); ?></th>
+=======
 		<td align="left" class="outer_table_heading">
 			&nbsp;
 		</td>
 		<td align="right" >
 			<a href="javascript:goClone()">Copy Projects/Tasks between users</a>
 		</td>
+>>>>>>> .r340
 	</tr>
+<<<<<<< .mine
+	</thead>
+	<tbody>
+		<tr>
+			<td><input size="20" name="first_name" style="width: 100%;"></th>
+		<td><input size="20" name="last_name" style="width: 100%;"></td>
+		<td><input size="15" name="username" style="width: 100%;" /></td>
+		<td><input size="35" name="email_address" style="width: 100%;" /></td>
+		<td><input type="password" size="20" name="password" style="width: 100%;" AUTOCOMPLETE="OFF" /></td>
+=======
 
 	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
 	<tr>
@@ -174,6 +202,7 @@ while ($data = dbResult($qh)) {
 		<td><?php echo JText::_('USERNAME'); ?>:<br /><input size="15" name="username" style="width: 100%;" /></td>
 		<td><?php echo JText::_('EMAIL_ADDRESS'); ?>:<br /><input size="35" name="email_address" style="width: 100%;" /></td>
 		<td><?php echo JText::_('PASSWORD'); ?>:<br /><input type="password" size="20" name="password" style="width: 100%;" AUTOCOMPLETE="OFF" /></td>
+>>>>>>> .r340
 	</tr>
 	<tr>
 		<td colspan="2" align="left">
@@ -189,12 +218,13 @@ while ($data = dbResult($qh)) {
 			<input type="hidden" name="isActive" id="isActive" value="false" />
 		</td>
 	</tr>
-				<!--  table width="100%" border="0" class="table_bottom_panel" -->
+
 	<tr>
 		<td align="center">
 			<input type="button" name="addupdate" value="Add/Update Employee/Contractor" onclick="javascript:addUser()" class="bottom_panel_button" />
 		</td>
 	</tr>
+	</tbody>
 </table>
 
 </form>

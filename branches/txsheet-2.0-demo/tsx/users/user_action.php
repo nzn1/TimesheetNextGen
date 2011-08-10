@@ -8,6 +8,8 @@ $action = $_REQUEST["action"];
 $uid = $_REQUEST["uid"];
 $first_name = $_REQUEST["first_name"];
 $last_name = $_REQUEST["last_name"];
+$employee_type = $_REQUEST["employee_type"];
+$supervisor = $_REQUEST["supervisor"];
 $username = $_REQUEST["username"];
 $email_address = $_REQUEST["email_address"];
 $password = $_REQUEST["password"];
@@ -54,7 +56,9 @@ if ($action == "delete") {
 								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
-								"level='$level' ".
+								"level='$level', ".
+								"employee_type='$employee_type', ".
+								"supervisor='$supervisor' ".
 								"WHERE uid='$uid'");
 		} else {
 			//set the password as well
@@ -63,15 +67,17 @@ if ($action == "delete") {
 								"username='$username', " .
 								"email_address='$email_address', ".
 								"level='$level', ".
+								"employee_type='$employee_type', ".
+								"supervisor='$supervisor' ".
 								"password=".config::getDbPwdFunction()."('$password') " .
 								"WHERE uid='$uid'");
 		}
 	} else {
 		// a new user
 		dbquery("INSERT INTO ".tbl::getuserTable()." (username, level, password, first_name, ".
-							"last_name, email_address, time_stamp, status) " .
-						"VALUES ('$username',$level,".config::getDbPwdFunction()."('$password'),'$first_name',".
-							"'$last_name','$email_address',0,'$status')");
+							"last_name, employee_type, supervisor, email_address, time_stamp, status) " .
+						"VALUES ('$username',$level,config::getDbPwdFunction().('$password'),'$first_name',".
+                                        "'$last_name','$employee_type','$supervisor','$email_address',0,'OUT')");   
 		dbquery("INSERT INTO ".tbl::getAssignmentsTable()." VALUES (1,'$username', 1)"); // add default project.
 		dbquery("INSERT INTO ".tbl::getTaskAssignmentsTable()." VALUES (1,'$username', 1)"); // add default task
 		//create a time string for >>now<<
@@ -81,6 +87,6 @@ if ($action == "delete") {
 }
 
 //redirect back to the user management page
-gotoLocation(Config::getRelativeRoot()."/user_maint");
+gotoLocation(Config::getRelativeRoot()."/users/user_maint");
 
 ?>
