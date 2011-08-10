@@ -31,12 +31,12 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 //    c} figure out logic to split up tasks that would be tickled by this bug
 //       and save and update the extra day's times as needed.
 
-//error_reporting(E_ALL);
-ini_set('display_errors', false);
+error_reporting(E_ALL);
+//ini_set('display_errors', false);
 
 $simple_debug=true;
 if($simple_debug) {
-	$test=http_build_query($_POST);
+	$test=http_build_query($_REQUEST);
 	$tsize = strlen($test);
 	LogFile::write("post size is $tsize\n");
 }
@@ -56,57 +56,43 @@ if ($daysToMinus < 0)
 $startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
 $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 
-$totalRows = $_POST["totalRows"];
+$totalRows = $_REQUEST["totalRows"];
 
-//$startDate = $_POST["startStamp"];
+//$startDate = $_REQUEST["startStamp"];
 $startStr = date("Y-m-d H:i:s",$startDate);
 
 //$endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 if($simple_debug) {
-	LogFile::write(print_r($_POST, TRUE));
+	LogFile::write(print_r($_REQUEST, TRUE));
 	LogFile::write("startStr = \"$startStr\"");
 	LogFile::write("  endStr = \"$endStr\"\n");
 
 	LogFile::write("  totalRows = \"$totalRows\"\n");
-	LogFile::write("  totalRows = \"".$_POST["totalRows"]."\"\n");
-	LogFile::write("  existingRows = \"".$_POST["existingRows"]."\"\n");
-}
-
-function delete_time_entries($uid, $btime, $etime, $proj_id, $task_id, $descr, $simple_debug) {
-	
-	$queryString = "DELETE FROM ".tbl::getTimesTable()." " . 
-						"WHERE uid='$uid' AND " .
-							"start_time >= '$btime' AND ".
-							"start_time < '$etime' AND ".
-							"proj_id=$proj_id AND task_id=$task_id AND ".
-							"log_message='$descr'";
-
-
-	if($simple_debug)
-		LogFile::write("   Query = \"$queryString\"\n");
-
-	dbQuery($queryString);
+	LogFile::write("  totalRows = \"".$_REQUEST["totalRows"]."\"\n");
+	LogFile::write("  existingRows = \"".$_REQUEST["existingRows"]."\"\n");
 }
 
 for ($i=0; $i<$totalRows; $i++) {
 	if($simple_debug)
-		LogFile::write("working on row $i proj_id ". $_POST["projectSelect_row".$i]." task_id ".$_POST["taskSelect_row".$i]."\n");
+		LogFile::write("working on row $i proj_id ". $_REQUEST["projectSelect_row".$i]." task_id ".$_REQUEST["taskSelect_row".$i]."\n");
 
-	$projectId = $_POST["projectSelect_row" . $i];
-	$oprojectId = $_POST["project_row" . $i];
-	if ($oprojectId < 1 && $projectId < 1)
+		//TODO does this handle change of client/project/task?
+	$projectId = $_REQUEST["projectSelect_row" . $i];
+	$oprojectId = $_REQUEST["project_row" . $i];
+	if ($oprojectId < 1 && $projectId < 1) // when the projectId is < 1 indicates an unused blank last row: ignore
 		continue;
-	$taskId = $_POST["taskSelect_row" . $i];
-	$otaskId = $_POST["task_row" . $i];
-	if ($otaskId < 1 && $taskId < 1)
+	$taskId = $_REQUEST["taskSelect_row" . $i];
+	$otaskId = $_REQUEST["task_row" . $i];
+	if ($otaskId < 1 && $taskId < 1) // when the taskId is < 1 indicates an unused blank last row: ignore
 		continue;
 	$workDescription = '';
-	if (array_key_exists("description_row" . $i, $_POST)) {
+	//TODO handle change of description
+	if (array_key_exists("description_row" . $i, $_REQUEST)) {
 		// does not exist if simple timesheet layout = "no work description field"!
-		$workDescription = mysql_real_escape_string($_POST["description_row" . $i]);
-		$oworkDescription = mysql_real_escape_string($_POST["odescription_row" . $i]);
+		$workDescription = mysql_real_escape_string($_REQUEST["description_row" . $i]);
+		//$oworkDescription = mysql_real_escape_string($_REQUEST["odescription_row" . $i]); // get the old and new descriptions
 	} else {
 		$workDescription = '';
 		$oworkDescription = '';
@@ -120,62 +106,90 @@ for ($i=0; $i<$totalRows; $i++) {
 		//Create the starting timestamp string
 		$stsStr = strftime("%Y-%m-%d %H:%M:%S", $curDaysTimestamp);
 		$etsStr = strftime("%Y-%m-%d %H:%M:%S",$nextDaysTimestamp);
+		$trans_num = $_REQUEST["tid_row" . $i . "_col" . $j];
 
-		//get the number of hours and minutes entered into the form
-		$ohours = $_POST["ohours_row" . $i . "_col" . $j];
-		$omins = $_POST["omins_row" . $i . "_col" . $j];
-
-		if($taskId > -1) {  //if this row was deleted, taskId is -1, and variables hours_rowx_coly don't exist
-			$hours = $_POST["hours_row" . $i . "_col" . $j];
-			$mins = $_POST["mins_row" . $i . "_col" . $j];
-		} else {
-			$hours = 0;
-			$mins = 0;
-		}
-
-		if($ohours != $hours || $omins != $mins || $oprojectId != $projectId || $otaskId != $taskId || $oworkDescription != $workDescription) {
-			//something changed for this entry
-			//if($simple_debug)
-			//	LogFile::write(" changing opid=$oprojectId otid=$otaskId date=$stsStr\n");
-
-			//don't delete anything if this was a new set of entries
-			if($oprojectId != '' && $otaskId != '') 
-				delete_time_entries(gbl::getContextUser(), $stsStr, $etsStr, $oprojectId, $otaskId, $oworkDescription, $simple_debug);
-
-			if ((!empty($hours) && $hours != 0) || (!empty($mins) && $mins != 0)) {
-
-				//fix by Tyler Schacht
-				if (empty($hours) || $hours == "") $hours = "00";
-
-				//change hours & minutes into total number of minutes
-				$minutes = $hours*60 + $mins;
-
-				//calculate and set ending timestamp string
-				$ets = strtotime(date("d M Y H:i:s",$curDaysTimestamp) . " +$minutes Minutes");
-				$etsStr = strftime("%Y-%m-%d %H:%M:%S", $ets);
-				
-				//add to database
-				$queryString = "INSERT INTO ".tbl::getTimesTable()." (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
-										"VALUES ('".gbl::getContextUser()."','$stsStr', ".
-										"'$etsStr', ".
-										"'$minutes', ".
-										"$projectId, $taskId, '$workDescription')";
-
-				if($simple_debug)
-					LogFile::write("   Query = \"$queryString\"\n");
-
-				list($qh,$num) = dbQuery($queryString);
+		if($taskId == -1) {  //if this row was deleted, taskId is -1, 
+			// delete the transactions in this row for this column
+			if ($trans_num > 0) { // trans_num = 0 for empty cells, so skip them
+				$delquery = "DELETE FROM ". tbl::getTimesTable(). " WHERE trans_num = '" .$trans_num. "'";
+				LogFile::write("delete string: " .$delquery);
+				list($del1, $numd) = dbQuery($delquery); // delete the times record
+				//$data = dbResult($del1);
+			}
+		} 
+		else {
+			//get the number of hours and minutes entered into the form
+			$hours = $_REQUEST["hours_row" . $i . "_col" . $j];
+			$mins = $_REQUEST["mins_row" . $i . "_col" . $j];
+			$minutes = $hours*60 + $mins;
+			
+			if($trans_num < 0) { 
+				// trans_num has beeen made negative hence the time for this entry has changed
+				//	LogFile::write(" changing opid=$oprojectId otid=$otaskId date=$stsStr\n");
+				// get record, update new ending time, and update no of hours 
+				$trans_num = - $trans_num; // make positive
+				$qt1 = "SELECT start_time, end_time, duration FROM ". tbl::getTimesTable(). " WHERE trans_num = " .$trans_num;
+				list($qh1, $num1) = dbQuery($qt1); // retrieve the times record
+				$data = dbResult($qh1);
+				// calculate new ending time
+				$newEndTime = $data['start_time'] . " + $minutes Minutes";
+				LogFile::write("new end time is " . $newEndTime);
+				$newEndTime = strtotime($data['start_time'] . " + $minutes Minutes");
+				// if new end time crossses midnight, split record into two
+				$midnight = strtotime($data['start_time'] . " midnight");
+				$etsStr = strftime("%Y-%m-%d %H:%M:%S", $newEndTime);
+				//if ($newEndTime > $midnight) {
+					// split record into two
+				//LogFile::write("new end time: " . $newEndTime . " is beyond midnight: ". $midnight);
+					
+				//}
+				//else {
+					// update record with new duration and new end time
+					$updateQuery = "UPDATE ". tbl::getTimesTable(). " SET end_time = '" . $etsStr . "', duration = " . $minutes .
+						" WHERE trans_num = " . $trans_num;
+					list($qu1, $num1) = dbQuery($updateQuery); // update the times record
+					LogFile::write("new end time: " . $newEndTime . " and duration updated ". $minutes);
+				//}
+			}
+			
+			if($trans_num == 0) { 
+				// insert new times record
+				if ((!empty($hours) && $hours != 0) || (!empty($mins) && $mins != 0)) {
+	
+					//fix by Tyler Schacht
+					if (empty($hours) || $hours == "") $hours = "00";
+	
+					//change hours & minutes into total number of minutes
+					$minutes = $hours*60 + $mins;
+	
+					//calculate and set ending timestamp string
+					$ets = strtotime(date("d M Y H:i:s",$curDaysTimestamp) . " +$minutes Minutes");
+					$etsStr = strftime("%Y-%m-%d %H:%M:%S", $ets);
+					
+					//add to database
+					$queryString = "INSERT INTO ".tbl::getTimesTable()." (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
+									"VALUES ('".gbl::getContextUser()."','$stsStr', ".
+									"'$etsStr', ".
+									"'$minutes', ".
+									"$projectId, $taskId, '$workDescription')";
+	
+					if($simple_debug)
+						LogFile::write("   Query = \"$queryString\"\n");
+	
+					list($qh,$num) = dbQuery($queryString);
+				}
 			}
 		}
 		$curDaysTimestamp = $nextDaysTimestamp;
+		
 	}
 }
 
 // date1 contains the date redirection in the format dd-mm-yyyy
 
-$date1 = $_POST["date1"];
+$date1 = $_REQUEST["date1"];
 $newdate = explode("-", $date1);
-$Location = Config::getRelativeRoot()."/simple?year=".$newdate[2]."&amp;month=".$newdate[1]."&amp;day=".$newdate[0];
+$Location = Config::getRelativeRoot()."/simpleNew?year=".$newdate[2]."&amp;month=".$newdate[1]."&amp;day=".$newdate[0];
 gotoLocation($Location);
 exit;
 // vim:ai:ts=4:sw=4

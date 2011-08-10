@@ -76,7 +76,7 @@ class SimplePage{
 								</td>								
 								<td align="left" style="width:auto;">
 									<input type="hidden" id="odescription_row<?php echo $rowIndex; ?>" name="odescription_row<?php echo $rowIndex; ?>" value="<?php echo $workDescription; ?>" />
-									<textarea rows="2" cols="4" style="width:98%;" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onkeyup="onchangeWorkDescription(this.id);"><?php echo $workDescription; ?></textarea>
+									<textarea rows="2" cols="4" style="width:98%;" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onkeyup="onChangeWorkDescription(this.id);"><?php echo $workDescription; ?></textarea>
 								</td>
 								<?php
 								break;
@@ -99,7 +99,7 @@ class SimplePage{
 								</td>
 								<td align="left" style="width:auto;">
 									<input type="hidden" id="odescription_row<?php echo $rowIndex; ?>" name="odescription_row<?php echo $rowIndex; ?>" value="<?php echo $workDescription; ?>" />
-									<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onchange="onchangeWorkDescription(this.id);" value="<?php echo $workDescription; ?>" style="width: 100%;" />
+									<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onchange="onChangeWorkDescription(this.id);" value="<?php echo $workDescription; ?>" style="width: 100%;" />
 								</td>
 								<?php
 								break;
@@ -131,6 +131,7 @@ class SimplePage{
 			$curDaysTotal = 0;
 			$curDaysHours = "";
 			$curDaysMinutes = "";
+			$times = 0; // used to store the trans_num of each time record.
 
 			// if there is an $daysArray calculate current day's minutes and hours
 
@@ -152,6 +153,7 @@ class SimplePage{
 
 			print "<input type=\"hidden\" id=\"ohours".$rowCol."\" name=\"ohours".$rowCol."\" value=\"$curDaysHours\" />";
 			print "<input type=\"hidden\" id=\"omins".$rowCol."\" name=\"omins".$rowCol."\" value=\"$curDaysMinutes\" />";
+			print "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"$times\" />";
 			print "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$curDaysHours\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>";
 			print "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$curDaysMinutes\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>";
 
