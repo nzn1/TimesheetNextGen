@@ -18,11 +18,23 @@ if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
 	$uid = gbl::getContextUser();
+if (isset($_REQUEST['date1'])) {
+	 $date1 = $_REQUEST["date1"];
+	$newdate = explode("-", $date1);
+	$year=$newdate[2];
+	$month=$newdate[1];
+	$day=$newdate[0];
+	
+}
+else {
+	$month = gbl::getMonth();
+	$day = gbl::getDay(); 
+	$year = gbl::getYear();
+}
+$startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
+$todayDate = mktime(0, 0, 0, $month, $day, $year);
+$startDate = strtotime(date("d M Y",$todayDate));
 
-//load local vars from request/post/get
-$month = gbl::getMonth();
-$day = gbl::getDay(); 
-$year = gbl::getYear();
 $last_day = isset($_REQUEST['last_day']) ? $_REQUEST['last_day']: "31";
 $action = isset($_REQUEST['action']) ? $_REQUEST['action']: 0;
 
@@ -56,6 +68,6 @@ if ($action!=0) {
 	}
 }
 //set the return location
-$Location = Config::getRelativeRoot."/absences?month=$month&amp;year=$year&amp;day=$day&amp;uid=$uid";
+$Location = Config::getRelativeRoot()."/absences?month=$month&amp;year=$year&amp;day=$day&amp;uid=$uid";
 gotoLocation($Location);
 ?>
