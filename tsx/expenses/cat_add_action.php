@@ -23,6 +23,7 @@ if ($action == "add") {
 	
 		list($qh, $num) = dbQuery("INSERT INTO  ".tbl::getExpenseCategoryTable()."  (description) VALUES ".
 						"('$description')");
+		$data = dbResult($qh);
 	}
 
 	gotoLocation(Config::getRelativeRoot()."/expenses/cat_list");
