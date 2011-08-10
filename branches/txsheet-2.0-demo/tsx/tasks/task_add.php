@@ -32,19 +32,19 @@ PageElements::setTheme('newcss');
 	LogFile::write(" Get title organisation  Query = \"$queryString\" and rows returned is \"$num\"\n");
 	
 ?>
-<table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
-	<tr>
+<table class="noborder">
+	<tbody class="nobground">
 		<td class="outer_table_heading">
 			<h3><?php echo (JText::_('ADD_NEW_TASK')). " ". JText::_('PROJECT'). $data['title']. JText::_('FOR_CLIENT'). $data['organisation'] ?>:</h3>
 		</td>
 	</tr>
 	<tr>
 		<td align="right"><?php echo (JText::_('TASK_NAME')) ?>:</td>
-		<td><input type="text" name="name" size="42" style="width: 100%" /></td>
+		<td><input type="text" name="name" size="42" /></td>
 	</tr>
 	<tr>
 		<td align="right" valign="top"><?php echo (JText::_('DESCRIPTION')) ?>:</td>
-		<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%"></textarea></td>
+		<td><textarea name="description" rows="4" cols="40" wrap="virtual"></textarea></td>
 	</tr>
 	<tr>
 		<td align="right"><?php echo (JText::_('STATUS')) ?>:</td>
@@ -70,7 +70,7 @@ PageElements::setTheme('newcss');
 		$size = 4; // selects size of multi_user_select_list. Minimum of 4 to get a vert scroll bar
 		if($numtasks > 0) {
 	?>
-<table>
+<table width="70%">
 	<thead>
 		<tr>
 			<th><?php echo JText::_('SELECT_ADD'); ?></t>
@@ -88,7 +88,7 @@ PageElements::setTheme('newcss');
 	?>
 			<tr>
 				<td>
-					<input type="checkbox" name="add<?php echo $i; ?>" size="4" style="width: 100%"></td>
+					<input type="checkbox" name="add<?php echo $i; ?>"></td>
 				<td><?php echo $data["name"]; ?></td>
 				<td><?php echo $data["description"]; ?></td>
 	<?php 
@@ -96,15 +96,16 @@ PageElements::setTheme('newcss');
 				Common::proj_status_list("task_status$i", "Pending");
 			print("</td><td>");
 				Common::multi_user_select_list("stdassigned".$i."[]", $noneSelected, $size );
-			print("</td>	</tr>");
+			print("</td></tr>");
 		}
 	}
 	
 	?>
 	<tr>
-		<td align="center">
+		<td align="center" colspan="2">
 			<input type="submit" value="<?php echo (JText::_('ADD_NEW_TASK')) ?>" />
 		</td>
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
 	</tr>
 
 </table>

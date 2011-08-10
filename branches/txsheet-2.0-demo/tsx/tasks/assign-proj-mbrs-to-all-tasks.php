@@ -1,10 +1,7 @@
 <?php
-
-if(!class_exists('Site'))die('Restricted Access');
-                              
 // Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
-
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
+$loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 $assignTasks = isset($_REQUEST["assignTasks"]) ? $_REQUEST["assignTasks"]: false;
 
@@ -18,11 +15,11 @@ function do_query($sql) {
 	return $result;
 }
 
-?>
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ASSIGN_ALLTASKS_ALLPROJECTMEMBERS')." | ".gbl::getContextUser()."</title>");
+ob_start();
 
-<html>
-<head>
-	<title>Assign all Tasks</title>
+PageElements::setTheme('newcss');
+?>
 
 <script type="text/javascript">
 
@@ -34,12 +31,20 @@ function do_query($sql) {
 	}
 
 </script>
-</head>
-
-
+<?php 
+ob_end_clean();
+?>
 <form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
+<<<<<<< .mine
+		<td>
+			<h2><?php print JText::_('ASSIGN_ALLTASKS_ALLPROJECTMEMBERS'); ?></h2>
+		</td>
+	</tr>
+	<tr>
+		<td>
+=======
 		<td width="100%" class="face_padding_cell">
 
 
@@ -57,6 +62,7 @@ function do_query($sql) {
 				<tr>
 					<td width="40">&nbsp;</td>
 					<td>
+>>>>>>> .r341
 <?php if($assignTasks!='checked') { ?>
 <h2><font color="red"><b>Attention!</b></font> &nbsp;<font color="red">Read this carefully</font><br /></h2>
 <h3>Clicking on the checkbox below and submitting this form will:
@@ -64,7 +70,7 @@ function do_query($sql) {
 <li> iterate through the users and project tables</li>
 <li> and assign each user to all the tasks for every project of which they are a member</li>
 </ol>
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo Config::getRelativeRoot(); ?>/explain-assign-all-tasks">Click here if you don't understand</a><br /><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo Config::getRelativeRoot(); ?>/tasks/explain-assign-all-tasks">Click here if you don't understand</a><br /><br />
 If this is what you want to do, check this box <input type="checkbox" name="assignTasks" value="checked" <?php if($assignTasks) echo " checked=\"checked\"" ?> />  and hit submit, or return. <br />
 <img src="<?php echo Config::getRelativeRoot(); ?>/images/spacer.gif" alt="" width="50" height="1" /><input type="submit" value="Submit" /></h3>
 <?php } else { 
@@ -116,9 +122,6 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 }
 
 ?>
-					</td>
-				</tr>
-			</table>
 
 		</td>
 	</tr>
