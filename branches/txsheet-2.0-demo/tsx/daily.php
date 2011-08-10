@@ -42,10 +42,15 @@ $js->printJavascript();
       ."&task_id=".gbl::getTaskId();?> &trans_num=' + transNum;
 	}
 ]]>
+	function CallBack_WithNewDateSelected(strDate) {
+		document.dayForm.submit();
+	}
+
 </script>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <?php 
 PageElements::setHead(PageElements::getHead().ob_get_contents());
+PageElements::setTheme('newcss');
 ob_end_clean();
 PageElements::setBodyOnLoad('doOnLoad();');
 ?>
@@ -64,32 +69,34 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
 <input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table>
 	<tr>
-		<td align="left" colspan="2" class="outer_table_heading">
-			<?php echo JText::_('CURRENT_DATE').': '?><span style="color:#00066F;"><?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate); ?></span>
+		<td>
+			<?php echo JText::_('CURRENT_DATE').': '?><span><?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate); ?></span>
 		</td>
-		<td align="right">
-			<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-				value="<?php echo date('d-M-Y', $todayDate);  ?>" />
-		</td>
-		<td align="center" class="outer_table_heading">
-			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
-		</td>
+		<td nowrap="nowrap" class="outer_table_heading">
+			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
+			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+			</td>
+
 	</tr>
 </table>
 
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr class="inner_table_head">
-			<td class="inner_table_column_heading" align="center"><?php print ucfirst(JText::_('CLIENT')) ?></td>
-			<td class="inner_table_column_heading" align="center"><?php print ucfirst(JText::_('PROJECT')) ?></td>
-			<td class="inner_table_column_heading" align="center"><?php print ucfirst(JText::_('TASK')) ?></td>
-			<td class="inner_table_column_heading" align="center"><?php print ucwords(JText::_('WORK_DESCRIPTION')) ?></td>
-			<td class="inner_table_column_heading" align="center" width="10%"><?php print ucfirst(JText::_('START')) ?></td>
-			<td class="inner_table_column_heading" align="center" width="10%"><?php print ucfirst(JText::_('END')) ?></td>
-			<td class="inner_table_column_heading" align="center" width="10%"><?php print ucfirst(JText::_('TOTAL')) ?></td>
-			<td class="inner_table_column_heading" align="center" width="15%"><i><?php print ucfirst(JText::_('ACTIONS')) ?></i></td>
+	<table>
+		<thead>
+		<tr>
+			<th><?php print ucfirst(JText::_('CLIENT')) ?></td>
+			<th><?php print ucfirst(JText::_('PROJECT')) ?></th>
+			<th><?php print ucfirst(JText::_('TASK')) ?></th>
+			<th><?php print ucwords(JText::_('WORK_DESCRIPTION')) ?></th>
+			<th class="alignmiddle"><?php print ucfirst(JText::_('START')) ?></th>
+			<th  class="alignmiddle"><?php print ucfirst(JText::_('END')) ?></th>
+			<th  class="alignmiddle"><?php print ucfirst(JText::_('TOTAL')) ?></th>
+			<th  class="alignmiddle"><i><?php print ucfirst(JText::_('ACTIONS')) ?></i></th>
 		</tr>
+		</thead>
+		<tbody>
 <?php
 
 //Get the data
@@ -102,21 +109,21 @@ list($num, $qh) = Common::get_time_records($startStr, $endStr, gbl::getContextUs
 if ($num == 0) {
 	$ymdStrSd = "&amp;year=".$year . "&amp;month=".$month . "&amp;day=".$day;
 	print "	<tr>\n";
-	print "		<td class=\"calendar_cell_middle\"><i>".JText::_('NO_TIME_RECORDED')."</i></td>\n";
-	print "		<td class=\"calendar_cell_middle\">&nbsp;</td>\n";
-	print "		<td class=\"calendar_cell_middle\">&nbsp;</td>\n";
+	print "		<td><i>".JText::_('NO_TIME_RECORDED')."</i></td>\n";
+	print "		<td>&nbsp;</td>\n";
+	print "		<td>&nbsp;</td>\n";
 	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
-	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
-	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
-	print "		<td class=\"calendar_cell_disabled_right\" width=\"15%\">&nbsp;</td>\n";
-	$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
+	print "		<td>&nbsp;</td>\n";
+	print "		<td>&nbsp;</td>\n";
+	print "		<td>&nbsp;</td>\n";
+	$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
 								"?client_id=".gbl::getClientId()."".
 								"&amp;proj_id=".gbl::getProjId()."".
 								"&amp;task_id=".gbl::getTaskId()."".
 								"$ymdStrSd".
 								"&amp;destination=$_SERVER[PHP_SELF]".
-								"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
-	print "	<td class=\"calendar_cell_disabled_right\" width=\"15%\"><a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;</td>\n";
+								"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+	print "	<td><a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;</td>\n";
 	
 	print "	</tr>\n";
 	//print "</table>\n";
@@ -150,10 +157,10 @@ else {
 		else
 			print "<tr>\n";
 
-		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('client_info?client_id=$data[client_id]','Client Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$clientName</a></td>\n";
-		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('proj_info?proj_id=$data[proj_id]','Project Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$projectTitle</a></td>\n";
-		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('task_info?task_id=$data[task_id]','Task Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=300,height=150')\">$taskName</a></td>\n";
-		print "<td class=\"calendar_cell_middle\">" . $data['log_message'] . "</td>\n";
+		print "<td><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('".Config::getRelativeRoot()."/clients/client_info?client_id=$data[client_id]','Client Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$clientName</a></td>\n";
+		print "<td><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('".Config::getRelativeRoot()."/projects/proj_info?proj_id=$data[proj_id]','Project Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$projectTitle</a></td>\n";
+		print "<td><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('".Config::getRelativeRoot()."/tasks/task_info?task_id=$data[task_id]','Task Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=300,height=150')\">$taskName</a></td>\n";
+		print "<td>" . $data['log_message'] . "</td>\n";
 		
 		if ($data["duration"] > 0) {
 			//format printable times
@@ -222,7 +229,7 @@ else {
 				print Common::formatMinutes($data["duration"]) . "</td>\n";
 			}
 
-			print "<td class=\"calendar_cell_disabled_right\" align=\"right\">\n";
+			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
 			if ($data['subStatus'] == "Open") {
 				print "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">".ucfirst(JText::_('EDIT'))."</a>,&nbsp;\n";
 				//print "	<a href=\"".Config::getRelativeRoot()."/delete?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete, </a>\n";
@@ -231,13 +238,13 @@ else {
 				// submitted or approved times cannot be edited
 				print  $data['subStatus'] . "&nbsp;\n";
 			}
-			$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
+			$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".
 											"$ymdStrSd".
 											"&amp;destination=$_SERVER[PHP_SELF]".
-											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
+											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
 			print "	<a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;\n";
 			print "</td>";
 
@@ -255,7 +262,7 @@ else {
 			print "&nbsp;</td>\n";
 			$dc->open_cell_middle_td(); //<td....>
 			print "&nbsp;</td>\n";
-			print "<td class=\"calendar_cell_disabled_right\" align=\"right\">\n";
+			print "<td>\n";
 			/**
 			 * Update by robsearles 26 Jan 2008
 			 * Added a "Clock Off" link to make it easier to stop timing a task
@@ -274,11 +281,10 @@ else {
 		print "</tr>";
 		$count++;
 	}
-	print "<tr>\n";
-	print "	<td class=\"calendar_totals_line_weekly_right\" colspan=\"7\" align=\"right\">";
-	print " Daily Total: <span class=\"calendar_total_value_weekly\">" . Common::formatMinutes($todaysTotal) . "</span></td>\n";
-	print "	<td class=\"calendar_cell_disabled_right\" align=\"right\">&nbsp;</td>\n";
-	print "</tr>\n";
+	print "<tr class=\"totalr\"><td class=\"textproject\" colspan=\"7\">\n";
+	print " Daily Total: <span>" . Common::formatMinutes($todaysTotal) . "</span></td>\n";
+	print "	<td>&nbsp;</td>\n";
+	print "</tr></tbody>\n";
 	print "</table>";
 }
 ?>
