@@ -13,7 +13,6 @@ if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
 
-
 if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_MANAGER))
 	$canChangeUser = true;
 else
@@ -42,11 +41,16 @@ ob_start();
 
 
 <script type="text/javascript">
+
 	function onSubmit() {
 		//set the action
 		document.getElementById('action').value = 1;
 		document.theForm.submit();
 	}
+	function CallBack_WithNewDateSelected(strDate) {
+		document.theForm.submit();
+	}
+
 </script>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 
@@ -71,21 +75,18 @@ ob_end_clean();
 	<tr>
 		<!--	<?php print "$day $month $year"; ?> -->
 		<?php if($canChangeUser) : ?>
-			<td align="left" width="38%" class="outer_table_heading"><?php echo JText::_('USER'); ?>: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
+			<td align="left" width="38%" nowrap class="outer_table_heading"><?php echo JText::_('USER'); ?>: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
 		<?php else : ?>
-			<td width="38%" ><?php echo JText::_('USER'); ?>: &nbsp; <?php echo "<b>$uid</b>"; ?></td>
+			<td width="38%" nowrap><?php echo JText::_('USER'); ?>: &nbsp; <?php echo "<b>$uid</b>"; ?></td>
 		<?php endif; ?>
-		<td align="center"  class="outer_table_heading">
+		<td align="center" nowrap class="outer_table_heading">
 			<?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), mktime(0,0,0,$month, 1, $year))); ?>
 		</td>
-		<td align="right">&nbsp; </td>
-				<td align="center" nowrap="nowrap" class="outer_table_heading">
-				<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-				value="<?php echo date('d-M-Y', $startDate); ?>" />
-		</td>
-		<td align="center" nowrap="nowrap" class="outer_table_heading">
-			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE')?>"></input>
-		</td>
+		<td nowrap="nowrap" class="outer_table_heading">
+			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
+			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+			</td>
 		
 		<td align="right">
 			<input type="button" value="<?php echo JText::_('SAVE_CHANGES')?>" name="save" id="save" onclick="onSubmit();" />
@@ -96,24 +97,20 @@ ob_end_clean();
 	</tr>
 </table>
 
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 		<tr>
-			<td>
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-				<tr>
-<!--					<td class="calendar_cell_disabled_right">&nbsp;</td> -->
-					<td align="center" colspan="2" rowspan="2" class="calendar_cell_disabled_right"><b><?php echo JText::_('JOUR'); ?></b></td>
-					<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('MORNING'); ?></b></td>
-					<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('AFTERNOON'); ?></b></td>
-				</tr>
-				<tr>
-					<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
-					<td align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></td>
-					<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
-					<td align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></td>
-				</tr>
-				
+<!--		<td class="calendar_cell_disabled_right">&nbsp</td> -->
+			<td align="center" colspan="2" rowspan="2" class="calendar_cell_disabled_right"><b><?php echo JText::_('DAY'); ?></b></td>
+			<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('MORNING'); ?></b></td>
+			<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('AFTERNOON'); ?></b></td>
+		</tr>
 		<tr>
+			<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
+			<td align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></td>
+			<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
+			<td align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></td>
+		</tr>
+	<tr>
 <?php
 	for ($i=1;$i<=$last_day;$i++) {
 		$day = mktime(0,0,0,$month,$i,$year);
@@ -191,10 +188,8 @@ ob_end_clean();
 	}
 ?>
 						</tr>
-					</td>
-				</table>
 			</td>
-		</tr>
+
 	</table>
 
 		</td>

@@ -11,11 +11,7 @@ list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getConfigTable()." WHERE config_
 $resultset = dbResult($qh);
 
 ?>
-<html>
-<head>
-<title>Timesheet Configuration Parameters</title>
 
-</head>
 <script type="text/javascript">
 
 //store the current LDAP entry method in this variable
@@ -201,15 +197,28 @@ function onSubmit() {
 }
 
 </script>
+<?php 
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('CONFIG_PARMS')." | ".gbl::getContextUser()."</title>");
+ob_start();
+
+PageElements::setTheme('newcss');
+ob_end_clean();
+PageElements::setBodyOnLoad('doOnLoad();');
+?>
 <body  onload="enableLDAP(<?php echo $resultset["useLDAP"]?>);">
 <div id="inputArea">
 <form action="<?php echo Config::getRelativeRoot(); ?>/config_action" name="configurationForm" method="post">
 <input type="hidden" name="action" value="edit" />
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="noborder">
 	<tr>
+<<<<<<< .mine
+		<td class="configtype">
+				<?php echo JText::_('CONFIG_PARMS') ?>
+=======
 		<td align="left" class="outer_table_heading" >
 				Configuration Parameters:
+>>>>>>> .r345
 		</td>
 		<td align="right">
 			<input type="button" value="Save Changes" name="submitButton" id="submitButton" onclick="onSubmit();" />
@@ -217,17 +226,58 @@ function onSubmit() {
 	</tr>
 	<tr>
 		<td>
-			This form allows you to change the basic operating parameters of TimesheetNextGen.
-			Please be careful here, as errors may cause pages not to display properly.
-			Somewhere in one of these, you should include the placeholder %commandMenu%.
-			This is where TimesheetNextGen will place the menu options.
+		<?php echo JText::_('CONFIG_INTRO') ?>
 		</td>
 	</tr>
 	</table>
 
 
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
+	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<!-- LDAP configurationForm -->
 		<tr>
+<<<<<<< .mine
+			<td class="configtype">
+				<b><?php echo JText::_('LDAP'); ?></b>:
+			</td>
+			<td align="left" width="100%">
+				<input type="checkbox" name="useLDAPCheck" id="useLDAPCheck" onclick="enableLDAP(this.checked);"
+					 <?php if ($resultset['useLDAP'] == 1) echo "checked=\"checked\""; ?> /><?php echo JText::_('USE_LDAP'); ?>
+				<input type="hidden" name="useLDAP" id="useLDAP" />
+			</td>
+		</tr>
+		<tr>
+			<td align="left" class="label" nowrap width="90">&nbsp;</td>
+			<td class="configdesc">
+				<legend><?php echo JText::_('LDAP_DETAILS'); ?></legend>
+					<table width="100%" >
+						<tr>
+							<td>
+								<b>&nbsp;Data entry style:</b>
+								</td><td>
+								<select id="LDAPEntryMethod" name="LDAPEntryMethod" onChange="onChangeLDAPEntryMethod();">
+									<option value="normal" selected="selected">Normal</option>
+									<option value="advanced">RFC 2255 URL</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<span class="label">Scheme:</span>
+								</td><td>
+								<select id="LDAPScheme" name="LDAPScheme">
+								<option value="ldap" <?php if ($resultset["LDAPScheme"] == "ldap") echo "selected=\"selected\"";?>>LDAP</option>
+								<option value="ldaps" <?php if ($resultset["LDAPScheme"] == "ldaps") echo "selected=\"selected\"";?>>LDAPS</option>
+								</select>
+								(LDAP=Non SSL, LDAPS=Use SSL)
+							</td>
+						</tr>
+						<tr>
+							<td width="50%">
+								<span class="label">Host:</span>
+								</td><td>
+								<input id="LDAPHost" name="LDAPHost" type="text" value="<?php echo $resultset['LDAPHost']; ?>" style="width:100%;" />
+							</td>
+=======
 			<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 			<!-- LDAP configurationForm -->
 			<tr>
@@ -253,8 +303,121 @@ function onSubmit() {
 										<option value="advanced">RFC 2255 URL</option>
 									</select>
 								</td>
+>>>>>>> .r345
 							</tr>
 							<tr>
+<<<<<<< .mine
+							<td width="50%">
+								<span class="label">Port:</span>
+								</td><td>
+								<input id="LDAPPort" name="LDAPPort" type="text" size="10" maxlength="10" value="<?php echo $resultset['LDAPPort']; ?>" />
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>LDAP search base (Distinguished Name):</span>
+							</td>
+							<td width="100%">
+								<input id="LDAPBaseDN" type="text" name="LDAPBaseDN" value="<?php echo $resultset["LDAPBaseDN"]; ?>" style="width:100%;" />
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>Username attribute to query:</span>
+							</td>
+							<td width="100%">
+								<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<?php echo $resultset["LDAPUsernameAttribute"]; ?>" size="30"/>
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>Search scope:</span>
+							</td>
+							<td width="100%">
+								<select id="LDAPSearchScope" name="LDAPSearchScope">
+									<option value="base" <?php if ($resultset["LDAPSearchScope"] == "base") echo "selected=\"selected\""; ?>>Base DN search only (LDAPRead)</option>
+									<option value="one" <?php if ($resultset["LDAPSearchScope"] == "one") echo "selected=\"selected\""; ?>>One level search (LDAPList)</option>
+									<option value="sub" <?php if ($resultset["LDAPSearchScope"] == "sub") echo "selected=\"selected\""; ?>>Full sub-tree search (LDAPSearch)</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>Filter:</span>
+							</td>
+							<td width="100%">
+								<input id="LDAPFilter" type="text" name="LDAPFilter" value="<?php echo $resultset["LDAPFilter"]; ?>" style="width:100%;" />
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>Protocol Version:</span>
+							</td>
+							<td width="100%">
+								<select id="LDAPProtocolVersion" name="LDAPProtocolVersion">
+									<option value="3" <?php if ($resultset["LDAPProtocolVersion"] == "3") echo "selected=\"selected\""; ?>>3</option>
+									<option value="2" <?php if ($resultset["LDAPProtocolVersion"] == "2") echo "selected=\"selected\""; ?>>2</option>
+									<option value="1" <?php if ($resultset["LDAPProtocolVersion"] == "1") echo "selected=\"selected\""; ?>>1</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>Use LDAP Referrals:</span>
+							</td>
+							<td width="100%">
+								<input type="checkbox" name="LDAPReferralsCheck" id="LDAPReferralsCheck" <?php if ( $resultset['LDAPReferrals'] == 1 ) echo "checked=\"checked\""; ?> />
+								<input type="hidden" name="LDAPReferrals" id="LDAPReferrals" />
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>Fallback to local Authentication on fail:</span>
+							</td>
+							<td width="100%">
+								<input type="checkbox" name="LDAPFallbackCheck" id="LDAPFallbackCheck" <?php if ( $resultset['LDAPFallback'] == 1 ) echo "checked=\"checked\""; ?> />
+								<input type="hidden" name="LDAPFallback" id="LDAPFallback" />
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" nowrap>
+								<span class="label_grey" nowrap><i>The following fields are normally only required for Microsoft's Active Directory LDAP Server:</i></span>
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>Use LDAP by user authentication:</span>
+							</td>
+							<td width="100%">
+								<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <?php if ($resultset['LDAPBindByUser'] == 1) echo "checked=\"checked\""; ?> />
+								<input type="hidden" name="LDAPBindByUser" id="LDAPBindByUser" />
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>Bind Username:</span>
+							</td>
+							<td width="50%">
+								<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<?php echo $resultset["LDAPBindUsername"]; ?>" style="width:100%;" />
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>Bind Password:</span>
+							</td>
+							<td width="50%">
+								<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<?php echo $resultset["LDAPBindPassword"]; ?>" style="width:100%;" AUTOCOMPLETE="OFF" />
+							</td>
+						</tr>
+						<tr>
+							<td nowrap>
+								<span class="label" nowrap>RFC 2255 URL:</span>
+							</td>
+							<td width="100%">
+								<input id="LDAPUrl" name="LDAPUrl" type="text" value="" style="width:100%;" />
+							</td>
+						</tr>
+=======
 								<td>
 										<table width="100%" cellpadding="2">
 											<tr>
@@ -458,28 +621,48 @@ function onSubmit() {
 				</td>
 			</tr>
 
+>>>>>>> .r345
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+			</table>
+		<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 
 		<!-- ACL-->
 			<tr>
-				<td align="left" valign="top">
-					<b>ACL</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('ACL'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					The ACL defines the access given to pages for the different user roles defined. It is possible to disable a page by giving no access.
+				<td class="configdesc">
+					<legend><?php echo JText::_('ACL_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" />Reset
+					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" /><?php echo JText::_('RESET'); ?>
 				</td>
-				<td align="left" width="100%">
+				<td>
+				<table>			
+
 				<?php
-         /**
-    		  *@todo - find a way to replace the nobr tags whilst keeping the menu icons next to the names
-    		  */       	        
+         
+    		 //TODO FInd a way to replace the nobr tags whilst keeping the menu icons next to the names
+    		      	        
         ?>
+<<<<<<< .mine
+					<tr><td>Stopwatch:</td><td><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</td></tr>
+					<tr><td>Daily:</td><td><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</td></tr>
+					<tr><td>Weekly:</td><td><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</td></tr>
+					<tr><td>Monthly:</td><td><?php Common::acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</td></tr>
+					<tr><td>Simple:</td><td><?php Common::acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</td></tr>
+					<tr><td>Clients:</td><td><?php Common::acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</td></tr>
+					<tr><td>Projects:</td><td><?php Common::acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</td></tr>
+					<tr><td>Tasks:</td><td><?php Common::acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</td></tr>
+					<tr><td>Reports:</td><td><?php Common::acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</td></tr>
+					<tr><td>Rates:</td><td><?php Common::acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</td></tr>
+					<tr><td>Absences:</td><td><?php Common::acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</td></tr>
+		</table>
+	</table>
+	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+=======
 					<div class="nobr left"><span class="label">Stopwatch:</span><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</div>
 					<div class="nobr left"><span class="label">Daily:</span><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</div>
 					<div class="nobr left"><span class="label">Weekly:</span><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</div>
@@ -496,19 +679,20 @@ function onSubmit() {
 
 				</table>
 				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+>>>>>>> .r345
 
 		<!-- simple timesheet layout -->
 			<tr>
-				<td align="left" valign="top">
-					<b>simple layout</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('SIMPLE_LAYOUT'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					Select a layout of the simple timesheet plugin. You can choose to show a text field to describe the work you did with plain text and additionally choose between two different sizes of that field.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('SIMPLE_LAYOUT_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);"  />Reset
+					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);"  /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<select name="simpleTimesheetLayout" id="simpleTimesheetLayout">
@@ -519,21 +703,21 @@ function onSubmit() {
 				</td>
 			</tr>
 
-				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+	</table>
+	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 
 		<!-- start page -->
 			<tr>
-				<td align="left" valign="top">
-					<b>start page</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('START_PAGE'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					Select a default page to go to after login.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('START_PAGE_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="aclReset" value="off" valign="absmiddle" onclick="document.configurationForm.simpleTimesheetLayout.selectedIndex = 0; document.configurationForm.simpleTimesheetLayout.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<select name="startPage" id="startPage">
@@ -551,16 +735,16 @@ function onSubmit() {
 
 		<!-- locale -->
 			<tr>
-				<td align="left" valign="top">
-					<b>locale</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('LOCALE'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					The locale in which you want TimesheetNextGen to work. This affects regional settings. Leave it blank if you want to use the system locale. An example locale is <code>en_AU</code>, for Australia.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('LOCALE_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="localeReset" value="off" valign="absmiddle" onclick="document.configurationForm.locale.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="localeReset" value="off" valign="absmiddle" onclick="document.configurationForm.locale.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<input type="text" name="locale" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["locale"]))); ?>" style="width: 100%;" />
@@ -572,16 +756,16 @@ function onSubmit() {
 
 		<!-- timezone -->
 			<tr>
-				<td align="left" valign="top">
-					<b>Time Zone</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('TIME_ZONE'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					The timezone to use when generating dates. Leave it blank to use the system timezone. Example timezones: <code>Australia/Melbourne</code> &nbsp;<code>US/Central</code> &nbsp;<code>America/Chicago</code> &nbsp;<code>Europe/Zurich</code> &nbsp;<code>GMT+2</code>.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('TIME_ZONE_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="timezoneReset" value="off" onclick="document.configurationForm.timezone.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="timezoneReset" value="off" onclick="document.configurationForm.timezone.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<input type="text" name="timezone" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["timezone"]))); ?>" style="width: 100%;" />
@@ -593,18 +777,16 @@ function onSubmit() {
 
 			<!-- timeformat -->
 			<tr>
-				<td align="left" valign="top">
-					<b>Time Format</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('TIME_FORMAT'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					The format in which times should be displayed.	For example:<br />
-					&nbsp;&nbsp;&nbsp;&nbsp;<i> 12 hour format:</i><code>&nbsp;5:35 pm</code>
-					&nbsp;&nbsp;&nbsp;&nbsp;<i> 24 hour format:</i><code>&nbsp;17:35</code>
+				<td class="configdesc">
+					</<legend><?php echo JText::_('TIME_FORMAT_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="timeformatReset" value="off" onclick="document.configurationForm.timeformat.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="timeformatReset" value="off" onclick="document.configurationForm.timeformat.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<select name="timeformat" style="width: 100%;">
@@ -624,17 +806,16 @@ function onSubmit() {
 
 			<!-- weekstartday -->
 			<tr>
-				<td align="left" valign="top">
-					<b>Week Start Day</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('WEEK_START'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					The starting day of the week. Some people prefer to calculate the week starting
-					from Monday rather than Sunday.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('WEEK_START_INFO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="weekStartDayReset" value="off" onclick="document.configurationForm.weekstartday.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="weekStartDayReset" value="off" onclick="document.configurationForm.weekstartday.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<select name="weekstartday" style="width: 100%;">
@@ -644,7 +825,7 @@ function onSubmit() {
 
 							//make it sunday
 							$dowDate = strtotime(date("d M Y H:i:s",$dowDate) . " -" . date("w",$dowDate) . " days");
-
+							//TODO fix up selection to put day into internationalisation language
 							//for each day of the week
 							for ($i=0; $i<7; $i++) {
 								$dowString = strftime("%A", $dowDate);
@@ -665,16 +846,16 @@ function onSubmit() {
 
 			<!-- Items per page in Projects-->
 			<tr>
-				<td align="left" valign="top">
-					<b>Items per page in Projects</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('PROJECTS_ITEMS'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					Type the number of elements your want per page, when viewing projects.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('PROJECTS_ITEMS_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="projectItemsPerPageReset" value="off" onclick="document.configurationForm.projectItemsPerPage.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="projectItemsPerPageReset" value="off" onclick="document.configurationForm.projectItemsPerPage.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<input type="text" name="projectItemsPerPage" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["project_items_per_page"]))); ?>" style="width: 100%;" />
@@ -686,16 +867,16 @@ function onSubmit() {
 
 			<!-- Items per page in Tasks-->
 			<tr>
-				<td align="left" valign="top">
-					<b>Items per page in Tasks</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('TASKS_ITEMS'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					Type the number of elements your want per page, when viewing tasks.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('TASKS_ITEMS_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="taskItemsPerPageReset" value="off" onclick="document.configurationForm.taskItemsPerPage.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="taskItemsPerPageReset" value="off" onclick="document.configurationForm.taskItemsPerPage.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<input type="text" name="taskItemsPerPage" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["task_items_per_page"]))); ?>" style="width: 100%;" />
@@ -708,16 +889,16 @@ function onSubmit() {
 
 			<!-- headerhtml -->
 			<tr>
-				<td align="left" valign="top">
-					<b>headerhtml</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('HEADER_HTML'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					Additional HTML to add to the HEAD area of documents, eg. links to stylesheets.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('HEADER_HTML_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="headerReset" value="off" onclick="document.configurationForm.headerhtml.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="headerReset" value="off" onclick="document.configurationForm.headerhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<textarea rows="5" cols="73" name="headerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["headerhtml"]))); ?></textarea>
@@ -729,16 +910,16 @@ function onSubmit() {
 
 			<!-- bodyhtml -->
 			<tr>
-				<td align="left" valign="top">
-					<b>bodyhtml</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('BODY_HTML'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					Additional parameters to add to the BODY tag at the beginning of documents, eg. background image/colors, link colors, etc
+				<td class="configdesc">
+					</<legend><?php echo JText::_('BODY_HTML_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="bodyReset" value="off" onclick="document.configurationForm.bodyhtml.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="bodyReset" value="off" onclick="document.configurationForm.bodyhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<textarea rows="5" cols="73" name="bodyhtml"  style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["bodyhtml"]))); ?></textarea>
@@ -750,16 +931,16 @@ function onSubmit() {
 
 			<!-- bannerhtml -->
 			<tr>
-				<td align="left" valign="top">
-					<b>bannerhtml</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('BANNER_HTML'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					The html that gets emitted at the head of every page. This is a good place to insert the placeholder %commandMenu%. You may also want to include the placeholder %username% as part of a welcome message.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('BANNER_HTML_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="bannerReset" value="off" onclick="document.configurationForm.bannerhtml.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="bannerReset" value="off" onclick="document.configurationForm.bannerhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<textarea rows="5" cols="73" name="bannerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["bannerhtml"]))); ?></textarea>
@@ -771,16 +952,16 @@ function onSubmit() {
 
 			<!-- footerhtml -->
 			<tr>
-				<td align="left" valign="top">
-					<b>footerhtml</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('FOOTER_HTML'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					HTML to add to the bottom of every page. If you include %time%, %date%, and %timezone% here, it will print the time and date the page was loaded.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('FOOTER_HTML_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="footerReset" value="off" onclick="document.configurationForm.footerhtml.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="footerReset" value="off" onclick="document.configurationForm.footerhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<textarea rows="5" cols="73" name="footerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["footerhtml"]))); ?></textarea>
@@ -792,16 +973,16 @@ function onSubmit() {
 
 			<!-- errorhtml -->
 			<tr>
-				<td align="left" valign="top">
-					<b>errorhtml</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('ERROR_HTML'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					This is what is printed out when a form is improperly filled out. %errormsg% is replaced by the actual error itself.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('ERROR_HTML_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="errorReset" value="off" onclick="document.configurationForm.errorhtml.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="errorReset" value="off" onclick="document.configurationForm.errorhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<textarea rows="5" cols="73" name="errorhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["errorhtml"]))); ?></textarea>
@@ -814,29 +995,23 @@ function onSubmit() {
 
 			<!-- tablehtml -->
 			<tr>
-				<td align="left" valign="top">
-					<b>tablehtml</b>:
+				<td class="configtype">
+					<b><?php echo JText::_('TABLE_HTML'); ?></b>:
 				</td>
-				<td align="left" width="100%">
-					Additional parameters to add to the table tag when displaying sheets, calenders, etc. This is often used to set the background color or background image of the table.
+				<td class="configdesc">
+					</<legend><?php echo JText::_('TABLE_HTML_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
 				<td align="left" class="label" width="90">
-					<input type="checkbox" name="tableReset" value="off" onclick="document.configurationForm.tablehtml.disabled=(this.checked);" />Reset
+					<input type="checkbox" name="tableReset" value="off" onclick="document.configurationForm.tablehtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
 					<textarea rows="5" cols="73" name="tablehtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["tablehtml"]))); ?></textarea>
 				</td>
 			</tr>
 
-						</table>
-					</td>
-				</tr>
 
-				</table>
-			
-		</table>
 
 			</td>
 		</tr>
