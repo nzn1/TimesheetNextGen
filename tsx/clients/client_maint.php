@@ -11,9 +11,6 @@ if (empty($loggedInUser))
 
 ?>
 
-<HTML>
-<head>
-
 <script type="text/javascript">
 
 	function delete_client(clientId) {
@@ -22,12 +19,19 @@ if (empty($loggedInUser))
 	}
 
 </script>
-</head>
+<?php 
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('CLIENTS')." | ".gbl::getContextUser()."</title>");
+ob_start();
+
+PageElements::setTheme('newcss');
+ob_end_clean();
+PageElements::setBodyOnLoad('doOnLoad();');
+?>
 <form action="<?php echo Config::getRelativeRoot(); ?>/clients/client_action" method="post">
 
 <h1><?php echo JText::_('CLIENTS'); ?></h1>
 
-	<table width="100%" border="0">
+	<table>
 		<tr>
 		<td align="right">
 			<a href="client_add" class="outer_table_action"><?php echo JText::_('ADD_NEW_CLIENT')?></a>
@@ -35,8 +39,8 @@ if (empty($loggedInUser))
 		</tr>
 	</table>
 
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<!--  table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body" -->
+	<table>
+		
 <?php
 
 //execute the query
@@ -48,12 +52,13 @@ if ($num == 0) {
 	print "<a href=\"client_add\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br /><br /></td></tr>";
 } else {
 
-	print "<tr class=\"inner_table_head\">";
-	print "<td class=\"inner_table_column_heading\">".ucfirst(JText::_('ORGANISATION'))."</td>";
-	print "<td class=\"inner_table_column_heading\">".ucfirst(JText::_('CONTACT_NAME'))."</td>";
-	print "<td class=\"inner_table_column_heading\">".ucfirst(JText::_('EMAIL'))."</td>";
-	print "<td class=\"inner_table_column_heading\">".ucfirst(JText::_('PHONE'))."</td>";
-	print "<td class=\"inner_table_column_heading\" align=\"right\" width=\"10%\" ><i>".ucfirst(JText::_('ACTIONS'))."</i></td>";
+	print "<thead><tr>";
+	print "<th>".ucfirst(JText::_('ORGANISATION'))."</th>";
+	print "<th>".ucfirst(JText::_('CONTACT_NAME'))."</th>";
+	print "<th>".ucfirst(JText::_('EMAIL'))."</th>";
+	print "<th>".ucfirst(JText::_('PHONE'))."</th>";
+	print "<th align=\"right\" width=\"10%\" ><i>".ucfirst(JText::_('ACTIONS'))."</i></th>";
+	print "</tr></thead><tbody>";
 
 	$count = 0;
 	while ($data = dbResult($qh)) {
@@ -71,11 +76,11 @@ if ($num == 0) {
 			print "<tr class=\"diff\">";
 		else
 			print "<tr>";
-		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=window.open(\"client_info?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=260\")>$organisationField</a></td>";
-		print "<td class=\"calendar_cell_middle\">$contactNameField</td>";
-		print "<td class=\"calendar_cell_middle\">$emailField</td>";
-		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
-		print "<td class=\"calendar_cell_disabled_right\">\n";
+		print "<td><a href=\"javascript:void(0)\" onclick=window.open(\"client_info?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=260\")>$organisationField</a></td>";
+		print "<td>$contactNameField</td>";
+		print "<td>$emailField</td>";
+		print "<td>$phoneField</td>";
+		print "<td>\n";
 		print "	<a href=\"client_edit?client_id=$data[client_id]\">".JText::_('EDIT')."</a>,&nbsp;\n";
 		print "	<a href=\"javascript:delete_client($data[client_id]);\">".JText::_('DELETE')."</a>\n";
 		print "</td>\n";
