@@ -24,6 +24,7 @@ class tbl{
 	private static $CONFIG_TABLE;
 	private static $NEW_CONFIG_TABLE;
 	private static $PROJECT_TABLE;
+	private static $STD_TASK_TABLE;
 	private static $TASK_TABLE;
 	private static $TASK_ASSIGNMENTS_TABLE;
 	private static $TIMES_TABLE;
@@ -31,7 +32,9 @@ class tbl{
 	private static $RATE_TABLE;
 	private static $ABSENCE_TABLE;
 	private static $ALLOWANCE_TABLE;
-
+	private static $EXPENSE_CATEGORY_TABLE;
+	private static $EXPENSE_TABLE;
+		
 	public static function initialise(){
 		if(!file_exists('table_names.inc')){
 			trigger_error('table_names.inc could not be found');
@@ -45,6 +48,7 @@ class tbl{
 		self::$CONFIG_TABLE = $CONFIG_TABLE;
 		self::$PROJECT_TABLE = $PROJECT_TABLE;
 		self::$TASK_TABLE = $TASK_TABLE;
+		self::$STD_TASK_TABLE = $STD_TASK_TABLE;
 		self::$TASK_ASSIGNMENTS_TABLE = $TASK_ASSIGNMENTS_TABLE;
 		self::$TIMES_TABLE = $TIMES_TABLE;
 		self::$USER_TABLE = $USER_TABLE;
@@ -52,6 +56,8 @@ class tbl{
 		self::$ABSENCE_TABLE = $ABSENCE_TABLE;
 		self::$ALLOWANCE_TABLE = $ALLOWANCE_TABLE;
 		self::$NEW_CONFIG_TABLE = $NEW_CONFIG_TABLE;
+		self::$EXPENSE_CATEGORY_TABLE = $EXPENSE_CATEGORY_TABLE;
+		self::$EXPENSE_TABLE = $EXPENSE_TABLE;
 	}
 
 	public static function getAssignmentsTable(){
@@ -77,7 +83,11 @@ class tbl{
 	public static function getTaskTable(){
 		return self::$TASK_TABLE;
 	}
-
+	
+	public static function getStdTaskTable(){
+		return self::$STD_TASK_TABLE;
+	}
+	
 	public static function getTaskAssignmentsTable(){
 		return self::$TASK_ASSIGNMENTS_TABLE;
 	}
@@ -100,5 +110,11 @@ class tbl{
 
 	public static function getAllowanceTable(){
 		return self::$ALLOWANCE_TABLE;
+	}
+	public static function getExpenseCategoryTable(){
+		return self::$EXPENSE_CATEGORY_TABLE;
+	}
+	public static function getExpenseTable(){
+		return self::$EXPENSE_TABLE;
 	}
 }
