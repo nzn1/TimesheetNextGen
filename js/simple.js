@@ -288,6 +288,11 @@
 	}
 
 	function recalculateRowCol(idStr) {
+		var match = /(row.*_col.*)/.exec(idStr)
+		//alert('changetransid ' + idStr + " regexp result " + match[0]);
+		transId = parseInt(document.getElementById("tid_" + match[0]).value);
+		if(transId>0) {transId = -transId};
+		document.getElementById("tid_" + match[0]).value=transId;
 		recalculateRow(rowFromIdStr(idStr));
 		recalculateCol(colFromIdStr(idStr),idStr);
 		setDirty();

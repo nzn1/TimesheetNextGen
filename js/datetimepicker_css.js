@@ -39,7 +39,7 @@ var CalPosOffsetY = 8; //Y position offset relative to calendar icon, can be neg
 
 //Configurable parameters
 
-//var WindowTitle = "DateTime Picker";//Date Time Picker title.
+var WindowTitle = "Select Date";//Date Time Picker title.
 
 var SpanBorderColor = "#000000";//span border color
 var SpanBgColor = "#FFFFFF"; //span background color
