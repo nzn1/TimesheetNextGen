@@ -124,11 +124,8 @@ PageElements::setTheme('newcss');
 			<td>
 				<?php writePageLinks($page, $results_per_page, $num2);?>
 			</td>
-<<<<<<< .mine
 			<td>
-=======
-			<td align="right">
->>>>>>> .r341
+
 				<a href="proj_add?client_id=<?php echo gbl::getClientId(); ?>"><?php echo JText::_('ADD_NEW_PROJECT')?></a>
 			</td>
 		</tr>
@@ -196,31 +193,13 @@ PageElements::setTheme('newcss');
 			if ($data["http_link"] != "")
 				print "<a href=\"$data[http_link]\">";
 
-<<<<<<< .mine
+
 			print "<span class=\"project_title\">".$data['title']."</span>";
 			if ($data["http_link"] != "")
 				print "</a></td>";
 				
-			
-=======
-			print "<br /><span class=\"project_title\">".ucwords(JText::_('CLIENT')).": </span>".$data['organisation'];
+
 ?>
-					</td>
-					<td align="right" valign="top">
-						<?php print "<span class=\"project_status\">&lt;".ucwords(JText::_("$data[proj_status]"))."&gt;&nbsp;&nbsp;&nbsp;</span>" ?>
-					</td>
-					<td width="25%">
-<?php
-			if (isset($data["start_date"]) && $data["start_date"] != '' && $data["deadline"] != '')
-				{
-				print "<span class=\"label\">".JText::_('START_DATE').":</span>".strftime(JText::_('DFMT_MONTH_DAY_YEAR'),strtotime($data["start_date"]))."<br />";
-				print "<span class=\"label\">".JText::_('DUE_DATE').":</span>".strftime(JText::_('DFMT_MONTH_DAY_YEAR'),strtotime($data["deadline"]));
-				}
-			else
-				print "&nbsp;";
->>>>>>> .r341
-?>
-<<<<<<< .mine
 			</td>
 			<td>
 				<?php print "<span class=\"project_status\">".ucwords(JText::_("$data[proj_status]"))."</span>" ?>
@@ -249,24 +228,13 @@ PageElements::setTheme('newcss');
 				</tr><tr>
 					<td><?php echo JText::_('DUE_DATE'); ?></td>
 					<td><?php echo strftime(JText::_('DFMT_MONTH_DAY_YEAR'),strtotime($data["deadline"])); ?></td>
-=======
-					</td>
-					<td width="30%"align="right" valign="top">
-						<span class="label">
-							<?php echo ucwords(JText::_('ACTIONS'))?>:
-						</span>
-						<a href="proj_edit?client_id=<?php echo gbl::getClientId(); ?>&amp;proj_id=<?php echo $data["proj_id"]; ?>"><?php echo ucwords(JText::_('EDIT'))?></a>,
-						<a href="project_user_rates_action?proj_id=<?php echo $data["proj_id"]; ?>&amp;action=show_users"><?php echo JText::_('CHG_BILL_RATES')?></a>,
-						<a href="javascript:delete_project(<?php echo gbl::getClientId(); ?>,<?php echo $data["proj_id"]; ?>);"><?php echo ucwords(JText::_('DELETE'))?></a>
-					</td>
->>>>>>> .r341
+
 				</tr>
 			</table>
 		</td>
 		<td>
 			<table  class="inner_table"<?php if ($j+1<$num) print "class=\"section_body\""; ?>>
 				<tr>
-<<<<<<< .mine
 					<td>
 							<?php echo JText::_('TOTAL_TIME')?>:
 					</td><td> 
@@ -277,13 +245,7 @@ PageElements::setTheme('newcss');
 							<?php echo JText::_('TOTAL_BILL')?>:
 					</td><td> 	 
 							<?php echo (isset($bill_data["billed"]) ? sprintf("%01.2f",$bill_data["billed"]): "0.00")." ".JText::_('CURRENCY'); ?></b>
-=======
-					<td valign="middle" height="20" colspan="3">
-						<span class="label">
-							<?php echo ucwords(JText::_('DESCRIPTION')).": "?>
-						</span>
-						<?php echo $data['description'] ?><br />
->>>>>>> .r341
+
 					</td>
 				</tr>
 			</table>
@@ -291,7 +253,6 @@ PageElements::setTheme('newcss');
 		<td>
 			<table>
 				<tr>
-<<<<<<< .mine
 					<td>
 						<?php echo JText::_('PROJECT_LEADER')?>:
 					</td><td> 
@@ -299,30 +260,7 @@ PageElements::setTheme('newcss');
 					</td>
 				</tr><tr>
 			<td>
-=======
-					<td width="60%">
-						<table border="0">
-							<tr>
-								<td>
-									<span class="label">
-										<?php echo JText::_('TOTAL_TIME')?>:
-									</span> 
-									<?php echo (isset($bill_data["total_time"]) ? Common::formatSeconds($bill_data["total_time"]): "0h 0m"); ?><br />
-									<span class="label">
-										<?php echo JText::_('TOTAL_BILL')?>:
-									</span> 
-									<b><?php echo (isset($bill_data["billed"]) ? sprintf("%01.2f",$bill_data["billed"]): "0.00")." ".JText::_('CURRENCY'); ?></b>
-								</td>
-							</tr>
-							<tr><td>&nbsp;</td></tr>
-							<tr>
-								<td>
-									<span class="label">
-										<?php echo JText::_('PROJECT_LEADER')?>:
-									</span> 
-									<?php echo $data['proj_leader'] ?>
-									<br />
->>>>>>> .r341
+
 	<?php
 				//display assigned users
 				list($qh2, $num_workers) = dbQuery("SELECT DISTINCT username FROM ".tbl::getAssignmentsTable()." WHERE proj_id = $data[proj_id]");
