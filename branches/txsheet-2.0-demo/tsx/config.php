@@ -212,13 +212,9 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 <table class="noborder">
 	<tr>
-<<<<<<< .mine
 		<td class="configtype">
 				<?php echo JText::_('CONFIG_PARMS') ?>
-=======
-		<td align="left" class="outer_table_heading" >
-				Configuration Parameters:
->>>>>>> .r345
+
 		</td>
 		<td align="right">
 			<input type="button" value="Save Changes" name="submitButton" id="submitButton" onclick="onSubmit();" />
@@ -235,7 +231,6 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 		<!-- LDAP configurationForm -->
 		<tr>
-<<<<<<< .mine
 			<td class="configtype">
 				<b><?php echo JText::_('LDAP'); ?></b>:
 			</td>
@@ -277,36 +272,8 @@ PageElements::setBodyOnLoad('doOnLoad();');
 								</td><td>
 								<input id="LDAPHost" name="LDAPHost" type="text" value="<?php echo $resultset['LDAPHost']; ?>" style="width:100%;" />
 							</td>
-=======
-			<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
-			<!-- LDAP configurationForm -->
-			<tr>
-				<td align="left" valign="top">
-					<b>LDAP</b>:
-				</td>
-				<td align="left" width="100%">
-					<input type="checkbox" name="useLDAPCheck" id="useLDAPCheck" onclick="enableLDAP(this.checked);" <?php if ($resultset['useLDAP'] == 1) echo "checked=\"checked\""; ?> />Use LDAP for authentication
-					<input type="hidden" name="useLDAP" id="useLDAP" />
-				</td>
-			</tr>
-			<tr>
-				<td align="left" class="label" width="90">&nbsp;</td>
-				<td align="left" width="100%">
-					<fieldset>
-						<legend>Connection Details</legend>
-						<table width="100%" >
-							<tr>
-								<td>
-									<b>&nbsp;Data entry style:</b>
-									<select id="LDAPEntryMethod" name="LDAPEntryMethod" onchange="onChangeLDAPEntryMethod();">
-										<option value="normal" selected="selected">Normal</option>
-										<option value="advanced">RFC 2255 URL</option>
-									</select>
-								</td>
->>>>>>> .r345
 							</tr>
 							<tr>
-<<<<<<< .mine
 							<td width="50%">
 								<span class="label">Port:</span>
 								</td><td>
@@ -417,211 +384,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 								<input id="LDAPUrl" name="LDAPUrl" type="text" value="" style="width:100%;" />
 							</td>
 						</tr>
-=======
-								<td>
-										<table width="100%" cellpadding="2">
-											<tr>
-												<td colspan="3">
-													<span class="label">Scheme:</span>
-													<select id="LDAPScheme" name="LDAPScheme">
-														<option value="ldap" <?php if ($resultset["LDAPScheme"] == "ldap") echo "selected=\"selected\"";?>>LDAP</option>
-														<option value="ldaps" <?php if ($resultset["LDAPScheme"] == "ldaps") echo "selected=\"selected\"";?>>LDAPS</option>
-													</select>
-													(LDAP=Non SSL, LDAPS=Use SSL)
-												</td>
-											</tr>
-											<tr>
-												<td width="50%">
-													<span class="label">Host:</span>
-													<input id="LDAPHost" name="LDAPHost" type="text" value="<?php echo $resultset['LDAPHost']; ?>" style="width:100%;" />
-												</td>
-												<td width="20">&nbsp;</td>
-												<td width="50%">
-													<span class="label">Port:</span>
-													<input id="LDAPPort" name="LDAPPort" type="text" size="10" maxlength="10" value="<?php echo $resultset['LDAPPort']; ?>" />
-												</td>
-											</tr>
-											<tr>
-												<td colspan="3">
-													<table width="100%" cellpadding="0" cellspacing="0">
-														<tr>
-															<td >
-																<span class="label" >LDAP search base (Distinguished Name):</span>
-															</td>
-															<td>&nbsp;</td>
-															<td width="100%">
-																<input id="LDAPBaseDN" type="text" name="LDAPBaseDN" value="<?php echo $resultset["LDAPBaseDN"]; ?>" style="width:100%;" />
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-											<tr>
-												<td colspan="3">
-													<table width="100%" cellpadding="0" cellspacing="0">
-														<tr>
-															<td >
-																<span class="label" >Username attribute to query:</span>
-															</td>
-															<td>&nbsp;</td>
-															<td width="100%">
-																<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<?php echo $resultset["LDAPUsernameAttribute"]; ?>" size="30"/>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-											<tr>
-												<td colspan="3">
-													<table width="100%" cellpadding="0" cellspacing="0">
-														<tr>
-															<td >
-																<span class="label" >Search scope:</span>
-															</td>
-															<td>&nbsp;</td>
-															<td width="100%">
-																<select id="LDAPSearchScope" name="LDAPSearchScope">
-																	<option value="base" <?php if ($resultset["LDAPSearchScope"] == "base") echo "selected=\"selected\""; ?>>Base DN search only (LDAPRead)</option>
-																	<option value="one" <?php if ($resultset["LDAPSearchScope"] == "one") echo "selected=\"selected\""; ?>>One level search (LDAPList)</option>
-																	<option value="sub" <?php if ($resultset["LDAPSearchScope"] == "sub") echo "selected=\"selected\""; ?>>Full sub-tree search (LDAPSearch)</option>
-																</select>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-											<tr>
-												<td colspan="3">
-													<table width="100%" cellpadding="0" cellspacing="0">
-														<tr>
-															<td>
-																<span class="label">Filter:</span>
-															</td>
-															<td>&nbsp;</td>
-															<td width="100%">
-																<input id="LDAPFilter" type="text" name="LDAPFilter" value="<?php echo $resultset["LDAPFilter"]; ?>" style="width:100%;" />
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-											<tr>
-												<td colspan="3">
-													<table width="100%" cellpadding="0" cellspacing="0">
-														<tr>
-															<td>
-																<span class="label">Protocol Version:</span>
-															</td>
-															<td>&nbsp;</td>
-															<td width="100%">
-																<select id="LDAPProtocolVersion" name="LDAPProtocolVersion">
-																	<option value="3" <?php if ($resultset["LDAPProtocolVersion"] == "3") echo "selected=\"selected\""; ?>>3</option>
-																	<option value="2" <?php if ($resultset["LDAPProtocolVersion"] == "2") echo "selected=\"selected\""; ?>>2</option>
-																	<option value="1" <?php if ($resultset["LDAPProtocolVersion"] == "1") echo "selected=\"selected\""; ?>>1</option>
-																</select>
-															</td>
-															<td>
-																<span class="label">Use LDAP Referrals:</span>
-															</td>
-															<td>&nbsp;</td>
-															<td width="100%">
-																<input type="checkbox" name="LDAPReferralsCheck" id="LDAPReferralsCheck" <?php if ( $resultset['LDAPReferrals'] == 1 ) echo "checked=\"checked\""; ?> />
-																<input type="hidden" name="LDAPReferrals" id="LDAPReferrals" />
-															</td>
-															<td>&nbsp;</td>
-															<td>
-																<span class="label">Fallback to local Authentication on fail:</span>
-															</td>
-															<td>&nbsp;</td>
-															<td width="100%">
-																<input type="checkbox" name="LDAPFallbackCheck" id="LDAPFallbackCheck" <?php if ( $resultset['LDAPFallback'] == 1 ) echo "checked=\"checked\""; ?> />
-																<input type="hidden" name="LDAPFallback" id="LDAPFallback" />
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-											<tr>
-												<td colspan="3">
-													<table width="100%" cellpadding="0" cellspacing="0">
-														<tr>
-															<td>
-																<span class="label_grey"><i>The following fields are normally only required for Microsoft's Active Directory LDAP Server:</i></span>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-											<tr>
-												<td colspan="3">
-													<table width="100%" cellpadding="0" cellspacing="0" border="0">
-														<tr>
-															<td width="50%">
-																<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																	<tr>
-																		<td>
-																			<span class="label">Use LDAP by user authentication:</span>
-																		</td>
-																		<td width="5">&nbsp;</td>
-																		<td width="100%">
-																			<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <?php if ($resultset['LDAPBindByUser'] == 1) echo "checked=\"checked\""; ?> />
-																			<input type="hidden" name="LDAPBindByUser" id="LDAPBindByUser" />
-																		</td>
-																	</tr>
-																</table>
-																<table width="100%" cellpadding="0" cellspacing="0" border="0">
-																	<tr>
-																		<td>
-																			<span class="label">Bind Username:</span>
-																		</td>
-																		<td width="5">&nbsp;</td>
-																		<td width="50%">
-																			<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<?php echo $resultset["LDAPBindUsername"]; ?>" style="width:100%;" />
-																		</td>
-																		<td>
-																			<span class="label">&nbsp;&nbsp;&nbsp;Bind Password:</span>
-																		</td>
-																		<td width="5">&nbsp;</td>
-																		<td width="50%">
-																			<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<?php echo $resultset["LDAPBindPassword"]; ?>" style="width:100%;" AUTOCOMPLETE="OFF" />
-																		</td>
-																	</tr>
-																</table>
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
 
-										</table>
-									</div>
-									<div id="advancedLDAPEntry" style="display:none;">
-										<table width="100%" cellpadding="0">
-											<tr>
-												<td colspan="3">
-													<table width="100%" cellpadding="0" cellspacing="0">
-														<tr>
-															<td>
-																<span class="label">RFC 2255 URL:</span>
-															</td>
-															<td>&nbsp;</td>
-															<td width="100%">
-																<input id="LDAPUrl" name="LDAPUrl" type="text" value="" style="width:100%;" />
-															</td>
-														</tr>
-													</table>
-												</td>
-											</tr>
-										</table>
-									</div>
-								</td>
-							</tr>
-						</table>
-					</fieldset>
-				</td>
-			</tr>
-
->>>>>>> .r345
 				</table>
 			</table>
 		<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
@@ -647,7 +410,6 @@ PageElements::setBodyOnLoad('doOnLoad();');
     		 //TODO FInd a way to replace the nobr tags whilst keeping the menu icons next to the names
     		      	        
         ?>
-<<<<<<< .mine
 					<tr><td>Stopwatch:</td><td><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</td></tr>
 					<tr><td>Daily:</td><td><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</td></tr>
 					<tr><td>Weekly:</td><td><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</td></tr>
@@ -662,24 +424,6 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		</table>
 	</table>
 	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
-=======
-					<div class="nobr left"><span class="label">Stopwatch:</span><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Daily:</span><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Weekly:</span><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Monthly:</span><?php Common::acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Simple:</span><?php Common::acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Clients:</span><?php Common::acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Projects:</span><?php Common::acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Tasks:</span><?php Common::acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Reports:</span><?php Common::acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Rates:</span><?php Common::acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</div>
-					<div class="nobr left"><span class="label">Absences:</span><?php Common::acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</div>
-				</td>
-			</tr>
-
-				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
->>>>>>> .r345
 
 		<!-- simple timesheet layout -->
 			<tr>
