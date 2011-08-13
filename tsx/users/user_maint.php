@@ -167,22 +167,15 @@ while ($data = dbResult($qh)) {
 <table>
 	<thead>
 	<tr>
-<<<<<<< .mine
+
 		<th><?php echo JText::_('FIRST_NAME'); ?></th>
 		<th><?php echo JText::_('LAST_NAME'); ?></th>
 		<th><?php echo JText::_('USERNAME'); ?></th>
 		<th><?php echo JText::_('EMAIL_ADDRESS'); ?></th>
 		<th><?php echo JText::_('PASSWORD'); ?></th>
-=======
-		<td align="left" class="outer_table_heading">
-			&nbsp;
-		</td>
-		<td align="right" >
-			<a href="javascript:goClone()">Copy Projects/Tasks between users</a>
-		</td>
->>>>>>> .r340
+
 	</tr>
-<<<<<<< .mine
+
 	</thead>
 	<tbody>
 		<tr>
@@ -191,18 +184,6 @@ while ($data = dbResult($qh)) {
 		<td><input size="15" name="username" style="width: 100%;" /></td>
 		<td><input size="35" name="email_address" style="width: 100%;" /></td>
 		<td><input type="password" size="20" name="password" style="width: 100%;" AUTOCOMPLETE="OFF" /></td>
-=======
-
-	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
-	<tr>
-		<!-- table width="100%" border="0" class="table_body" -->
-	<tr>
-		<td><?php echo JText::_('FIRST_NAME'); ?>:<br /><input size="20" name="first_name" style="width: 100%;"></td>
-		<td><?php echo JText::_('LAST_NAME'); ?>:<br /><input size="20" name="last_name" style="width: 100%;"></td>
-		<td><?php echo JText::_('USERNAME'); ?>:<br /><input size="15" name="username" style="width: 100%;" /></td>
-		<td><?php echo JText::_('EMAIL_ADDRESS'); ?>:<br /><input size="35" name="email_address" style="width: 100%;" /></td>
-		<td><?php echo JText::_('PASSWORD'); ?>:<br /><input type="password" size="20" name="password" style="width: 100%;" AUTOCOMPLETE="OFF" /></td>
->>>>>>> .r340
 	</tr>
 	<tr>
 		<td colspan="2" align="left">
