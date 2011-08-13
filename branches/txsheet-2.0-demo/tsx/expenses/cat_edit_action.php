@@ -21,7 +21,6 @@ if ($action == "add") {
 		list($qh, $num) = dbQuery("UPDATE  ".tbl::getExpenseCategoryTable()." SET description= '".
 				$description . "' WHERE cat_id = '". $cat_id. "'");
 		
-		$data_cat = dbResult($qh);
 	}
 	gotoLocation(Config::getRelativeRoot()."/expenses/cat_list");
 

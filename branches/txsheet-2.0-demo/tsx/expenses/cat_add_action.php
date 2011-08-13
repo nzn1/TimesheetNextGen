@@ -22,8 +22,8 @@ if ($action == "add") {
 	if ($num == 0) { // no duplicate in the table, ok to add this new category
 	
 		list($qh, $num) = dbQuery("INSERT INTO  ".tbl::getExpenseCategoryTable()."  (description) VALUES ".
-						"('$description')");
-		$data = dbResult($qh);
+						" ('$description')");
+
 	}
 
 	gotoLocation(Config::getRelativeRoot()."/expenses/cat_list");

@@ -383,7 +383,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					if($grand_total_time) {
 						$formatted_time = $sc->format_time($level_total[1]);
 						print "<tr class=\"totalr\"><td class=\"texttotal\" colspan=\"7\">". 
-							$subtotal_label[1]." </td><td class=\"texttotal\"><span>".$formatted_time."</span></td></tr>\n";
+							$subtotal_label[1]." </td><td class=\"texttotal\">".$formatted_time."</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
 											}
 					$level_total[1]=0;
 				}
@@ -391,7 +391,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					if($grand_total_time) {
 						$formatted_time = $sc->format_time($level_total[0]);
 						print "<tr class=\"totalr\"><td class=\"texttotal\" colspan=\"7\">" .
-							$subtotal_label[0].": </td><td class=\"texttotal\"><span>".$formatted_time."</span></td></tr>\n";
+							$subtotal_label[0].": </td><td class=\"texttotal\">".$formatted_time."</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
 					}
 					$level_total[0]=0;
 					$last_colVar[1]="";
@@ -422,12 +422,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		if (isset($subtotal_label[1]) && $level_total[1]) {
 			$formatted_time = $sc->format_time($level_total[1]);
 			print "<tr class=\"totalr\"><td class=\"texttotal\" colspan=\"7\">" .
-				$subtotal_label[1].": </td><td class=\"texttotal\"><span>$formatted_time</span></td></tr>\n";
+				$subtotal_label[1].": </td><td class=\"texttotal\">$formatted_time</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
 		}
 		if (isset($subtotal_label[0]) && $level_total[0]) {
 			$formatted_time = $sc->format_time($level_total[0]);
 			print "<tr class=\"totalr\"><td class=\"textproject\" colspan=\"7\">" .
-				$subtotal_label[0].": </td><td class=\"texttotal\"><span>$formatted_time</span></td></tr>\n";
+				$subtotal_label[0].": </td><td class=\"texttotal\">$formatted_time</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
 		}
 		$formatted_time = $sc->format_time($grand_total_time);
 	}
@@ -448,7 +448,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		echo JText::_('MONTHLY_TOTAL'). ": ";
 	echo "</td><td class=\"textproject\">" .$formatted_time; 
 ?>
-						</td>
+						</td><td>&nbsp;</td><td>&nbsp;</td>
 					</tr>
 				</table>
 			</td>
