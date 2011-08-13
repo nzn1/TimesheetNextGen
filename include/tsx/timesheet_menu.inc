@@ -109,6 +109,10 @@ $menuStr = JText::_('ABSENCES');
 if (Site::getAuthenticationManager()->hasAccess('aclAbsences'))
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/absences?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_calendar.gif"));
 
+$menuStr = JText::_('EXPENSES');
+if (Site::getAuthenticationManager()->hasAccess('aclSimple'))
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/expenses/exp_list?".gbl::getPost()."", Config::getRelativeRoot()."/images/icon_rates.gif"));
+	
 $menuStr = JText::_('CLIENTS');
 if (Site::getAuthenticationManager()->hasAccess('aclClients'))
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/clients/client_maint", Config::getRelativeRoot()."/images/icon_clients.gif"));
@@ -136,6 +140,9 @@ if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	$menuStr = JText::_('SUPERVISORS');
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/supervisor", Config::getRelativeRoot()."/images/icon_supervisor.gif"));
 
+	$menuStr = JText::_('EXPENSE_CATEGORIES');
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/expenses/cat_list", Config::getRelativeRoot()."/images/icon_supervisor.gif"));
+	
 	$menuStr = JText::_('USER_RATES');
 	if (Site::getAuthenticationManager()->hasAccess('aclRates'))
 		Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/users/rate_maint", Config::getRelativeRoot()."/images/icon_rates.gif"));
