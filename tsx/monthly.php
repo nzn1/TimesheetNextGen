@@ -22,17 +22,30 @@ if (gbl::getProjId() != 0) { // id 0 means 'All Projects'
 		Common::errorPage(JText::sprintf('NOT_ASSIGNED_TO_IT',JText::_('PROJECT')));
 } else
 	gbl::setTaskId(0);
-
 //get the context date
+	if (isset($_REQUEST['date1'])) {
+	 $date1 = $_REQUEST["date1"];
+	$newdate = explode("-", $date1);
+	$year=$newdate[2];
+	$month=$newdate[1];
+	$day=$newdate[0];
+	
+}
+else {
+	$month = gbl::getMonth();
+	$day = gbl::getDay(); 
+	$year = gbl::getYear();
+}
+$startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
+//work out the start date by subtracting days to get to beginning of week
+$todayDate = mktime(0, 0, 0, $month, 1, $year);
+$startDate = strtotime(date("d M Y",$todayDate));
 
-$todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $dateValues = getdate($todayDate);
 
 //the day the week should start on: 0=Sunday, 1=Monday
 $startDayOfWeek = Common::getWeekStartDay();
 
-//work out the start date by subtracting days to get to beginning of week
-$startDate = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
 $startStr = date("Y-m-d H:i:s",$startDate);
 
 // Get day of week of 1st of month
@@ -60,6 +73,11 @@ if (isset($popup))
 ?>
 
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
+<script type="text/javascript">
+	function CallBack_WithNewDateSelected(strDate) {
+		document.monthForm.submit();
+	}
+</script>
 <form name="monthForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
 <!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
 <!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
@@ -71,30 +89,30 @@ if (isset($popup))
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td >&nbsp;</td>
-		<td  colspan="8" class="outer_table_heading">
-			<?php echo JText::_('CURRENT_DATE').": "; ?>
-			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-			value="<?php echo date('d-M-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;
-			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
+
+		<td colspan="8" class="outer_table_heading">
+			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
+			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+			</td>
 		</td>
 	</tr>
 	<tr>
 		<td >&nbsp;</td>
 	</tr>
 	<tr>
-		<td align="center" class="outer_table_heading">
+		<td align="center" nowrap class="outer_table_heading">
 			<?php echo JText::_('CURRENT_MONTH').": "; ?><span style="color:#00066F;"><?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)); ?> </span> 
 		</td>
-		<td class="outer_table_heading"><?php echo JText::_('FILTER')?>:</td>
-		<td class="outer_table_heading">
+		<td nowrap class="outer_table_heading"><?php echo JText::_('FILTER')?>:</td>
+		<td nowrap class="outer_table_heading">
 				<span style="color:#00066F;"><?php echo JText::_('CLIENT').': '; ?></span>
 		</td>
 		<td align="left">
 			<?php Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?>
 		</td>
 		<td >&nbsp;</td>
-		<td class="outer_table_heading">
+		<td nowrap class="outer_table_heading">
 			<span style="color:#00066F;"><?php echo JText::_('PROJECT').': '; ?></span>
 		</td>
 		<td align="left"><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();"); ?></td>
@@ -147,8 +165,7 @@ if (isset($popup))
 
 		// New Week.
 		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
-			print "</tr><tr>\n";
-      $mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
+			$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 			$weeklyTotal = 0;
 			print "</tr>\n<!-- --><tr>\n";
 		} else
@@ -205,7 +222,7 @@ if (isset($popup))
 
 		$ymdStr = "&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".$curDay;
 
-		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
+		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".
@@ -368,7 +385,6 @@ if (isset($popup))
 		$dayCol++;
 	}
 	// Print the rest of the calendar.
-	echo '<!-- print the rest of the calendar-->';
 	while (($dayCol % 7) != 0) {
 		if (($dayCol % 7) == 6)
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</td>\n ";
@@ -376,7 +392,6 @@ if (isset($popup))
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
-	print "</tr><tr>\n";
 	$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 	$weeklyTotal = 0;
 	print "</tr>\n<tr>\n";
@@ -385,5 +400,13 @@ if (isset($popup))
 ?>
 					</tr>
 				</table>
-      </form>
+			</td>
+		</tr>
+	</table>
+
+		</td>
+	</tr>
+</table>
+
+</form>
 
