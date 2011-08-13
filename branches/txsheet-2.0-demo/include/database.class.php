@@ -190,7 +190,7 @@ class Database {
 				$this->affectedRows = mysql_affected_rows($this->connection);
 				$this->numRows = 0;
 			} else {
-				$this->numRows = $this->numrows();
+				$this->numRows = $this->getNumRows();
 				$this->affectedRows = 0;
 			}
 
