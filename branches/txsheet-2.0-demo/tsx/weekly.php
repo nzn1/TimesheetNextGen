@@ -171,7 +171,8 @@ function CallBack_WithNewDateSelected(strDate)
 	for ($i=0; $i<$num3; $i++) {
 		//get the record for this task entry
 		$data = dbResult($qh3,$i);
-
+		
+		//LogFile::write("\nweekly.php qh3 tuple: ". var_export($data, true)."\n");
 		//There are several potential problems with the date/time data comming from the database
 		//because this application hasn't taken care to cast the time data into a consistent TZ.
 		//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
@@ -185,11 +186,9 @@ function CallBack_WithNewDateSelected(strDate)
 		$currentTaskName = $data["taskName"];
 		$currentProjectTitle = $data["projectTitle"];
 		$currentProjectId = $data["proj_id"];
+		$currentWorkDescription =  $data['log_message'];
 		$currentClientName = $data["clientName"];
 		$currentClientId = $data["client_id"];
-
-
-
 
 		//find the current task id in the array
 		$taskCount = count($structuredArray);
@@ -237,8 +236,9 @@ function CallBack_WithNewDateSelected(strDate)
 											$currentProjectTitle,
 											$currentTaskName,
 											$currentClientName,
-											$currentClientId,'');
-
+											$currentClientId,
+											$currentWorkDescription);
+LogFile::write("\nweekly.php new matched pair: ". var_export($matchedPair, true)."\n");
 			//add the matched pair to the structured array
 			$structuredArray[] = $matchedPair;
 
@@ -291,7 +291,7 @@ function CallBack_WithNewDateSelected(strDate)
 
 		//start the row
 		print "<tr>";
-
+LogFile::write("\nweekly.php structured matched pair: ". var_export($matchedPair, true)."\n");
 		//open the column for client name, project title, task name
 		print "<td  class=\"calendar_cell_middle\" valign=\"top\">";
 
