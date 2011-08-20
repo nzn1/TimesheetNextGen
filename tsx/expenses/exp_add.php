@@ -30,7 +30,7 @@ $start_year = date("Y", $startDate);;
 
 ?>
 
-<form action="<?php echo Config::getRelativeRoot(); ?>/expenses/exp_add_action" method="post">
+<form action="<?php echo Config::getRelativeRoot(); ?>/expenses/exp_action" method="post">
 <input type="hidden" name="action" value="add" />
 <div id="inputArea">
 
@@ -38,10 +38,10 @@ $start_year = date("Y", $startDate);;
 	<tbody class="nobground">
 	<tr>
 		<td class="outer_table_heading">
-		<td>	<h1><?php echo JText::_('ADD_EXPENSE'); ?></h1>
+		<h1><?php echo JText::_('ADD_EXPENSE'); ?></h1>
 		</td>
 	</tr>
-	<tr>
+
 	<tr>
 		<td align="right"><?php echo JText::_('CLIENT'); ?>:</td>
 		<td><?php Common::client_select_list($client_id, 0, false, false, false, true, "", "submit();"); ?></td>

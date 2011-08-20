@@ -251,7 +251,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
 			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="../images/cal.gif">
 			
-			</td>
+		</td>
 	<?php if (!$print): ?>
 		<td>
 			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
