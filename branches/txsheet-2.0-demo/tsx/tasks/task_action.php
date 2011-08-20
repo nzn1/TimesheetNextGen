@@ -44,7 +44,7 @@ elseif ($action == "add") {
 	}
 			// Now copy any selected standard tasks to the task table and assign to this project
 		// first, get a count of standard tasks
-		$query = "SELECT COUNT(task_id) AS numtasks FROM ". tbl::getTaskTable();
+		$query = "SELECT COUNT(task_id) AS numtasks FROM ". tbl::getStdTaskTable();
 
 		list($qx, $num) = dbQuery($query);
 		$data = dbResult($qx);
@@ -57,7 +57,7 @@ elseif ($action == "add") {
 					$task_status = $_REQUEST["task_status$i"];
 					
 					// retrieve the standard task details
-					list($qh, $num) = dbQuery("SELECT name, description from ". tbl::getTaskTable().
+					list($qh, $num) = dbQuery("SELECT name, description FROM ". tbl::getStdTaskTable().
 						" WHERE task_id = $id");
 					$results = dbResult($qh);
 					$name = $results["name"];
