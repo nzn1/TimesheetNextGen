@@ -252,7 +252,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td>
-								<span class="label">Scheme:</span>
+								<span class="label"><?php echo JText::_('LDAP_SCHEME'); ?>:</span>
 								</td><td>
 								<select id="LDAPScheme" name="LDAPScheme">
 								<option value="ldap" <?php if ($resultset["LDAPScheme"] == "ldap") echo "selected=\"selected\"";?>>LDAP</option>
@@ -263,21 +263,21 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td width="50%">
-								<span class="label">Host:</span>
+								<span class="label"><?php echo JText::_('LDAP_HOST'); ?>:</span>
 								</td><td>
 								<input id="LDAPHost" name="LDAPHost" type="text" value="<?php echo $resultset['LDAPHost']; ?>" style="width:100%;" />
 							</td>
 							</tr>
 							<tr>
 							<td width="50%">
-								<span class="label">Port:</span>
+								<span class="label"><?php echo JText::_('LDAP_PORT'); ?>:</span>
 								</td><td>
 								<input id="LDAPPort" name="LDAPPort" type="text" size="10" maxlength="10" value="<?php echo $resultset['LDAPPort']; ?>" />
 							</td>
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>LDAP search base (Distinguished Name):</span>
+								<span class="label" nowrap><?php echo JText::_('LDAP_SEARCH_BASE'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input id="LDAPBaseDN" type="text" name="LDAPBaseDN" value="<?php echo $resultset["LDAPBaseDN"]; ?>" style="width:100%;" />
@@ -285,7 +285,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>Username attribute to query:</span>
+								<span class="label" nowrap><?php echo JText::_('LDAP_USERNAME_ATTRIBUTE'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<?php echo $resultset["LDAPUsernameAttribute"]; ?>" size="30"/>
@@ -293,7 +293,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>Search scope:</span>
+								<span class="label" nowrap><?php echo JText::_('LDAP_SEARCH_SCOPE'); ?>:</span>
 							</td>
 							<td width="100%">
 								<select id="LDAPSearchScope" name="LDAPSearchScope">
@@ -305,7 +305,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>Filter:</span>
+								<span class="label" nowrap><?php echo JText::_('FILTER'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input id="LDAPFilter" type="text" name="LDAPFilter" value="<?php echo $resultset["LDAPFilter"]; ?>" style="width:100%;" />
@@ -313,7 +313,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>Protocol Version:</span>
+								<span class="label" nowrap><?php echo JText::_('LDAP_PROTOCOL_VERSION'); ?>:</span>
 							</td>
 							<td width="100%">
 								<select id="LDAPProtocolVersion" name="LDAPProtocolVersion">
@@ -325,7 +325,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>Use LDAP Referrals:</span>
+								<span class="label" nowrap><?php echo JText::_('LDAP_USE_REFERRALS'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input type="checkbox" name="LDAPReferralsCheck" id="LDAPReferralsCheck" <?php if ( $resultset['LDAPReferrals'] == 1 ) echo "checked=\"checked\""; ?> />
@@ -334,7 +334,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>Fallback to local Authentication on fail:</span>
+								<span class="label" nowrap><?php echo JText::_('LDAP_FALLBACK'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input type="checkbox" name="LDAPFallbackCheck" id="LDAPFallbackCheck" <?php if ( $resultset['LDAPFallback'] == 1 ) echo "checked=\"checked\""; ?> />
@@ -343,12 +343,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td colspan="2" nowrap>
-								<span class="label_grey" nowrap><i>The following fields are normally only required for Microsoft's Active Directory LDAP Server:</i></span>
+								<span class="label_grey" nowrap><i><?php echo JText::_('LDAP_REQUIRED_ACTIVEDIRECTORY'); ?>:</i></span>
 							</td>
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>Use LDAP by user authentication:</span>
+								<span class="label" nowrap><?php echo JText::_('LDAP_USE_AUTHENTICATION'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <?php if ($resultset['LDAPBindByUser'] == 1) echo "checked=\"checked\""; ?> />
@@ -357,7 +357,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>Bind Username:</span>
+								<span class="label" nowrap><?php echo JText::_('LDAP_USERNAME'); ?>:</span>
 							</td>
 							<td width="50%">
 								<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<?php echo $resultset["LDAPBindUsername"]; ?>" style="width:100%;" />
@@ -365,7 +365,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						</tr>
 						<tr>
 							<td nowrap>
-								<span class="label" nowrap>Bind Password:</span>
+								<span class="label" nowrap><?php echo JText::_('LDAP_PASSWORD'); ?>:</span>
 							</td>
 							<td width="50%">
 								<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<?php echo $resultset["LDAPBindPassword"]; ?>" style="width:100%;" AUTOCOMPLETE="OFF" />
@@ -405,17 +405,17 @@ PageElements::setBodyOnLoad('doOnLoad();');
     		 //TODO FInd a way to replace the nobr tags whilst keeping the menu icons next to the names
     		      	        
         ?>
-					<tr><td>Stopwatch:</td><td><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('STOPWATCH'); ?>:</td><td><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</td></tr>
 					<tr><td><?php echo JText::_('DAILY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</td></tr>
-					<tr><td>Weekly:</td><td><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('WEEKLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</td></tr>
 					<tr><td><?php echo JText::_('MONTHLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</td></tr>
-					<tr><td>Simple:</td><td><?php Common::acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</td></tr>
-					<tr><td>Clients:</td><td><?php Common::acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</td></tr>
-					<tr><td>Projects:</td><td><?php Common::acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</td></tr>
-					<tr><td>Tasks:</td><td><?php Common::acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</td></tr>
-					<tr><td>Reports:</td><td><?php Common::acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</td></tr>
-					<tr><td>Rates:</td><td><?php Common::acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</td></tr>
-					<tr><td>Absences:</td><td><?php Common::acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('SIMPLE_WEEKLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('CLIENTS'); ?>:</td><td><?php Common::acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('PROJECTS'); ?>:</td><td><?php Common::acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('TASKS'); ?>:</td><td><?php Common::acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('REPORTS'); ?>:</td><td><?php Common::acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('RATES'); ?>:</td><td><?php Common::acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('ABSENCES'); ?>:</td><td><?php Common::acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</td></tr>
 		</table>
 	</table>
 	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
@@ -549,7 +549,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					<b><?php echo JText::_('WEEK_START'); ?></b>:
 				</td>
 				<td class="configdesc">
-					</<legend><?php echo JText::_('WEEK_START_INFO'); ?></legend>
+					</<legend><?php echo JText::_('WEEK_START_INTRO'); ?></legend>
 				</td>
 			</tr>
 			<tr>
