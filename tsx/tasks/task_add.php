@@ -34,8 +34,9 @@ PageElements::setTheme('newcss');
 ?>
 <table class="noborder">
 	<tbody class="nobground">
+	<tr>
 		<td class="outer_table_heading">
-			<h3><?php echo (JText::_('ADD_NEW_TASK')). " ". JText::_('PROJECT'). $data['title']. JText::_('FOR_CLIENT'). $data['organisation'] ?>:</h3>
+			<h2><?php echo JText::_('ADD_NEW_TASK_IN_PROJECT'). $data['title']. JText::_('FOR_CLIENT'). $data['organisation']; ?>:</h2>
 		</td>
 	</tr>
 	<tr>
@@ -56,14 +57,14 @@ PageElements::setTheme('newcss');
 	</tr>
 	<tr>
 		<td class="outer_table_heading">
-			<h3><?php echo (JText::_('ADD_STANDARD_TASKS')). " ". JText::_('PROJECT'). $data['title']. JText::_('FOR_CLIENT'). $data['organisation'] ?>:</h3>
+			<h2><?php echo JText::_('ADD_STANDARD_TASKS_IN_PROJECT'). $data['title']. JText::_('FOR_CLIENT'). $data['organisation']; ?>:</h2>
 		</td>
 	</tr>
 </table>
 	<?php 
 		// add standard tasks to the selection list
 		// get all the standard tasks
-		$query = "SELECT task_id, name, description from " .tbl::getTaskTable()." ORDER BY name";
+		$query = "SELECT task_id, name, description from " .tbl::getStdTaskTable()." ORDER BY name";
 
 		list($stdtasks, $numtasks) = dbQuery($query);
 		$noneSelected = array();
