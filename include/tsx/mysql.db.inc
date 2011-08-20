@@ -91,8 +91,8 @@ if(!class_exists('Site'))die('Restricted Access');
 	 * @TODO Move this function to the database class
 	 * @param unknown_type $statement
 	 */
-	function dbLastID($result) {
-		return mysql_insert_id($result);
+	function dbLastID() {
+		return mysql_insert_id();
 	}
 
 }?>
