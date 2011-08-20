@@ -285,14 +285,16 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 	$projPost="uid=$uid$ymdStr&amp;orderby=project&amp;client_id=$client_id&amp;mode=$mode";
 	$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
-	if($orderby== 'project'): ?>
-		<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
+	if($orderby== 'project') { ?>
+		<th>
+		<a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?> >" <?php echo JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 		<th><?php echo JText::_('TASK');?></th>
 		<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 		<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
 		<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>
 	
-	<?php else: ?>
+	<?php }
+	else { ?>
 		<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 		<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 		<th><?php echo JText::_('TASK');?></td>
@@ -302,7 +304,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			<th><?php echo JText::_('WORK_DESCRIPTION');?></td>
 			<th><?php echo JText::_('STATUS');?></td>
 			<th><?php echo JText::_('DURATION');?></td>
-			<th><?php echo JText::_('CONFIRM');?></td>
+			<th><?php echo JText::_('SUBMIT');?></td>
 		</tr>
 	</thead>
 <?php
