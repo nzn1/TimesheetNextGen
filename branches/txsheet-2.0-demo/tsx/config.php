@@ -210,24 +210,19 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <form action="<?php echo Config::getRelativeRoot(); ?>/config_action" name="configurationForm" method="post">
 <input type="hidden" name="action" value="edit" />
 
+<h1><?php echo JText::_('CONFIG_PARMS') ?></h1>
+
 <table class="noborder">
 	<tr>
-		<td class="configtype">
-				<?php echo JText::_('CONFIG_PARMS') ?>
-
+		<td class="configdesc">
+		<?php echo JText::_('CONFIG_INTRO') ?>
 		</td>
 		<td align="right">
-			<input type="button" value="Save Changes" name="submitButton" id="submitButton" onclick="onSubmit();" />
-		</td>
-	</tr>
-	<tr>
-		<td>
-		<?php echo JText::_('CONFIG_INTRO') ?>
+			<input type="button" value="<?php echo JText::_('SAVE_CHANGES') ?>" name="submitButton" id="submitButton" onclick="onSubmit();" />
 		</td>
 	</tr>
 	</table>
-
-
+<br />
 	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
 		<!-- LDAP configurationForm -->
 		<tr>
@@ -411,9 +406,9 @@ PageElements::setBodyOnLoad('doOnLoad();');
     		      	        
         ?>
 					<tr><td>Stopwatch:</td><td><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</td></tr>
-					<tr><td>Daily:</td><td><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('DAILY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</td></tr>
 					<tr><td>Weekly:</td><td><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</td></tr>
-					<tr><td>Monthly:</td><td><?php Common::acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('MONTHLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</td></tr>
 					<tr><td>Simple:</td><td><?php Common::acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</td></tr>
 					<tr><td>Clients:</td><td><?php Common::acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</td></tr>
 					<tr><td>Projects:</td><td><?php Common::acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</td></tr>
