@@ -125,10 +125,6 @@ $menuStr = JText::_('PROJECT_RATES');
 if (Site::getAuthenticationManager()->hasAccess('aclRates'))
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/projects/project_user_rates", Config::getRelativeRoot()."/images/icon_rates.gif"));
 
-$menuStr = JText::_('CATEGORY');
-if (Site::getAuthenticationManager()->hasAccess('aclsIMPLE'))
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/expenses/cat_list", Config::getRelativeRoot()."/images/icon_rates.gif"));
-	
 $menuStr = JText::_('TASKS');
 if (Site::getAuthenticationManager()->hasAccess('aclTasks'))
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/tasks/task_maint", Config::getRelativeRoot()."/images/icon_tasks.gif"));
