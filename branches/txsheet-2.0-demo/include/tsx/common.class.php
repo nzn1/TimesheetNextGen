@@ -549,7 +549,7 @@ class Common{
 	}
 
 	public static function get_acl_level($page) {
-		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
+		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences,aclExpenses,aclECategories,aclTApproval FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		if(array_key_exists($page,$configData)){
 		  return $configData[$page];

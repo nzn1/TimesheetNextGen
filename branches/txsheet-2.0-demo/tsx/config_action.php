@@ -1,16 +1,14 @@
 <?php
-die('NOT CONVERTED TO OO YET');
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
-require("class.AuthenticationManager.php");
-require("class.CommandMenu.php");
 
-if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=Administrator");
-	exit;
-}
+//if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
 
 
+//if ((!Site::getSession()->isLoggedIn()) || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
+//	gotoLocation(Config::getRelativeRoot()."/login?redirect=".urlencode($_SERVER['REQUEST_URI'])."&clearanceRequired=Administrator");
+//	exit;
+//}
 
 //load local vars from request/post/get
 $action = $_REQUEST["action"];
@@ -64,6 +62,9 @@ $aclTasks = $_REQUEST["aclTasks"];
 $aclReports = $_REQUEST["aclReports"];
 $aclRates = $_REQUEST["aclRates"];
 $aclAbsences = $_REQUEST["aclAbsences"];
+$aclExpenses = $_REQUEST["aclExpenses"];
+$aclECategories = $_REQUEST["aclECategories"];
+$aclTApproval = $_REQUEST["aclTApproval"];
 $simpleTimesheetLayout = $_REQUEST["simpleTimesheetLayout"];
 $startPage = $_REQUEST["startPage"];
 
@@ -84,16 +85,16 @@ if (!isset($action)) {
 	gotoLocation($HTTP_REFERER);
 }
 elseif ($action == "edit") {
-	$headerhtml = addslashes(unhtmlentities(trim($headerhtml)));
-	$bodyhtml = addslashes(unhtmlentities(trim($bodyhtml)));
-	$footerhtml = addslashes(unhtmlentities(trim($footerhtml)));
-	$errorhtml = addslashes(unhtmlentities(trim($errorhtml)));
-	$bannerhtml = addslashes(unhtmlentities(trim($bannerhtml)));
-	$tablehtml = addslashes(unhtmlentities(trim($tablehtml)));
-	$locale = addslashes(unhtmlentities(trim($locale)));
-	$timezone = addslashes(unhtmlentities(trim($timezone)));
-	$projectItemsPerPage = addslashes(unhtmlentities(trim($projectItemsPerPage)));
-	$taskItemsPerPage = addslashes(unhtmlentities(trim($taskItemsPerPage)));
+	$headerhtml = mysql_real_escape_string(trim($headerhtml));
+	$bodyhtml = mysql_real_escape_string(trim($bodyhtml));
+	$footerhtml = mysql_real_escape_string(trim($footerhtml));
+	$errorhtml = mysql_real_escape_string(trim($errorhtml));
+	$bannerhtml = mysql_real_escape_string(trim($bannerhtml));
+	$tablehtml = mysql_real_escape_string(trim($tablehtml));
+	$locale = mysql_real_escape_string(trim($locale));
+	$timezone = mysql_real_escape_string(trim($timezone));
+	$projectItemsPerPage = mysql_real_escape_string(trim($projectItemsPerPage));
+	$taskItemsPerPage = mysql_real_escape_string(trim($taskItemsPerPage));
 	$query = "UPDATE ".tbl::getConfigTable()." SET ".
 		"headerhtml='$headerhtml',".
 		"bodyhtml='$bodyhtml',".
@@ -132,6 +133,9 @@ elseif ($action == "edit") {
 		"aclReports='$aclReports', " .
 		"aclRates='$aclRates', " .
 		"aclAbsences='$aclAbsences', " .
+		"aclExpenses = '$aclExpenses', ".
+		"aclECategories = '$aclECategories', ".
+		"aclTApproval = '$aclTApproval', ".
 		"simpleTimesheetLayout= '$simpleTimesheetLayout', " .
 		"startPage='$startPage' " .
 		"WHERE config_set_id='1';";
@@ -175,6 +179,9 @@ elseif ($action == "edit") {
 		resetConfigValue("aclReports");
 		resetConfigValue("aclRates");
 		resetConfigValue("aclAbsences");
+		resetConfigValue("aclExpenses");
+		resetConfigValue("aclECategories");
+		resetConfigValue("aclTApproval");
 	}
 }
 

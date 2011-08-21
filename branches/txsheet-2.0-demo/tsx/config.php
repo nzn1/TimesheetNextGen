@@ -416,6 +416,9 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					<tr><td><?php echo JText::_('REPORTS'); ?>:</td><td><?php Common::acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</td></tr>
 					<tr><td><?php echo JText::_('RATES'); ?>:</td><td><?php Common::acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</td></tr>
 					<tr><td><?php echo JText::_('ABSENCES'); ?>:</td><td><?php Common::acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</td></tr>
+					<tr><td>Expenses:</td><td><?php Common::acl_select_droplist("aclExpenses", $resultset["aclExpenses"]); ?>&nbsp;</td></tr>
+					<tr><td>Expense Categories:</td><td><?php Common::acl_select_droplist("aclECategories", $resultset["aclECategories"]); ?>&nbsp;</td></tr>
+					<tr><td>Time Approval:</td><td><?php Common::acl_select_droplist("aclTApproval", $resultset["aclTApproval"]); ?>&nbsp;</td></tr>
 		</table>
 	</table>
 	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
