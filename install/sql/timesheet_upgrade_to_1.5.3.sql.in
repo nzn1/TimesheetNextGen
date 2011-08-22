@@ -29,6 +29,7 @@ insert into configuration values ('LDAPBindByUser',(select (LDAPBindByUser) from
 /* new fields */
 ALTER TABLE tsx_user  ADD   employee_type enum('Contractor','Employee') NOT NULL DEFAULT 'Employee';
 ALTER TABLE tsx_user  ADD supervisor int(11) DEFAULT NULL;
+ALTER TABLE __TABLE_PREFIX__config  ADD  aclExpenses enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic', aclECategories enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic', aclTApproval enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic',
 --
 -- Table structure for table `expense`
 --
