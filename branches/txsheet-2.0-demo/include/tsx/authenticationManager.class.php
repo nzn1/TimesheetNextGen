@@ -309,6 +309,15 @@ class AuthenticationManager {
 		case 'Mgr':
 			$level = CLEARANCE_MANAGER;
 			break;
+		case 'Basic':
+			$level = CLEARANCE_BASIC;
+			break;
+		case 'Manager':
+			$level = CLEARANCE_MANAGER;
+			break;
+		case 'Administrator':
+			$level = CLEARANCE_ADMINISTRATOR;
+			break;
 		default:
 			$level = CLEARANCE_ADMINISTRATOR;
 			break;
