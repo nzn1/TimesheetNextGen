@@ -57,3 +57,15 @@ CREATE TABLE IF NOT EXISTS `tsx_category` (
   `description` varchar(64) NOT NULL,
   PRIMARY KEY (`cat_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='ts1_expense_category' AUTO_INCREMENT=8 ;
+
+--
+-- Table structure for table `__TABLE_PREFIX__std_tasks`
+--
+
+CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__std_tasks` (
+  `task_id` int(8) NOT NULL AUTO_INCREMENT,
+  `name` varchar(127) DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`task_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=187 ;
+
