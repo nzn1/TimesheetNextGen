@@ -33,7 +33,7 @@ $js = new ClientProjTaskJavascript();
 $js->printJavascript();
 ?>
 <script type="text/javascript">
-<![CDATA[
+//<![CDATA[
 	function delete_entry(transNum) {
 		if (confirm("<?php echo JText::_('JS_CONFIRM_DELETE_TIME'); ?>"))
 			location.href = '<?php echo Config::getRelativeRoot()."/delete?month=".gbl::getMonth()
@@ -41,7 +41,7 @@ $js->printJavascript();
       ."&client_id=".gbl::getClientId()."&proj_id=".gbl::getProjId()
       ."&task_id=".gbl::getTaskId();?> &trans_num=' + transNum;
 	}
-]]>
+//]]>
 	function CallBack_WithNewDateSelected(strDate) {
 		document.dayForm.submit();
 	}
