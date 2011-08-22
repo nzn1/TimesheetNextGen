@@ -120,8 +120,8 @@ PageElements::setTheme('newcss');
 		<th><?php echo JText::_('ROLE'); ?></th>
 		<th><?php echo JText::_('EMPLOYEE_TYPE'); ?></th>
 		<th><?php echo JText::_('SUPERVISOR'); ?></th>
-		<th><?php echo JText::_('SUPERVISOR'); ?></th>
 		<th><?php echo JText::_('LOGIN_NAME'); ?></th>
+		<th><?php echo JText::_('EMAIL_ADDRESS'); ?></th>
 		<th><i><?php echo JText::_('ACTIONS'); ?></i></th>
 	</tr>
 	</thead>

@@ -77,7 +77,7 @@ if ($action == "delete") {
 		dbquery("INSERT INTO ".tbl::getuserTable()." (username, level, password, first_name, ".
 							"last_name, employee_type, supervisor, email_address, time_stamp, status) " .
 						"VALUES ('$username','$level',". config::getDbPwdFunction()."('$password'),'$first_name',".
-                                        "'$last_name','$employee_type','$supervisor','$email_address',0,'OUT')");   
+                                        "'$last_name','$employee_type','$supervisor','$email_address',0,'$status')");   
 		dbquery("INSERT INTO ".tbl::getAssignmentsTable()." VALUES (1,'$username', 1)"); // add default project.
 		dbquery("INSERT INTO ".tbl::getTaskAssignmentsTable()." VALUES (1,'$username', 1)"); // add default task
 		//create a time string for >>now<<
