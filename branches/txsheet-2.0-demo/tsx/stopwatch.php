@@ -30,7 +30,7 @@ $js->printJavascript();
 ?>
 
 <script type="text/javascript">
-<![CDATA[
+//<![CDATA[
 
 function doClockonoff(clockon) {
 	document.theForm.clockonoff.value = clockon;
@@ -57,7 +57,7 @@ function resizePopupWindow() {
 	var newHeight = outerTable.offsetHeight + outerHeight - innerHeight;
 	window.resizeTo(newWidth, newHeight);
 }
-]]>
+//]]>
 </script>
 <?php
 
