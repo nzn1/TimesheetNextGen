@@ -144,7 +144,7 @@ if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/users/user_maint", Config::getRelativeRoot()."/images/icon_users.gif"));
 
 	$menuStr = JText::_('SUPERVISE_TIMES');
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/supervisort", Config::getRelativeRoot()."/images/icon_supervisor.gif"));
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/supervisor", Config::getRelativeRoot()."/images/icon_supervisor.gif"));
 	
 	$menuStr = JText::_('SUPERVISE_EXPENSES');
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/expenses/supervisore", Config::getRelativeRoot()."/images/icon_supervisor.gif"));

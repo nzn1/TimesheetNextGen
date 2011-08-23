@@ -240,7 +240,7 @@ ob_end_clean();
 PageElements::setBodyOnLoad('doOnLoad();');
 
  if(!$export_excel) { ?>
-<form name="subtimes" action="<?php echo Config::getRelativeRoot(); ?>/supervisort_action" method="post">
+<form name="subtimes" action="<?php echo Config::getRelativeRoot(); ?>/supervisor_action" method="post">
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
