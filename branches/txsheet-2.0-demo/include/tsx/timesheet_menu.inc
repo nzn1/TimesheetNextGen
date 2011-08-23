@@ -8,8 +8,10 @@ if(class_exists('Site')){
 	if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator'))
 		if(isset($_REQUEST["contextuid"])) 
 			$_SESSION['contextUser'] = $_REQUEST['contextuid'];	
-} else {
-	if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator')
+} 
+else 
+{
+	if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator'))
 		if(isset($_REQUEST["contextuid"]))
 			$_SESSION['contextUser'] = $_REQUEST['contextuid'];
 }
@@ -141,9 +143,12 @@ if (Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 	$menuStr = JText::_('USERS');
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/users/user_maint", Config::getRelativeRoot()."/images/icon_users.gif"));
 
-	$menuStr = JText::_('SUPERVISORS');
-	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/supervisor", Config::getRelativeRoot()."/images/icon_supervisor.gif"));
-
+	$menuStr = JText::_('SUPERVISE_TIMES');
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/supervisort", Config::getRelativeRoot()."/images/icon_supervisor.gif"));
+	
+	$menuStr = JText::_('SUPERVISE_EXPENSES');
+	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/expenses/supervisore", Config::getRelativeRoot()."/images/icon_supervisor.gif"));
+	
 	$menuStr = JText::_('EXPENSE_CATEGORIES');
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/expenses/cat_list", Config::getRelativeRoot()."/images/icon_supervisor.gif"));
 	
