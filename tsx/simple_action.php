@@ -189,7 +189,7 @@ for ($i=0; $i<$totalRows; $i++) {
 
 $date1 = $_REQUEST["date1"];
 $newdate = explode("-", $date1);
-$Location = Config::getRelativeRoot()."/simpleNew?year=".$newdate[2]."&amp;month=".$newdate[1]."&amp;day=".$newdate[0];
+$Location = Config::getRelativeRoot()."/simple?year=".$newdate[2]."&amp;month=".$newdate[1]."&amp;day=".$newdate[0];
 gotoLocation($Location);
 exit;
 // vim:ai:ts=4:sw=4

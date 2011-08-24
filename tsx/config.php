@@ -203,7 +203,7 @@ ob_start();
 
 PageElements::setTheme('newcss');
 ob_end_clean();
-PageElements::setBodyOnLoad('doOnLoad();');
+
 ?>
 <body  onload="enableLDAP(<?php echo $resultset["useLDAP"]?>);">
 <div id="inputArea">
@@ -214,7 +214,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 <table class="noborder">
 	<tr>
-		<td class="configdesc">
+		<td class="configdesc" colspan="2">
 		<?php echo JText::_('CONFIG_INTRO') ?>
 		</td>
 		<td align="right">

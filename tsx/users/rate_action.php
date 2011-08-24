@@ -36,6 +36,6 @@ if ($action == "addupdate") {
 } 
 
 //redirect back to the rate management page
-gotoLocation(Config::getRelativeRoot."/users/rate_maint");
+gotoLocation(Config::getRelativeRoot()."/users/rate_maint");
 
 ?>
