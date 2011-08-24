@@ -8,15 +8,9 @@ $loggedInUser = strtolower($_SESSION['loggedInUser']);
 if (empty($loggedInUser))
 	errorPage("Could not determine the logged in user");
 
-$layout = Common::getLayout();
-ob_start();
-//PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USER_RATES')."</title>");
-
-//PageElements::setHead(PageElements::getHead().ob_get_contents());
-PageElements::setTheme('newcss');
 
 ?>
-<title><?php echo Config::getMainTitle();?> - Simple Weekly Timesheet for <?php echo gbl::getContextUser();?></title>
+
 <script type="text/javascript" type="text/javascript">
 
 	function editRate(rateId, billRate)
@@ -39,6 +33,13 @@ PageElements::setTheme('newcss');
 	}
 </script>
 <?php 
+
+$layout = Common::getLayout();
+ob_start();
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USER_RATES')."</title>");
+
+//PageElements::setHead(PageElements::getHead().ob_get_contents());
+PageElements::setTheme('newcss');
 	ob_end_clean();
 ?>
 

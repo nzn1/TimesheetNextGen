@@ -229,7 +229,7 @@ ob_start();
 
 PageElements::setTheme('newcss');
 ob_end_clean();
-PageElements::setBodyOnLoad('doOnLoad();');
+
 ?>
 
 <?php if(!$export_excel) { ?>
