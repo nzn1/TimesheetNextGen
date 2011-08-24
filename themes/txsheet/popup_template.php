@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
-  {head}
+  
   <link rel="stylesheet" href="<?php echo PageElements::getRelThemePath();?>/styles/popup.css" type="text/css" />
   
   <script type="text/javascript">
@@ -11,6 +11,8 @@
 	cfg.relativeRoot = '<?php echo Config::getRelativeRoot();?>';
 	cfg.requestUri = '<?php echo urlencode($_SERVER['REQUEST_URI']);?>';
 </script>
+
+{head}
 <!--This is an IE hack that allows absolute positioning inside a relative div-->
 <!--[if IE]>
   <style type="text/css">
