@@ -1,14 +1,16 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclExpenses'))return;
 
 // Note supervisor form uses the same functions as the submit form.
-include('submit.class.php');
+require_once(Config::getDocumentRoot().'/tsx/submit.class.php'); 
 $sc = new SubmitClass();
 
-if (isset($_REQUEST['uid']))
+if (isset($_REQUEST['uid'])) {
 	$uid = gbl::getUid();
+	LogFile::write("\nsupervisore uid: ". $uid."\n");
+}
 else {
 	// need to find the first user managed by this supervisor, contextuser, otherwise we display the supervisor's times
 	//$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getuserTable()." " .
@@ -20,9 +22,10 @@ else {
 	}
 	else
 	// no user
-		$uid = "0";
+		$uid = gbl::getContextUser();
 }
-
+$uid = gbl::getContextUser();
+	LogFile::write("\nsupervisore uid final: ". $uid."\n");
 if (isset($_REQUEST['print']))
 	$print = true;
 else
@@ -56,6 +59,8 @@ if ($mode == "weekly") {
 	$endStr = date("Y-m-d H:i:s",$endDate);
 }
 
+//Setup the variables so we can let the user choose how to order things...
+$orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 //export data to excel (or not)
 $export_excel = isset($_GET["export_excel"]) ? (bool)$_GET["export_excel"] : false;
 
@@ -71,15 +76,17 @@ if($export_excel){
 } else
 	$time_fmt = 'time';
 
-//Setup the variables so we can let the user choose how to order things...
-$orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 
-//LogFile::->write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
-//LogFile::->write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
+	// list the expense data
 
-//Since we have to pre-process the data, it really doesn't matter what order the data 
-//is in at this point...
-list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, $proj_id, $client_id);
+		$query = "SELECT eid, title as project, organisation as client, billable, amount, e.description, " .
+			" date, status, t.description as category FROM ".
+			tbl::getExpenseTable(). " e , " . tbl::getProjectTable(). " p, " . tbl::getClientTable()." c, " . tbl::getExpenseCategoryTable().
+			 " t WHERE user_id = '" . $uid . "' AND p.proj_id = e.proj_id AND c.client_id = e.client_id ".
+			 " AND e.cat_id = t.cat_id ORDER BY e.proj_id, e.client_id, e.date";
+			//"' AND p.proj_id = '" . $proj_id .   "' AND c.client_id = '" . $client_id .
+
+	list($qh, $num) = dbQuery($query);
 
 if($orderby == "project") {
 	$subtotal_label[]= JText::_('PROJECT_TOTAL');
@@ -94,21 +101,12 @@ if($orderby == "project") {
 	//$colWid[]="";
 	$colAlign[]=""; $colWrap[]="nowrap";
 
-	$colVar[]="start_stamp";
-	$colWid[]="width=\"7%\"";
-	$colAlign[]=""; $colWrap[]="";
-
 	// start and stop times field
 	$colVar[]="start_time";
 	$colWid[]="width=\"5%\"";
 	$colAlign[]=""; $colWrap[]="";
 	
-	// start and stop times field
-	$colVar[]="stop_time";
-	$colWid[]="width=\"5%\"";
-	$colAlign[]=""; $colWrap[]="";
-	
-	$colVar[]="log";
+	$colVar[]="date";
 	$colWid[]="width=\"20%\"";
 	$colAlign[]=""; $colWrap[]="";
 	
@@ -117,12 +115,29 @@ if($orderby == "project") {
 	$colWid[]="width=\"5%\"";
 	$colAlign[]=""; $colWrap[]="";
 	
-	$colVar[]="duration";
+	$colVar[]="description";
 	$colWid[]="width=\"10%\"";
 //	$colAlign[]="align=\"right\"";
 	$colAlign[]="";
 	$colWrap[]="";
 	
+	$colVar[]="billable";
+	$colWid[]="width=\"10%\"";
+//	$colAlign[]="align=\"right\"";
+	$colAlign[]="";
+	$colWrap[]="";
+		
+	$colVar[]="category";
+	$colWid[]="width=\"10%\"";
+//	$colAlign[]="align=\"right\"";
+	$colAlign[]="";
+	$colWrap[]="";
+		
+	$colVar[]="amount";
+	$colWid[]="width=\"10%\"";
+//	$colAlign[]="align=\"right\"";
+	$colAlign[]="";
+	$colWrap[]="";	
 	// approve
 	$colVar[]="approve";
 	$colWid[]="width=\"3%\"";
@@ -202,7 +217,7 @@ $Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&orderby=$orderby&client_id=$client
 gbl::setPost("uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode");
 
 ?>
-<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
+<script type="text/javascript" src="<?php echo Config::getDocumentRoot()."/js/datetimepicker_css.js";?>"</script>
 <?php if(!$export_excel) { ?>
 <script type="text/javascript">
 <!--
@@ -230,17 +245,17 @@ function CallBack_WithNewDateSelected(strDate)
 //-->
 </script>
 <?php 
-PageElements::setHead("<title>".Config::getMainTitle()." | Timesheet for ".gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | Expenses Approval for ".gbl::getContextUser()."</title>");
 ob_start();
 
 PageElements::setTheme('newcss');
 
 PageElements::setHead(PageElements::getHead().ob_get_contents());
 ob_end_clean();
-PageElements::setBodyOnLoad('doOnLoad();');
+
 
  if(!$export_excel) { ?>
-<form name="subtimes" action="<?php echo Config::getRelativeRoot(); ?>/supervisort_action" method="post">
+<form name="subtimes" action="<?php echo Config::getRelativeRoot(); ?>/expenses/supervisore_action" method="post">
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
@@ -267,7 +282,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			<td>	
 				<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
 				&nbsp;<?php echo ucfirst(JText::_('CHANGE_DATE')).':'; ?>&nbsp;
-				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
+				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="../images/cal.gif" />
 			</td>
 			<?php if (!$print): ?>
 		<td  align="center" width="10%" >
@@ -308,34 +323,27 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					$datePost="uid=$uid$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
 					if($orderby== 'project'): ?>
 						<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
-						<th><?php echo JText::_('TASK');?></th>
+
 						<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
-						<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
-						<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>
 							
 						<?php else: ?>
 							<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 							<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
-						<th><?php echo JText::_('TASK');?></td>
-						<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
-						<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>
 						<?php endif; ?>
-						<th><?php echo JText::_('WORK_DESCRIPTION');?></td>
-						<th><?php echo JText::_('STATUS');?></td>
-						<th><?php echo JText::_('DURATION');?></td>
-						<th><?php echo JText::_('APPROVE');?></td>
-						<th><?php echo JText::_('REJECT');?></td>
-					</tr>
+						<th><?php echo JText::_('DESCRIPTION');?></th>
+						<th><?php echo ucfirst(JText::_('EXPENSE_CATEGORY')); ?></th>
+						<th><?php echo ucfirst(JText::_('AMOUNT')); ?></th>
+						<th><?php echo JText::_('BILLABLE');?></th>
+						<th><?php echo JText::_('STATUS');?></th>
+						<th><?php echo JText::_('APPROVE');?></th>
+						<th><?php echo JText::_('REJECT');?></th>
+			</tr>
+		</thead>
 <?php
-	$dati_total=array();
-	$darray=array();
-
-	$grand_total_time = 0;
-
 	if ($num == 0) {
 		print "	<tr>\n";
 		print "		<td align=\"center\">\n";
-		print "			<i><br />".JText::_('NO_TIME_RECORDED') .date("Y-m-d",$startDate).".<br /><br /></i>\n";
+		print "			<i><br>".JText::_('NO_EXPENSES_RECORDED') ." ".date("Y-m-d",$startDate).".<br><br></i>\n";
 		print "		</td>\n";
 		print "	</tr>\n";
 	} else {
@@ -345,114 +353,74 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 		$level_total[0] = 0;
 		$level_total[1] = 0;
+		
+
 
 		while ($data = dbResult($qh)) {
-			//if entry doesn't have an end time or duration, it's an incomplete entry
-			//fixStartEndDuration returns a 0 if the entry is incomplete.
-			
-			if(!Common::fixStartEndDuration($data)) continue;
-			
-			array_push($dati_total,$data);
-
-			//Since we're allowing entries that may span date boundaries, this complicates
-			//our life quite a lot.  We need to "pre-process" the results to split those
-			//entries that do span date boundaries into multiple entries that stop and then
-			//re-start on date boundaries.
-			//NOTE: there must be a make_index() function defined in this file for the following function to, well, function
-			Common::split_data_into_discrete_days($data,$orderby,$darray,1);
-		}
-
-		ksort($darray);
-		//sort($data, ksort($data));
-		unset($data);
-
-		foreach($darray as $dary){
-			foreach($dary as $data){
-				//need to make sure date is in range of what we want...
-				if($data["start_stamp"] < $startDate) continue;
-				if($data["start_stamp"] >= $endDate) continue;
-			$dateValues = getdate($data["start_stamp"]);
-			$strtDate = sprintf("%04d-%02d-%02d %02d:%02d",$dateValues["year"],$dateValues["mon"],$dateValues["mday"],
-					$dateValues["hours"], $dateValues["minutes"]); 
-			$dateValuese = getdate($data["end_stamp"]);
-			$stopDate = sprintf("%04d-%02d-%02d %02d:%02d",$dateValuese["year"],$dateValuese["mon"],$dateValuese["mday"],
-					$dateValuese["hours"], $dateValues["minutes"]); 
-					
-				if(isset($subtotal_label[1]) && (($last_colVar[1] != $data[$colVar[1]]) 
-					|| ($last_colVar[0] != $data[$colVar[0]]))) {
-					if($grand_total_time) {
-						$formatted_time = $sc->format_time($level_total[1]);
-						print "<tr class=\"totalr\"><td class=\"texttotal\" colspan=\"7\">". 
-							$subtotal_label[1]." </td><td class=\"texttotal\">".$formatted_time."</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
-											}
-					$level_total[1]=0;
+			print "<tr>";
+			print "<td>" . $data['client']. " / " .  $data['project']. "</td>";
+			print "<td>" . $data['date']. "</td>";
+			print "<td>" . $data['description']. "</td>";
+			print "<td>" . $data['category']. "</td>";
+			print "<td>" . $data['amount']. "</td>";
+			if ($data['billable']) {
+				// print the different billable descriptions internationalised
+				print "<td>";
+				switch($data['billable']) {
+					case "Billable":
+						print JText::_('BILLABLE');
+						break;
+					case "Internal":
+						print JText::_('INTERNAL');
+						break;
+					case "Personal":
+						print JText::_('PERSONAL');
+						break;
 				}
-				if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
-					if($grand_total_time) {
-						$formatted_time = $sc->format_time($level_total[0]);
-						print "<tr class=\"totalr\"><td class=\"texttotal\" colspan=\"7\">" .
-							$subtotal_label[0].": </td><td class=\"texttotal\">".$formatted_time."</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
-					}
-					$level_total[0]=0;
-					$last_colVar[1]="";
-				}
-
-				print "<tr>";
-				// max value equals number of columns plus 1 to print
-				for($i=0; $i<10; $i++) {
-					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
-					if($i<2) {
-						if($last_colVar[$i] != $data[$colVar[$i]]) {
-							$sc->printInfo($colVar[$i], $data);
-							$last_colVar[$i]=$data[$colVar[$i]];
-						} else
-							print "&nbsp;";
-					} else
-							$sc->printInfo($colVar[$i], $data);
-					print "</td>";
-				}
-				print "</tr>";
-
-				$level_total[0] += $data["duration"];
-				$level_total[1] += $data["duration"];
-				$grand_total_time += $data["duration"];
+				print "</td>";
 			}
+			// print the different status descriptions internationalised
+			print "<td>";
+			switch($data['status']) {
+				case "Open":
+					print JText::_('STATUS_OPEN');
+					break;
+				case "Submitted":
+					print JText::_('STATUS_SUBMITTED');
+					break;
+				case "Approved":
+					print JText::_('STATUS_APPROVED');
+					break;
+			}
+			print "</td>";
+			if ($data['status'] == "Submitted") { // if expense has been submitted, then allow approval or rejection
+				print "<td><input type=\"checkbox\" name=\"approve[]\" value=\"" . $data["eid"] . "\"></td>";
+				print "<td><input type=\"checkbox\" name=\"reject[]\" value=\"" . $data["eid"] . "\"></td>";
+			} else
+			{
+				print "<td>&nbsp;</td><td>&nbsp;</td>";
+			}
+			print "</tr>";
+			$level_total[0] = $level_total[0] + $data['amount'];
 		}
-
-		if (isset($subtotal_label[1]) && $level_total[1]) {
-			$formatted_time = $sc->format_time($level_total[1]);
-			print "<tr class=\"totalr\"><td class=\"texttotal\" colspan=\"7\">" .
-				$subtotal_label[1].": </td><td class=\"texttotal\">$formatted_time</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
-		}
-		if (isset($subtotal_label[0]) && $level_total[0]) {
-			$formatted_time = $sc->format_time($level_total[0]);
-			print "<tr class=\"totalr\"><td class=\"textproject\" colspan=\"7\">" .
-				$subtotal_label[0].": </td><td class=\"texttotal\">$formatted_time</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
-		}
-		$formatted_time = $sc->format_time($grand_total_time);
-	}
-
-?>
-
-		</td>
-
-<?php
+		
+	}			
 	if ($num > 0) {
 ?>
+
 		<tr class="mtotalr">
-		<td class="textproject" colspan="7">
+		<td class="textproject" colspan="5">
 <?php
 	if ($mode == "weekly")
 		echo JText::_('WEEKLY_TOTAL'). ": ";
 	else
 		echo JText::_('MONTHLY_TOTAL'). ": ";
-	echo "</td><td class=\"textproject\">" .$formatted_time; 
+	echo $level_total[0];
 ?>
-						</td><td>&nbsp;</td><td>&nbsp;</td>
-					</tr>
-				</table>
-			</td>
+		</td>
+		<td></td><td></td>
 		</tr>
+	</table>
 <?php
 	}
 ?>

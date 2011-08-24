@@ -2,7 +2,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclExpenses'))return;
 
 //make sure the selected project is valid for this client
 $client_id = gbl::getClientId();

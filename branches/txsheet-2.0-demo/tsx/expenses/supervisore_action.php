@@ -13,7 +13,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 		$date1 = $_REQUEST["date1"];
 		$newdate = explode("-", $date1);
-		$Location = Config::getRelativeRoot()."/supervisor?uid=".gbl::getUid()."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".$newdate[2]."&amp;month=".$newdate[1]."&amp;day=".$newdate[0];
+		$Location = Config::getRelativeRoot()."/expenses/supervisore?uid=".gbl::getUid()."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".$newdate[2]."&amp;month=".$newdate[1]."&amp;day=".$newdate[0];
 		gotoLocation($Location);
 	}
 	else {

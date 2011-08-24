@@ -3,7 +3,7 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 define("NR_FIELDS", 9); // number of fields to iterate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclExpenses'))return;
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 if (empty($loggedInUser))
@@ -213,7 +213,7 @@ function submitAll (chk) {
 
 function CallBack_WithNewDateSelected(strDate) 
 {
-	document.subtimes.submit();
+	document.subexpenses.submit();
 }
 </script>
 
@@ -223,11 +223,11 @@ ob_start();
 
 PageElements::setTheme('newcss');
 ob_end_clean();
-PageElements::setBodyOnLoad('doOnLoad();');
+
 ?>
 
 <?php if(!$export_excel) { ?>
-<form action="<?php echo Config::getRelativeRoot();?>/submit_action" method="post" name="subexpenses" >
+<form action="<?php echo Config::getRelativeRoot();?>/expenses/exp_submit_action" method="post" name="subexpenses" >
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
@@ -249,12 +249,12 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		<td>
 		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="../images/cal.gif">
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
 			
 		</td>
 	<?php if (!$print): ?>
 		<td>
-			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
+			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="<?php echo Config::getRelativeRoot();?>images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
 		</td>
 		<td>
 			<?php print "<button onClick=\"popupPrintWindow()\">" .ucfirst(JText::_('PRINT_REPORT'))."</button></td>\n"; ?>
@@ -270,7 +270,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			<input type="submit" name="Submit" value="<?php echo JText::_('SUBMIT')?>" > 
 		</td>
 		<td>
-			<input type="checkbox" name="Check All" onclick="submitAll(document.subtimes['sub[]']);">
+			<input type="checkbox" name="Check All" onclick="submitAll(document.subexpenses['sub[]']);">
 		</td>
 	<?php endif; ?>	
 	</tr>
