@@ -32,54 +32,17 @@ class gbl{
 		self::$uid = isset($_REQUEST["uid"]) ? $_REQUEST["uid"]: "";	
 		
 	if(isset($_REQUEST['date1'])){
-//if the date variable exists
+//if the date1 variable exists, which comes from the java date picker
 
 		/* @TODO - add validation to this!!!*/
-	$d = explode('-',$_REQUEST['date1']);
+		$d = explode('-',$_REQUEST['date1']);
 
-	gbl::setYear(intval($d[2]));
-	switch($d[1]){
-		case 'Jan':
-			self::$month = 1;
-			break;
-		case 'Feb':
-			self::$month = 2;
-			break;
-		case 'Mar':
-			self::$month = 3;
-			break;
-		case 'Apr':
-			self::$month = 4;
-			break;
-		case 'May':
-			self::$month = 5;
-			break;
-		case 'Jun':
-			self::$month = 6;
-			break;
-		case 'Jul':
-			self::$month = 7;
-			break;
-		case 'Aug':
-			self::$month = 8;
-			break;
-		case 'Sep':
-			self::$month = 9;
-			break;
-		case 'Oct':
-			self::$month = 10;
-			break;
-		case 'Nov':
-			self::$month = 11;
-			break;
-		case 'Dec':
-			self::$month = 12;
-			break;
-		default:
-			break;
-			
-	}
-}    
+		gbl::setYear(intval($d[2])); // not sure what the purpose of this is
+		self::$year = intval($d[2]);
+		self::$month = intval($d[1]);
+		self::$day = intval($d[0]);
+
+	}    
 		
 		if (isset($_SESSION['contextUser']))
 			self::$contextUser = strtolower($_SESSION['contextUser']);

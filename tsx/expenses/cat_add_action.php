@@ -3,7 +3,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclECategores'))return;
 
 //load local vars from request/post/get
 $action = $_REQUEST['action'];
