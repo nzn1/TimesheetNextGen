@@ -12,7 +12,11 @@
 <meta name="description" content="Timesheet Next Gen" />
 <link rel="stylesheet" href="<?php echo PageElements::getRelThemePath();?>/styles/newtimesheet.css" type="text/css" />
 <link rel="shortcut icon" href="<?php echo PageElements::getRelThemePath();?>/images/favicon.ico" />
-
+<script type="text/javascript">
+	var cfg = new Object();
+	cfg.relativeRoot = '<?php echo Config::getRelativeRoot();?>';
+	cfg.requestUri = '<?php echo urlencode($_SERVER['REQUEST_URI']);?>';
+</script>
 {head}
 <style type="text/css">
 html {
@@ -20,11 +24,7 @@ html {
 }
 </style>
 
-<script type="text/javascript">
-	var cfg = new Object();
-	cfg.relativeRoot = '<?php echo Config::getRelativeRoot();?>';
-	cfg.requestUri = '<?php echo urlencode($_SERVER['REQUEST_URI']);?>';
-</script>
+
 
 <!--This is an IE hack that allows absolute positioning inside a relative div-->
 <!--[if IE 6]>

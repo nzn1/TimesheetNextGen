@@ -74,6 +74,9 @@ class gbl{
 	public static function getDay(){
 		return self::$day;
 	}
+	public static function setDay($i){
+		self::$day = $i;
+	}
 	public static function getProjId(){
 		return self::$proj_id;
 	}

@@ -5,13 +5,13 @@ if(!isset($realToday))
 	$realToday = getdate(time());
 
 if(class_exists('Site')){
-	if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator'))
+	if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator','page'))
 		if(isset($_REQUEST["contextuid"])) 
 			$_SESSION['contextUser'] = $_REQUEST['contextuid'];	
 } 
 else 
 {
-	if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator'))
+	if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator','page'))
 		if(isset($_REQUEST["contextuid"]))
 			$_SESSION['contextUser'] = $_REQUEST['contextuid'];
 }
