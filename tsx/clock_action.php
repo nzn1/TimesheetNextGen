@@ -36,11 +36,13 @@ if($ca->getSimpleDebug()) {
  * as I think javascript doesn't like &amp;  
  */ 
 //set the return location
-$ca->setLocation($ca->getDestination()."?month=".gbl::getMonth()."&amp;year=".gbl::getYear()."&amp;day=".gbl::getDay()."&amp;destination=".$ca->getDestination());
+//not using &amp; here because these urls get used in javascript!
+$ca->setLocation($ca->getDestination()."?month=".gbl::getMonth()."&year=".gbl::getYear()."&day=".gbl::getDay()."&destination=".$ca->getDestination());
 
 
 if ($ca->getDestination() == "stopwatch" || $ca->getDestination() == "daily"){
-	$ca->setLocation($ca->getDestination()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;month=".gbl::getMonth()."&amp;year=".gbl::getYear()."&amp;day=".gbl::getDay()."&amp;destination=".$ca->getDestination());
+	//not using &amp; here because these urls get used in javascript!
+  $ca->setLocation($ca->getDestination()."?client_id=".gbl::getClientId()."&proj_id=".gbl::getProjId()."&task_id=".gbl::getTaskId()."&month=".gbl::getMonth()."&year=".gbl::getYear()."&day=".gbl::getDay()."&destination=".$ca->getDestination());
 }
 
 //determine the action
@@ -96,6 +98,9 @@ if ($ca->getClockOffRadio() == "now" || $ca->getClockOnOff() == "clockoffnow") {
 	$ca->setClockOffTimeMin($realToday["minutes"]);
 }
 
+//ppr($ca->getClockOnTimeMin());
+//ppr($ca->getClockOffTimeMin());
+
 $ca->setOnStamp(mktime($ca->getClockOnTimeHour(), $ca->getClockOnTimeMin(), 0, gbl::getMonth(), gbl::getDay(), gbl::getYear()));
 $ca->setOffStamp(mktime($ca->getClockOffTimeHour(), $ca->getClockOffTimeMin(), 0, gbl::getMonth(), gbl::getDay(), gbl::getYear()));
 
@@ -118,7 +123,8 @@ else if ($ca->getClockOnOff() == "clockonnow") {
 	//if we're coming from the popup window then set the return location to the origin
 	if ($ca->getFromPopupWindow() == "true"){
 		//set the return location
-		$ca->setLocation($ca->getOrigin()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;month=".gbl::getMonth()."&amp;year=".gbl::getYear()."&amp;day=".gbl::getDay()."&amp;destination=".$ca->getDestination()."");
+		//not using &amp; here because these urls get used in javascript!
+		$ca->setLocation($ca->getOrigin()."?client_id=".gbl::getClientId()."&proj_id=".gbl::getProjId()."&task_id=".gbl::getTaskId()."&month=".gbl::getMonth()."&year=".gbl::getYear()."&day=".gbl::getDay()."&destination=".$ca->getDestination());
 	}
 
 	$ca->clockon();
