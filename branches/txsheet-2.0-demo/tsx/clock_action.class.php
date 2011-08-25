@@ -71,7 +71,7 @@ class ClockAction{
 		return $this->clockOnTimeMin;
 	}
 	public function setClockOnTimeMin($s){
-    $this->clocklockOnTimeMin = $s;
+    $this->clockOnTimeMin = $s;
   }
 	public function getClockOnTimeHour(){
 		return $this->clockOnTimeHour;
@@ -196,22 +196,39 @@ class ClockAction{
 		list($qh,$num) = dbQuery($querystring);
 
 		//now output an ok page, the redirect back
-		echo "<html>\n";
-		echo "	<head>\n";
-		echo " 	<script language=\"javascript\">\n";
-		echo "				function alertAndLoad()\n";
-		echo "				{\n";
-		echo "					alert('Clocked on successfully');\n";
-		if ($this->fromPopupWindow){
-		echo "					window.opener.location.reload();\n";
-		}
-		echo "					window.location=\"".$this->location."\";\n";
-		echo "				}\n";
-		echo "			</script>\n";
-		echo "		</head>\n";
-		echo "		<body onLoad=\"javascript:alertAndLoad();\">\n";
-		echo "		</body>\n";
-		echo "	</html>\n";
+		?>
+		<html>
+      <head>
+		    <script language="javascript">
+		      function alertAndLoad(){
+            alert('Clocked on successfully');
+            <?php
+		        if ($this->fromPopupWindow){		  
+		          echo "window.opener.location.reload();\n";
+		        }
+		        ?>
+		        window.location="<?php echo $this->location;?>";
+		      }
+		    </script>
+      </head>
+		
+      <?php
+        if(Debug::getLocation()){
+        ?>
+          <body><a href="javascript:alertAndLoad();" />javascript:alertAndLoad()</a></body>
+        <?php
+        ppr($this);
+        }
+        else{
+        ?>
+        <body onload="javascript:alertAndLoad();"></body>
+        <?php
+        
+        }
+      ?>
+      
+	 </html>
+	 <?php
 		exit;
 	}
 
