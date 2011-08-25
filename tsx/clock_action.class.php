@@ -174,7 +174,7 @@ class ClockAction{
 		$querystring = "SELECT timest.start_time, tt.name FROM ".
   			"".tbl::getTimesTable()." timest, ".tbl::getTaskTable()." tt WHERE ".
   			"uid='".gbl::getContextUser()."' AND ".
-  			"end_time='0' AND ".
+  			"end_time='0000-00-00 00:00:00' AND ".
 		//"start_time>='".gbl::getYear()."-".gbl::getMonth()."-".gbl::getDay()."' AND ".
 		//"start_time<='".gbl::getYear()."-".gbl::getMonth()."-".gbl::getDay()." 23:59:59' AND ".
   			"timest.task_id=".gbl::getTaskId()." AND ".
@@ -182,6 +182,7 @@ class ClockAction{
   			"tt.task_id=".gbl::getTaskId()." AND ".
   			"tt.proj_id=".gbl::getProjId();
 
+        ppr($querystring);
 		list($qh,$num) = dbQuery($querystring);
 		$resultset = dbResult($qh);
 
@@ -239,7 +240,7 @@ class ClockAction{
 		//check that we are actually clocked on
 		$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM ".tbl::getTimesTable()." WHERE ".
   			"uid='".gbl::getContextUser()."' AND ".
-  			"end_time=0 AND ".
+  			"end_time='0000-00-00 00:00:00' AND ".
 		//"start_time >= '".gbl::getYear()."-".gbl::getMonth()."-".gbl::getDay()."' AND ".
 		//"start_time <= '".gbl::getYear()."-".gbl::getMonth()."-".gbl::getDay()." 23:59:59' AND ".
   			"proj_id=".gbl::getProjId()." AND ".
