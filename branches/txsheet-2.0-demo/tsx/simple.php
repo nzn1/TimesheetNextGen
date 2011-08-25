@@ -6,17 +6,23 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
+$copyprev = isset($_REQUEST["copyprev"]) ? $_REQUEST["copyprev"]: "";
 
 require_once('simple.class.php');
 $simple = new SimplePage();
 
 if (empty($loggedInUser))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
+	
+		$uid = gbl::getContextUser();
 
 //get the passed date (context date)
 $todayStamp = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $todayValues = getdate($todayStamp);
 $curDayOfWeek = $todayValues["wday"];
+$year = gbl::getYear();
+$month = gbl::getMonth();
+$day = gbl::getDay();
 
 //the day the week should start on: 0=Sunday, 1=Monday
 $startDayOfWeek = Common::getWeekStartDay();
@@ -28,7 +34,21 @@ if ($daysToMinus < 0)
 $startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
 $startDay =  strtotime(date("d",$todayStamp) . " -$daysToMinus days");
 $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
-LogFile::write("\n\n\n\n\n\n\n\n\n\nStart of new execution. startDate: ". $todayStamp. "\n\n");
+// if required to copy the previous week's tasks and times, calculate the date
+//$debug->write("copyprev = \"$copyprev\"" . " \n");
+if (empty($copyprev)) {
+    $copyStartDate = 0;
+    $copyEndDate = 0;
+
+}
+else
+{
+    $daysToMinus += 7; // subtract a further 7 days to go a week earlier
+    $copyStartDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
+    $copyEndDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
+}
+
+LogFile::write("\n\n\n\n\n\n\n\n\n\nStart of new Simple.php execution. startDate: ". $todayStamp. "\t context user: ". $uid. "\n\n");
 //get the configuration of timeformat and layout
 //list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 //$configData = dbResult($qh2);
@@ -66,6 +86,7 @@ $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
 						"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
 list($qh3, $num3) = dbQuery($getProjectsQuery);
+LogFile::write("\nList of new projects Num: ". $num3. "\n");
 
 //iterate through results
 for ($i=0; $i<$num3; $i++) {
@@ -88,6 +109,7 @@ $getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
 					"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);
+LogFile::write("\nList of tasks Num: ". $num4. "\n");
 //iterate through results
 for ($i=0; $i<$num4; $i++) {
 	//get the current record
@@ -160,20 +182,20 @@ function printFormRow($rowIndex, $layout, $data) {
 					default:
 						// small work description field = default layout
 						?>
-						<td align="left" style="width:100px;">
+						<td align="left">
 							<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $data['client_id']; ?>" />
-							<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+							<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" />
 						</td>
-						<td align="left" style="width:100px;">
+						<td align="left">
 							<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $data['proj_id']; ?>" />
-							<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+							<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);"  />
 						</td>
-						<td align="left" style="width:140px;">
+						<td align="left" >
 							<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $data['task_id']; ?>" />
-							<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+							<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" />
 						</td>
-						<td align="left" style="width:auto;">
-							<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onChange="onChangeWorkDescription(this.id);" value="<?php echo $data['log_message']; ?>" style="width: 100%;" />
+						<td align="left" >
+							<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onChange="onChangeWorkDescription(this.id);" value="<?php echo $data['log_message']; ?>" />
 						</td>
 						<?php
 						break;
@@ -265,7 +287,7 @@ function printFormRow($rowIndex, $layout, $data) {
 ================ end Function PrintFormRow =============================
 =======================================================================*/
 	?>
-<form name="simpleForm" action="<?php echo Config::getRelativeRoot(); ?>/simple_action" method="post">
+<form name="simpleForm" action="/simple_action" method="post">
 <input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
 <input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
 <input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
@@ -289,11 +311,20 @@ function printFormRow($rowIndex, $layout, $data) {
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
 			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
 			</td>
-		<td align="right" nowrap="nowrap">
-			<!--prev / next buttons used to be here -->
-		</td>
-		<td align="right" nowrap="nowrap">
-			<input type="button" name="saveButton" id="saveButton" value="<?php echo JText::_('SAVE_CHANGES')?>" disabled="disabled" onclick="validate();" />
+	      <td width="15%" nowrap style="font-size: 11"><a href="<?php echo $_SERVER['PHP_SELF']?>?&year=<?php echo $year?>&month=<?php echo $month?>&day=<?php echo $day?>&copyprev=1">Copy Previous</a></td>
+          <td width="15%" align="right" nowrap>
+      <?php
+          if($copyprev) { // if copyprev is set, then enable the save changes
+      ?>
+          <input type="button" name="saveButton" id="saveButton" value="Save Changes" onClick="validate();" />
+      <?php
+          }
+          else {
+      ?>
+              <input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="true" onClick="validate();" />
+      <?php
+          }
+      ?>
 		</td>
 	</tr>
 	<tr>
@@ -339,7 +370,7 @@ function printFormRow($rowIndex, $layout, $data) {
 				$daysOfWeek[$i] = date("d", $currentDayDate);
 
 				print
-					"<th class=\"inner_table_column_heading\" align=\"center\" width=\"5%\">"								
+					"<th class=\"inner_table_column_heading\" align=\"center\" >"								
 					  ."<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\" />"
 						."$currentDayStr<br />" .
 						//Output the numerical date in the form of day of the month
@@ -371,7 +402,7 @@ function printFormRow($rowIndex, $layout, $data) {
 
 	$previousDay = date("d",$startDate);
 	$currentTaskId = -1;
-	$previousClientProjTaskDesc = "";
+	$previousClientProjTaskDesc = "-1";
 	$rowIndex = 0;
 	$colIndex = 1;
 	$count = 0;
@@ -406,7 +437,11 @@ function printFormRow($rowIndex, $layout, $data) {
 		
 		// calculate current change key
 		$currentClientProjTaskDesc = $data['client_id'].$data['proj_id']. $data['task_id'].$data['log_message'];
-
+		if ($previousClientProjTaskDesc == -1) { // if this is the first time through
+			$previousClientProjTaskDesc = $currentClientProjTaskDesc; // make the keys the same so we don't force a new row
+			$previousDay = $currentDay - 1;
+			printFormRow($rowIndex, $layout, $data); // print client/proj/task etc
+		}
 		// set colIndex to match the day of the incoming record
 		for ($col = $colIndex; $col <8; $col++) {
 		LogFile::write("inside loop colIndex: ". $colIndex. " col: ". $col . " currentDay: " . $currentDay ." previousDay: ". $previousDay. " daysofweek: ". $daysOfWeek[$col-1]."\n");
