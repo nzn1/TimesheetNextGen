@@ -7,6 +7,41 @@ track and log their time spent on multiple projects.
 Please see INSTALL.txt for installation instructions.
 
 	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
+Version 2.0 notes:
+
+Purpose
+The purpose of the changes that have been made in this new release are to:
+
+    Move the PHP code to an object oriented model. This should help simplify the code, and better enable the use of common code. It should also help in making it easier to add new function.
+    Change the web pages to xhtml standard
+    Change the web page formatting to the currently accepted paradigm of xhtml for structure and css style sheets for colour and style. Doing this will enable the style of TSNG to be changed, making it look new and modern.
+    Provide support for internationalisation
+
+Changes
+
+    All modules have changed to a template model, where header and footer are supplied from a common source
+    The removal of all timesheet_face gifs and associated tables. The rounded borders of previous tsng forms no longer appears. The forms now have a more modern look.
+    Common routines in common.inc changed to Object Oriented PHP format
+    Html changed to xhtml
+    Many errors in the css were detected by the html browsers in timesheet.css. These are been cleaned up.
+    TSNG uses html tables to format the web pages. Too many tables have been used such that there are many nested tables. These nested tables have been mostly removed. There are still a few tables for layout purposes. Tables continue to be used for laying out tabulated data, such as list of projects, tasks etc. 
+    Replacement of the navcal date selection system with a java based date selector. The screens look simpler and less cluttered as a result.
+	Addition of language internationalisation. The include/language directory has support for English and French.
+	Removal of default tasks. Previously when a project was defined, a default task was created. The default task can be a little confusing when entering time into the system.
+	Time entries no longer cross the midnight boundary. Instead, these entries will be inserted as two separate time entries. The purpose of breaking the time entries at the midnight timeslot is to what?
+	The simple weekly time entry form has had a number of changes. These changes make it more robust, and prevent possible loss of data. The simple weekly form now displays each and every time entry separately. Previously, it consolidated time entries by client/project/task/work description and displayed them as one entry per day. Those consolidated entries were then written back into the database as just one entry. So details of start and stop times on time entries that were entered by the daily or other time form were lost. Simple weekly now retains all of those individual records and preserves the original start and stop times.
+	New tables. Three new tables have been added. The tables are expenses, category and std_tasks. 
+	Users have a new category "contractor" or "employee". Users also have a link to their manager.
+	
+New Features
+	Time submission. It is now possible to have users submit their time entries. The submitted time entries are then displayed at a manager level for approval or rejection.
+	Managers/Supervisors. Each user will now have a manager assigned. This enables managers to view users time entries and to approve them.
+	Simple expense entry. Users can enter expense items against clients. The expense items can be submitted for mananger approval.	
+	Simple weekly time entry has a "copy previous" button. This copies the previous week's projects and tasks and times to the current week. Useful for users who are on a long running project. 
+	Standard Tasks. A set of common or standard tasks can be defined. Many projects have common tasks such as design, code, unit test. These standard tasks can be defined once, and then applied through a checklist to any project.
+	 
+
+	 <<<<<<<<<<<<<<<<<<<<<<<*>>>>>>>>>>>>>>>>>>>>>
 Version 1.5.1 notes:
 
 Added ability to administratively close the site by creating a file named 'siteclosed' in the main context of the site (for instance, where simple.php is located), to reopen, simply delete the file.  Allows administrators to loggin, or continue to be logged in to allow for testing or making adjustments.
