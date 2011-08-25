@@ -29,14 +29,15 @@ PageElements::setTheme('newcss');
 
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
-							Add New Standard Tasks:
+							<?php echo JText::_('ADD_NEW_STANDARD_TASK') ?>
 						</td>
 					</tr>
 				</table>
 
 
 
-<h3>Add New Standard Tasks</h3>
+<h3><?php echo JText::_('ADD_NEW_STANDARD_TASK') ?></h3>
+<?php echo JText::_('STANDARD_TASK') ?>
 <table>
 <thead>
 <tr>
@@ -79,7 +80,7 @@ PageElements::setTheme('newcss');
 		}
 	}
 	else {
-		print("<tr><td>No existing tasks</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		print("<tr><td>" . JText::_('NO_EXISTING_TASKS') . "</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 	}
 ?>
 	<tr>

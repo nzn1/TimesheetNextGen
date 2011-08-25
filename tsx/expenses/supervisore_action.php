@@ -8,26 +8,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 //load local vars from request/post/get
 
 	if (!isset($_REQUEST['Modify'])) {
-		// if no modify request, then assume date or client or user redirection is required
-		// date1 contains the date redirection in the format dd-mm-yyyy
-
-		$date1 = $_REQUEST["date1"];
-		$newdate = explode("-", $date1);
-		$Location = Config::getRelativeRoot()."/expenses/supervisore?uid=".gbl::getUid()."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".$newdate[2]."&amp;month=".$newdate[1]."&amp;day=".$newdate[0];
-		gotoLocation($Location);
-	}
-	else {
-	
-		$action = $_REQUEST["Modify"];
-		$proj_id = gbl::getProjId();
-		$client_id = gbl::getClientId();
-		$orderby = $_REQUEST["orderby"];
-		$mode = gbl::getMode();
-		$uid = gbl::getUid();
-	
-		// if the approve tick box is pressed, change the state of all selected times to Approved
-		if (isset($_REQUEST['approve'])) {
-		//var_dump ($_REQUEST['sub']);
+		// if a modify request, look for changes to individual expenses
 			$transids = "";
 			foreach ($_REQUEST['approve'] as $transId) {
 				if($transids == "")
@@ -35,10 +16,49 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 				else 
 					$transids = $transids . ", " . $transId;
 			}
-			list($qh, $num) = dbQuery("UPDATE ".tbl::getTimesTable()." SET status = \"Approved\"" .
-					" WHERE trans_num IN ( $transids )");
-			//LogFile::->write("update query transids = \" $transids\" qh = \"$qh\"  num=\"".$num. "\"\n");		
+			LogFile::write("\nsSupervisore approved: ". $transids);
+			if ($transids != "") // if there are some expenses approved, update them in the db
+				list($qh, $num) = dbQuery("UPDATE ".tbl::getTimesTable()." SET status = \"Approved\"" .
+					" WHERE eid IN ( $transids )");
+			
+			foreach ($_REQUEST['reject'] as $transId) {
+				if($transids == "")
+					$transids = $transId;
+				else 
+					$transids = $transids . ", " . $transId;
 			}
+			LogFile::write("\nsSupervisore rejected: ". $transids);
+			if ($transids != "") // if there are some expenses rejected, update them in the db
+				list($qh, $num) = dbQuery("UPDATE ".tbl::getTimesTable()." SET status = \"Open\"" .
+					" WHERE eid IN ( $transids )");
+
+		// now go back to the supervisor expense list		
+		
+		$Location = Config::getRelativeRoot()."/expenses/supervisore?uid=".gbl::getUid()."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".$newdate[2]."&amp;month=".$newdate[1]."&amp;day=".$newdate[0];
+		gotoLocation($Location);
+	}
+		
+	$action = $_REQUEST["Modify"];
+	$proj_id = gbl::getProjId();
+	$client_id = gbl::getClientId();
+	$orderby = $_REQUEST["orderby"];
+	$mode = gbl::getMode();
+	$uid = gbl::getUid();
+	
+	// if the approve tick box is pressed, change the state of all selected times to Approved
+	if (isset($_REQUEST['approve'])) {
+		$transids = "";
+		foreach ($_REQUEST['approve'] as $transId) {
+			if($transids == "")
+				$transids = $transId;
+			else 
+				$transids = $transids . ", " . $transId;
+			}
+		LogFile::write("\nsSupervisore approve a: ". $transids);
+		list($qh, $num) = dbQuery("UPDATE ".tbl::getExpenseTable()." SET status = \"Approved\"" .
+				" WHERE eid IN ( $transids )");
+			//LogFile::->write("update query transids = \" $transids\" qh = \"$qh\"  num=\"".$num. "\"\n");		
+		}
 		// if the reject tick box is pressed, change the state of all selected times to Open
 		if (isset($_REQUEST['reject'])) {
 			//var_dump ($_REQUEST['sub']);
@@ -49,14 +69,16 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 				else 
 					$transids = $transids . ", " . $transId;
 			}
-			list($qh, $num) = dbQuery("UPDATE ".tbl::getTimesTable()." SET status = \"Open\"" .
-					" WHERE trans_num IN ( $transids )");
+			LogFile::write("\nsSupervisore reject a: ". $transids);
+			list($qh, $num) = dbQuery("UPDATE ".tbl::getExpenseTable()." SET status = \"Open\"" .
+					" WHERE eid IN ( $transids )");
 			//LogFile::->write("update query transids = \" $transids\" qh = \"$qh\"  num=\"".$num. "\"\n");		
 		}
-	}
+		
+	
 	
 	// we're done so redirect to the submission page
-	$path = Config::getRelativeRoot()."/supervisor?uid=".$uid."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay();
+	$path = Config::getRelativeRoot()."/expenses/supervisore?uid=".$uid."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay();
 	gotoLocation($path);
 
 ?>

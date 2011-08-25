@@ -38,7 +38,7 @@ if (isset($_REQUEST['Submit'])) { // if submission of times
 		exit;
 	}
 	// we're done so redirect to the submission page
-	$Location = Config::getRelativeRoot()."/exp_list?uid=".$_REQUEST["uid"]."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay();
+	$Location = Config::getRelativeRoot()."/expenses/exp_list?uid=".$_REQUEST["uid"]."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay();
 	LogFile::write("Changed data, redirect path is $Location\n");
 	gotoLocation($Location);
 	exit;
