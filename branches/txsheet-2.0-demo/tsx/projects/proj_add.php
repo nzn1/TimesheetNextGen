@@ -27,10 +27,6 @@ $end_month = date("n", $startDate);;
 $end_year = date("Y", $startDate);;
 
 ?>
-<<<<<<< .mine
-
-=======
->>>>>>> .r341
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/projects/proj_action" method="post">
 <input type="hidden" name="action" value="add" />

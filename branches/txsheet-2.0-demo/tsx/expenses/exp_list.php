@@ -364,7 +364,10 @@ ob_end_clean();
 					break;
 			}
 			print "</td>";
-			print "<td><input type=\"checkbox\" name=\"sub[]\" value=\"" . $data["eid"] . "\"></td>";
+			if ($data['status'] == "Open") 
+				print "<td><input type=\"checkbox\" name=\"sub[]\" value=\"" . $data["eid"] . "\"></td>";
+			else 
+				print "<td>&nbsp;</td>";
 			print "</tr>";
 			$level_total[0] = $level_total[0] + $data['amount'];
 		}
@@ -383,7 +386,7 @@ ob_end_clean();
 	echo $level_total[0];
 ?>
 		</td>
-		<td></td><td></td>
+		<td colspan="3">&nbsp;</td>
 		</tr>
 	</table>
 <?php

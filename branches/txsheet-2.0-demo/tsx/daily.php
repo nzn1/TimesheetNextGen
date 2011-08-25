@@ -41,7 +41,7 @@ $js->printJavascript();
       ."&client_id=".gbl::getClientId()."&proj_id=".gbl::getProjId()
       ."&task_id=".gbl::getTaskId();?> &trans_num=' + transNum;
 	}
-//]]>
+	//]]>
 	function CallBack_WithNewDateSelected(strDate) {
 		document.dayForm.submit();
 	}
