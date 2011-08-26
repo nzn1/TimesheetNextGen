@@ -62,6 +62,7 @@ if (isset($popup))
 	
 	
 ob_start();	
+require_once("include/language/datetimepicker_lang.inc");
 ?>
 <title><?php echo Config::getMainTitle();?> - Simple Weekly Timesheet for <?php echo gbl::getContextUser();?></title>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>

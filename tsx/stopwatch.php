@@ -22,7 +22,6 @@ if ($proj_id == 0)
 ob_start();
 ?>
 
-<title><?php echo Config::getMainTitle() - gbl::getContextUser(); ?> Stopwatch</title>
 <?php
 include('tsx/client_proj_task_javascript.class.php');
 $js = new ClientProjTaskJavascript();
@@ -65,6 +64,7 @@ $head = ob_get_contents();
 PageElements::setHead($head);
 ob_end_clean();                                             
 PageElements::setBodyOnLoad("doOnLoad();");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('STOPWATCH')." | ".gbl::getContextUser()."</title>");
 ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">

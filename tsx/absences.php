@@ -37,6 +37,8 @@ $last_day = Common::get_last_day($month, $year);
 $startDate = mktime(0,0,0, $month, 1, $year);
 
 ob_start();
+require_once("include/language/datetimepicker_lang.inc");
+
 ?>
 
 
