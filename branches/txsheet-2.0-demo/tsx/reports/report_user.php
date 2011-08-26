@@ -255,6 +255,8 @@ if (isset($popup))
     }
 		echo "</div>";
 	}
+require_once("include/language/datetimepicker_lang.inc");
+
 ?>
 
 <?php if(!$export_excel) { ?>

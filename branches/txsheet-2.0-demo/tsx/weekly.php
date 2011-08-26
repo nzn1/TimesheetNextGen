@@ -57,9 +57,11 @@ if (isset($popup)){
 	require_once("include/tsx/navcal/navcal.class.php");
 	$nav = new NavCal();
 	$nav->navCalClockOnOff($todayDate,false);
+	require_once("include/language/datetimepicker_lang.inc");
 ?>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <script type="text/javascript">
+
 function CallBack_WithNewDateSelected(strDate) 
 {
 	document.subtimes.submit();

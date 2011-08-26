@@ -5,7 +5,7 @@
     <td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">TimesheetNextGen 
       <br />
       <span style=\"font-size: 9px;\"><b>".JText::_('PAGE_GENERATED');
-	$date=strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'));  
+	$date=utf8_encode(strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR')));  
 	$footer.=$date." ".JText::_('TIMEZONE')."</b>
       </span></td>
   </tr>

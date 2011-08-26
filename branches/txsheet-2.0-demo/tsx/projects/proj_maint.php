@@ -224,10 +224,10 @@ PageElements::setTheme('newcss');
 				<table>
 				<tr>
 					<td><?php echo JText::_('START_DATE'); ?></td>
-					<td><?php echo strftime(JText::_('DFMT_MONTH_DAY_YEAR'),strtotime($data["start_date"])); ?></td>
+					<td><?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),strtotime($data["start_date"]))); ?></td>
 				</tr><tr>
 					<td><?php echo JText::_('DUE_DATE'); ?></td>
-					<td><?php echo strftime(JText::_('DFMT_MONTH_DAY_YEAR'),strtotime($data["deadline"])); ?></td>
+					<td><?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),strtotime($data["deadline"]))); ?></td>
 
 				</tr>
 			</table>

@@ -31,6 +31,8 @@ ob_start();
 include('tsx/client_proj_task_javascript.class.php');
 $js = new ClientProjTaskJavascript();
 $js->printJavascript();
+require_once("include/language/datetimepicker_lang.inc");
+
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -72,7 +74,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <table>
 	<tr>
 		<td>
-			<?php echo JText::_('CURRENT_DATE').': '?><span><?php echo strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate); ?></span>
+			<?php echo JText::_('CURRENT_DATE').': '?><span><?php echo utf8_encode(strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate)); ?></span>
 		</td>
 		<td nowrap="nowrap" class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
