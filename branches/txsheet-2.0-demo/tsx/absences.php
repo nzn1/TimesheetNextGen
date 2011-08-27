@@ -86,7 +86,7 @@ ob_end_clean();
 		</td>
 		<td nowrap="nowrap" class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
+			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_MONTH').": "; ?>
 			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
 			</td>
 		
