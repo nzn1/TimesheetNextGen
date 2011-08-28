@@ -117,6 +117,7 @@ function Calendar(pDate, pCtrl)
 	this.Format = "ddMMyyyy";
 	this.Separator = DateSeparator;
 	this.ShowTime = false;
+	this.MonthOnly = false;
 	this.Scroller = "DROPDOWN";
 	if (pDate.getHours() < 12)
 	{
@@ -456,27 +457,9 @@ Calendar.prototype.FormatDate = function (pDate)
 		}
 	}
 
-	switch (this.Format.toUpperCase())
-	{
-		case "DDMMYYYY":
+		// case "DDMMYYYY":
 		return (pDate + DateSeparator + MonthDigit + DateSeparator + this.Year);
-		case "DDMMMYYYY":
-		return (pDate + DateSeparator + this.GetMonthName(false) + DateSeparator + this.Year);
-		case "MMDDYYYY":
-		return (MonthDigit + DateSeparator + pDate + DateSeparator + this.Year);
-		case "MMMDDYYYY":
-		return (this.GetMonthName(false) + DateSeparator + pDate + DateSeparator + this.Year);
-		case "YYYYMMDD":
-		return (this.Year + DateSeparator + MonthDigit + DateSeparator + pDate);
-		case "YYMMDD":
-		return (String(this.Year).substring(2, 4) + DateSeparator + MonthDigit + DateSeparator + pDate);
-		case "YYMMMDD":
-		return (String(this.Year).substring(2, 4) + DateSeparator + this.GetMonthName(false) + DateSeparator + pDate);
-		case "YYYYMMMDD":
-		return (this.Year + DateSeparator + this.GetMonthName(false) + DateSeparator + pDate);
-		default:
-		return (pDate + DateSeparator + (this.Month + 1) + DateSeparator + this.Year);
-	}
+
 };
 
 Calendar.prototype.OnDateSelected=OnDateSelected; 
@@ -661,140 +644,151 @@ function RenderCssCal(bNewCal)
 
 	//******************End Month and Year selector in arrow******************************
 
-	//Calendar header shows Month and Year
-	if (ShowMonthYear && Cal.Scroller === "DROPDOWN")
+	// PAL if month only, skip the rest of the calendar creation
+	if (Cal.MonthOnly === true)  // print a close and ok button
 	{
-	    vCalHeader += "<tr><td colspan='7' class='calR' style='color:" + MonthYearColor + "'>" + Cal.GetMonthName(ShowLongMonth) + " " + Cal.Year + "</td></tr>";
-		calHeight += 19;
-	}
+		vCalTime += "<tr><td colspan='7' style=\"text-align:center;\"><input style='width:60px;font-size:12px;' onClick='javascript:closewin(\"" + Cal.Ctrl + "\");'  type=\"button\" value=\"OK\">&nbsp;<input style='width:60px;font-size:12px;' onClick='javascript: winCal.style.visibility = \"hidden\"' type=\"button\" value=\"Cancel\"></td></tr>";
 
-	//Week day header
-
-	vCalHeader += "<tr><td colspan=\"7\"><table style='border-spacing:1px;border-collapse:separate;'><tr>";
-	if (MondayFirstDay === true)
-	{
-		WeekDayName = WeekDayName2;
+	    vCalClosing += "</tr>";
 	}
 	else
 	{
-		WeekDayName = WeekDayName1;
-	}
-	for (i = 0; i < 7; i += 1)
-	{
-	    vCalHeader += "<td style='background-color:"+WeekHeadColor+";width:"+CellWidth+"px;color:#FFFFFF' class='calTD'>" + WeekDayName[i].substr(0, WeekChar) + "</td>";
-	}
 
-	calHeight += 19;
-	vCalHeader += "</tr>";
-	//Calendar detail
-	CalDate = new Date(Cal.Year, Cal.Month);
-	CalDate.setDate(1);
-
-	vFirstDay = CalDate.getDay();
-
-	//Added version 1.7
-
-	if (MondayFirstDay === true)
-	{
-		vFirstDay -= 1;
-		if (vFirstDay === -1)
+		//Calendar header shows Month and Year
+		if (ShowMonthYear && Cal.Scroller === "DROPDOWN")
 		{
-			vFirstDay = 6;
+		    vCalHeader += "<tr><td colspan='7' class='calR' style='color:" + MonthYearColor + "'>" + Cal.GetMonthName(ShowLongMonth) + " " + Cal.Year + "</td></tr>";
+			calHeight += 19;
 		}
-	}
-
-	//Added version 1.7
-	vCalData = "<tr>";
-	calHeight += 19;
-	for (i = 0; i < vFirstDay; i += 1)
-	{
-		vCalData = vCalData + GenCell();
-		vDayCount = vDayCount + 1;
-	}
-
-	//Added version 1.7
-	for (j = 1; j <= Cal.GetMonDays(); j += 1)
-	{
-		if ((vDayCount % 7 === 0) && (j > 1))
+	
+		//Week day header
+	
+		vCalHeader += "<tr><td colspan=\"7\"><table style='border-spacing:1px;border-collapse:separate;'><tr>";
+		if (MondayFirstDay === true)
 		{
-			vCalData = vCalData + "<tr>";
-		}
-
-		vDayCount = vDayCount + 1;
-		//added version 2.1.2
-		if (DisableBeforeToday === true && ((j < dtToday.getDate()) && (Cal.Month === dtToday.getMonth()) && (Cal.Year === dtToday.getFullYear()) || (Cal.Month < dtToday.getMonth()) && (Cal.Year === dtToday.getFullYear()) || (Cal.Year < dtToday.getFullYear())))
-		{
-			strCell = GenCell(j, false, DisableColor, false);//Before today's date is not clickable
-		}
-		//if End Year + Current Year = Cal.Year. Disable.
-		else if (Cal.Year > (dtToday.getFullYear()+EndYear))
-		{
-		    strCell = GenCell(j, false, DisableColor, false); 
-		}
-		else if ((j === dtToday.getDate()) && (Cal.Month === dtToday.getMonth()) && (Cal.Year === dtToday.getFullYear()))
-		{
-			strCell = GenCell(j, true, TodayColor);//Highlight today's date
+			WeekDayName = WeekDayName2;
 		}
 		else
 		{
-			if ((j === selDate.getDate()) && (Cal.Month === selDate.getMonth()) && (Cal.Year === selDate.getFullYear())){
-			     //modified version 1.7
-				strCell = GenCell(j, true, SelDateColor);
-            }
-			else
+			WeekDayName = WeekDayName1;
+		}
+		for (i = 0; i < 7; i += 1)
+		{
+		    vCalHeader += "<td style='background-color:"+WeekHeadColor+";width:"+CellWidth+"px;color:#FFFFFF' class='calTD'>" + WeekDayName[i].substr(0, WeekChar) + "</td>";
+		}
+	
+		calHeight += 19;
+		vCalHeader += "</tr>";
+		//Calendar detail
+		CalDate = new Date(Cal.Year, Cal.Month);
+		CalDate.setDate(1);
+	
+		vFirstDay = CalDate.getDay();
+	
+		//Added version 1.7
+	
+		if (MondayFirstDay === true)
+		{
+			vFirstDay -= 1;
+			if (vFirstDay === -1)
 			{
-				if (MondayFirstDay === true)
-				{
-					if (vDayCount % 7 === 0)
-					{
-						strCell = GenCell(j, false, SundayColor);
-					}
-					else if ((vDayCount + 1) % 7 === 0)
-					{
-						strCell = GenCell(j, false, SaturdayColor);
-					}
-					else
-					{
-						strCell = GenCell(j, null, WeekDayColor);
-					}
-				}
-				else
-				{
-					if (vDayCount % 7 === 0)
-					{
-						strCell = GenCell(j, false, SaturdayColor);
-					}
-					else if ((vDayCount + 6) % 7 === 0)
-					{
-						strCell = GenCell(j, false, SundayColor);
-					}
-					else
-					{
-						strCell = GenCell(j, null, WeekDayColor);
-					}
-				}
+				vFirstDay = 6;
 			}
 		}
-
-		vCalData = vCalData + strCell;
-
-		if ((vDayCount % 7 === 0) && (j < Cal.GetMonDays()))
-		{
-			vCalData = vCalData + "</tr>";
-			calHeight += 19;
-		}
-	}
-
-	// finish the table proper
-
-	if (vDayCount % 7 !== 0)
-	{
-		while (vDayCount % 7 !== 0)
+	
+		//Added version 1.7
+		vCalData = "<tr>";
+		calHeight += 19;
+		for (i = 0; i < vFirstDay; i += 1)
 		{
 			vCalData = vCalData + GenCell();
 			vDayCount = vDayCount + 1;
 		}
-	}
+	
+		//Added version 1.7
+		for (j = 1; j <= Cal.GetMonDays(); j += 1)
+		{
+			if ((vDayCount % 7 === 0) && (j > 1))
+			{
+				vCalData = vCalData + "<tr>";
+			}
+	
+			vDayCount = vDayCount + 1;
+			//added version 2.1.2
+			if (DisableBeforeToday === true && ((j < dtToday.getDate()) && (Cal.Month === dtToday.getMonth()) && (Cal.Year === dtToday.getFullYear()) || (Cal.Month < dtToday.getMonth()) && (Cal.Year === dtToday.getFullYear()) || (Cal.Year < dtToday.getFullYear())))
+			{
+				strCell = GenCell(j, false, DisableColor, false);//Before today's date is not clickable
+			}
+			//if End Year + Current Year = Cal.Year. Disable.
+			else if (Cal.Year > (dtToday.getFullYear()+EndYear))
+			{
+			    strCell = GenCell(j, false, DisableColor, false); 
+			}
+			else if ((j === dtToday.getDate()) && (Cal.Month === dtToday.getMonth()) && (Cal.Year === dtToday.getFullYear()))
+			{
+				strCell = GenCell(j, true, TodayColor);//Highlight today's date
+			}
+			else
+			{
+				if ((j === selDate.getDate()) && (Cal.Month === selDate.getMonth()) && (Cal.Year === selDate.getFullYear())){
+				     //modified version 1.7
+					strCell = GenCell(j, true, SelDateColor);
+	            }
+				else
+				{
+					if (MondayFirstDay === true)
+					{
+						if (vDayCount % 7 === 0)
+						{
+							strCell = GenCell(j, false, SundayColor);
+						}
+						else if ((vDayCount + 1) % 7 === 0)
+						{
+							strCell = GenCell(j, false, SaturdayColor);
+						}
+						else
+						{
+							strCell = GenCell(j, null, WeekDayColor);
+						}
+					}
+					else
+					{
+						if (vDayCount % 7 === 0)
+						{
+							strCell = GenCell(j, false, SaturdayColor);
+						}
+						else if ((vDayCount + 6) % 7 === 0)
+						{
+							strCell = GenCell(j, false, SundayColor);
+						}
+						else
+						{
+							strCell = GenCell(j, null, WeekDayColor);
+						}
+					}
+				}
+			}
+	
+			vCalData = vCalData + strCell;
+	
+			if ((vDayCount % 7 === 0) && (j < Cal.GetMonDays()))
+			{
+				vCalData = vCalData + "</tr>";
+				calHeight += 19;
+			}
+		}
+	
+		// finish the table proper
+	
+		if (vDayCount % 7 !== 0)
+		{
+			while (vDayCount % 7 !== 0)
+			{
+				vCalData = vCalData + GenCell();
+				vDayCount = vDayCount + 1;
+			}
+		}
+	
 
 	vCalData = vCalData + "</table></td></tr>";
 
@@ -859,7 +853,7 @@ function RenderCssCal(bNewCal)
 	    }
 	    vCalClosing += "</tr>";
 	}
-
+	}
 
 
 	vCalClosing += "</tbody></table></td></tr>";
@@ -951,9 +945,10 @@ function OnDateSelected(strDate)
 	CallBack_WithNewDateSelected(strDate);
 }
 
-function NewCssCal(pCtrl, pFormat, pScroller, pShowTime, pTimeMode, pShowSeconds)
+function NewCssCal(pCtrl, pFormat, pScroller, pShowTime, pTimeMode, pShowSeconds, pShowMonth)
 {
 	// get current date and time
+	//alert("pCtrl " + pCtrl + " pFormat " + pFormat + " pScroller " +pScroller + " pShowTime " + pShowTime + " pTimeMode " + pTimeMode + " pShowSeconds " + pShowSeconds + " pShowMonth " + pShowMonth);
 
 	dtToday = new Date();
 	Cal = new Calendar(dtToday);
@@ -995,7 +990,7 @@ function NewCssCal(pCtrl, pFormat, pScroller, pShowTime, pTimeMode, pShowSeconds
 		{
 			Cal.ShowSeconds = false;
 		}
-
+		//alert("pShowTime" +pShowTime + "Cal.ShowTime " + Cal.ShowTime);
 	}
 
 	if (pCtrl !== undefined)
@@ -1023,6 +1018,22 @@ function NewCssCal(pCtrl, pFormat, pScroller, pShowTime, pTimeMode, pShowSeconds
 			Cal.Scroller = "DROPDOWN";
 		}
 	}
+	
+    // PAL pShowMonth added to just display month
+	
+	if (pShowMonth !== undefined)
+	{
+		if (pShowMonth.toUpperCase() === "MONTH")
+		{
+			Cal.MonthOnly = true;
+			Cal.ShowTime = false;
+		}
+		else
+		{
+			Cal.MonthOnly = false;
+		}
+	}
+	//alert("Cal.MonthOnly " + Cal.MonthOnly + " Cal.ShowTime " + Cal.ShowTime ); 
 
 	exDateTime = document.getElementById(pCtrl).value; //Existing Date Time value in textbox.
 
@@ -1071,48 +1082,6 @@ function NewCssCal(pCtrl, pFormat, pScroller, pShowTime, pTimeMode, pShowSeconds
 			}
 		}
 
-		else if (Cal.Format.toUpperCase() === "MMDDYYYY" || Cal.Format.toUpperCase() === "MMMDDYYYY"){
-			if (DateSeparator === ""){
-				strMonth = exDateTime.substring(0, 2 + offset);
-				strDate = exDateTime.substring(2 + offset, 4 + offset);
-				strYear = exDateTime.substring(4 + offset, 8 + offset);
-			}
-			else{
-				strMonth = exDateTime.substring(0, Sp1);
-				strDate = exDateTime.substring(Sp1 + 1, Sp2);
-				strYear = exDateTime.substring(Sp2 + 1, Sp2 + 5);
-			}
-		}
-
-		else if (Cal.Format.toUpperCase() === "YYYYMMDD" || Cal.Format.toUpperCase() === "YYYYMMMDD")
-		{
-			if (DateSeparator === ""){
-				strMonth = exDateTime.substring(4, 6 + offset);
-				strDate = exDateTime.substring(6 + offset, 8 + offset);
-				strYear = exDateTime.substring(0, 4);
-			}
-			else{
-				strMonth = exDateTime.substring(Sp1 + 1, Sp2);
-				strDate = exDateTime.substring(Sp2 + 1, Sp2 + 3);
-				strYear = exDateTime.substring(0, Sp1);
-			}
-		}
-
-		else if (Cal.Format.toUpperCase() === "YYMMDD" || Cal.Format.toUpperCase() === "YYMMMDD")
-		{
-			if (DateSeparator === "")
-			{
-				strMonth = exDateTime.substring(2, 4 + offset);
-				strDate = exDateTime.substring(4 + offset, 6 + offset);
-				strYear = exDateTime.substring(0, 2);
-			}
-			else
-			{
-				strMonth = exDateTime.substring(Sp1 + 1, Sp2);
-				strDate = exDateTime.substring(Sp2 + 1, Sp2 + 3);
-				strYear = exDateTime.substring(0, Sp1);
-			}
-		}
 
 		if (isNaN(strMonth)){
 			intMonth = Cal.GetMonthIndex(strMonth);
@@ -1206,6 +1175,8 @@ function closewin(id) {
                 callback(id, Cal.FormatDate(Cal.Date));
         }
     }
+    else if (Cal.MonthOnly === true)
+    	callback(id, Cal.FormatDate(Cal.Date));
     
 	var CalId = document.getElementById(id);
 	CalId.focus();

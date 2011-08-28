@@ -93,7 +93,7 @@ require_once("include/language/datetimepicker_lang.inc");
 		<td colspan="8" class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_MONTH').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow','false' ,'24','false','MONTH')" alt="" src="images/cal.gif">
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif">
 			</td>
 		</td>
 	</tr>
@@ -124,7 +124,7 @@ require_once("include/language/datetimepicker_lang.inc");
 </table><!-- end of the client, project select table and the current month -->
 
 	<!-- table encompassing heading, days in month, weekly total and month total -->
-	<table>
+	<table width="100%">
 		<thead>
 		<tr class="inner_table_head">
 		<?php
