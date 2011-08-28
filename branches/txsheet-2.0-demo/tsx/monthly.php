@@ -93,7 +93,7 @@ require_once("include/language/datetimepicker_lang.inc");
 		<td colspan="8" class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_MONTH').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow','false' ,'24','false','MONTH')" alt="" src="images/cal.gif">
 			</td>
 		</td>
 	</tr>
@@ -124,7 +124,8 @@ require_once("include/language/datetimepicker_lang.inc");
 </table><!-- end of the client, project select table and the current month -->
 
 	<!-- table encompassing heading, days in month, weekly total and month total -->
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
+	<table>
+		<thead>
 		<tr class="inner_table_head">
 		<?php
 			//print the days of the week
@@ -132,10 +133,12 @@ require_once("include/language/datetimepicker_lang.inc");
 			for ($i=0; $i<7; $i++) {
 				$currentDayStr = strftime("%A", $currentDate);
 				$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 day");
-				print "	<td class=\"inner_table_column_heading\" align=\"center\">$currentDayStr</td>\n";
+				print "	<th align=\"center\">$currentDayStr</th>\n";
 			}
 		?>
 		</tr>
+		</thead>
+		<tbody>
 		<tr>
 <?php
 
@@ -165,6 +168,7 @@ require_once("include/language/datetimepicker_lang.inc");
 
 		// New Week.
 		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
+			print "</tr>\n<!-- --><tr>\n";
 			$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 			$weeklyTotal = 0;
 			print "</tr>\n<!-- --><tr>\n";
@@ -392,6 +396,7 @@ require_once("include/language/datetimepicker_lang.inc");
 			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
+	print "</tr>\n<tr>\n";
 	$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 	$weeklyTotal = 0;
 	print "</tr>\n<tr>\n";
