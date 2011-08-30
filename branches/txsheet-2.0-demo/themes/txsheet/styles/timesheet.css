@@ -167,7 +167,7 @@ a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-s
 
 .login_image { background-image: url(../images/logo.gif); width: 136px; height: 46px; margin-right: 20px; }
 
-.face_padding_cell { padding: 2px 5px 5px 5px; background: #FFFFFF; }
+.face_padding_cell {width: 100%; padding: 2px 5px 5px 5px; background: #FFFFFF; }
 
 .face_padding_cell_small { padding: 0px 3px 3px 3px; background: #FFFFFF; }
 

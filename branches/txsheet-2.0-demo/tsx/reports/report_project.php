@@ -243,7 +243,7 @@ if(!$export_excel)
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="100%" class="face_padding_cell">
+		<td class="face_padding_cell">
 
 <!-- include the timesheet face up until the heading start section -->
 
