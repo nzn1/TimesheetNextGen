@@ -37,32 +37,19 @@ ob_end_clean();
 <form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-<<<<<<< .mine
+
 		<td>
 			<h2><?php print JText::_('ASSIGN_ALLTASKS_ALLPROJECTMEMBERS'); ?></h2>
 		</td>
 	</tr>
 	<tr>
 		<td>
-=======
-		<td width="100%" class="face_padding_cell">
-
-
-			<table width="100%" border="0">
-				<tr>
-					<td align="center">
-						<h2>Assign all Tasks to all Project Members</h2>
-					</td>
-				</tr>
-			</table>
-
-
 
 			<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 				<tr>
 					<td width="40">&nbsp;</td>
 					<td>
->>>>>>> .r341
+
 <?php if($assignTasks!='checked') { ?>
 <h2><font color="red"><b>Attention!</b></font> &nbsp;<font color="red">Read this carefully</font><br /></h2>
 <h3>Clicking on the checkbox below and submitting this form will:
