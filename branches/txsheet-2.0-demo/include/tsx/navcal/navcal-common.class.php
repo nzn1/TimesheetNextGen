@@ -157,10 +157,10 @@ class NavCalCommon{
 		echo'<table width="100%" border="0">
 			<tr>';
 			if($orient == "tall"){
-				echo'<td align="left" nowrap="nowrap" class="navcal_header">';
+				echo'<td align="left"  class="navcal_header">';
 			}
 			else{
-				echo '<td align="left" nowrap="nowrap" class="navcal_header" style="font-size: 10">';
+				echo '<td align="left"  class="navcal_header" style="font-size: 10">';
 			}
 					
 			list($prev_year,$next_year) = $this->getPrevNextYear($curDate,$need_ldom);
@@ -173,19 +173,19 @@ class NavCalCommon{
 
 				echo '</td>';
 						if($orient == "tall"){
-							echo '<td align="center" nowrap="nowrap" class="navcal_header">';
+							echo '<td align="center"  class="navcal_header">';
 						}
 						else{
-							echo '<td align="center" nowrap="nowrap" class="navcal_header" style="font-size: 12">';
+							echo '<td align="center"  class="navcal_header" style="font-size: 12">';
 						}
 						echo date('Y',$firstDate);
 						echo '</td>';
 						
 						if($orient == "tall"){
-							echo '<td align="right" nowrap="nowrap" class="navcal_header">';
+							echo '<td align="right"  class="navcal_header">';
 						}
 						else{
-							echo '<td align="right" nowrap="nowrap" class="navcal_header" style="font-size: 10">';
+							echo '<td align="right"  class="navcal_header" style="font-size: 10">';
 						}
 						
 
@@ -326,9 +326,9 @@ class NavCalCommon{
 					<table width="100%" border="0">
 						<tr >
 						<?php if($orient == "tall"): ?>
-							<td align="left" nowrap="nowrap" class="navcal_header">
+							<td align="left"  class="navcal_header">
 						<?php else: ?>
-							<td align="left" nowrap="nowrap" class="navcal_header" style="font-size: 10">
+							<td align="left"  class="navcal_header" style="font-size: 10">
 						<?php endif; ?>
 								<?php 
 								list($sprev_year,$snext_year) = $this->getPrevNextYear($startDate,$s_need_ldom);
@@ -346,16 +346,16 @@ class NavCalCommon{
 								?>
 							</td>
 						<?php if($orient == "tall"): ?>
-							<td align="center" nowrap="nowrap" class="navcal_header">
+							<td align="center"  class="navcal_header">
 						<?php else: ?>
-							<td align="center" nowrap="nowrap" class="navcal_header" style="font-size: 12">
+							<td align="center"  class="navcal_header" style="font-size: 12">
 						<?php endif; ?>
 								<?php echo date('Y',$firstStartDate); ?>
 							</td>
 						<?php if($orient == "tall"): ?>
-							<td align="right" nowrap="nowrap" class="navcal_header">
+							<td align="right"  class="navcal_header">
 						<?php else: ?>
-							<td align="right" nowrap="nowrap" class="navcal_header" style="font-size: 10">
+							<td align="right"  class="navcal_header" style="font-size: 10">
 						<?php endif; ?>
 								<?php
 								print "<a href=\"".Rewrite::getShortUri()."?$post";

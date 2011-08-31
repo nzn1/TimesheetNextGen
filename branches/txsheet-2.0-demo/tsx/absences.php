@@ -77,14 +77,14 @@ ob_end_clean();
 	<tr>
 		<!--	<?php print "$day $month $year"; ?> -->
 		<?php if($canChangeUser) : ?>
-			<td align="left" width="38%" nowrap class="outer_table_heading"><?php echo JText::_('USER'); ?>: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
+			<td align="left" width="38%" class="outer_table_heading"><?php echo JText::_('USER'); ?>: &nbsp; <?php Common::user_select_droplist($uid); ?></td>
 		<?php else : ?>
-			<td width="38%" nowrap><?php echo JText::_('USER'); ?>: &nbsp; <?php echo "<b>$uid</b>"; ?></td>
+			<td width="38%"><?php echo JText::_('USER'); ?>: &nbsp; <?php echo "<b>$uid</b>"; ?></td>
 		<?php endif; ?>
-		<td align="center" nowrap class="outer_table_heading">
+		<td align="center" class="outer_table_heading">
 			<?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), mktime(0,0,0,$month, 1, $year))); ?>
 		</td>
-		<td nowrap="nowrap" class="outer_table_heading">
+		<td  class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_MONTH').": "; ?>
 			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">

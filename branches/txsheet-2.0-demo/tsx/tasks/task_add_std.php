@@ -28,7 +28,7 @@ PageElements::setTheme('newcss');
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 
 					<tr>
-						<td align="left" nowrap class="outer_table_heading" nowrap>
+						<td align="left" class="outer_table_heading" >
 							<?php echo JText::_('ADD_NEW_STANDARD_TASK') ?>
 						</td>
 					</tr>

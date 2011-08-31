@@ -211,7 +211,7 @@ PageElements::setTheme('newcss');
 				?>
 			</td>
 
-			<td width="20%"align="right" valign="top" nowrap>
+			<td width="20%"align="right" valign="top" >
 				
 				<a href="proj_edit?client_id=<?php echo gbl::getClientId(); ?>&amp;proj_id=<?php echo $data["proj_id"]; ?>"><?php echo ucwords(JText::_('EDIT'))?></a>,
 				<a href="project_user_rates_action?proj_id=<?php echo $data["proj_id"]; ?>&amp;action=show_users"><?php echo JText::_('CHG_BILL_RATES')?></a>,
