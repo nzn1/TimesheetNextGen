@@ -215,7 +215,7 @@ function make_index($data,$order) {
 
 $Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode";
 gbl::setPost("uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode");
-require_once("include/language/datetimepicker_lang.inc");
+//require_once("include/language/datetimepicker_lang.inc");
 ?>
 <script type="text/javascript" src="<?php echo Config::getDocumentRoot()."/js/datetimepicker_css.js";?>"</script>
 <?php if(!$export_excel) { ?>

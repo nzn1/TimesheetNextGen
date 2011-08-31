@@ -31,7 +31,7 @@ ob_start();
 include('tsx/client_proj_task_javascript.class.php');
 $js = new ClientProjTaskJavascript();
 $js->printJavascript();
-require_once("include/language/datetimepicker_lang.inc");
+//require_once("include/language/datetimepicker_lang.inc");
 
 ?>
 <script type="text/javascript">

@@ -255,7 +255,7 @@ if (isset($popup))
     }
 		echo "</div>";
 	}
-require_once("include/language/datetimepicker_lang.inc");
+//require_once("include/language/datetimepicker_lang.inc");
 
 ?>
 
