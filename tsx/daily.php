@@ -76,7 +76,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		<td>
 			<?php echo JText::_('CURRENT_DATE').': '?><span><?php echo utf8_encode(strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate)); ?></span>
 		</td>
-		<td nowrap="nowrap" class="outer_table_heading">
+		<td  class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_DAY').": "; ?>
 			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
@@ -231,7 +231,7 @@ else {
 				print Common::formatMinutes($data["duration"]) . "</td>\n";
 			}
 
-			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
+			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" >\n";
 			if ($data['subStatus'] == "Open") {
 				print "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">".ucfirst(JText::_('EDIT'))."</a>,&nbsp;\n";
 				//print "	<a href=\"".Config::getRelativeRoot()."/delete?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete, </a>\n";

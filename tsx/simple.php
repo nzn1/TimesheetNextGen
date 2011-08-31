@@ -298,7 +298,7 @@ function printFormRow($rowIndex, $layout, $data) {
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="center" nowrap="nowrap" class="outer_table_heading">
+		<td align="center"  class="outer_table_heading">
 			<?php
 				$sdStr = utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate));
 				//just need to go back 1 second most of the time, but DST
@@ -307,13 +307,13 @@ function printFormRow($rowIndex, $layout, $data) {
 				echo JText::_('CURRENT_WEEK').': <span style="color:#00066F;">'.$sdStr.' - '.$edStr.'</span>';
 			?>
 		</td>
-		<td nowrap="nowrap" class="outer_table_heading">
+		<td  class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
 			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
 			</td>
-	      <td width="15%" nowrap style="font-size: 11"><a href="<?php echo $_SERVER['PHP_SELF']?>?&year=<?php echo $year?>&month=<?php echo $month?>&day=<?php echo $day?>&copyprev=1">Copy Previous</a></td>
-          <td width="15%" align="right" nowrap>
+	      <td width="15%" style="font-size: 11"><a href="<?php echo $_SERVER['PHP_SELF']?>?&year=<?php echo $year?>&month=<?php echo $month?>&day=<?php echo $day?>&copyprev=1">Copy Previous</a></td>
+          <td width="15%" align="right" >
       <?php
           if($copyprev) { // if copyprev is set, then enable the save changes
       ?>

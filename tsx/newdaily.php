@@ -59,27 +59,27 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('NEW_DAILY
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td align="left" nowrap="nowrap" class="outer_table_heading">
+		<td align="left"  class="outer_table_heading">
 			<?php echo JText::_('NEW_DAILY_TIMESHEET'); ?>
 		</td>
 	</tr>
 	<tr>
-		<td align="center" nowrap="nowrap" class="outer_table_heading">
+		<td align="center"  class="outer_table_heading">
 			<?php
 				$sdStr = strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$todayStamp);
 				echo JText::_('DAY').": $sdStr";
 			?>
 		</td>
-		<td nowrap="nowrap" align="center">
+		<td  align="center">
 			<input id="date1" name="date1" type="text" size="15" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
 			value="<?php echo date('d-M-Y', $todayStamp); ?>" />
 			&nbsp;&nbsp;&nbsp;
 			<input id="sub" type="submit" name="Change Date" value="<?php echo JText::_('CHANGE_DATE') ?>"></input>
 		</td>
-		<td align="right" nowrap="nowrap" >
+		<td align="right"  >
 			<!--prev / next buttons used to be here -->
 		</td>
-		<td align="right" nowrap="nowrap" >
+		<td align="right"  >
 			<input type="button" name="saveButton" id="saveButton" value="<?php echo ucwords(JText::_('SAVE_CHANGES'))?>" disabled="true" onClick="validate();" />
 		</td>
 	</tr>
@@ -276,17 +276,17 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('NEW_DAILY
 
 		$str = "clk_on_now".$row;
 		print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"center\">";
-			print "<span id=\"starttime".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<span id=\"starttime".$row."\" $do_display >";
 			print "<input type=\"checkbox\" $canClockOn name=\"$str\" id=\"$str\" ";
 		print"</span></td>\n";
 		$str = "clk_off_now".$row;
 		print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"center\">";
-			print "<span id=\"starttime".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<span id=\"starttime".$row."\" $do_display >";
 			print "<input type=\"checkbox\" $canClockOff name=\"$str\" id=\"$str\" ";
 		print"</span></td>\n";
 
-		print "<td class=\"calendar_cell_middle\" nowrap=\"nowrap\" valign=\"top\" align=\"left\">\n";
-			print "<span id=\"starttime".$row."\" $do_display nowrap=\"nowrap\">";
+		print "<td class=\"calendar_cell_middle\"  valign=\"top\" align=\"left\">\n";
+			print "<span id=\"starttime".$row."\" $do_display >";
 			print "<input type=\"hidden\" id=\"osh".$row."\" name=\"osh".$row."\" value=\"".date("G",$startStamp)."\" />\n";
 			print "<input type=\"hidden\" id=\"osm".$row."\" name=\"osm".$row."\" value=\"".date("i",$startStamp)."\" />\n";
 			$str = "sthr".$row;
@@ -299,14 +299,14 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('NEW_DAILY
 		print"</span></td>\n";
 
 		$str = "stdt".$row;
-		print "<td class=\"calendar_cell_middle\" nowrap=\"nowrap\" valign=\"top\" align=\"left\">\n";
-			print "<span id=\"startdate".$row."\" $do_display nowrap=\"nowrap\">";
+		print "<td class=\"calendar_cell_middle\"  valign=\"top\" align=\"left\">\n";
+			print "<span id=\"startdate".$row."\" $do_display >";
 			print "<input id=\"$str\" name=\"$str\"".$row." type=\"text\" size=\"15\" onclick=\"javascript:NewCssCal('$str', 'ddmmmyyyy')\"";
 			print "value=\"" . date('d-M-Y', $startStamp). "\" />";
 		print"</span></td>\n";
 
-		print "<td class=\"calendar_cell_middle\" nowrap=\"nowrap\" valign=\"top\" align=\"left\">\n";
-			print "<span id=\"endtime".$row."\" $do_display nowrap=\"nowrap\">";
+		print "<td class=\"calendar_cell_middle\"  valign=\"top\" align=\"left\">\n";
+			print "<span id=\"endtime".$row."\" $do_display >";
 			print "<input type=\"hidden\" id=\"osh".$row."\" name=\"osh".$row."\" value=\"".date("G",$endStamp)."\" />\n";
 			print "<input type=\"hidden\" id=\"osm".$row."\" name=\"osm".$row."\" value=\"".date("i",$endStamp)."\" />\n";
 			$str = "endhr".$row;
@@ -319,8 +319,8 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('NEW_DAILY
 		print"</span></td>\n";
 
 		$str = "enddt".$row;
-		print "<td class=\"calendar_cell_middle\" nowrap=\"nowrap\" valign=\"top\" align=\"left\">\n";
-			print "<span id=\"enddate".$row."\" $do_display nowrap=\"nowrap\">";
+		print "<td class=\"calendar_cell_middle\"  valign=\"top\" align=\"left\">\n";
+			print "<span id=\"enddate".$row."\" $do_display >";
 			print "<input id=\"$str\" name=\"$str\"".$row." type=\"text\" size=\"15\" onclick=\"javascript:NewCssCal('$str', 'ddmmmyyyy')\"";
 			print "value=\"" . date('d-M-Y', $endStamp). "\" />";
 		print"</span></td>\n";
@@ -342,7 +342,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('NEW_DAILY
 
 		// print delete button
 		print "<td class=\"calendar_delete_cell subtotal\">";
-			print "<span id=\"delete".$row."\" $do_display nowrap=\"nowrap\">";
+			print "<span id=\"delete".$row."\" $do_display >";
 			print "<a id=\"delete_row$rowIndex\" href=\"#\" onclick=\"onDeleteRow(this.id); return false;\">x</a>\n";
 		print"</span></td>\n";
 
@@ -407,7 +407,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('NEW_DAILY
 	$grandTotal = 0;
 	$col = 1;
 	$formattedTotal = Common::formatMinutes($dailyTotal);
-	print "<td class=\"calendar_totals_line_weekly subtotal\" nowrap=\"nowrap\" valign=\"bottom\" align=\"right\">";
+	print "<td class=\"calendar_totals_line_weekly subtotal\"  valign=\"bottom\" align=\"right\">";
 	print "<span class=\"calendar_total_value_weekly\" style=\"text-align:right;\" id=\"daily_total\" >$formattedTotal</span></td>";
 	printSpaceColumn();
 	//print "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";

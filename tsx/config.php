@@ -236,7 +236,7 @@ ob_end_clean();
 			</td>
 		</tr>
 		<tr>
-			<td align="left" class="label" nowrap width="90">&nbsp;</td>
+			<td align="left" class="label" width="90">&nbsp;</td>
 			<td class="configdesc">
 				<legend><?php echo JText::_('LDAP_DETAILS'); ?></legend>
 					<table width="100%" >
@@ -276,24 +276,24 @@ ob_end_clean();
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('LDAP_SEARCH_BASE'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('LDAP_SEARCH_BASE'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input id="LDAPBaseDN" type="text" name="LDAPBaseDN" value="<?php echo $resultset["LDAPBaseDN"]; ?>" style="width:100%;" />
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('LDAP_USERNAME_ATTRIBUTE'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('LDAP_USERNAME_ATTRIBUTE'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<?php echo $resultset["LDAPUsernameAttribute"]; ?>" size="30"/>
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('LDAP_SEARCH_SCOPE'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('LDAP_SEARCH_SCOPE'); ?>:</span>
 							</td>
 							<td width="100%">
 								<select id="LDAPSearchScope" name="LDAPSearchScope">
@@ -304,16 +304,16 @@ ob_end_clean();
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('FILTER'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('FILTER'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input id="LDAPFilter" type="text" name="LDAPFilter" value="<?php echo $resultset["LDAPFilter"]; ?>" style="width:100%;" />
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('LDAP_PROTOCOL_VERSION'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('LDAP_PROTOCOL_VERSION'); ?>:</span>
 							</td>
 							<td width="100%">
 								<select id="LDAPProtocolVersion" name="LDAPProtocolVersion">
@@ -324,8 +324,8 @@ ob_end_clean();
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('LDAP_USE_REFERRALS'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('LDAP_USE_REFERRALS'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input type="checkbox" name="LDAPReferralsCheck" id="LDAPReferralsCheck" <?php if ( $resultset['LDAPReferrals'] == 1 ) echo "checked=\"checked\""; ?> />
@@ -333,8 +333,8 @@ ob_end_clean();
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('LDAP_FALLBACK'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('LDAP_FALLBACK'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input type="checkbox" name="LDAPFallbackCheck" id="LDAPFallbackCheck" <?php if ( $resultset['LDAPFallback'] == 1 ) echo "checked=\"checked\""; ?> />
@@ -342,13 +342,13 @@ ob_end_clean();
 							</td>
 						</tr>
 						<tr>
-							<td colspan="2" nowrap>
-								<span class="label_grey" nowrap><i><?php echo JText::_('LDAP_REQUIRED_ACTIVEDIRECTORY'); ?>:</i></span>
+							<td colspan="2" >
+								<span class="label_grey" ><i><?php echo JText::_('LDAP_REQUIRED_ACTIVEDIRECTORY'); ?>:</i></span>
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('LDAP_USE_AUTHENTICATION'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('LDAP_USE_AUTHENTICATION'); ?>:</span>
 							</td>
 							<td width="100%">
 								<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <?php if ($resultset['LDAPBindByUser'] == 1) echo "checked=\"checked\""; ?> />
@@ -356,24 +356,24 @@ ob_end_clean();
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('LDAP_USERNAME'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('LDAP_USERNAME'); ?>:</span>
 							</td>
 							<td width="50%">
 								<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<?php echo $resultset["LDAPBindUsername"]; ?>" style="width:100%;" />
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap><?php echo JText::_('LDAP_PASSWORD'); ?>:</span>
+							<td >
+								<span class="label" ><?php echo JText::_('LDAP_PASSWORD'); ?>:</span>
 							</td>
 							<td width="50%">
 								<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<?php echo $resultset["LDAPBindPassword"]; ?>" style="width:100%;" AUTOCOMPLETE="OFF" />
 							</td>
 						</tr>
 						<tr>
-							<td nowrap>
-								<span class="label" nowrap>RFC 2255 URL:</span>
+							<td >
+								<span class="label" >RFC 2255 URL:</span>
 							</td>
 							<td width="100%">
 								<input id="LDAPUrl" name="LDAPUrl" type="text" value="" style="width:100%;" />
