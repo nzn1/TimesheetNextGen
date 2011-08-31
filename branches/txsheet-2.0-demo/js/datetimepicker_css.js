@@ -37,6 +37,18 @@ var EndYear = 5; // The last year of pickable date. if current year is 2011, the
 var CalPosOffsetX = 8; //X position offset relative to calendar icon, can be negative value
 var CalPosOffsetY = 8; //Y position offset relative to calendar icon, can be negative value
 
+
+includeJavaScript(cfg.relativeRoot+'/js/datetimepickerlang');
+
+/**
+ * a method of including a javascript file within a js script
+ * @param jsFile
+ */
+function includeJavaScript(jsFile) {
+	document.write('<script type="text/javascript" src="' + jsFile
+			+ '"></script>');
+}
+
 //Configurable parameters
 
 var WindowTitle = "Select Date";//Date Time Picker title.

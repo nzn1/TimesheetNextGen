@@ -186,7 +186,7 @@ function make_index($data,$order) {
 	}
 	return $index;
 }
-require_once("include/language/datetimepicker_lang.inc");
+//require_once("include/language/datetimepicker_lang.inc");
 ?>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <script type="text/javascript">
