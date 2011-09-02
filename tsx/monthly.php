@@ -90,11 +90,6 @@ if (isset($popup))
 	<tr>
 		<td ><h1 style="margin:0;padding:0;"><?php echo JText::_('MONTHLY_TIMESHEET'); ?></h1></td>
 
-		<td colspan="8" class="outer_table_heading">
-			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_MONTH').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif" />
-		</td>
 	</tr>
 	<tr>
 		<td >&nbsp;</td>
@@ -102,6 +97,11 @@ if (isset($popup))
 	<tr>
 		<td align="center" class="outer_table_heading">
 			<?php echo JText::_('CURRENT_MONTH').": "; ?><span style="color:#00066F;"><?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)); ?> </span> 
+		</td>
+		<td colspan="8" class="outer_table_heading">
+			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
+			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_MONTH').": "; ?>
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif" />
 		</td>
 		<td class="outer_table_heading"><?php echo JText::_('FILTER')?>:</td>
 		<td class="outer_table_heading">

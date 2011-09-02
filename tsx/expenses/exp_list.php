@@ -33,21 +33,24 @@ $client_id = gbl::getClientId();
 $year = $todayDateValues["year"];
 $month = $todayDateValues["mon"];
 $day = $todayDateValues["mday"];
+
 LogFile::write("Date values are: $year : $month : $day\n");
 
 if ($mode == "all") $mode = "monthly";
 if ($mode == "monthly") {
 	$startDate = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
+
 	$startStr = date("Y-m-d H:i:s",$startDate);
-	LogFile::write("Startdate/str=$startStr\n");
 
-	$endDate = Common::getMonthlyEndDate($todayDateValues);
+	$endDate = Common::getMonthlyEndDate(getdate ($startDate));
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	LogFile::write("Startdate/str=$startStr\n");
 	
-
 }
 if ($mode == "weekly") {
-	list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
+	$startDate = mktime(0,0,0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
+	
+	list($startDate,$endDate) = Common::getWeeklyStartEndDates($startDate);
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
@@ -230,9 +233,6 @@ ob_end_clean();
 <?php if(!$export_excel) { ?>
 <form action="<?php echo Config::getRelativeRoot();?>/expenses/exp_submit_action" method="post" name="subexpenses" >
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
-<input type="hidden" name="year" value="<?php echo $year; ?>">
-<input type="hidden" name="month" value="<?php echo $month; ?>">
-<input type="hidden" name="day" value="<?php echo $day; ?>">
 <input type="hidden" name="mode" value="<?php echo $mode; ?>">
 
 <table>
@@ -249,13 +249,26 @@ ob_end_clean();
 		</td>
 		<td>
 		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
+			&nbsp;&nbsp;&nbsp;
+			<?php
+			if ($mode == "monthly") {
+				echo JText::_('SELECT_OTHER_MONTH').": ";
+			?>
+				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
+			<?php 
+			}
+			else { 
+				echo JText::_('SELECT_OTHER_WEEK').": ";
+			?>
+				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
+			<?php
+			} 
+			?>
 			
 		</td>
 	<?php if (!$print): ?>
 		<td>
-			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="<?php echo Config::getRelativeRoot();?>images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
+			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="<?php echo Config::getRelativeRoot();?>/images/export_data.gif" name="esporta_dati" border=0><br>&rArr;&nbsp;Excel </a>
 		</td>
 		<td>
 			<?php print "<button onClick=\"popupPrintWindow()\">" .ucfirst(JText::_('PRINT_REPORT'))."</button></td>\n"; ?>
@@ -308,8 +321,10 @@ ob_end_clean();
 			" date, status, t.description as category FROM ".
 			tbl::getExpenseTable(). " e , " . tbl::getProjectTable(). " p, " . tbl::getClientTable()." c, " . tbl::getExpenseCategoryTable().
 			 " t WHERE user_id = '" . $uid . "' AND p.proj_id = e.proj_id AND c.client_id = e.client_id ".
+			" AND e.date >= '$startStr' AND e.date < '$endStr' " .
 			 " AND e.cat_id = t.cat_id ORDER BY e.proj_id, e.client_id, e.date";
 			//"' AND p.proj_id = '" . $proj_id .   "' AND c.client_id = '" . $client_id .
+			LogFile::write("\nexp_list db query: ". $query. "\n");
 	list($qh, $num) = dbQuery($query);
 
 	if ($num == 0) {
