@@ -19,6 +19,7 @@ $day = gbl::getDay();
 $year = gbl::getYear();
 $startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
 $todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
+$startDate = strtotime(date("d M Y",$todayDate));
 
 $tomorrowDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 days");
 
