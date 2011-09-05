@@ -69,9 +69,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('MONTHLY_T
 
 if (isset($popup))
 	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
-//require_once("include/language/datetimepicker_lang.inc");
 ?>
-
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <script type="text/javascript">
 	function CallBack_WithNewDateSelected(strDate) {
@@ -99,7 +97,7 @@ if (isset($popup))
 			<?php echo JText::_('CURRENT_MONTH').": "; ?><span style="color:#00066F;"><?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)); ?> </span> 
 		</td>
 		<td colspan="8" class="outer_table_heading">
-			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
+			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_MONTH').": "; ?>
 			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif" />
 		</td>
