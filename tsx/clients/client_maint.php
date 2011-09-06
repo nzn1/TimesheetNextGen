@@ -76,7 +76,7 @@ if ($num == 0) {
 			print "<tr class=\"diff\">";
 		else
 			print "<tr>";
-		print "<td><a href=\"javascript:void(0)\" onclick=window.open(\"client_info?client_id=$data[client_id]\",\"ClientInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=260\")>$organisationField</a></td>";
+		print "<td><a href=\"javascript:void(0)\" onclick=\"window.open('client_info?client_id=$data[client_id]','ClientInfo','location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=260')\">$organisationField</a></td>";
 		print "<td>$contactNameField</td>";
 		print "<td>$emailField</td>";
 		print "<td>$phoneField</td>";

@@ -17,10 +17,8 @@
 	<tr>
 		<td> </td>
 		<td class="timesheet_logo" width="30%">
-			<?php 
-				$ver = Common::getVersion();
-		
-			echo "TimesheetNextGen &nbsp;&nbsp; v$ver";
+			<?php 		
+			 echo "TimesheetNextGen &nbsp;&nbsp; v".Config::getVersion();
 			?>
 		</td>
 		<td> </td>

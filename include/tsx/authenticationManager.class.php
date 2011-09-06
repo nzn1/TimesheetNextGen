@@ -8,11 +8,6 @@ if( file_exists( Config::getRelativeRoot() . "/siteclosed")) {
 	gbl::setSiteClosed(0);
 }
 	
-require("table_names.inc");
-if(!class_exists('Site')){
-	require("common.inc");
-}
-
 /**
 * A function to perform enumeration defines easily. Use it as follows:
 *

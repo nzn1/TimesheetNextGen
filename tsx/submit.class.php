@@ -22,9 +22,9 @@ class SubmitClass{
 	}
 	
 	public function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
-		print "<a href=\"javascript:void(0)\" ONCLICK=window.open(\"" . $script .
-			"?$variable=$info\",\"$title\",\"location=0,directories=no,status=no,scrollbar=yes," .
-			"menubar=no,resizable=1,width=500,height=200\")>";
+		print "<a href=\"javascript:void(0)\" onclick=\"window.open('".$script.
+			"?$variable=$info','$title','location=0,directories=no,status=no,scrollbar=yes," .
+			"menubar=no,resizable=1,width=500,height=200')\">";
 	}
 	
 	public function make_daily_link($ymdStr, $proj_id, $string) {

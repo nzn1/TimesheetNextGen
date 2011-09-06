@@ -34,7 +34,9 @@ class Session
 	}
 
 	public function isLoggedIn() {
-		return $this->loggedIn;
+		
+    return Site::getAuthenticationManager()->isLoggedIn();
+    //return $this->loggedIn;
 	}
 
 	/**
