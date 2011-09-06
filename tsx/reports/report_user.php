@@ -261,7 +261,13 @@ if (isset($popup))
 
 <?php if(!$export_excel) { ?>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
-<form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="get">
+<script type="text/javascript">
+	function CallBack_WithNewDateSelected(strDate) 
+	{
+		document.subreport.submit();
+	}
+</script>
+<form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="post" name="subreport">
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
 <input type="hidden" name="year" value="<?php echo $year; ?>" />
 <input type="hidden" name="month" value="<?php echo $month; ?>" />
@@ -291,16 +297,23 @@ if (isset($popup))
 							</table>
 						</td>
 						<td align="center" class="outer_table_heading">
+		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
+			&nbsp;&nbsp;&nbsp;
 						<?php
-							//if ($mode == "weekly") {
-								//$sdStr = date("M d, Y",$startDate);
-								//just need to go back 1 second most of the time, but DST 
-								//could mess things up, so go back 6 hours...
-								//$edStr = date("M d, Y",$endDate - 6*60*60); 
-								//echo "Week: $sdStr - $edStr"; 
-							//} else { ?>
-								<input id="date1" name="date1" type="text" size="25" onclick="javascript:NewCssCal('date1', 'ddmmmyyyy')" 
-								value="<?php echo date('d-M-Y', $startDate); ?>" />
+							if ($mode == "monthly") {
+								echo JText::_('SELECT_OTHER_MONTH').": ";
+						?>
+							<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
+						<?php 
+							}
+							else { 
+								echo JText::_('SELECT_OTHER_WEEK').": ";
+						?>
+								<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
+						<?php
+							} 
+						?>
+
 								</td>
 								<td align="center"  class="outer_table_heading">
 								<input id="sub" type="submit" name="Change Date"></input>

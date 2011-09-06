@@ -66,8 +66,7 @@ function popupPrintWindow() {
 //-->
 </script>
 
-<html>
-<head>
+
 <title>Report: Monthly Absences</title>
 
 </head>
@@ -90,8 +89,14 @@ function popupPrintWindow() {
 
 
 ?>
-
-<form action="<?php echo Config::getRelativeRoot(); ?>/report_absences" method="get">
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
+<script type="text/javascript">
+	function CallBack_WithNewDateSelected(strDate) 
+	{
+		document.subabsences.submit();
+	}
+</script>
+<form action="<?php echo Config::getRelativeRoot(); ?>/reports/report_absences" method="post" name="subabsences" >
 <input type="hidden" name="month" value="<?php echo $month; ?>" />
 <input type="hidden" name="year" value="<?php echo $year; ?>" />
 <input type="hidden" name="day" value="<?php echo $day; ?>" />
@@ -102,10 +107,17 @@ function popupPrintWindow() {
 		<!--  td align="left" width="200" -->
 				<!--  table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2" -->
 			<td align="right" width="0" class="outer_table_heading">User:</td>
-			<td align="left" width="100%"> <?php Common::user_select_droplist($uid, false); ?>
+			<td align="left" > <?php Common::user_select_droplist($uid, false); ?>
 			</td>
 			<td align="center" class="outer_table_heading">
-				<?php echo date('F Y',$todayDate); ?>
+			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $todayDate); ?>" />
+			&nbsp;&nbsp;&nbsp;
+			<?php
+				echo JText::_('SELECT_OTHER_MONTH').": ";
+			?>
+				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
+				</td><td><td>	&nbsp;&nbsp;&nbsp;</td><td>
+			<?php echo date('F Y',$todayDate); ?>
 			</td>
 			<?php if (!$print): 
 				//<td  align="center" >
