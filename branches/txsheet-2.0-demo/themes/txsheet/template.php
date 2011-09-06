@@ -41,7 +41,7 @@ html {
   <![endif]-->
 <!--this javascript is to fix an IE 6 PNG alpha transparency renderring bug-->
 <!--[if lt IE 7.]>
-    <script defer type="text/javascript" src="/uybb/javascript/pngfix.js"></script>
+    <script defer type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/pngfix.js"></script>
   <![endif]-->
 <!--[if lt IE 8.]>
   <style type="text/css">

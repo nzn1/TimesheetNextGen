@@ -76,6 +76,8 @@ class Common{
 					"     end_time   >  '$endStr')) " .
 				"ORDER BY $order_by";
 
+    //ppr($query);
+    
 		list($my_qh, $num) = dbQuery($query);
 		return array($num, $my_qh);
 	}
@@ -1160,9 +1162,9 @@ class Common{
 			if($info) {
 				print "</td><td width=\"0\">";
 				print "<input type=\"button\" name=\"info\" value=\"Info\"";
-				print "onclick=window.open(\"".Config::getRelativeRoot()."/client_info?client_id=$clientId\",";
-				print "\"Client_Info\",";
-				print "\"location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200\") />";
+				print "onclick=\"window.open('".Config::getRelativeRoot()."/client_info?client_id=$clientId',";
+				print "'Client_Info',";
+				print "'location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200') />";
 			}
 			//print "</td></tr></table>";
 		}
@@ -1487,14 +1489,8 @@ class Common{
 	}
 	
 	public static function getVersion() {
-
-		list($qh, $num) = dbQuery("SELECT version FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-		if ($num == 0)
-			return 0;
-
-		//get the first result
-		$data = dbResult($qh);
-		return $data["version"];
+    trigger_error('the method getVersion() is deprecated.  Replace with Config::getVersion()<br />'.ppr(debug_backtrace(),'trace',true));
+    return Config::getVersion();
 	}
 
 	public static function getWeeklyStartEndDates($time) {

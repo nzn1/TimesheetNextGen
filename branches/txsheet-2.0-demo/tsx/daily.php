@@ -1,4 +1,3 @@
-<h1><?php echo JText::_('DAILY_TIMESHEET'); ?></h1>
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
@@ -57,6 +56,10 @@ PageElements::setTheme('newcss');
 ob_end_clean();
 PageElements::setBodyOnLoad('doOnLoad();');
 ?>
+
+<h1><?php echo JText::_('DAILY_TIMESHEET'); ?></h1>
+
+<div style="width:50%; margin:auto auto;">
 <?php
 	$currentDate = $todayDate;
 	$fromPopup = "false";
@@ -66,6 +69,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
   //($currentDate,$fromPopup=false,$enableShowHideLink = true,$stopwatch=false
   $clock->createClockOnOff(null,false,true,false); 
 ?>
+</div>
 
 <form name="dayForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
 <!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
@@ -80,7 +84,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		<td  class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-M-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_DAY').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif">
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
 			</td>
 
 	</tr>
@@ -89,7 +93,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	<table>
 		<thead>
 		<tr>
-			<th><?php print ucfirst(JText::_('CLIENT')) ?></td>
+			<th><?php print ucfirst(JText::_('CLIENT')) ?></th>
 			<th><?php print ucfirst(JText::_('PROJECT')) ?></th>
 			<th><?php print ucfirst(JText::_('TASK')) ?></th>
 			<th><?php print ucwords(JText::_('WORK_DESCRIPTION')) ?></th>
@@ -119,14 +123,16 @@ if ($num == 0) {
 	print "		<td>&nbsp;</td>\n";
 	print "		<td>&nbsp;</td>\n";
 	print "		<td>&nbsp;</td>\n";
-	$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
+	$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 								"?client_id=".gbl::getClientId()."".
 								"&amp;proj_id=".gbl::getProjId()."".
 								"&amp;task_id=".gbl::getTaskId()."".
 								"$ymdStrSd".
-								"&amp;destination=$_SERVER[PHP_SELF]".
-								"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
-	print "	<td><a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;</td>\n";
+								"&amp;destination=".$_SERVER['REQUEST_URI'].
+								"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
+	
+  
+  print "	<td><a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;</td>\n";
 	
 	print "	</tr>\n";
 	//print "</table>\n";
@@ -241,13 +247,13 @@ else {
 				// submitted or approved times cannot be edited
 				print  $data['subStatus'] . "&nbsp;\n";
 			}
-			$popup_href = "javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/clock_popup".
+			$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".
 											"$ymdStrSd".
 											"&amp;destination=$_SERVER[PHP_SELF]".
-											"\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310\") dummy=\"";
+											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 			print "	<a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;\n";
 			print "</td>";
 

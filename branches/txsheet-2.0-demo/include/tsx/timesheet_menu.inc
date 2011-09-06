@@ -165,11 +165,14 @@ $menuStr = JText::_('CHANGE_PASSWD');
 if (!Site::getAuthenticationManager()->ldapCfgInfo['useLDAP']==1)
 	Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/changepwd", Config::getRelativeRoot()."/images/icon_key.gif"));
 
-$menuStr = JText::_('LOGOUT');
-Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/logout?logout=true", Config::getRelativeRoot()."/images/icon_logout.gif"));
-
+if(Site::getSession()->isLoggedIn()){
+  $menuStr = JText::_('LOGOUT');
+  Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/logout?logout=true", Config::getRelativeRoot()."/images/icon_logout.gif"));
+}
+else{
 $menuStr = JText::_('LOGIN');
 Site::getCommandMenu()->add(new IconTextCommand($menuStr, true, Config::getRelativeRoot()."/login", Config::getRelativeRoot()."/images/icon_logout.gif"));
+}
 // !!!! Delete to here once we have all the needed ACLs defined !!!!
 
 if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {

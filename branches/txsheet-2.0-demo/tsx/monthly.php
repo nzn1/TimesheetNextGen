@@ -61,6 +61,8 @@ $firstPrintedDate = strtotime(date("d M Y H:i:s",$startDate) . " -$leadInDays da
 
 $endDate = Common::getMonthlyEndDate($dateValues);
 $endStr = date("Y-m-d H:i:s",$endDate);
+//ppr($endDate,'end date');
+//ppr($endStr,'end str');
 
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
@@ -79,7 +81,7 @@ if (isset($popup))
 <form name="monthForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
 <!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
 <!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
-<input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
+<!--<input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />-->
 
 
 
@@ -222,7 +224,7 @@ if (isset($popup))
 
 		$ymdStr = "&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".$curDay;
 
-		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/popup".
+		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".
@@ -265,6 +267,8 @@ if (isset($popup))
 		$i=$a;
 		$data = dbResult($qh,$i);
 
+    //ppr($data);
+    
 		$todaysTotal = 0;
 
 		if($i<$num) {

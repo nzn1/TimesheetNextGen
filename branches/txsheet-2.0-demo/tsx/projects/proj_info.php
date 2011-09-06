@@ -148,7 +148,7 @@ ob_end_clean();
 			if ($num_tasks > 0) {
 				while ($task_data = dbResult($qh3)) {
 					$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
-					print "<a href=\"javascript:void(0)\" onclick=window.open(\"".Config::getRelativeRoot()."/task_info?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br />";
+					print "<a href=\"javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/task_info?proj_id=$data[proj_id]&amp;task_id=$task_data[task_id]','TaskInfo','location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220')\">$taskName</a><br />";
 				}
 			}
 			else

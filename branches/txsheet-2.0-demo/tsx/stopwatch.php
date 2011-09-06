@@ -20,10 +20,7 @@ if ($proj_id == 0)
 	$task_id = 0;
 
 ob_start();
-?>
-
-<?php
-include('tsx/client_proj_task_javascript.class.php');
+require(Config::getDocumentRoot().'/tsx/client_proj_task_javascript.class.php');
 $js = new ClientProjTaskJavascript();
 $js->printJavascript();
 ?>
@@ -61,10 +58,11 @@ function resizePopupWindow() {
 <?php
 
 $head = ob_get_contents();
+ppr($head);
 PageElements::setHead($head);
 ob_end_clean();                                             
 PageElements::setBodyOnLoad("doOnLoad();");
-PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('STOPWATCH')." | ".gbl::getContextUser()."</title>");
+PageElements::appendHead("<title>".Config::getMainTitle()." | ".JText::_('STOPWATCH')." | ".gbl::getContextUser()."</title>");
 ?>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" id="outer_table">
