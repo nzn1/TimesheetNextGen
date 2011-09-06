@@ -17,9 +17,9 @@
 var winCal;
 var dtToday;
 var Cal;
-var MonthName;
-var WeekDayName1;
-var WeekDayName2;
+//var MonthName;
+//var WeekDayName1;
+//var WeekDayName2;
 var exDateTime;//Existing Date and Time
 var selDate;//selected date. version 1.7
 var calSpanID = "calBorder"; // span ID
@@ -660,7 +660,7 @@ function RenderCssCal(bNewCal)
 	if (Cal.MonthOnly === true)  // print a close and ok button
 	{
 		vCalTime += "<tr><td colspan='7' style=\"text-align:center;\"><input style='width:60px;font-size:12px;' onClick='javascript:closewin(\"" + Cal.Ctrl + "\");'  type=\"button\" value=\"OK\">&nbsp;<input style='width:60px;font-size:12px;' onClick='javascript: winCal.style.visibility = \"hidden\"' type=\"button\" value=\"Cancel\"></td></tr>";
-
+		vCalData = "";
 	    vCalClosing += "</tr>";
 	}
 	else
