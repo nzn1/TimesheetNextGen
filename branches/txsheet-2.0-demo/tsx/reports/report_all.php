@@ -260,7 +260,14 @@ PageElements::setHead("<title>".Config::getMainTitle()." | All hours this month<
 ?>
 
 <?php if(!$export_excel) { ?>
-<form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="get">
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
+<script type="text/javascript">
+	function CallBack_WithNewDateSelected(strDate) 
+	{
+		document.subreport.submit();
+	}
+</script>
+<form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="post" name="subreport">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="face_padding_cell">
@@ -270,11 +277,19 @@ PageElements::setHead("<title>".Config::getMainTitle()." | All hours this month<
 						<td width="15%">&nbsp;</td>
 						<td align="left" class="outer_table_heading">
 						<?php echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
+						</td><td><input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $todayDate); ?>" />
+			&nbsp;&nbsp;&nbsp;
+			<?php
+				echo JText::_('SELECT_OTHER_MONTH').": ";
+			?>
+				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
+				<td>	&nbsp;&nbsp;&nbsp;
+						
 						</td>
 						<?php if (!$print): ?>
 							<td  align="right" width="15%" >
 								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
-								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
+								</td><td><button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>
 						<?php endif; ?>
 					</tr>
