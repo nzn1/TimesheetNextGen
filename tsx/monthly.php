@@ -20,10 +20,12 @@ if (gbl::getProjId() != 0) { // id 0 means 'All Projects'
 	list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getAssignmentsTable()." WHERE proj_id='".gbl::getProjId()."' AND username='".gbl::getContextUser()."'");
 	if ($num < 1)
 		Common::errorPage(JText::sprintf('NOT_ASSIGNED_TO_IT',JText::_('PROJECT')));
-} else
+} 
+else{
 	gbl::setTaskId(0);
+}
 //get the context date
-	if (isset($_REQUEST['date1'])) {
+if (isset($_REQUEST['date1'])) {
 	 $date1 = $_REQUEST["date1"];
 	$newdate = explode("-", $date1);
 	$year=$newdate[2];
@@ -36,6 +38,23 @@ else {
 	$day = gbl::getDay(); 
 	$year = gbl::getYear();
 }
+
+// Calculate the previous month.
+$last_month = $month - 1;
+$last_year = $year;
+if (!checkdate($last_month, 1, $last_year)) {
+	$last_month += 12;
+	$last_year --;
+}
+
+//calculate the next month
+$next_month = $month+1;
+$next_year = $year;
+if (!checkdate($next_month, 1, $next_year)) {
+	$next_year++;
+	$next_month -= 12;
+}
+
 $startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
 //work out the start date by subtracting days to get to beginning of week
 $todayDate = mktime(0, 0, 0, $month, 1, $year);
@@ -70,7 +89,8 @@ $CfgTimeFormat = Common::getTimeFormat();
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('MONTHLY_TIMESHEET')." | ".gbl::getContextUser()."</title>");
 
 if (isset($popup))
-	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+	PageElements::setBodyOnLoad("window.open('".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id',"
+      ."'Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205');");
 ?>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <script type="text/javascript">
@@ -96,13 +116,16 @@ if (isset($popup))
 	</tr>
 	<tr>
 		<td align="center" class="outer_table_heading">
-			<?php echo JText::_('CURRENT_MONTH').": "; ?><span style="color:#00066F;"><?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)); ?> </span> 
+			<?php echo JText::_('Date').": "; ?>
+        <span style="color:#00066F;">
+          <a href="<? echo Rewrite::getShortUri()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$last_year."&amp;month=".$last_month;?>" ><img src="{relativeRoot}/images/cal_reverse.gif" alt="prev" /></a>
+          <?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)); ?>
+          <a href="<? echo Rewrite::getShortUri()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$next_year."&amp;month=".$next_month;?>" ><img src="{relativeRoot}/images/cal_forward.gif" alt="next" /></a>
+          <img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif" />
+          <input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
+        </span> 
 		</td>
-		<td colspan="8" class="outer_table_heading">
-			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_MONTH').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif" />
-		</td>
+		
 		<td class="outer_table_heading"><?php echo JText::_('FILTER')?>:</td>
 		<td class="outer_table_heading">
 				<span style="color:#00066F;"><?php echo JText::_('CLIENT').': '; ?></span>
