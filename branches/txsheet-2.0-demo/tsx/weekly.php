@@ -94,14 +94,14 @@ function CallBack_WithNewDateSelected(strDate)
 		</td>
 		<td width="5%" align="right"><?php echo JText::_('FILTER')?>:</td>
 
-		<td width="25%" align="left">
+		<td  align="left">
 		<?php 
-      echo ucfirst(JText::_('CLIENT')).':';
+      echo ucfirst(JText::_('CLIENT')).':</td><td width="25%" align="left">';
       Common::client_select_list(gbl::getClientId(), gbl::getContextUser(), false, false, true, false, "submit();"); ?>
 		</td>
-		<td width="25%" align="left">
+		<td  align="left">
       <?php 
-      echo ucfirst(JText::_('PROJECT')).':';
+      echo ucfirst(JText::_('PROJECT')).':</td><td width="25%" align="left">';
       Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, "submit();");
       ?>
     </td>
