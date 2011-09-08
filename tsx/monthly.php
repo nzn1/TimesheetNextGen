@@ -121,7 +121,7 @@ if (isset($popup))
           <a href="<? echo Rewrite::getShortUri()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$last_year."&amp;month=".$last_month;?>" ><img src="{relativeRoot}/images/cal_reverse.gif" alt="prev" /></a>
           <?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)); ?>
           <a href="<? echo Rewrite::getShortUri()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$next_year."&amp;month=".$next_month;?>" ><img src="{relativeRoot}/images/cal_forward.gif" alt="next" /></a>
-          <img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif" />
+          <img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'dropdown', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif" />
           <input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
         </span> 
 		</td>
