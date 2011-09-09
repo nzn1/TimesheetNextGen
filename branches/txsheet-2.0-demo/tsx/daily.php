@@ -2,7 +2,7 @@
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
-
+PageElements::setTheme('txsheet2');
 include('daily.class.php');
 $dc = new DailyClass();
 
@@ -10,12 +10,10 @@ $dc = new DailyClass();
 //  gbl::getMonth() gbl::getDay() gbl::getYear() gbl::getClientId() gbl::getProjId() gbl::getTaskId()
 
 //check that project id is valid
-if (gbl::getProjId() == 0)
+if (gbl::getProjId() == 0){
 	gbl::setTaskId(0);
+}
 
-$month = gbl::getMonth();
-$day = gbl::getDay(); 
-$year = gbl::getYear();
 $startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
 $todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $startDate = strtotime(date("d M Y",$todayDate));
@@ -31,7 +29,6 @@ ob_start();
 include('tsx/client_proj_task_javascript.class.php');
 $js = new ClientProjTaskJavascript();
 $js->printJavascript();
-//require_once("include/language/datetimepicker_lang.inc");
 
 ?>
 <script type="text/javascript">
@@ -52,7 +49,7 @@ $js->printJavascript();
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <?php 
 PageElements::setHead(PageElements::getHead().ob_get_contents());
-PageElements::setTheme('newcss');
+//PageElements::setTheme('newcss');
 ob_end_clean();
 PageElements::setBodyOnLoad('doOnLoad();');
 ?>
@@ -71,6 +68,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 ?>
 </div>
 
+<div id="daily">
 <form name="dayForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
 <!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
 <!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
@@ -89,20 +87,20 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	</tr>
 </table>
 
-	<table>
+	<table class="dailyTable">
 		<thead>
-		<tr>
+		<tr class="table_head">
 			<th><?php print ucfirst(JText::_('CLIENT')) ?></th>
 			<th><?php print ucfirst(JText::_('PROJECT')) ?></th>
 			<th><?php print ucfirst(JText::_('TASK')) ?></th>
 			<th><?php print ucwords(JText::_('WORK_DESCRIPTION')) ?></th>
 			<th class="alignmiddle"><?php print ucfirst(JText::_('START')) ?></th>
-			<th  class="alignmiddle"><?php print ucfirst(JText::_('END')) ?></th>
-			<th  class="alignmiddle"><?php print ucfirst(JText::_('TOTAL')) ?></th>
-			<th  class="alignmiddle"><i><?php print ucfirst(JText::_('ACTIONS')) ?></i></th>
+			<th class="alignmiddle"><?php print ucfirst(JText::_('END')) ?></th>
+			<th class="alignmiddle"><?php print ucfirst(JText::_('TOTAL')) ?></th>
+			<th class="alignmiddle"><i><?php print ucfirst(JText::_('ACTIONS')) ?></i></th>
 		</tr>
 		</thead>
-		<tbody>
+
 <?php
 
 //Get the data
@@ -113,28 +111,26 @@ $order_by_str = "start_stamp, ".tbl::getClientTable().".organisation, ".tbl::get
 list($num, $qh) = Common::get_time_records($startStr, $endStr, gbl::getContextUser(), 0, 0, $order_by_str);
 
 if ($num == 0) {
-	$ymdStrSd = "&amp;year=".$year . "&amp;month=".$month . "&amp;day=".$day;
-	print "	<tr>\n";
-	print "		<td><i>".JText::_('NO_TIME_RECORDED')."</i></td>\n";
-	print "		<td>&nbsp;</td>\n";
-	print "		<td>&nbsp;</td>\n";
-	print "		<td class=\"calendar_cell_middle\" width=\"10%\">&nbsp;</td>\n";
-	print "		<td>&nbsp;</td>\n";
-	print "		<td>&nbsp;</td>\n";
-	print "		<td>&nbsp;</td>\n";
-	$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
+  $popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 								"?client_id=".gbl::getClientId()."".
 								"&amp;proj_id=".gbl::getProjId()."".
 								"&amp;task_id=".gbl::getTaskId()."".
-								"$ymdStrSd".
+								"&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".gbl::getDay().
 								"&amp;destination=".urlencode($_SERVER['REQUEST_URI']).
 								"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
+	?>
+  <tr>
+    <td><i><?php echo JText::_('NO_TIME_RECORDED');?></i></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td width="10%">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>  
+    <td class="calendar_cell_disabled_right align_right"><a href=" <?php echo $popup_href;?>" class="action_link"> <?php echo ucfirst(JText::_('ADD'));?> </a>&nbsp;</td>
 	
-  
-  print "	<td><a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;</td>\n";
-	
-	print "	</tr>\n";
-	//print "</table>\n";
+	</tr>
+<?php
 }
 else {
 	$last_task_id = -1;
@@ -185,43 +181,43 @@ else {
 				//all day - no one should work this hard!
 				$taskTotal += get_duration($todayDate, $tomorrowDate);  
 
-				$dc->open_cell_middle_td(); //<td....>
+				echo "<td class=\"alignmiddle\">";
 				echo "<font color=\"#909090\"><i>" . $formattedStartTime . ",";
 				$dc->make_daily_link($ymdStrSd,gbl::getProjId(),date("d-M",$data["start_stamp"])); 
 				echo "</i></font></td>" ;
 
-				$dc->open_cell_middle_td(); //<td....>
+				echo "<td class=\"alignmiddle\">";
 				echo "<font color=\"#909090\"><i>" . $formattedEndTime . ",";
 				$dc->make_daily_link($ymdStrEd,gbl::getProjId(),date("d-M",$data["end_stamp"])); 
 				echo "</i></font></td>" ;
 
-				$dc->open_cell_middle_td(); //<td....>
+				echo "<td class=\"alignmiddle\">";
 				echo Common::formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " .
 					Common::formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} //if end time is not today
 			  elseif ($data["end_stamp"] > $tomorrowDate) {
 				$taskTotal = Common::get_duration($data["start_stamp"],$tomorrowDate);
 
-				$dc->open_cell_middle_td(); //<td....>
+				echo "<td class=\"alignmiddle\">";
 				echo $formattedStartTime . "</td>" ;
 
-				$dc->open_cell_middle_td(); //<td....>
+				echo "<td class=\"alignmiddle\">";
 				echo "<font color=\"#909090\"><i>" . $formattedEndTime . "," ;
 				$dc->make_daily_link($ymdStrEd,gbl::getProjId(),date("d-M",$data["end_stamp"])); 
 				echo "</i></font></td>" ;
 
-				$dc->open_cell_middle_td(); //<td....>
+				echo "<td class=\"alignmiddle\">";
 				echo  Common::formatMinutes($taskTotal). "<font color=\"#909090\"><i> of " . Common::formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} //elseif start time is not today
 			  elseif ($data["start_stamp"] < $todayDate) {
 				$taskTotal = Common::get_duration($todayDate,$data["end_stamp"]);
 
-				$dc->open_cell_middle_td(); //<td....>
+				echo "<td class=\"alignmiddle\">";
 				echo "<font color=\"#909090\"><i>" . $formattedStartTime . "," ;
 				$dc->make_daily_link($ymdStrSd,gbl::getProjId(),date("d-M",$data["start_stamp"])); 
 				echo "</i></font></td>"; 
 
-				$dc->open_cell_middle_td(); //<td....>
+				echo "<td class=\"alignmiddle\">";
 				echo $formattedEndTime . "</td>" ;
 
 				$dc->open_cell_middle_td(); //<td....>
@@ -229,15 +225,12 @@ else {
 					Common::formatMinutes($data["duration"]) . "</i></font></td>\n";
 			} else {
 				$taskTotal = $data["duration"];
-				$dc->open_cell_middle_td(); //<td....>
-				print "$formattedStartTime</td>\n";
-				$dc->open_cell_middle_td(); //<td....>
-				print "$formattedEndTime</td>\n";
-				$dc->open_cell_middle_td(); //<td....>
-				print Common::formatMinutes($data["duration"]) . "</td>\n";
+				echo "<td class=\"align_right\">".$formattedStartTime."</td>\n";
+				echo "<td class=\"align_right\">".$formattedEndTime."</td>\n";
+				echo "<td class=\"align_right\">".Common::formatMinutes($data["duration"]) . "</td>\n";
 			}
 
-			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" >\n";
+			print "<td class=\"calendar_cell_disabled_right actions\">\n";
 			if ($data['subStatus'] == "Open") {
 				print "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">".ucfirst(JText::_('EDIT'))."</a>,&nbsp;\n";
 				//print "	<a href=\"".Config::getRelativeRoot()."/delete?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete, </a>\n";
@@ -258,20 +251,22 @@ else {
 
 			//add to todays total
 			$todaysTotal += $taskTotal;
-		} else {
-			if ($CfgTimeFormat == "12") 
+		} 
+    else {
+			if ($CfgTimeFormat == "12"){ 
 				$formattedStartTime = date("g:iA",$data["start_stamp"]);
-			else
+			}
+			else{
 				$formattedStartTime = date("G:i",$data["start_stamp"]);
+			}
+			?>
+			<td class="align_right"><?php echo $formattedStartTime;?></td>
+			<td class="align_right">&nbsp;</td>
+			<td class="align_right">&nbsp;</td>
 			
-			$dc->open_cell_middle_td(); //<td....>
-			print "$formattedStartTime</td>\n";
-			$dc->open_cell_middle_td(); //<td....>
-			print "&nbsp;</td>\n";
-			$dc->open_cell_middle_td(); //<td....>
-			print "&nbsp;</td>\n";
-			print "<td>\n";
-			/**
+      <td class="actions">
+			<?php
+      /**
 			 * Update by robsearles 26 Jan 2008
 			 * Added a "Clock Off" link to make it easier to stop timing a task
 			 * Common::getRealTodayDate() is defined in common.inc
@@ -282,8 +277,14 @@ else {
 						'&amp;clock_off_check=on&amp;clock_off_radio=now" class="action_link\">'.JText::_('CLOCK_OFF').'</a>, ';
 				print $stop_link;
 			}
-			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">".ucfirst(JText::_('DELETE'))."</a>\n";
-			print "</td>";
+			else{
+        echo '<small>clock off link currently disabled</small>';
+      }
+			
+      echo "<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">".ucfirst(JText::_('DELETE'))."</a>\n";
+			?>
+      </td>
+    <?php
 		}
 
 		print "</tr>";
@@ -292,9 +293,11 @@ else {
 	print "<tr class=\"totalr\"><td class=\"textproject\" colspan=\"7\">\n";
 	print " Daily Total: <span>" . Common::formatMinutes($todaysTotal) . "</span></td>\n";
 	print "	<td>&nbsp;</td>\n";
-	print "</tr></tbody>\n";
-	print "</table>";
+	print "</tr>\n";
+	
 }
 ?>
 
+	</table>
 </form>
+</div><!--close daily div-->

@@ -279,4 +279,8 @@ function relRoot(){
 	echo Config::getRelativeRoot();
 }
 
+function ampersandEncode($str){
+  return htmlspecialchars($str); 
+}
+
 ?>
