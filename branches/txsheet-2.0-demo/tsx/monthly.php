@@ -257,7 +257,7 @@ if (isset($popup))
 											"&amp;year=".gbl::getYear()."".
 											"&amp;month=".gbl::getMonth()."".
 											"&amp;day=".gbl::getDay()."".
-											"&amp;destination=".$_SERVER['PHP_SELF'].
+											"&amp;destination=".urlencode(Rewrite::getShortUri()).
 											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 
 		print "<tr><td valign=\"top\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";

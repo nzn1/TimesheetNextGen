@@ -573,7 +573,7 @@ function create_database_one() {
 					<?php if($tables>=6) { ?>
 					<tr><td width="20">&nbsp;</td> <td>
 						or, if you need to upgrade, go copy the database_credentials.inc file from the existing installation, then
-						<a href="<?php echo $_SERVER['PHP_SELF']; ?>">click here</a></td>
+						<a href="<?php echo Rewrite::getShortUri(); ?>">click here</a></td>
 					<?php } ?>
 					</table><br />
 				<?php

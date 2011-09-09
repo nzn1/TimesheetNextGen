@@ -109,7 +109,7 @@ PageElements::setBodyOnLoad("doOnLoad();");
 					</tr>
 				</table>
 
-		<form name="editForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" id="theForm">
+		<form name="editForm" action="<?php echo Rewrite::getShortUri(); ?>" method="post" id="theForm">
 		<input type="hidden" name="year" value="<?php echo $year; ?>" />
 		<input type="hidden" name="month" value="<?php echo $month; ?>" />
 		<input type="hidden" name="day" value="<?php echo $day; ?>" />

@@ -53,7 +53,7 @@ function make_index($data,$order) {
 	return $index;
 }
 
-$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr";
+$Location= Rewrite::getShortUri()."?uid=$uid$ymdStr";
 gbl::setPost("uid=$uid");
 
 ?>

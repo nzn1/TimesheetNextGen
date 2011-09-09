@@ -110,7 +110,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS'
 PageElements::setTheme('newcss');
 ?>
 
-<form method="post" name="projectFilter" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
+<form method="post" name="projectFilter" action="<?php echo Rewrite::getShortUri(); ?>">
 	<input type="hidden" name="page" value="English" />
 
 <h3><?php echo JText::_('PROJECTS'); ?></h3>

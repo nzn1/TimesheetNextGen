@@ -221,7 +221,7 @@ function make_index($data,$order) {
 	return $index;
 }
 
-$Location="$_SERVER[PHP_SELF]?$ymdStr&amp;orderby=$orderby";
+$Location=" Rewrite::getShortUri()."?$ymdStr&amp;orderby=$orderby";
 gbl::setPost("&amp;orderby=$orderby");
 
 if(!$export_excel) 
@@ -267,7 +267,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | All hours this month<
 		document.subreport.submit();
 	}
 </script>
-<form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="post" name="subreport">
+<form action="<?php echo Rewrite::getShortUri(); ?>" method="post" name="subreport">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="face_padding_cell">
@@ -314,21 +314,21 @@ else {  //create Excel header
 						$projPost="$ymdStr&amp;orderby=project";
 						$taskPost="$ymdStr&amp;orderby=task";
 						if($orderby=='username'): ?>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
 							<td class="inner_table_column_heading">First Name</td>
 							<td class="inner_table_column_heading">Last Name</td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
 						<?php elseif($orderby=='project'): ?>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
 							<td class="inner_table_column_heading">First Name</td>
 							<td class="inner_table_column_heading">Last Name</td>
 						<?php elseif($orderby=='task'): ?>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
 							<td class="inner_table_column_heading">First Name</td>
 							<td class="inner_table_column_heading">Last Name</td>
 						<?php else: ?>

@@ -316,7 +316,7 @@
 			var minutes = hours * 60 + mins;
 
 			if (minutes > minsinday) {
-				alert("<?php echo JText::sprintf('TOO_MUCH_TIME_FOR_DAY', minsinday/60) ?>");
+				alert(jtext.sprintf('TOO_MUCH_TIME_FOR_ROW', minsinday/60));
 				document.getElementById("hours_row" + row + "_col" + i).value="";  //=true;
 				document.getElementById("mins_row" + row + "_col" + i).value="";  //=true;
 				document.getElementById("hours_row" + row + "_col" + i).select();  //=true;
@@ -332,7 +332,8 @@
 
 		//get the total cell
 		var totalCell = document.getElementById("subtotal_row" + row);
-		totalCell.innerHTML = '' + hours + 'h&nbsp;' + mins + 'm';
+		//totalCell.innerHTML = '' + hours + 'h&nbsp;' + mins + 'm';
+		totalCell.innerHTML = '' + hours + jtext.get("HR") + '&nbsp;' + mins + jtext.get("MN");
 	}
 
 	function recalculateCol(col,idStr) {
@@ -360,7 +361,7 @@
 		}
 
 		if (totalMins > minsinday) {
-			alert("<?php echo JText::sprintf('TOO_MUCH_TIME_FOR_COL', minsinday/60) ?>");
+			alert(jtext.sprintf('TOO_MUCH_TIME_FOR_COL', minsinday/60));
 			row=rowFromIdStr(idStr);
 			document.getElementById("hours_row" + row + "_col" + col).value="";  //=true;
 			document.getElementById("mins_row" + row + "_col" + col).value="";  //=true;
@@ -375,7 +376,8 @@
 
 		//get the total cell
 		var totalCell = document.getElementById("subtotal_col" + col);
-		totalCell.innerHTML = '' + hours + 'h&nbsp;' + mins + 'm';
+		//totalCell.innerHTML = '' + hours + 'h&nbsp;' + mins + 'm';
+		totalCell.innerHTML = '' + hours + jtext.get("HR") + '&nbsp;' + mins + jtext.get("MN");
 
 		recalculateGrandTotal();
 	}
@@ -404,6 +406,7 @@
 		//get the grand total cell
 		var grandTotalCell = document.getElementById("grand_total");
 		grandTotalCell.innerHTML = '' + hours + 'h&nbsp;' + mins + 'm';
+		grandTotalCell.innerHTML = '' + hours + jtext.get("HR") + '&nbsp;' + mins + jtext.get("MN");
 	}
 
 	function recalculateAll() {
@@ -449,7 +452,7 @@
 			mins = colTotals[i] - (hours * 60);
 
 			totalCell = document.getElementById("subtotal_col" + i);
-			totalCell.innerHTML = '' + hours + "<?php echo JText::_('HR')?>" + '&nbsp;' + mins + "<?php echo JText::_('MN')?>";
+			totalCell.innerHTML = '' + hours + jtext.get("HR") + '&nbsp;' + mins + jtext.get("MN");
 		}
 
 		for (j=0; j<totalRows; j++) {
@@ -457,14 +460,14 @@
 			mins = rowTotals[j] - (hours * 60);
 
 			totalCell = document.getElementById("subtotal_row" + j);
-			totalCell.innerHTML = '' + hours + "<?php echo JText::_('HR')?>" + '&nbsp;' + mins + "<?php echo JText::_('MN')?>";
+			totalCell.innerHTML = '' + hours + jtext.get("HR") + '&nbsp;' + mins + jtext.get("MN");
 		}
 
 		hours = Math.floor(grandTotal / 60);
 		mins = grandTotal - (hours * 60);
 
 		totalCell = document.getElementById("grand_total");
-		totalCell.innerHTML = '' + hours + "<?php echo JText::_('HR')?>" + '&nbsp;' + mins + "<?php echo JText::_('MN')?>";
+		totalCell.innerHTML = '' + hours + jtext.get("HR") + '&nbsp;' + mins + jtext.get("MN");
 	}
 
 	function setDirty() {
@@ -493,7 +496,7 @@
 				var minutes = hours * 60 + mins;
 
 				if (minutes > minsinday) {
-					alert("<?php echo JText::sprintf('TOO_MUCH_TIME_FOR_DAY', minsinday/60) ?>");
+					alert(jtext.sprintf('TOO_MUCH_TIME_FOR_DAY', minsinday/60));
 					document.getElementById("hours_row" + i + "_col" + j).value="";  //=true;
 					document.getElementById("mins_row" + i + "_col" + j).value="";  //=true;
 					document.getElementById("hours_row" + i + "_col" + j).select();  //=true;

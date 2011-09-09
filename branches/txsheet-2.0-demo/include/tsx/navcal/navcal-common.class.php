@@ -259,7 +259,7 @@ class NavCalCommon{
 		if($sdti["mon"] == $cdti["mon"] && $sdti["year"] == $cdti["year"]) {
 			print "\t<font color=\"#CC9900\"><b>".utf8_encode(strftime("%b",$start))."</b></font></td>\n";
 		} else {
-			print "\t<a href=\"" . $_SERVER["PHP_SELF"] . "?$post";
+			print "\t<a href=\"" . Rewrite::getShortUri() . "?$post";
 			print 	"&amp;start_year=".$sdti["year"] .	
 					"&amp;start_month=".$sdti["mon"] .
 					"&amp;start_day=".$sdti["mday"] .

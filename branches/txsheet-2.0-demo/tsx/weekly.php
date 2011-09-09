@@ -67,7 +67,7 @@ function CallBack_WithNewDateSelected(strDate)
 	document.subtimes.submit();
 }
 </script>
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="subtimes">
+<form action="<?php echo Rewrite::getShortUri(); ?>" method="post" name="subtimes">
 <input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
 <input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
 <input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
@@ -390,7 +390,7 @@ LogFile::write("\nweekly.php structured matched pair: ". var_export($matchedPair
 				"&amp;year=".$dateValues["year"].
 				"&amp;month=".$dateValues["mon"].
 				"&amp;day=".$dateValues["mday"].
-				"&amp;destination=$_SERVER[PHP_SELF]".
+				"&amp;destination=".Rewrite::getShortUri().
 				"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 			print "<a href=\"$popup_href\" class=\"action_link\">".
 				"<img src=\"images/add.gif\" width=\"11\" height=\"11\" border=\"0\" alt=\"\" />".
@@ -448,7 +448,7 @@ LogFile::write("\nweekly.php structured matched pair: ". var_export($matchedPair
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".
 											"$ymdStr".
-											"&amp;destination=$_SERVER[PHP_SELF]".
+											"&amp;destination=".Rewrite::getShortUri().
 											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 		print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
 		print "<a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>,";

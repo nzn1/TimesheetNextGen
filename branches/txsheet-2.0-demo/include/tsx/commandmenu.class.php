@@ -162,7 +162,7 @@ class CommandMenu {
 		//iterate through commands
 		$count = count($this->commands);
 		for ($i=0; $i < $count; $i++) {
-			$self = $_SERVER["PHP_SELF"];
+			$self = Rewrite::getShortUri();
 			$slashPos = strrpos($self, "/");
 			if (!is_bool($slashPos))
 				$self = substr($self, $slashPos + 1);

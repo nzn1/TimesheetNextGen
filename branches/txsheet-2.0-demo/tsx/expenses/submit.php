@@ -178,7 +178,7 @@ if($orderby == "date") {
 	$colWrap[]="";
 }
 
-$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
+$Location=Rewrite::getShortUri()."?uid=$uid$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
 gbl::setPost("uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode");
 
 function make_index($data,$order) {
@@ -261,7 +261,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			</td>
 	<?php if (!$print): ?>
 		<td>
-			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br />&rArr;&nbsp;Excel </a>
+			<a href="<?php echo Rewrite::getShortUri();?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br />&rArr;&nbsp;Excel </a>
 		</td>
 		<td>
 			<?php print "<button onClick=\"popupPrintWindow()\">" .ucfirst(JText::_('PRINT_REPORT'))."</button></td>\n"; ?>
@@ -289,16 +289,16 @@ PageElements::setBodyOnLoad('doOnLoad();');
 	$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
 	if($orderby== 'project') { ?>
 		<th>
-		<a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost; ?> >" <?php echo JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
+		<a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?> >" <?php echo JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 		<th><?php echo JText::_('TASK');?></th>
-		<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
+		<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 		<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
 		<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>
 	
 	<?php }
 	else { ?>
-		<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
-		<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
+		<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
+		<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 		<th><?php echo JText::_('TASK');?></td>
 		<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
 		<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>

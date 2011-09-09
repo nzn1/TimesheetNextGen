@@ -69,7 +69,7 @@ ob_end_clean();
 <input type="hidden" name="year" value=<?php echo $year; ?> />
 <input type="hidden" name="last_day" value=<?php echo $last_day; ?> />
 <input type="hidden" name="action" id="action" value=<?php echo $action; ?> />
-<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>" />
+<input type="hidden" name="origin" value="<?php echo Rewrite::getShortUri(); ?>" />
 
 <h1><?php echo JText::_('ABSENCE_ENTRY'); ?></h1>
 
