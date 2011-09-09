@@ -63,7 +63,7 @@ $startStr = date("Y-m-d H:i:s",$startDate);
 $endDate = Common::getMonthlyEndDate($dateValues);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
-$Location="$_SERVER[PHP_SELF]?&amp;uid=$uid$ymdStr";
+$Location= Rewrite::getShortUri()."?&amp;uid=$uid$ymdStr";
 
 gbl::setPost("&amp;uid=$uid");
 

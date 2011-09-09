@@ -101,7 +101,7 @@ function format_time($time,$time_fmt) {
 
 $ymdStr = "&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=$start_day".
 		  "&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
-$Location="$_SERVER[PHP_SELF]?$ymdStr&amp;client_id=$client_id";
+$Location= Rewrite::getShortUri()."?$ymdStr&amp;client_id=$client_id";
 
 ?>
 <html>
@@ -206,7 +206,7 @@ $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;client_id=$client_id";
 ?>
 
 <?php if(!$export_excel) { ?>
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get">
+<form action="<?php echo Rewrite::getShortUri(); ?>" method="get">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="face_padding_cell">

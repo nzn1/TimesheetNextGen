@@ -100,7 +100,7 @@ PageElements::setTheme('newcss');
 </head>
 <h1> <?php echo (JText::_('TASKS')) ?> </h1>
 
-<form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
+<form name="changeForm" action="<?php echo Rewrite::getShortUri(); ?>" style="margin-bottom: 0px;">
 <input type="hidden" name="page" />
 
 

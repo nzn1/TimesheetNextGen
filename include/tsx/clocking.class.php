@@ -31,7 +31,7 @@ class Clocking{
 				</table>
 
 <?php 
-	$destination=$_SERVER["PHP_SELF"];
+	$destination=Rewrite::getShortUri();
 	//include('clockOnOff_core_new.inc')
 	$this->stopWatchClockForm($currentDate,$fromPopup,$stopwatch,$destination);
 ?>
@@ -56,7 +56,7 @@ class Clocking{
 		<input type="hidden" id="task_id" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
 		<input type="hidden" name="clockonoff" value="" />
 		<input type="hidden" name="fromPopupWindow" value="<?php echo $fromPopup; ?>" />
-		<input type="hidden" name="origin" value="<?php echo $_SERVER["PHP_SELF"]; ?>" />
+		<input type="hidden" name="origin" value="<?php echo Rewrite::getShortUri(); ?>" />
 		<input type="hidden" name="destination" value="<?php echo $destination; ?>" />
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>

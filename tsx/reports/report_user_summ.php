@@ -101,7 +101,7 @@ function format_time($time,$time_fmt) {
 		return "-";
 }
 
-$Location="$_SERVER[PHP_SELF]?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=$start_day&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
+$Location= Rewrite::getShortUri()."?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=$start_day&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
 gbl::setPost("uid=$uid&amp;time_fmt=$time_fmt");
 
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USER_SUMMARY')." | ".gbl::getContextUser()."</title>");
@@ -176,7 +176,7 @@ function init(){
 ?>
 
 <?php if(!$export_excel) { ?>
-<form action="<?php print $_SERVER['PHP_SELF'] ?>" method="get">
+<form action="<?php print Rewrite::getShortUri(); ?>" method="get">
 <input type="hidden" name="start_month" value="<?php echo $start_month; ?>" />
 <input type="hidden" name="start_year" value="<?php echo $start_year; ?>" />
 <input type="hidden" name="end_month" value="<?php echo $end_month; ?>" />
@@ -213,8 +213,8 @@ function init(){
 								$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=1&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=15";
 								$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=16&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=".date('t',strtotime("$end_year-$end_month-15"));
 							?>
-								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p1post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_1'); ?></a><br />
-								<a href="<?PHP print $_SERVER['PHP_SELF']."?".$p2post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_2'); ?></a>
+								<a href="<?PHP print Rewrite::getShortUri()."?".$p1post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_1'); ?></a><br />
+								<a href="<?PHP print Rewrite::getShortUri()."?".$p2post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_2'); ?></a>
 							</td>
 							<td  align="right" width="15%" >
 								<button name="export_excel" onclick="reload2Export(this.form)"><img src="../images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;

@@ -182,7 +182,7 @@ function make_index($data,$order) {
 	return $index;
 }
 
-$Location="$_SERVER[PHP_SELF]?$ymdStr&amp;orderby=$orderby&amp;proj_id=$proj_id&amp;mode=$mode";
+$Location= Rewrite::getShortUri()."?$ymdStr&amp;orderby=$orderby&amp;proj_id=$proj_id&amp;mode=$mode";
 gbl::setPost("&amp;orderby=$orderby&amp;proj_id=$proj_id&amp;mode=$mode");
 
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_REPORT')." | ".gbl::getContextUser()."</title>");
@@ -241,7 +241,7 @@ if(!$export_excel)
 		document.subreport.submit();
 	}
 </script>
-<form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="post" name="subreport">
+<form action="<?php echo Rewrite::getShortUri(); ?>" method="post" name="subreport">
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
 <input type="hidden" name="year" value="<?php echo $year; ?>" />
 <input type="hidden" name="month" value="<?php echo $month; ?>" />
@@ -338,12 +338,12 @@ else {  //create Excel header
 						$userPost="$ymdStr&amp;orderby=username&amp;proj_id=$proj_id&amp;mode=$mode";
 						$datePost="$ymdStr&amp;orderby=date&amp;proj_id=$proj_id&amp;mode=$mode";
 						if($orderby== 'username'): ?>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USER'); ?></a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USER'); ?></a></td>
 							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
 						<?php else: ?>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USER'); ?></a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
+							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USER'); ?></a></td>
 							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
 						<?php endif; ?>
 						<td class="inner_table_column_heading"><?php echo JText::_('DESCRIPTION'); ?></td>

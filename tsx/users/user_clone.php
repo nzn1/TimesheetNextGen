@@ -25,7 +25,7 @@ else
 if($action!='performCopy') {
 
 } else {
-	Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "$_SERVER[PHP_SELF]?cloneFrom=$cloneFrom&amp;cloneTo=$cloneTo"));
+	Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, Rewrite::getShortUri()."?cloneFrom=$cloneFrom&amp;cloneTo=$cloneTo"));
 }
 
 //LogFile::->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");

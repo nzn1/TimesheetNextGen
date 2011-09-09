@@ -213,7 +213,7 @@ function make_index($data,$order) {
 	return $index;
 }
 
-$Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode";
+$Location= Rewrite::getShortUri()."?uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode";
 gbl::setPost("uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode");
 //require_once("include/language/datetimepicker_lang.inc");
 ?>
@@ -286,7 +286,7 @@ ob_end_clean();
 			</td>
 			<?php if (!$print): ?>
 		<td  align="center" width="10%" >
-			<a href="<?php echo $_SERVER['PHP_SELF'];?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br />&rArr;&nbsp;Excel </a>
+			<a href="<?php echo Rewrite::getShortUri();?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br />&rArr;&nbsp;Excel </a>
 		</td>
 		<td align="center">
 			<?php 
@@ -322,13 +322,13 @@ ob_end_clean();
 					$projPost="uid=$uid$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
 					$datePost="uid=$uid$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
 					if($orderby== 'project'): ?>
-						<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
+						<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 
-						<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
+						<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 							
 						<?php else: ?>
-							<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
-							<th><a href="<?php echo $_SERVER["PHP_SELF"] . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
+							<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
+							<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 						<?php endif; ?>
 						<th><?php echo JText::_('DESCRIPTION');?></th>
 						<th><?php echo ucfirst(JText::_('EXPENSE_CATEGORY')); ?></th>

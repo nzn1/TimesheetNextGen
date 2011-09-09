@@ -4,5 +4,6 @@ echo 'var MonthName = ["'.JText::_('JANUARY').'", "'.JText::_('FEBRUARY').'", "'
 echo 'var WeekDayName1 = ["'.JText::_('SUNDAY').'", "'.JText::_('MONDAY').'", "'.JText::_('TUESDAY').'", "'.JText::_('WEDNESDAY').'", "'.JText::_('THURSDAY').'", "'.JText::_('FRIDAY').'", "'.JText::_('SATURDAY').'"];';
 echo 'var WeekDayName2 = ["'.JText::_('MONDAY').'", "'.JText::_('TUESDAY').'", "'.JText::_('WEDNESDAY').'", "'.JText::_('THURSDAY').'", "'.JText::_('FRIDAY').'", "'.JText::_('SATURDAY').'", "'.JText::_('SUNDAY').'"];';
 //echo '</script>';
+
 exit;
 ?>

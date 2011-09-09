@@ -127,7 +127,7 @@ if ($num == 0) {
 								"&amp;proj_id=".gbl::getProjId()."".
 								"&amp;task_id=".gbl::getTaskId()."".
 								"$ymdStrSd".
-								"&amp;destination=".$_SERVER['REQUEST_URI'].
+								"&amp;destination=".urlencode($_SERVER['REQUEST_URI']).
 								"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 	
   
@@ -251,7 +251,7 @@ else {
 											"&amp;proj_id=".gbl::getProjId()."".
 											"&amp;task_id=".gbl::getTaskId()."".
 											"$ymdStrSd".
-											"&amp;destination=$_SERVER[PHP_SELF]".
+											"&amp;destination=".Rewrite::getShortUri().
 											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 			print "	<a href=\"$popup_href\" class=\"action_link\">".ucfirst(JText::_('ADD'))."</a>&nbsp;\n";
 			print "</td>";

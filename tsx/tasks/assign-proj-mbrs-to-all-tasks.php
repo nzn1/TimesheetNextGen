@@ -34,7 +34,7 @@ PageElements::setTheme('newcss');
 <?php 
 ob_end_clean();
 ?>
-<form name="changeForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" style="margin-bottom: 0px;">
+<form name="changeForm" action="<?php echo Rewrite::getShortUri(); ?>" style="margin-bottom: 0px;">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 
