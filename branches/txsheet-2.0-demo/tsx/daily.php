@@ -21,7 +21,7 @@ $todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $startDate = strtotime(date("d M Y",$todayDate));
 
 $tomorrowDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 days");
-
+$yesterdayDate = strtotime(date("d M Y H:i:s",$todayDate) . " -1 days");
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
@@ -82,9 +82,8 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			<?php echo JText::_('CURRENT_DATE').': '?><span><?php echo utf8_encode(strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate)); ?></span>
 		</td>
 		<td  class="outer_table_heading">
-			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_DAY').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
+				<?php Common::printDateSelector("daily", $startDate, $yesterdayDate, $tomorrowDate); ?>
+		
 			</td>
 
 	</tr>

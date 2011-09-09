@@ -39,6 +39,12 @@ else {
 	$year = gbl::getYear();
 }
 
+$mode="monthly";
+$startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
+//work out the start date by subtracting days to get to beginning of week
+$todayDate = mktime(0, 0, 0, $month, 1, $year);
+$startDate = strtotime(date("d M Y",$todayDate));
+
 // Calculate the previous month.
 $last_month = $month - 1;
 $last_year = $year;
@@ -46,6 +52,7 @@ if (!checkdate($last_month, 1, $last_year)) {
 	$last_month += 12;
 	$last_year --;
 }
+$previousDate = strtotime(date("d M Y H:i:s",$todayDate) . " -1 month");
 
 //calculate the next month
 $next_month = $month+1;
@@ -54,7 +61,9 @@ if (!checkdate($next_month, 1, $next_year)) {
 	$next_year++;
 	$next_month -= 12;
 }
+$nextDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 month");
 
+$mode="monthly";
 $startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
 //work out the start date by subtracting days to get to beginning of week
 $todayDate = mktime(0, 0, 0, $month, 1, $year);
@@ -116,14 +125,8 @@ if (isset($popup))
 	</tr>
 	<tr>
 		<td align="center" class="outer_table_heading">
-			<?php echo JText::_('Date').": "; ?>
-        <span style="color:#00066F;">
-          <a href="<? echo Rewrite::getShortUri()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$last_year."&amp;month=".$last_month;?>" ><img src="{relativeRoot}/images/cal_reverse.gif" alt="prev" /></a>
-          <?php echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate)); ?>
-          <a href="<? echo Rewrite::getShortUri()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$next_year."&amp;month=".$next_month;?>" ><img src="{relativeRoot}/images/cal_forward.gif" alt="next" /></a>
-          <img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'dropdown', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif" />
-          <input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-        </span> 
+		<?php Common::printDateSelector($mode, $startDate, $previousDate, $nextDate); ?>
+     </span> 
 		</td>
 		
 		<td class="outer_table_heading"><?php echo JText::_('FILTER')?>:</td>
