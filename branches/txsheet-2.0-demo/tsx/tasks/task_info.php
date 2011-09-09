@@ -3,6 +3,8 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+PageElements::setTheme('txsheet2');
+PageElements::setTemplate('popup_template.php');
 
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -35,7 +37,7 @@ $query_project = "SELECT DISTINCT title, description,".
 		"WHERE proj_id=$proj_id";
 
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASK_INFO')."</title>");
-PageElements::setTheme('newcss');
+
 ?>
 
 

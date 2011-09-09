@@ -2,7 +2,8 @@
 
 class gbl{
 
-	private static $realToday;
+	private static $todayDateTime;
+	private static $todayDate;
 	private static $year;
 	private static $month;
 	private static $day;
@@ -19,12 +20,13 @@ class gbl{
 	
 	public static function initialize(){
 		//get todays values
-		self::$realToday = getdate(time());
+		self::$todayDateTime = getdate(time());
+		self::$todayDate = getdate(mktime(0, 0, 0,self::$todayDateTime['mon'],self::$todayDateTime['mday'], self::$todayDateTime['year']));
 		
 		//load local vars from request/post/get
-		self::$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: self::$realToday["year"];
-		self::$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: self::$realToday["mon"];
-		self::$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: self::$realToday["mday"];
+		self::$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: self::$todayDate["year"];
+		self::$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: self::$todayDate["mon"];
+		self::$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: self::$todayDate["mday"];
 		self::$mode = isset($_REQUEST["mode"]) ? $_REQUEST["mode"]: 0;
 		self::$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 		self::$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
@@ -56,8 +58,20 @@ class gbl{
 		
 	}
 		
-	public static function getRealToday(){
-		return self::$realToday;
+	/**
+	 * getNow returns a date object for NOW
+	 */   	
+	public static function getNow(){
+		return self::$todayDateTime;
+	}
+	/**
+	 * Returns a date object for today at 00:00:00 hours
+	 */   	
+	public static function getTodayDate(){
+		return self::$todayDate;
+	}
+	public static function getTodayDateStamp(){
+		return self::$todayDate[0];
 	}
 	public static function getYear(){
 		return self::$year;

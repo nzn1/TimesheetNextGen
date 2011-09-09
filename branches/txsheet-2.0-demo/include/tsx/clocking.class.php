@@ -19,7 +19,7 @@ class Clocking{
   }
   else $style = ''; 
 ?>
-<table <?php echo $style;?> id="clockOnOffTable" width="436" align="center" border="0" cellspacing="0" cellpadding="0">
+<table <?php echo $style;?> id="clockOnOffTable">
 	<tr>
 		<td width="100%" class="face_padding_cell">
 				<table width="100%" border="0">
@@ -137,7 +137,7 @@ class Clocking{
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
-																if ($currentDate == Common::getRealTodayDate()): ?>
+																if ($currentDate == gbl::getTodayDateStamp()): ?>
 																	<input type="radio" name="clock_on_radio" id="clock_on_radio_date" value="date" onclick="enableClockOn();" checked="checked"  />
 																<?php endif; ?>
 																<?php $hourInput = new HourInput("clock_on_time_hour");
@@ -151,7 +151,7 @@ class Clocking{
 															</td>
 														</tr>
 														<?php // If the current day is today:
-														if ($currentDate == Common::getRealTodayDate()): ?>
+														if ($currentDate == gbl::getTodayDateStamp()): ?>
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_on_text">
@@ -172,7 +172,7 @@ class Clocking{
 															</td>
 															<td valign="middle">
 																<?php // If the current day is today:
-																if ($currentDate == Common::getRealTodayDate()): ?>
+																if ($currentDate == gbl::getTodayDateStamp()): ?>
 																	<input type="radio" name="clock_off_radio" id="clock_off_radio_date" value="date" onclick="enableClockOff();" />
 																<?php endif; ?>
 																<?php $hourInput = new HourInput("clock_off_time_hour");
@@ -186,7 +186,7 @@ class Clocking{
 															</td>
 														</tr>
 														<?php // If the current day is today:
-														if ($currentDate == Common::getRealTodayDate()): ?>
+														if ($currentDate == gbl::getTodayDateStamp()): ?>
 														<tr>
 															<td>&nbsp;</td>
 															<td valign="middle" align="left" class="clock_off_text">

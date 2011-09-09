@@ -3,16 +3,12 @@
 class Common{
 	
 	private static $motd;
-	private static $realTodayDate;
 	
   public static function getMotd(){
     return self::$motd;
   }  
   public static function setMotd($i){
     self::$motd = $i;
-  }
-  public static function getRealTodayDate(){
-    return self::$realTodayDate;
   }
 	public function __construct(){
 	if (!defined("COMMON_INC")) define("COMMON_INC", 1);
@@ -602,7 +598,7 @@ class Common{
 	}
 	
 	public static function day_button($name, $timeStamp=0, $limit=1) {
-		$realToday = gbl::getRealToday();
+		$realToday = gbl::getTodayDate();
 		if (!$timeStamp)
 			$timeStamp = $realToday[0];
 
@@ -630,7 +626,7 @@ class Common{
 	}
 
 	public static function month_button ($name, $month=0) {
-		$realToday = gbl::getRealToday();
+		$realToday = gbl::getTodayDate();
 		if(!$month)
 			$month = $realToday["mon"]; //date("m");
 
@@ -652,7 +648,7 @@ class Common{
 	}
 
 	public static function year_button ($name, $year=0) {
-		$realToday = gbl::getRealToday();
+		$realToday = gbl::getTodayDate();
 		if(!$year)
 			$year = $realToday["year"]; //date("Y");
 

@@ -16,8 +16,8 @@ if (gbl::getProjId() == 0)
 if (gbl::getProjId() != 0 && gbl::getClientId() != 0) { // id 0 means 'All Projects'
 
 	//make sure project id is valid for client. If not then choose another.
-	if (!isValidProjectForClient(gbl::getProjId(), gbl::getClientId())) {
-		gbl::setProjId(getValidProjectForClient(gbl::getClientId()));
+	if (!Common::isValidProjectForClient(gbl::getProjId(), gbl::getClientId())) {
+		gbl::setProjId(Common::getValidProjectForClient(gbl::getClientId()));
 	}
 }
 else

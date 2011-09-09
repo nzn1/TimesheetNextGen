@@ -23,7 +23,7 @@
 		</td>
 		<td> </td>
 		<td align="center" width="30%">
-			&copy; 2008-<?php $rt=gbl::getRealToday(); echo $rt['year']; ?> &nbsp;<a href="http://sourceforge.net/projects/tsheetx"><?php echo JText::_('DEVELOPMENT_TEAM') ?></a><br />
+			&copy; 2008-<?php $rt=gbl::getTodayDate(); echo $rt['year']; ?> &nbsp;<a href="http://sourceforge.net/projects/tsheetx"><?php echo JText::_('DEVELOPMENT_TEAM') ?></a><br />
 		</td>
 		<td> </td>
 		<td align="right" width="30%">
