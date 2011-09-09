@@ -160,17 +160,17 @@ if (isset($popup))
 	<!-- table encompassing heading, days in month, weekly total and month total -->
 	<table class="monthTable">
 		<thead>
-		<tr class="table_head">
-		<?php
-			//print the days of the week
-			$currentDate = $firstPrintedDate;
-			for ($i=0; $i<7; $i++) {
-				$currentDayStr = strftime("%A", $currentDate);
-				$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 day");
-				echo "	<th align=\"center\">$currentDayStr</th>\n";
-			}
-		?>
-		</tr>
+  		<tr class="table_head">
+  		<?php
+  			//print the days of the week
+  			$currentDate = $firstPrintedDate;
+  			for ($i=0; $i<7; $i++) {
+  				$currentDayStr = strftime("%A", $currentDate);
+  				$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 day");
+  				echo "	<th align=\"center\">$currentDayStr</th>\n";
+  			}
+  		?>
+  		</tr>
 		</thead>
 		<tr>
 <?php
@@ -209,43 +209,48 @@ if (isset($popup))
 			$dowForFirstOfMonth = 1;
 
 		//define subtable
-		if (($dayCol % 7) == 6)
+		if (($dayCol % 7) == 6){
 			echo "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_right\">\n";
-		else if (($dayCol % 7 ) == 5)
+		}
+		else if (($dayCol % 7 ) == 5){
 			echo "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_middle\">\n";
+		}
 		else {
 			$cellstyle = 'calendar_cell_middle';
-			if ($holnum>$ihol) {
-				if ($holdata['day_of_month']==$curDay) {
-					$cellstyle = 'calendar_cell_holiday_middle';
-					if ($holdata['user']=='') {
-						$holtitle = urldecode($holdata['subject']);
-						if (($holdata['AM_PM']=='AM')||($holdata['AM_PM']=='PM'))
-							$holtitle .= " (".$holdata['AM_PM'].")";
-					} else
-						$holtitle = $holdata['user'].": ".urldecode($holdata['type'])." ".$holdata['AM_PM'];
-					$ihol++;
-					if ($holnum>$ihol)
-					{
-						$holdata = dbResult($qhol, $ihol);
-						if ($holdata['day_of_month']==$curDay) {
-							if ($holdata['user']=='')
-							{
-								$holtitle .= " ".urldecode($holdata['subject']);
-								if (($holdata['AM_PM']=='AM')||($holdata['AM_PM']=='PM'))
-									$holtitle .= " (".$holdata['AM_PM'].")";
-							} else {
-								if ($holtitle==$holdata['user'].": ".urldecode($holdata['type'])." AM")
-									$holtitle = $holdata['user'].": ".urldecode($holdata['type']);
-								else
-									$holtitle .= " ".$holdata['user'].": ".urldecode($holdata['type'])." ".$holdata['AM_PM'];
+			if ($holnum>$ihol && $holdata['day_of_month']==$curDay) {
+				$cellstyle = 'calendar_cell_holiday_middle';
+				if ($holdata['user']=='') {
+					$holtitle = urldecode($holdata['subject']);
+					if (($holdata['AM_PM']=='AM')||($holdata['AM_PM']=='PM')){
+						$holtitle .= " (".$holdata['AM_PM'].")";
+					}
+				} 
+        else{
+					$holtitle = $holdata['user'].": ".urldecode($holdata['type'])." ".$holdata['AM_PM'];
+				}
+				$ihol++;
+				if ($holnum>$ihol){
+					$holdata = dbResult($qhol, $ihol);
+					if ($holdata['day_of_month']==$curDay) {
+						if ($holdata['user']==''){
+							$holtitle .= " ".urldecode($holdata['subject']);
+							if (($holdata['AM_PM']=='AM')||($holdata['AM_PM']=='PM')){
+								$holtitle .= " (".$holdata['AM_PM'].")";
 							}
-							$ihol++;
-							if ($holnum>$ihol)
-								$holdata = dbResult($qhol, $ihol);
+						} 
+            else {
+							if ($holtitle==$holdata['user'].": ".urldecode($holdata['type'])." AM"){
+								$holtitle = $holdata['user'].": ".urldecode($holdata['type']);
+							}
+							else{
+								$holtitle .= " ".$holdata['user'].": ".urldecode($holdata['type'])." ".$holdata['AM_PM'];
+							}
+						}
+						$ihol++;
+						if ($holnum>$ihol){
+							$holdata = dbResult($qhol, $ihol);
 						}
 					}
-
 				}
 			}
 			echo "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"".$cellstyle."\">\n";

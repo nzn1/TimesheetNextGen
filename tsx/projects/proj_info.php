@@ -3,6 +3,8 @@ if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+PageElements::setTemplate('popup_template.php');
+PageElements::setTheme('txsheet2');
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 //load local vars from request/post/get
@@ -35,7 +37,7 @@ $query = "SELECT DISTINCT p.title, p.proj_id, p.client_id, ".
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_INFO')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('newcss');
+
 ob_end_clean();
 ?>
 <h2><?php echo JText::_('PROJECT_INFO');?></h2>

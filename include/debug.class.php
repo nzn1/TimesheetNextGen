@@ -22,8 +22,8 @@ class Debug{
 		
 	private static $hideDebugData    = 0;        //hide debug data if not logged in
 
-	private static $sendToConsole	   = 0;
-	private static $sendToScreen	   = 1;
+	private static $sendToConsole	   = 1;
+	private static $sendToScreen	   = 0;
 
 	private static $location         = 1;        //display location headers
 	private static $_sessionTop      = 0;        //display session data at top of page
@@ -31,7 +31,7 @@ class Debug{
 	private static $requestUri       = 0;        //display mini session data
 	private static $contentSession   = 0;        //display sesion data within content pane
 	private static $_files           = 0;
-	private static $_post            = 1;        //display POST data
+	private static $_post            = 0;        //display POST data
 	private static $_get             = 0;        //display GET data
 	private static $_server          = 0;        //display server data
 	private static $_cookie          = 0;        //display cookie data

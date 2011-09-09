@@ -65,12 +65,17 @@ width:100%;
 border: 1px solid black;
 width:100%;
 background-color: #F2F3FF;
+border-collapse:collapse;
+border-spacing:0;
 }
+
+#daily .dailyTable td {}
 
 /*header row of the table*/
 #daily .dailyTable .table_head { border-bottom: 1px solid #5271CC; background-color: #433B94;color:white;}
+#daily .dailyTable .table_head td { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC;}
 #daily .dailyTable tr.diff td { background:#C4C4C4; }
-
+                                                
 /**cell formatting of the enabled days*/
 #daily .dailyTable .calendar_cell_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; }
 #daily .dailyTable .calendar_cell_right { border-bottom: 1px solid #5271CC; background-color: #F2F3FF; }
@@ -94,10 +99,31 @@ background-color: #F2F3FF;
 /*This was done as a global a:link property before*/
 #daily .dailyTable .actions{display:block;text-align:right;}
 #daily .dailyTable .action_link{text-align:right;}
-#daily .dailyTable .action_link:link { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
-#daily .dailyTable .action_link:visited { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
-#daily .dailyTable .action_link:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
+#daily .dailyTable a:link { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
+#daily .dailyTable a:visited { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
+#daily .dailyTable a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
 
 .align_right{text-align:right;}
+
+#daily .clock{
+width:50%; margin:auto auto;
+background-color: #F2F3FF;
+
+}
+
+#clockOnOffTable{
+border:1px solid #5271CC;
+border-collapse:collapse;
+border-spacing:0;
+margin:auto auto;
+}
+/*.clock_on_box { border: 1px solid #00BF00; background-color: #EAEAEA; }*/
+.clock_on_box { border: 1px solid #00BF00; }
+/*.clock_off_box { border: 1px solid #FF1010; background-color: #EAEAEA; }*/
+.clock_off_box { border: 1px solid #FF1010; }
+
+.clock_on_text { color: #00BF00; }
+
+.clock_off_text { color: #FF1010; }
 
 

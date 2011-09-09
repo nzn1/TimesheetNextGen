@@ -3,9 +3,10 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 PageElements::setTemplate('popup_template.php');
+PageElements::setTheme('txsheet2');
 PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('CLIENT_INFO')."</title>");
 
-PageElements::setTheme('newcss');
+
 
 	$query = "SELECT organisation, description, address1, address2,".
 				"city, country, postal_code, contact_first_name, contact_last_name,".
