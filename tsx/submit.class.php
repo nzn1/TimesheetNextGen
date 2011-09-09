@@ -102,17 +102,17 @@ class SubmitClass{
 				break;
 				
 			case "submit":
-				if ($data['status'] == "Open") print "<input type=\"checkbox\" name=\"sub[]\" value=\"" . $data["trans_num"] . "\">";
+				if ($data['status'] == "Open") print "<input type=\"checkbox\" name=\"sub[]\" value=\"" . $data["trans_num"] . "\" />";
 				else print "&nbsp;";
 				break;
 				
 			case "approve":
-				if ($data['status'] == "Submitted") print "<input type=\"checkbox\" name=\"approve[]\" value=\"" . $data["trans_num"] . "\">";
+				if ($data['status'] == "Submitted") print "<input type=\"checkbox\" name=\"approve[]\" value=\"" . $data["trans_num"] . "\" />";
 					else print "&nbsp;";
 				break;
 				
 			case "reject":
-				if ($data['status'] == "Submitted") print "<input type=\"checkbox\" name=\"reject[]\" value=\"" . $data["trans_num"] . "\">";
+				if ($data['status'] == "Submitted") print "<input type=\"checkbox\" name=\"reject[]\" value=\"" . $data["trans_num"] . "\" />";
 					else print "&nbsp;";
 				break;
 				

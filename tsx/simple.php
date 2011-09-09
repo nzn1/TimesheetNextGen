@@ -91,11 +91,11 @@ LogFile::write("\nList of new projects Num: ". $num3. "\n");
 for ($i=0; $i<$num3; $i++) {
 	//get the current record
 	$data = dbResult($qh3, $i);
-	print("projectTasksHash['" . $data["proj_id"] . "'] = {};\n");
-	print("projectTasksHash['" . $data["proj_id"] . "']['name'] = '". addslashes($data["title"]) . "';\n");
-	print("projectTasksHash['" . $data["proj_id"] . "']['clientId'] = '". $data["client_id"] . "';\n");
-	print("projectTasksHash['" . $data["proj_id"] . "']['clientName'] = '". addslashes($data["organisation"]) . "';\n");
-	print("projectTasksHash['" . $data["proj_id"] . "']['tasks'] = {};\n");
+	echo("projectTasksHash['" . $data["proj_id"] . "'] = {};\n");
+	echo("projectTasksHash['" . $data["proj_id"] . "']['name'] = '". addslashes($data["title"]) . "';\n");
+	echo("projectTasksHash['" . $data["proj_id"] . "']['clientId'] = '". $data["client_id"] . "';\n");
+	echo("projectTasksHash['" . $data["proj_id"] . "']['clientName'] = '". addslashes($data["organisation"]) . "';\n");
+	echo("projectTasksHash['" . $data["proj_id"] . "']['tasks'] = {};\n");
 }
 
 //get all of the tasks and put them into the hashtable
@@ -113,8 +113,8 @@ LogFile::write("\nList of tasks Num: ". $num4. "\n");
 for ($i=0; $i<$num4; $i++) {
 	//get the current record
 	$data = dbResult($qh4, $i);
-	print("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
-	print("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
+	echo("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
+	echo("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
 }
 echo "var None_option = '".JText::_('VALUE_NONE')."';";
 ?>
@@ -192,7 +192,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 					echo JText::_('TASK'); 
 				?>
 			</th>
-			<th class="inner_table_column_heading" align="center" width=\"25%\">
+			<th class="inner_table_column_heading" align="center" width="25%">
 				<?php 
 					if(strstr($layout, 'no work description') == '')
 						echo JText::_('WORK_DESCRIPTION');
@@ -211,7 +211,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				$minsinday = ((24*60*60) - $dst_adjustment)/60;
 				$daysOfWeek[$i] = date("d", $currentDayDate);
 
-				print
+				echo
 					"<th class=\"inner_table_column_heading\" align=\"center\" >"								
 					  ."<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\" />"
 						."$currentDayStr<br />" .
@@ -231,7 +231,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			</th>
 		</tr>
 	</thead>
-	<tbody>
+
 <?php
 
 	// Get the Weekly user data.
@@ -405,36 +405,34 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	$simple->finishRow($rowIndex, $colIndex, $rowTotal, "yes"); // "yes" means fields will be disabled
 
 	//create a new totals row
-	print "<tr id=\"totalsRow\">\n";
-	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
+	echo "<tr id=\"totalsRow\">\n";
+	echo "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
   	//store a hidden form field containing the number of existing rows
-	print "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $rowIndex . "\" />";
+	echo "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $rowIndex . "\" />";
 
 	//store a hidden form field containing the total number of rows
-	print "<input type=\"hidden\" id=\"totalRows\" name=\"totalRows\" value=\"" . ($rowIndex+1) . "\" /></td>";
-	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\" colspan=\"3\">". JText::_('TOTAL_HOURS') .":</td>\n";
+	echo "<input type=\"hidden\" id=\"totalRows\" name=\"totalRows\" value=\"" . ($rowIndex+1) . "\" /></td>";
+	echo "<td class=\"calendar_cell_disabled_middle\" align=\"right\" colspan=\"3\">". JText::_('TOTAL_HOURS') .":</td>\n";
 	
 	//iterate through day totals for all tasks
 	$grandTotal = 0;
 	$col = 0;
 	for ($colIndex=1; $colIndex<8; $colIndex++) {
 			
-		print "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
-		print "<span class=\"calendar_total_value_weekly\" id=\"subtotal_col" . $colIndex . "\">" .Common::formatMinutes($allTasksDayTotals[$colIndex-1])."</span></td>";
+		echo "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
+		echo "<span class=\"calendar_total_value_weekly\" id=\"subtotal_col" . $colIndex . "\">" .Common::formatMinutes($allTasksDayTotals[$colIndex-1])."</span></td>";
 		$grandTotal += $allTasksDayTotals[$colIndex-1];
 	}
 
-	//print grand total
-	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
-	print "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
-	print "<span class=\"calendar_total_value_monthly\" id=\"grand_total\">" .Common::formatMinutes($grandTotal)."</span></td>";
-	print "</tr>";
+	//echo grand total
+	echo "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
+	echo "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
+	echo "<span class=\"calendar_total_value_monthly\" id=\"grand_total\">" .Common::formatMinutes($grandTotal)."</span></td>";
+	echo "</tr>";
 	
 ?>
 
 			</table>
-		</td>
-	</tr>
-</table>
+
 
 </form>

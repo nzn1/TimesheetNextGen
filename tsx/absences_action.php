@@ -52,22 +52,42 @@ if ($action!=0) {
 				"date < '$endYear-$endMonth-01 00:00:00'");
 
 	for ($i=1; $i<=$last_day; $i++) {
-		$AMtype = $_POST["AMtype".$i];
-		$AMtext = urlencode($_POST["AMtext".$i]);
-		$PMtype = $_POST["PMtype".$i];
-		$PMtext = urlencode($_POST["PMtext".$i]);
+		$AMtype = @$_POST["AMtype".$i];
+		$AMtext = urlencode(@$_POST["AMtext".$i]);
+		$PMtype = @$_POST["PMtype".$i];
+		$PMtext = urlencode(@$_POST["PMtext".$i]);
 
-		if (($AMtype!='')&&($AMtype!='Public')) {
-			dbquery("INSERT INTO ".tbl::getAbsenceTable()." VALUES ".
-				"(0,'$year-$month-$i 00:00:00','AM','$AMtext','$AMtype','$uid')");
+
+		if ($AMtype != '0' && $AMtype != null && $AMtype != 'Public') {
+			$q = "INSERT INTO ".tbl::getAbsenceTable()." VALUES ".
+				"(0,'$year-$month-$i 00:00:00','AM','$AMtext','$AMtype','$uid')";
+				
+			if(Debug::getSqlStatement())ppr($q);
+			$ret['status'] = Database::getInstance()->query($q);
+			$ret['ref'] = mysql_insert_id();
+
+			if($ret['status'] == false && debug::getSqlError()==1){
+				Debug::ppr(mysql_error(),'sqlError');
+			}
 		}
-		if (($PMtype!='')&&($PMtype!='Public')) {
-			dbquery("INSERT INTO ".tbl::getAbsenceTable()." VALUES ".
-				"(0,'$year-$month-$i 00:00:00','PM','$PMtext','$PMtype','$uid')");
+    
+
+		if ($PMtype != '0' && $PMtype != null && $PMtype != 'Public') {
+			$q = "INSERT INTO ".tbl::getAbsenceTable()." VALUES ".
+				"(0,'$year-$month-$i 00:00:00','PM','$PMtext','$PMtype','$uid')";
+				
+			if(Debug::getSqlStatement())ppr($q);
+			$ret['status'] = Database::getInstance()->query($q);
+			$ret['ref'] = mysql_insert_id();
+
+			if($ret['status'] == false && debug::getSqlError()==1){
+				Debug::ppr(mysql_error(),'sqlError');
+			}
 		}
 	}
 }
 //set the return location
 $Location = Config::getRelativeRoot()."/absences?month=$month&amp;year=$year&amp;day=$day&amp;uid=$uid";
+ppr($_POST);
 gotoLocation($Location);
 ?>

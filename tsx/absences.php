@@ -63,12 +63,12 @@ ob_end_clean();
 
 
 
-<form name="theForm" id="theForm" action="absences_action" method="post">
-<input type="hidden" name="month" value=<?php echo $month; ?> />
-<input type="hidden" name="day" value=<?php echo $day; ?> />
-<input type="hidden" name="year" value=<?php echo $year; ?> />
-<input type="hidden" name="last_day" value=<?php echo $last_day; ?> />
-<input type="hidden" name="action" id="action" value=<?php echo $action; ?> />
+<form name="theForm" id="theForm" action="<?php echo Config::getRelativeRoot();?>/absences_action" method="post">
+<input type="hidden" name="month" value="<?php echo $month; ?>" />
+<input type="hidden" name="day" value="<?php echo $day; ?>" />
+<input type="hidden" name="year" value="<?php echo $year; ?>" />
+<input type="hidden" name="last_day" value="<?php echo $last_day; ?>" />
+<input type="hidden" name="action" id="action" value="<?php echo $action; ?>" />
 <input type="hidden" name="origin" value="<?php echo Rewrite::getShortUri(); ?>" />
 
 <h1><?php echo JText::_('ABSENCE_ENTRY'); ?></h1>
@@ -87,7 +87,7 @@ ob_end_clean();
 		<td  class="outer_table_heading">
 			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
 			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_MONTH').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif">
+			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="images/cal.gif" />
 			</td>
 		
 		<td align="right">
@@ -103,8 +103,8 @@ ob_end_clean();
 		<tr>
 <!--		<td class="calendar_cell_disabled_right">&nbsp</td> -->
 			<td align="center" colspan="2" rowspan="2" class="calendar_cell_disabled_right"><b><?php echo JText::_('DAY'); ?></b></td>
-			<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('MORNING'); ?></b></td>
-			<td align="center" class="calendar_cell_disabled_right" colspan=2 ><b><?php echo JText::_('AFTERNOON'); ?></b></td>
+			<td align="center" class="calendar_cell_disabled_right" colspan="2" ><b><?php echo JText::_('MORNING'); ?></b></td>
+			<td align="center" class="calendar_cell_disabled_right" colspan="2" ><b><?php echo JText::_('AFTERNOON'); ?></b></td>
 		</tr>
 		<tr>
 			<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
@@ -112,7 +112,7 @@ ob_end_clean();
 			<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
 			<td align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></td>
 		</tr>
-	<tr>
+
 <?php
 	for ($i=1;$i<=$last_day;$i++) {
 		$day = mktime(0,0,0,$month,$i,$year);
@@ -179,23 +179,18 @@ ob_end_clean();
 			$disabled = 'false';
 
 ?>
+    <tr>
 			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $dow; ?></td>
 			<td align="center" class="<?php echo $daystyle; ?>"><?php echo $i; ?></td>
 			<td align="right" class="<?php echo $AMstyle; ?>"><?php Common::absence_select_droplist($AM_type, $disabled, "AMtype".$i); ?></td>
-			<td align="left" class="<?php echo $AMstyle; ?>"><input type="text" id="<?php echo "AMtext",$i; ?>" name="<?php echo "AMtext",$i; ?>" class="<?php echo $AMstyle; ?>" value="<?php echo $AM_text; ?>" style="width: 100%;" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
+			<td align="left" class="<?php echo $AMstyle; ?>"><input type="text" id="<?php echo "AMtext",$i; ?>" name="<?php echo "AMtext",$i; ?>" class="<?php echo $AMstyle; ?>" value="<?php echo $AM_text; ?>" style="width: 100%;" <?php if ($disabled=='true') echo "disabled=\"disabled\""; ?> /></td>
 			<td align="right" class="<?php echo $PMstyle; ?>"><?php Common::absence_select_droplist($PM_type, $disabled, "PMtype".$i); ?></td>
-			<td align="left" class="<?php echo $PMstyle; ?>"><input type="text" id="<?php echo $i,"_PMtext"; ?>" name="<?php echo "PMtext",$i; ?>" class="<?php echo $PMstyle; ?>" value="<?php echo $PM_text; ?>" style="width: 100%;" <?php if ($disabled=='true') echo "readonly"; ?> /></td>
+			<td align="left" class="<?php echo $PMstyle; ?>"><input type="text" id="<?php echo "PMtext",$i; ?>" name="<?php echo "PMtext",$i; ?>" class="<?php echo $PMstyle; ?>" value="<?php echo $PM_text; ?>" style="width: 100%;" <?php if ($disabled=='true') echo "disabled=\"disabled\""; ?> /></td>
 		</tr>
 <?php
 	}
 ?>
-						</tr>
-			</td>
 
 	</table>
-
-		</td>
-	</tr>
-</table>
 
 </form>

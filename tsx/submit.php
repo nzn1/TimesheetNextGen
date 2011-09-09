@@ -193,6 +193,12 @@ function make_index($data,$order) {
 }
 //require_once("include/language/datetimepicker_lang.inc");
 ?>
+
+<?php 
+PageElements::setTheme('newcss');
+ob_start();
+?>
+
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <script type="text/javascript">
 
@@ -223,23 +229,21 @@ function CallBack_WithNewDateSelected(strDate)
 }
 </script>
 
-<title><?php echo Config::getMainTitle()." - ".ucfirst(JText::_('SUBMIT_TIMES')). " " . gbl::getContextUser();?></title>
-<?php 
-PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('SUBMIT_TIMES')." | ".gbl::getContextUser()."</title>");
-ob_start();
 
-PageElements::setTheme('newcss');
+<title><?php echo Config::getMainTitle()." - ".ucfirst(JText::_('SUBMIT_TIMES')). " " . gbl::getContextUser();?></title>
+<?php
+PageElements::setHead(ob_get_contents());
 ob_end_clean();
 
 ?>
 
 <?php if(!$export_excel) { ?>
 <form action="<?php echo Config::getRelativeRoot();?>/submit_action" method="post" name="subtimes" >
-<input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
-<input type="hidden" name="year" value="<?php echo $year; ?>">
-<input type="hidden" name="month" value="<?php echo $month; ?>">
-<input type="hidden" name="day" value="<?php echo $day; ?>">
-<input type="hidden" name="mode" value="<?php echo $mode; ?>">
+<input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
+<input type="hidden" name="year" value="<?php echo $year; ?>" />
+<input type="hidden" name="month" value="<?php echo $month; ?>" />
+<input type="hidden" name="day" value="<?php echo $day; ?>" />
+<input type="hidden" name="mode" value="<?php echo $mode; ?>" />
 
 <table>
 	<tr>
@@ -261,20 +265,20 @@ ob_end_clean();
 			</td>
 	<?php if (!$print): ?>
 		<td>
-			<a href="<?php echo Rewrite::getShortUri();?>?<?php echo $_SERVER["QUERY_STRING"];?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br />&rArr;&nbsp;Excel </a>
+			<a href="<?php echo Rewrite::getShortUri();?>?<?php echo ampersandEncode($_SERVER["QUERY_STRING"]);?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" alt="" name="esporta_dati" border="0" /><br />&rArr;&nbsp;Excel </a>
 		</td>
 		<td>
-			<?php print "<button onClick=\"popupPrintWindow()\">" .ucfirst(JText::_('PRINT_REPORT'))."</button></td>\n"; ?>
+			<?php print "<button onclick=\"popupPrintWindow()\">" .ucfirst(JText::_('PRINT_REPORT'))."</button>\n"; ?>
 		</td>
 	<?php endif; ?>
 	<?php
 		// add submission and check all button
 		if (!$print): ?>
 		<td>
-			<input type="submit" name="Submit" value="<?php echo JText::_('CONFIRM')?>" > 
+			<input type="submit" name="Submit" value="<?php echo JText::_('CONFIRM')?>" /> 
 		</td>
 		<td>
-			<input type="checkbox" name="Check All" onclick="submitAll(document.subtimes['sub[]']);">
+			<input type="checkbox" name="Check All" onclick="submitAll(document.subtimes['sub[]']);" />
 		</td>
 	<?php endif; ?>	
 	</tr>
@@ -295,16 +299,18 @@ ob_end_clean();
 		<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>
 	
 	<?php else: ?>
-		<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
-		<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
-		<th><?php echo JText::_('TASK');?></td>
+		<?php 
+    echo "<th><a href=\"".Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE')."</a></th>";
+		echo "<th><a href=\"".Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')."</a></th>";
+		?>
+		<th><?php echo JText::_('TASK');?></th>
 		<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
 		<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>
 	<?php endif; ?>
-			<th><?php echo JText::_('WORK_DESCRIPTION');?></td>
-			<th><?php echo JText::_('STATUS');?></td>
-			<th><?php echo JText::_('DURATION');?></td>
-			<th><?php echo JText::_('CONFIRM');?></td>
+			<th><?php echo JText::_('WORK_DESCRIPTION');?></th>
+			<th><?php echo JText::_('STATUS');?></th>
+			<th><?php echo JText::_('DURATION');?></th>
+			<th><?php echo JText::_('CONFIRM');?></th>
 		</tr>
 	</thead>
 <?php
@@ -413,10 +419,6 @@ ob_end_clean();
 		$formatted_time = $subcl->format_time($grand_total_time);
 	}
 
-?>
-			</tr>
-
-<?php
 	if ($num > 0) {
 ?>
 
@@ -429,7 +431,7 @@ ob_end_clean();
 		echo JText::_('MONTHLY_TOTAL'). ": ";
 	echo "</td><td class=\"textproject\">" .$formatted_time;
 ?>
-		<td>&nbsp;</td></td>
+		</td>
 		</tr>
 	</table>
 <?php
@@ -438,9 +440,6 @@ ob_end_clean();
 	
 <?php if(!$export_excel) { ?>
 
-		</td>
-	</tr>
-</table>
 <?php if ($print): ?>
 	<table width="100%" border="1" cellspacing="0" cellpadding="0">
 		<tr>

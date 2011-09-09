@@ -1,5 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
+PageElements::setTheme('txsheet2');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
@@ -95,18 +96,26 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
-PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('MONTHLY_TIMESHEET')." | ".gbl::getContextUser()."</title>");
-
-if (isset($popup))
-	PageElements::setBodyOnLoad("window.open('".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id',"
-      ."'Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205');");
+ob_start();
+echo "<title>".Config::getMainTitle()." | ".JText::_('MONTHLY_TIMESHEET')." | ".gbl::getContextUser()."</title>";
 ?>
+
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <script type="text/javascript">
 	function CallBack_WithNewDateSelected(strDate) {
 		document.monthForm.submit();
 	}
 </script>
+<?php
+PageElements::setHead(ob_get_contents());
+ob_end_clean();
+
+if (isset($popup))
+	PageElements::setBodyOnLoad("window.open('".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id',"
+      ."'Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205');");
+?>
+
+
 <form name="monthForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
 <!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
 <!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
@@ -126,7 +135,6 @@ if (isset($popup))
 	<tr>
 		<td align="center" class="outer_table_heading">
 		<?php Common::printDateSelector($mode, $startDate, $previousDate, $nextDate); ?>
-     </span> 
 		</td>
 		
 		<td class="outer_table_heading"><?php echo JText::_('FILTER')?>:</td>
@@ -148,17 +156,18 @@ if (isset($popup))
 	</tr>
 </table><!-- end of the client, project select table and the current month -->
 
+<div id="monthly">
 	<!-- table encompassing heading, days in month, weekly total and month total -->
-	<table width="100%">
+	<table class="monthTable">
 		<thead>
-		<tr class="inner_table_head" style="color:white;">
+		<tr class="table_head">
 		<?php
 			//print the days of the week
 			$currentDate = $firstPrintedDate;
 			for ($i=0; $i<7; $i++) {
 				$currentDayStr = strftime("%A", $currentDate);
 				$currentDate = strtotime(date("d M Y H:i:s",$currentDate) . " +1 day");
-				print "	<th align=\"center\">$currentDayStr</th>\n";
+				echo "	<th align=\"center\">$currentDayStr</th>\n";
 			}
 		?>
 		</tr>
@@ -172,7 +181,7 @@ if (isset($popup))
 	// Print last months' days spots.
 	for ($i=0; $i<$leadInDays; $i++) {
 	//while (($dayCol < $dowForFirstOfMonth) && ($dowForFirstOfMonth != 0)) {
-		print "<td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
+		echo "<td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
 
@@ -192,18 +201,18 @@ if (isset($popup))
 
 		// New Week.
 		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
-			print "</tr>\n<!-- --><tr>\n";
+			echo "</tr>\n<!-- --><tr>\n";
 			$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 			$weeklyTotal = 0;
-			print "</tr>\n<!-- --><tr>\n";
+			echo "</tr>\n<!-- --><tr>\n";
 		} else
 			$dowForFirstOfMonth = 1;
 
 		//define subtable
 		if (($dayCol % 7) == 6)
-			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_right\">\n";
+			echo "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_right\">\n";
 		else if (($dayCol % 7 ) == 5)
-			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_middle\">\n";
+			echo "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_middle\">\n";
 		else {
 			$cellstyle = 'calendar_cell_middle';
 			if ($holnum>$ihol) {
@@ -239,14 +248,12 @@ if (isset($popup))
 
 				}
 			}
-			print "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"".$cellstyle."\">\n";
+			echo "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"".$cellstyle."\">\n";
 		}
 
-		print "	<table width=\"100%\">\n";
+
 
 		// Print out date.
-		/*print "<tr><td valign=\"top\"><tt><a href=\"".Config::getRelativeRoot()."/daily?month=".gbl::getMonth()."&amp;year=".gbl::getYear()."&amp;".
-			"day=$curDay&amp;client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\">$curDay</a></tt></td></tr>";*/
 
 		$ymdStr = "&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".$curDay;
 
@@ -259,17 +266,23 @@ if (isset($popup))
 											"&amp;day=".gbl::getDay()."".
 											"&amp;destination=".urlencode(Rewrite::getShortUri()).
 											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
+		
+    $href = Config::getRelativeRoot()."/daily?&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".$curDay.
+			"&amp;client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId();
+    ?>
+        <div style="display:inline;">
+          <?php echo "<a href=\"".$href."\">".$curDay."<span class=\"holiday_title_small\">&nbsp;$holtitle</span><!--shows holiday info--></a>";?>
+        </div>	
+        <div style="float:right; width:12px">
+          <a href="<?echo $popup_href;?>" class="action_link">
+				    <img src="{relativeRoot}/images/add.gif" alt="+" width="11" height="11" border="0" />
+				  </a>
+        </div>
+        <div class="clearall"></div>
+        
+		
 
-		print "<tr><td valign=\"top\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">";
-		print "<tr><td valign=\"top\"><a href=\"".Config::getRelativeRoot()."/daily?$ymdStr".
-			"&amp;client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."\">$curDay <span class=\"task_time_small\">$holtitle</span></a></td>";
-		print "<td valign=\"top\" align=\"right\"><a href=\"$popup_href\" class=\"action_link\">".
-				 "<img src=\"".Config::getRelativeRoot()."/images/add.gif\" alt=\"+\" width=\"11\" height=\"11\" border=\"0\" />".
-				"</a></td>";
-		print "</tr>";
-		print "</table></td></tr>";
-
-
+<?php  
 		$data_seen = 0;
 		$holtitle = ""; // reset
 
@@ -349,7 +362,7 @@ if (isset($popup))
 						$todaysTotal += Common::get_duration($data["start_stamp"],$tomorrowStamp);
 
 					} else {
-						print "Error: time booleans are in a confused state<br />\n";
+						echo "Error: time booleans are in a confused state<br />\n";
 					}
 
 
@@ -389,27 +402,27 @@ if (isset($popup))
 		if ($data_seen == 1) {
 			//Print the entire day's worth of info we've gathered
 			foreach($todaysData as $clientName => $clientArray) {
-				print "<tr><td valign=\"top\" class=\"client_name_small\">$clientName</td></tr>";
+				echo "<span class=\"client_name_small\">$clientName</span>";
 				foreach($clientArray as $projectName => $projectArray) {
-					print "<tr><td valign=\"top\" class=\"project_name_small\">&nbsp;$projectName</td></tr>";
+					echo "<span class=\"project_name_small\">&nbsp;$projectName</span>";
 					foreach($projectArray as $taskName => $taskArray) {
-						print "<tr><td valign=\"top\" class=\"task_name_small\">&nbsp;&nbsp;$taskName</td></tr>";
+						echo "<span class=\"task_name_small\">&nbsp;&nbsp;$taskName</span>";
 						foreach($taskArray as $taskStr) {
-							print "<tr><td valign=\"top\" class=\"task_time_small\">&nbsp;&nbsp;&nbsp;$taskStr</td></tr>";
+							echo "<span class=\"task_time_small\">&nbsp;&nbsp;&nbsp;$taskStr</span>";
 						}
 					}
 				}
 			}
 
-			print "<tr><td valign=\"top\" class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</td></tr>";
+			echo "<span class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</span>";
 
 		} else {
-			print "<tr><td>&nbsp;</td></tr>";
+			echo "<span>&nbsp;</span>";
 		}
 
 		//end subtable
-		print "		</table>\n";
-		print " </td>\n";
+
+		echo " </td>\n";
 
 		$curDay++;
 		$dayCol++;
@@ -417,19 +430,21 @@ if (isset($popup))
 	// Print the rest of the calendar.
 	while (($dayCol % 7) != 0) {
 		if (($dayCol % 7) == 6)
-			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</td>\n ";
+			echo " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_right\">&nbsp;</td>\n ";
 		else
-			print " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
+			echo " <td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
-	print "</tr>\n<tr>\n";
+	echo "</tr>\n<tr>\n";
 	$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 	$weeklyTotal = 0;
-	print "</tr>\n<tr>\n";
+	echo "</tr>\n<tr>\n";
 	$mc->print_totals($monthlyTotal, "monthly", gbl::getYear(), gbl::getMonth(), $curDay);
 
 ?>
 					</tr>
 				</table>
+  </div><!--end monthly div-->
 </form>
+
 
