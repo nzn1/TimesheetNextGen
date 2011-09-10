@@ -272,7 +272,8 @@ else {
 			<td class="calendar_cell_middle align_right">&nbsp;</td>
 			<td class="calendar_cell_middle align_right">&nbsp;</td>
 			
-      <td class="calendar_cell_disabled_right actions">
+      <td class="calendar_cell_disabled_right">
+        <span class="actions">
 			<?php
       /**
 			 * Update by robsearles 26 Jan 2008
@@ -295,6 +296,7 @@ else {
 			
       echo "<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">".ucfirst(JText::_('DELETE'))."</a>\n";
 			?>
+			 </span>
       </td>
     <?php
 		}
