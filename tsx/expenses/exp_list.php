@@ -45,6 +45,8 @@ if ($mode == "monthly") {
 	$endDate = Common::getMonthlyEndDate(getdate ($startDate));
 	$endStr = date("Y-m-d H:i:s",$endDate);
 	LogFile::write("Startdate/str=$startStr\n");
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 month");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 month");	
 	
 }
 if ($mode == "weekly") {
@@ -54,6 +56,8 @@ if ($mode == "weekly") {
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 week");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 week");	
 }
 
 //export data to excel (or not)
@@ -225,7 +229,7 @@ function CallBack_WithNewDateSelected(strDate)
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EXPENSE_LIST')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ob_end_clean();
 
 ?>
@@ -248,22 +252,7 @@ ob_end_clean();
 			<?php Common::user_select_droplist($uid, false,"100%"); ?>
 		</td>
 		<td>
-		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;
-			<?php
-			if ($mode == "monthly") {
-				echo JText::_('SELECT_OTHER_MONTH').": ";
-			?>
-				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
-			<?php 
-			}
-			else { 
-				echo JText::_('SELECT_OTHER_WEEK').": ";
-			?>
-				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
-			<?php
-			} 
-			?>
+		<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
 			
 		</td>
 	<?php if (!$print): ?>

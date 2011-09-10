@@ -23,6 +23,7 @@ if (gbl::getProjId() != 0 && gbl::getClientId() != 0) { // id 0 means 'All Proje
 else
 	gbl::setTaskId(0);
 
+	$mode = "weekly";
 //get the context date
 $startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
 $todayDate = mktime(0, 0, 0,gbl::getMonth(), gbl::getDay(), gbl::getYear());
@@ -32,6 +33,9 @@ list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
 
 $startStr = date("Y-m-d H:i:s",$startDate);
 $endStr = date("Y-m-d H:i:s",$endDate);
+
+$nextWeekDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 week");
+$prevWeekDate = strtotime(date("d M Y H:i:s",$todayDate) . " -1 week");
 
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
@@ -88,9 +92,7 @@ function CallBack_WithNewDateSelected(strDate)
 			?>
 		</td>
 		<td width="15%" align="center">
-  		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-  			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
-  			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
+  		<?php Common::printDateSelector($mode, $startDate, $prevWeekDate, $nextWeekDate); ?>
 		</td>
 		<td width="5%" align="right"><?php echo JText::_('FILTER')?>:</td>
 

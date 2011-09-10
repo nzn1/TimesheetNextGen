@@ -46,7 +46,8 @@ if ($mode == "monthly") {
 
 	$endDate = Common::getMonthlyEndDate($todayDateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
-	
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 month");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 month");	
 
 }
 if ($mode == "weekly") {
@@ -54,6 +55,8 @@ if ($mode == "weekly") {
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 week");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 week");
 }
 
 //export data to excel (or not)
@@ -258,9 +261,7 @@ ob_end_clean();
 			<?php Common::user_select_droplist($uid, false,"100%"); ?>
 		</td>
 		<td>
-		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
+		<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
 			
 			</td>
 	<?php if (!$print): ?>

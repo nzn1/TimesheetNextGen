@@ -1656,7 +1656,7 @@ class Common{
 		$next_day = date("d", $next_date);
 		echo JText::_('Date').": "; 
   	echo "<span style=\"color:#00066F;\">";
-    echo "<a href=\"" . Rewrite::getShortUri(). "?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$last_year."&amp;month=".$last_month."&amp;day=".$last_day."\" >";
+    echo "<a href=\"" . Rewrite::getShortUri(). "?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$last_year."&amp;month=".$last_month."&amp;day=".$last_day."&amp;mode=".$mode. "\" >";
     echo "<img src=\"{relativeRoot}/images/cal_reverse.gif\" alt=\"prev\" /></a>";
     if ($mode == "monthly"){
     	echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate));
@@ -1668,7 +1668,7 @@ class Common{
     	echo utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'), $startDate));
     }
                  
-  	echo "<a href=\"" .Rewrite::getShortUri()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day." \">";
+  	echo "<a href=\"" .Rewrite::getShortUri()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day."&amp;mode=".$mode." \">";
   	echo "<img src=\"{relativeRoot}/images/cal_forward.gif\" alt=\"next\" /></a>";
   	if ($mode == "monthly"){
       echo "<img style=\"cursor: pointer;\" onclick=\"javascript:NewCssCal('date1', 'ddmmyyyy', 'dropdown', 'false', '24', 'false', 'MONTH')\" alt=\"\" src=\"{relativeRoot}/images/cal.gif\" />";

@@ -64,12 +64,18 @@ if ($mode == "monthly") {
 
 	$endDate = Common::getMonthlyEndDate($dateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 month");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 month");	
+	
 }
 if ($mode == "weekly") {
 	list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 week");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 week");	
+	
 }
 
 //Setup the variables so we can let the user choose how to order things...
@@ -297,27 +303,8 @@ if (isset($popup))
 							</table>
 						</td>
 						<td align="center" class="outer_table_heading">
-		<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;
-						<?php
-							if ($mode == "monthly") {
-								echo JText::_('SELECT_OTHER_MONTH').": ";
-						?>
-							<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
-						<?php 
-							}
-							else { 
-								echo JText::_('SELECT_OTHER_WEEK').": ";
-						?>
-								<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
-						<?php
-							} 
-						?>
-
-								</td>
-								<td align="center"  class="outer_table_heading">
-								<input id="sub" type="submit" name="Change Date"></input>
-								</td>
+						<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
+						</td>
 						
 						<?php //}
 							if (!$print): ?>
