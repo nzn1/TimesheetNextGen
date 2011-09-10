@@ -35,8 +35,8 @@ list($startDate,$endDate) = Common::getWeeklyStartEndDates($contextTimeStamp);
 $startStr = date("Y-m-d H:i:s",$startDate);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
-$nextWeekDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 week");
-$prevWeekDate = strtotime(date("d M Y H:i:s",$todayDate) . " -1 week");
+$nextWeekDate = strtotime(date("d M Y H:i:s",$contextTimeStamp) . " +1 week");
+$prevWeekDate = strtotime(date("d M Y H:i:s",$contextTimeStamp) . " -1 week");
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('WEEKLY_TIMESHEET')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
