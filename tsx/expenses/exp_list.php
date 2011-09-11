@@ -310,9 +310,13 @@ ob_end_clean();
 			" date, status, t.description as category FROM ".
 			tbl::getExpenseTable(). " e , " . tbl::getProjectTable(). " p, " . tbl::getClientTable()." c, " . tbl::getExpenseCategoryTable().
 			 " t WHERE user_id = '" . $uid . "' AND p.proj_id = e.proj_id AND c.client_id = e.client_id ".
-			" AND e.date >= '$startStr' AND e.date < '$endStr' " .
-			 " AND e.cat_id = t.cat_id ORDER BY e.proj_id, e.client_id, e.date";
-			//"' AND p.proj_id = '" . $proj_id .   "' AND c.client_id = '" . $client_id .
+			" AND e.date >= '$startStr' AND e.date < '$endStr' AND e.cat_id = t.cat_id" ;
+	if ($proj_id > 0) 
+		$query .= " AND p.proj_id = '$proj_id' " ;
+	if ($client_id > 0)
+		$query .= " AND c.client_id = " . $client_id ;
+	$query .= " ORDER BY e.proj_id, e.client_id, e.date " ;
+			
 			LogFile::write("\nexp_list db query: ". $query. "\n");
 	list($qh, $num) = dbQuery($query);
 
