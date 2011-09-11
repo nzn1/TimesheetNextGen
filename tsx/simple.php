@@ -34,13 +34,18 @@ if ($daysToMinus < 0)
 $startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
 $startDay =  strtotime(date("d",$todayStamp) . " -$daysToMinus days");
 $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
+
+$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -7 days");;
+$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");;
 // if required to copy the previous week's tasks and times, calculate the date
 //$debug->write("copyprev = \"$copyprev\"" . " \n");
 if (empty($copyprev)) {
     $copyStartDate = 0;
     $copyEndDate = 0;
+
 }
-else{
+else
+{
     $daysToMinus += 7; // subtract a further 7 days to go a week earlier
     $copyStartDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
     $copyEndDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
@@ -54,16 +59,17 @@ $layout = Common::getLayout();
 
 //$post="";
 
-if (isset($popup)){
-	PageElements::setBodyOnLoad("window.open('".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205');");
-}
+if (isset($popup))
+	PageElements::setBodyOnLoad("onLoad=window.open(\"".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id\",\"Popup\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205\");");
+
+	
 	
 ob_start();	
+
+//require_once("include/language/datetimepicker_lang.inc");
 ?>
-<title><?php echo Config::getMainTitle()." - Simple Weekly Timesheet for ".gbl::getContextUser();?></title>
-
-<script type="text/javascript" src="<?php echo Config::getRelativeRoot()."/js/datetimepicker_css.js";?> "></script>
-
+<title><?php echo Config::getMainTitle();?> - Simple Weekly Timesheet for <?php echo gbl::getContextUser();?></title>
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <script type="text/javascript">
 	//define the hash table
 	var projectTasksHash = {};
@@ -91,11 +97,11 @@ LogFile::write("\nList of new projects Num: ". $num3. "\n");
 for ($i=0; $i<$num3; $i++) {
 	//get the current record
 	$data = dbResult($qh3, $i);
-	echo("projectTasksHash['" . $data["proj_id"] . "'] = {};\n");
-	echo("projectTasksHash['" . $data["proj_id"] . "']['name'] = '". addslashes($data["title"]) . "';\n");
-	echo("projectTasksHash['" . $data["proj_id"] . "']['clientId'] = '". $data["client_id"] . "';\n");
-	echo("projectTasksHash['" . $data["proj_id"] . "']['clientName'] = '". addslashes($data["organisation"]) . "';\n");
-	echo("projectTasksHash['" . $data["proj_id"] . "']['tasks'] = {};\n");
+	print("projectTasksHash['" . $data["proj_id"] . "'] = {};\n");
+	print("projectTasksHash['" . $data["proj_id"] . "']['name'] = '". addslashes($data["title"]) . "';\n");
+	print("projectTasksHash['" . $data["proj_id"] . "']['clientId'] = '". $data["client_id"] . "';\n");
+	print("projectTasksHash['" . $data["proj_id"] . "']['clientName'] = '". addslashes($data["organisation"]) . "';\n");
+	print("projectTasksHash['" . $data["proj_id"] . "']['tasks'] = {};\n");
 }
 
 //get all of the tasks and put them into the hashtable
@@ -113,20 +119,18 @@ LogFile::write("\nList of tasks Num: ". $num4. "\n");
 for ($i=0; $i<$num4; $i++) {
 	//get the current record
 	$data = dbResult($qh4, $i);
-	echo("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
-	echo("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
+	print("if (projectTasksHash['" . $data["proj_id"] . "'] != null)\n");
+	print("  projectTasksHash['" . $data["proj_id"] . "']['tasks']['" . $data["task_id"] . "'] = '" . addslashes($data["name"]) . "';\n");
 }
 echo "var None_option = '".JText::_('VALUE_NONE')."';";
-?>
-</script>
-
-<?php
+echo"</script>";
 echo "<script type=\"text/javascript\" src=\"".Config::getRelativeRoot()."/js/simple.js\"></script>";
 
 PageElements::setHead(ob_get_contents());
 PageElements::setTheme('newcss');
 ob_end_clean();
 PageElements::setBodyOnLoad('populateExistingSelects();');
+
 
 	?>
 <form name="simpleForm" action="<?php echo Config::getRelativeRoot();?>/simple_action" method="post">
@@ -149,21 +153,19 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			?>
 		</td>
 		<td  class="outer_table_heading">
-			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-			&nbsp;&nbsp;&nbsp;<?php echo JText::_('SELECT_OTHER_WEEK').": "; ?>
-			<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
-			</td>
-	      <td width="15%" style="font-size: 11"><a href="<?php echo Rewrite::getShortUri();?>?&amp;year=<?php echo $year?>&amp;month=<?php echo $month?>&amp;day=<?php echo $day?>&amp;copyprev=1">Copy Previous</a></td>
+		<?php Common::printDateSelector("weekly", $startDate, $prevDate, $nextDate); ?>
+
+		<td width="15%" style="font-size: 11"><a href="<?php echo $_SERVER['PHP_SELF']?>?&year=<?php echo $year?>&month=<?php echo $month?>&day=<?php echo $day?>&copyprev=1">Copy Previous</a></td>
           <td width="15%" align="right" >
       <?php
           if($copyprev) { // if copyprev is set, then enable the save changes
       ?>
-          <input type="button" name="saveButton" id="saveButton" value="Save Changes" onclick="validate();" />
+          <input type="button" name="saveButton" id="saveButton" value="Save Changes" onClick="validate();" />
       <?php
           }
           else {
       ?>
-              <input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="disabled" onclick="validate();" />
+              <input type="button" name="saveButton" id="saveButton" value="Save Changes" disabled="true" onClick="validate();" />
       <?php
           }
       ?>
@@ -192,7 +194,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 					echo JText::_('TASK'); 
 				?>
 			</th>
-			<th class="inner_table_column_heading" align="center" width="25%">
+			<th class="inner_table_column_heading" align="center" width=\"25%\">
 				<?php 
 					if(strstr($layout, 'no work description') == '')
 						echo JText::_('WORK_DESCRIPTION');
@@ -211,7 +213,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				$minsinday = ((24*60*60) - $dst_adjustment)/60;
 				$daysOfWeek[$i] = date("d", $currentDayDate);
 
-				echo
+				print
 					"<th class=\"inner_table_column_heading\" align=\"center\" >"								
 					  ."<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\" />"
 						."$currentDayStr<br />" .
@@ -231,7 +233,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			</th>
 		</tr>
 	</thead>
-
+	<tbody>
 <?php
 
 	// Get the Weekly user data.
@@ -247,6 +249,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	$previousClientProjTaskDesc = "-1";
 	$rowIndex = 0;
 	$colIndex = 1;
+	$prevColIndex = 1;
 	$count = 0;
 	$weeklyTotal = 0;
 	$rowTotal = 0;
@@ -276,14 +279,18 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		$currentProjectTitle = stripslashes($data["projectTitle"]);
 		$currentProjectId = $data["proj_id"];
 		$currentWorkDescription = $data["log_message"];
+		$hours = floor($data['duration'] / 60 );
+		$minutes = $data['duration'] - ($hours * 60);
 		
 		// calculate current change key
 		$currentClientProjTaskDesc = $data['client_id'].$data['proj_id']. $data['task_id'].$data['log_message'];
 		if ($previousClientProjTaskDesc == -1) { // if this is the first time through
+			LogFile::write("first time through colIndex: ". $colIndex. " currentDay: " . $currentDay ." previousDay: ". $previousDay."\n");
 			$previousClientProjTaskDesc = $currentClientProjTaskDesc; // make the keys the same so we don't force a new row
 			$previousDay = $currentDay - 1;
 			$simple->printFormRow($rowIndex, $layout, $data); // print client/proj/task etc
 		}
+		
 		// set colIndex to match the day of the incoming record
 		for ($col = $colIndex; $col <8; $col++) {
 		LogFile::write("inside loop colIndex: ". $colIndex. " col: ". $col . " currentDay: " . $currentDay ." previousDay: ". $previousDay. " daysofweek: ". $daysOfWeek[$col-1]."\n");
@@ -296,58 +303,75 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			$colIndex++;
 		}		
 
-		// on second thoughts, don't need an array, just output the values since the db query should be in the right order. 
 		LogFile::write("before test colIndex: ". $colIndex. "currentDay: " . $currentDay ." previousDay: ". $previousDay. "\n");
-		// if client/project/task/workdescription has changed, start a new row
-		if (($currentClientProjTaskDesc > $previousClientProjTaskDesc) or ($currentDay <= $previousDay)) { // change of data start new row
-			LogFile::write("Changed proj key or duplicate day. Start new row \n");
-			
-			if($colIndex != 1) { // close off previous row if this is not the first time through
-				LogFile::write("Closing previous row. colIndex: ". $colIndex. "\n"); 
-				$simple->finishRow($rowIndex, $colIndex, $rowTotal, "no"); // "no" means no disabled input fields
-				$rowTotal = 0;
-				$colIndex = 1; // reset column index
-				$rowIndex++; // count no rows
-				$previousDay = $currentDay; // reset previous day
-			}
-			
+		// if new record client/project/task/workdescription has changed, start a new row
+		if ($colIndex >  $prevColIndex) {
+			$simple->printTime($rowIndex, $colIndex, $data['trans_num'], $hours, $minutes); // print this column's data
+			$prevColIndex = $colIndex;
+			$colIndex++; 
+		}
+		else { // finish row and start new row
+			$simple->finishRow($rowIndex, $colIndex, $rowTotal, "no"); // "no" means no disabled input fields
+			$rowTotal = 0;
+			$colIndex = 1; // reset column index
+			$rowIndex++; // count no rows
+			$previousDay = $currentDay; // reset previous day
 			$simple->printFormRow($rowIndex, $layout, $data); // print client/proj/task etc
+			$previousClientProjTaskDesc = $currentClientProjTaskDesc; 
+			for ($col = 1; $col < $colIndex; $col++) { // now print empty cells until the space for the data
+				$simple->printTime($rowIndex, $col, 0, -1, -1); // print empty day's times
+			}	
+			$simple->printTime($rowIndex, $colIndex, $data['trans_num'], $hours, $minutes); // print this column's data		
+		}
+		//if (($currentClientProjTaskDesc > $previousClientProjTaskDesc) or ($currentDay <= $previousDay)) { // change of data start new row
+			//LogFile::write("Changed proj key or duplicate day. Start new row \n");
+			
+		//	if($colIndex != 1) { // close off previous row if this is not the first time through
+		//		LogFile::write("Closing previous row. colIndex: ". $colIndex. "\n"); 
+		//		finishRow($rowIndex, $colIndex, $rowTotal, "no"); // "no" means no disabled input fields
+		//		$rowTotal = 0;
+		//		$colIndex = 1; // reset column index
+		//		$rowIndex++; // count no rows
+		//		$previousDay = $currentDay; // reset previous day
+		//	}
+			
+		//	printFormRow($rowIndex, $layout, $data); // print client/proj/task etc
 			// set colIndex to match the day of the incoming record
-			for ($col = $colIndex; $col <8; $col++) {
-				LogFile::write("After closing previous row, inside loop colIndex: ". $colIndex. " col: ". $col . " currentDay: " . $currentDay ." previousDay: ". $previousDay. " daysofweek: ". $daysOfWeek[$col-1]."\n");
-				if ($currentDay == $daysOfWeek[$col-1]) {
-					LogFile::write("Equal, break loop \n");
-					break; 
-				}
-				LogFile::write("Not equal, print blank col and inc colIndex " . $colIndex ." \n");
-				$simple->printTime($rowIndex, $colIndex, 0, -1, -1); // print empty day's times
-				$colIndex++;
-			}
+		//	for ($col = $colIndex; $col <8; $col++) {
+		//		LogFile::write("After closing previous row, inside loop colIndex: ". $colIndex. " col: ". $col . " currentDay: " . $currentDay ." previousDay: ". $previousDay. " daysofweek: ". $daysOfWeek[$col-1]."\n");
+		//		if ($currentDay == $daysOfWeek[$col-1]) {
+		//			LogFile::write("Equal, break loop \n");
+		//			break; 
+		//		}
+		//		LogFile::write("Not equal, print blank col and inc colIndex " . $colIndex ." \n");
+		//		printTime($rowIndex, $colIndex, 0, -1, -1); // print empty day's times
+		//		$colIndex++;
+		//	}
 
-			$hours = floor($data['duration'] / 60 );
-			$minutes = $data['duration'] - ($hours * 60);
+		//	$hours = floor($data['duration'] / 60 );
+		//	$minutes = $data['duration'] - ($hours * 60);
 			// establish which column we should be in
 
-			$simple->printTime($rowIndex, $colIndex, $data['trans_num'], $hours, $minutes);
-			$rowTotal += $data['duration'];
-			$allTasksDayTotals[$colIndex-1] += $data['duration']; 
-			$colIndex++; 			
-			LogFile::write("Print value. colIndex++: ". $colIndex. "\n"); 
-		}
-		else {
+		//	printTime($rowIndex, $colIndex, $data['trans_num'], $hours, $minutes);
+		//	$rowTotal += $data['duration'];
+		//	$allTasksDayTotals[$colIndex-1] += $data['duration']; 
+		//	$colIndex++; 			
+		//	LogFile::write("Print value. colIndex++: ". $colIndex. "\n"); 
+		//}
+		//else {
 			// continue existing row
 			//print hours and minutes input field for new day, and blanks in between
 			// ignore blanks in between for now
 			
-			$hours = floor($data['duration'] / 60 );
-			$minutes = $data['duration'] - ($hours * 60);
-			$simple->printTime($rowIndex, $colIndex, $data['trans_num'], $hours, $minutes);
+		//	$hours = floor($data['duration'] / 60 );
+		//	$minutes = $data['duration'] - ($hours * 60);
+		//	printTime($rowIndex, $colIndex, $data['trans_num'], $hours, $minutes);
 			$rowTotal += $data['duration'];
 			$allTasksDayTotals[$colIndex-1] += $data['duration']; 
 			$colIndex++; 
 			LogFile::write("Continue existing row colIndex++: ". $colIndex. "\n"); 
 			
-		}
+		
 		
 		//LogFile::write("end of tuple: previous key: ". $previousClientProjTaskDesc . " current key: " . $currentClientProjTaskDesc."\n");
 		//LogFile::write("end of tuple: previous date: ". $previousDay . " current date: " . $currentDay."\n");
@@ -405,34 +429,36 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	$simple->finishRow($rowIndex, $colIndex, $rowTotal, "yes"); // "yes" means fields will be disabled
 
 	//create a new totals row
-	echo "<tr id=\"totalsRow\">\n";
-	echo "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
+	print "<tr id=\"totalsRow\">\n";
+	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\">";
   	//store a hidden form field containing the number of existing rows
-	echo "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $rowIndex . "\" />";
+	print "<input type=\"hidden\" id=\"existingRows\" name=\"existingRows\" value=\"" . $rowIndex . "\" />";
 
 	//store a hidden form field containing the total number of rows
-	echo "<input type=\"hidden\" id=\"totalRows\" name=\"totalRows\" value=\"" . ($rowIndex+1) . "\" /></td>";
-	echo "<td class=\"calendar_cell_disabled_middle\" align=\"right\" colspan=\"3\">". JText::_('TOTAL_HOURS') .":</td>\n";
+	print "<input type=\"hidden\" id=\"totalRows\" name=\"totalRows\" value=\"" . ($rowIndex+1) . "\" /></td>";
+	print "<td class=\"calendar_cell_disabled_middle\" align=\"right\" colspan=\"3\">". JText::_('TOTAL_HOURS') .":</td>\n";
 	
 	//iterate through day totals for all tasks
 	$grandTotal = 0;
 	$col = 0;
 	for ($colIndex=1; $colIndex<8; $colIndex++) {
 			
-		echo "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
-		echo "<span class=\"calendar_total_value_weekly\" id=\"subtotal_col" . $colIndex . "\">" .Common::formatMinutes($allTasksDayTotals[$colIndex-1])."</span></td>";
+		print "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
+		print "<span class=\"calendar_total_value_weekly\" id=\"subtotal_col" . $col . "\">" .Common::formatMinutes($allTasksDayTotals[$colIndex-1])."</span></td>";
 		$grandTotal += $allTasksDayTotals[$colIndex-1];
 	}
 
-	//echo grand total
-	echo "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
-	echo "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
-	echo "<span class=\"calendar_total_value_monthly\" id=\"grand_total\">" .Common::formatMinutes($grandTotal)."</span></td>";
-	echo "</tr>";
+	//print grand total
+	print "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
+	print "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
+	print "<span class=\"calendar_total_value_monthly\" id=\"grand_total\">" .Common::formatMinutes($grandTotal)."</span></td>";
+	print "</tr>";
 	
 ?>
 
 			</table>
-
+		</td>
+	</tr>
+</table>
 
 </form>
