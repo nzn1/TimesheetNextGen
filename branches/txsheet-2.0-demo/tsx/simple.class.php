@@ -25,9 +25,7 @@ class SimplePage{
 ==================== Function PrintFormRow =============================
 =======================================================================*/
 
-// taskId = $matchedPair->value1, daysArray = $matchedPair->value2
-
-// usage: provide an index to generate an empty row or ALL parameters to prefill the row
+// usage: provide an index to generate an empty row or ALL parameters to prefill the row with client/proj/task/log entry
 function printFormRow($rowIndex, $layout, $data) {
 	// print project, task and optionally work description
 	//LogFile::write("printFormRow Layout: ". $layout);
@@ -90,6 +88,7 @@ function printFormRow($rowIndex, $layout, $data) {
 							<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" />
 						</td>
 						<td align="left" >
+							<input type="hidden" id="desc_row<?php echo $rowIndex; ?>" name="desc_row<?php echo $rowIndex; ?>" value="0" />
 							<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onChange="onChangeWorkDescription(this.id);" value="<?php echo $data['log_message']; ?>" />
 						</td>
 						<?php
@@ -106,23 +105,25 @@ function printFormRow($rowIndex, $layout, $data) {
   			$disabled = 'disabled="disabled" ';
   		else 
   			$disabled = '';
-  		for ($currentDay = $colIndex; $currentDay < 8; $currentDay++) {
-			//open the column
-			print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\">";
-				//while we are printing times set the style
-			print "<span class=\"task_time_small\">";
-				//create a string to be used in form input names
-			$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
-		
-			print "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" />";
-			print "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('HR')."</span>";
-			print "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('MN')."</span>";
-				//close the times class
-			print "</span>";
-				//end the column
-			print "</td>";
-
-		}
+  		if ($colIndex <= 7) { // not at end of a row, fill empty columns
+	  		for ($currentDay = $colIndex; $currentDay < 8; $currentDay++) {
+				//open the column
+				print "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\">";
+					//while we are printing times set the style
+				print "<span class=\"task_time_small\">";
+					//create a string to be used in form input names
+				$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
+			
+				print "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" />";
+				print "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('HR')."</span>";
+				print "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('MN')."</span>";
+					//close the times class
+				print "</span>";
+					//end the column
+				print "</td>";
+	
+			}
+  		}
 		$this->printSpaceColumn();
 		//print the total column
 		$weeklyTotalStr = Common::formatMinutes($rowTotal);
@@ -146,15 +147,21 @@ function printFormRow($rowIndex, $layout, $data) {
 
 		//while we are printing times set the style
 		echo "<span class=\"task_time_small\">\n";
-
 		//create a string to be used in form input names
 		$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
+		if ($trans_num == "n") { // indicates copy from previous period, set trans_num field to zero to indicate new data
+			echo "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" />";
+			$trans_num = 1;
+		}
+		else 
+			echo "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"$trans_num\" />";
+		
+
 		if ($trans_num ==  -1)
 			$disabled = 'disabled="disabled" ';
 		else 
 			$disabled = '';
 
-		echo "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"$trans_num\" />";
 		if ($trans_num != 0) { //print a valid field 
 			echo "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$hours\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
 			echo "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$minutes\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
@@ -169,6 +176,26 @@ function printFormRow($rowIndex, $layout, $data) {
 		//end the column
 		echo "</td>\n";
 	}
-	
+  public function printEmpty($rowIndex, $currentDay) {
+  		
+		//open the column
+		echo "<td class=\"calendar_cell_middle\" valign=\"top\" align=\"left\">\n";
+
+		//while we are printing times set the style
+		echo "<span class=\"task_time_small\">\n";
+		//create a string to be used in form input names
+		$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
+		echo "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" />";
+		$disabled = '';
+
+		echo "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
+		echo "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
+
+		//close the times class
+		echo "</span>\n";
+
+		//end the column
+		echo "</td>\n";
+	}
 }
 ?>

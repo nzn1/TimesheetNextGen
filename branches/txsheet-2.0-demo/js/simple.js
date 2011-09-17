@@ -32,11 +32,11 @@
 			//var clientId = -1;
 			for (var key in projectTasksHash) {
 				//alert('looking at key ' + key);
-				if (projectTasksHash[key]['clientId'] != clientId) {
+				//if (projectTasksHash[key]['clientId'] != clientId) {
 					//projectSelect.options[projectSelect.options.length] = new Option('[' + projectTasksHash[key]['clientName'] + ']', -1);
 					clientSelect.options[clientSelect.options.length] = new Option(projectTasksHash[key]['clientName'], projectTasksHash[key]['clientId']);
 					clientId = projectTasksHash[key]['clientId'];
-				}
+				//}
 
 				//alert('added client ' + key);
 
@@ -246,6 +246,8 @@
 
 	function onChangeWorkDescription(idStr) {
 		setDirty();
+		var row = rowFromIdStr(idStr);
+		document.getElementById('desc_row' + row).value = "1";
 	}
 
 	//clear row and make it invisible
