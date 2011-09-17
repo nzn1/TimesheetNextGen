@@ -6,7 +6,6 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
-$copyprev = isset($_REQUEST["copyprev"]) ? $_REQUEST["copyprev"]: "";
 
 require_once('simple.class.php');
 $simple = new SimplePage();
@@ -15,7 +14,8 @@ if (empty($loggedInUser))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 	
 		$uid = gbl::getContextUser();
-
+define("A_WEEK", 60 * 60 * 24 * 7); // seconds per week
+		
 //get the passed date (context date)
 $todayStamp = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $todayValues = getdate($todayStamp);
@@ -35,10 +35,12 @@ $startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
 $startDay =  strtotime(date("d",$todayStamp) . " -$daysToMinus days");
 $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 
-$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -7 days");;
-$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");;
+$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -7 days");
+$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
+
 // if required to copy the previous week's tasks and times, calculate the date
-//$debug->write("copyprev = \"$copyprev\"" . " \n");
+$copyprev = isset($_REQUEST["copyprev"]) ? $_REQUEST["copyprev"]: "";
+//LogFile::write("\n\nsimple.php\ncopyprev = \"$copyprev\"" . " \n");
 if (empty($copyprev)) {
     $copyStartDate = 0;
     $copyEndDate = 0;
@@ -51,7 +53,7 @@ else
     $copyEndDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
 }
 
-LogFile::write("\n\n\n\n\n\n\n\n\n\nStart of new Simple.php execution. startDate: ". $todayStamp. "\t context user: ". $uid. "\n\n");
+//LogFile::write("\n\n\n\n\n\n\n\n\n\nStart of new Simple.php execution. startDate: ". $todayStamp. "\t context user: ". $uid. "\n\n");
 //get the configuration of timeformat and layout
 //list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 //$configData = dbResult($qh2);
@@ -66,7 +68,6 @@ if (isset($popup))
 	
 ob_start();	
 
-//require_once("include/language/datetimepicker_lang.inc");
 ?>
 <title><?php echo Config::getMainTitle();?> - Simple Weekly Timesheet for <?php echo gbl::getContextUser();?></title>
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
@@ -78,7 +79,7 @@ ob_start();
 $PROJECT_TABLE = tbl::getProjectTable();
 $CLIENT_TABLE = tbl::getClientTable();
 $TASK_TABLE = tbl::getTaskTable();
-//get all of the projects and put them into the hashtable
+//get all of the projects for this context user and put them into the hashtable
 $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
 							"$PROJECT_TABLE.title, " .
 							"$PROJECT_TABLE.client_id, " .
@@ -91,7 +92,7 @@ $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
 						"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
 list($qh3, $num3) = dbQuery($getProjectsQuery);
-LogFile::write("\nList of new projects Num: ". $num3. "\n");
+//LogFile::write("\nList of new projects Num: ". $num3. "\n");
 
 //iterate through results
 for ($i=0; $i<$num3; $i++) {
@@ -158,9 +159,9 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		<td width="15%" style="font-size: 11"><a href="<?php echo $_SERVER['PHP_SELF']?>?&year=<?php echo $year?>&month=<?php echo $month?>&day=<?php echo $day?>&copyprev=1">Copy Previous</a></td>
           <td width="15%" align="right" >
       <?php
-          if($copyprev) { // if copyprev is set, then enable the save changes
+          if($copyprev) { // if copy the previous week is set, then enable the save changes nutton
       ?>
-          <input type="button" name="saveButton" id="saveButton" value="Save Changes" onClick="validate();" />
+          	<input type="button" name="saveButton" id="saveButton" value="Save Changes" onClick="validate();" />
       <?php
           }
           else {
@@ -194,7 +195,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 					echo JText::_('TASK'); 
 				?>
 			</th>
-			<th class="inner_table_column_heading" align="center" width=\"25%\">
+			<th class="inner_table_column_heading" align="center" width=\"20%\">
 				<?php 
 					if(strstr($layout, 'no work description') == '')
 						echo JText::_('WORK_DESCRIPTION');
@@ -214,7 +215,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				$daysOfWeek[$i] = date("d", $currentDayDate);
 
 				print
-					"<th class=\"inner_table_column_heading\" align=\"center\" >"								
+					"<th class=\"inner_table_column_heading\" align=\"center\" width=\"8%\">"								
 					  ."<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\" />"
 						."$currentDayStr<br />" .
 						//Output the numerical date in the form of day of the month
@@ -224,7 +225,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			}
 			?>
 			<th align="center" width="2">&nbsp;</th>
-			<th class="inner_table_column_heading" align="center" width="50">
+			<th class="inner_table_column_heading" align="center" width="6%">
 				<?php echo ucfirst(JText::_('TOTAL')) ?>
 			</th>
 			<th align="center" width="2">&nbsp;</th>
@@ -237,11 +238,22 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 <?php
 
 	// Get the Weekly user data.
-	$startStr = date("Y-m-d H:i:s",$startDate);
-	$endStr = date("Y-m-d H:i:s",$endDate);
+	// if copy previous data is selected, take data from last week
+	if (!$copyStartDate) { // normal data retrieval 
+		$startStr = date("Y-m-d H:i:s",$startDate);
+		$endStr = date("Y-m-d H:i:s",$endDate);
+		$dayAdjust = 0;
+	}
+	else { // copy previous week
+		$startStr = date("Y-m-d H:i:s",$copyStartDate);
+		$endStr = date("Y-m-d H:i:s",$copyEndDate);
+		$dayAdjust = A_WEEK; // since we are retrieving records from last week, adjust date by 7
+		// days to bring it into the current week
+	}
+	//LogFile::write("\nStartStr = " . $startStr ." endStr = " .$endStr.  "\n");
 	$order_by_str = "".tbl::getClientTable().".organisation, ".tbl::getProjectTable().".title, ".tbl::getTaskTable().".name, ".
 	//	"".tbl::getTimesTable().".start_time, " .tbl::getTimesTable().".log_message";
-		"".tbl::getTimesTable().".log_message, " .tbl::getTimesTable().".trans_num";
+		"".tbl::getTimesTable().".log_message, " .tbl::getTimesTable().".start_time";
 	list($num5, $qh5) = Common::get_time_records($startStr, $endStr, gbl::getContextUser(), 0, 0, $order_by_str);
 
 	$previousDay = date("d",$startDate);
@@ -269,18 +281,19 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 		//get the current task properties
 		$currentTaskId = $data["task_id"];
-		$currentTaskStartDate = $data["start_stamp"];
+		$currentTaskStartDate = $data["start_stamp"] + $dayAdjust;
 		$currentDay = date("d",$currentTaskStartDate);
 		$currentDayDate = $startDate;
 		$tomorrowDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
 		$tomorrowDay = strtotime(date("d",$currentDayDate) . " +1 days");
-		$currentTaskEndDate = $data["end_stamp"];
+		$currentTaskEndDate = $data["end_stamp"] + $dayAdjust;
 		$currentTaskName = stripslashes($data["taskName"]);
 		$currentProjectTitle = stripslashes($data["projectTitle"]);
 		$currentProjectId = $data["proj_id"];
 		$currentWorkDescription = $data["log_message"];
 		$hours = floor($data['duration'] / 60 );
 		$minutes = $data['duration'] - ($hours * 60);
+
 		
 		// calculate current change key
 		$currentClientProjTaskDesc = $data['client_id'].$data['proj_id']. $data['task_id'].$data['log_message'];
@@ -291,49 +304,62 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			$simple->printFormRow($rowIndex, $layout, $data); // print client/proj/task etc
 		}
 		
-		// set colIndex to match the day of the incoming record
+		if (($currentClientProjTaskDesc > $previousClientProjTaskDesc) or ($colIndex > 7)) { // or ($currentDay <= $previousDay) change of data start new row
+			//LogFile::write("Changed proj key or duplicate day. Start new row \n");
+			LogFile::write("\nBreak in key\n"); 
+			if($colIndex != 1) { // close off previous row 
+				LogFile::write("\nClosing previous row". $rowIndex. " colIndex: ". $colIndex. "\n"); 
+				$simple->finishRow($rowIndex, $colIndex, $rowTotal, "no"); // "no" means no disabled input fields
+				$rowTotal = 0;
+				$colIndex = 1; // reset column index
+				$prevColIndex = 0; // reset column index
+				$rowIndex++; // count no rows
+				$previousDay = $currentDay; // reset previous day
+				$previousClientProjTaskDesc = $currentClientProjTaskDesc; 
+			}
+			$simple->printFormRow($rowIndex, $layout, $data); // print client/proj/task etc
+		}
+		
+			// set colIndex to match the day of the incoming record
 		for ($col = $colIndex; $col <8; $col++) {
-		LogFile::write("inside loop colIndex: ". $colIndex. " col: ". $col . " currentDay: " . $currentDay ." previousDay: ". $previousDay. " daysofweek: ". $daysOfWeek[$col-1]."\n");
 			if ($currentDay == $daysOfWeek[$col-1]) {
-				LogFile::write("Equal, break loop \n");
+				LogFile::write("\nFound matching day currentDay: ". $currentDay . " daysofweek: ". $daysOfWeek[$col-1] ." break loop \n");
 				break; 
 			}
-			LogFile::write("Not equal, inc colIndex" . $colIndex ." \n");
-			$simple->printTime($rowIndex, $colIndex, 0, -1, -1); // print empty day's times
+			//LogFile::write("Not equal, inc colIndex" . $colIndex ." \n");
+			$simple->printEmpty($rowIndex, $colIndex); // print empty day's times
 			$colIndex++;
 		}		
 
-		LogFile::write("before test colIndex: ". $colIndex. "currentDay: " . $currentDay ." previousDay: ". $previousDay. "\n");
+		LogFile::write("\nbefore test colIndex: ". $colIndex. " prevcolindex: ".$prevColIndex ." rowindex: ". $rowIndex. " currentDay: " . $currentDay ." previousDay: ". $previousDay. "\n");
 		// if new record client/project/task/workdescription has changed, start a new row
-		if ($colIndex >  $prevColIndex) {
-			$simple->printTime($rowIndex, $colIndex, $data['trans_num'], $hours, $minutes); // print this column's data
+		if (($colIndex >  $prevColIndex) and ($colIndex <= 7)) {
+			if ($copyStartDate) // if we are copying previous data, set the transaction number so that the data appears to be new
+				$simple->printTime($rowIndex, $colIndex, "n", $hours, $minutes); // print this column's data as new data
+			else 
+				$simple->printTime($rowIndex, $colIndex, $data["trans_num"], $hours, $minutes); // print this column's data
 			$prevColIndex = $colIndex;
-			$colIndex++; 
+			LogFile::write("\ncontinue same row ". $rowIndex. " colIndex: ". $colIndex. "\n");
 		}
-		else { // finish row and start new row
+		else if (($colIndex <= $prevColIndex) or ($colIndex > 7)) { // finish row and start new row
 			$simple->finishRow($rowIndex, $colIndex, $rowTotal, "no"); // "no" means no disabled input fields
 			$rowTotal = 0;
 			$colIndex = 1; // reset column index
+			$prevColIndex = 0; // reset column index
 			$rowIndex++; // count no rows
 			$previousDay = $currentDay; // reset previous day
 			$simple->printFormRow($rowIndex, $layout, $data); // print client/proj/task etc
 			$previousClientProjTaskDesc = $currentClientProjTaskDesc; 
+			LogFile::write("\nstarting new row ". $rowIndex. " colIndex: ". $colIndex. "\n");
 			for ($col = 1; $col < $colIndex; $col++) { // now print empty cells until the space for the data
-				$simple->printTime($rowIndex, $col, 0, -1, -1); // print empty day's times
+				$simple->printEmpty($rowIndex, $col); // print empty day's times
 			}	
-			$simple->printTime($rowIndex, $colIndex, $data['trans_num'], $hours, $minutes); // print this column's data		
+			if ($copyStartDate) // if we are copying previous data, set the transaction number so that the data appears to be new
+				$simple->printTime($rowIndex, $colIndex, "n", $hours, $minutes); // print this column's data as new data
+			else 
+				$simple->printTime($rowIndex, $colIndex, $data["trans_num"], $hours, $minutes); // print this column's data
 		}
-		//if (($currentClientProjTaskDesc > $previousClientProjTaskDesc) or ($currentDay <= $previousDay)) { // change of data start new row
-			//LogFile::write("Changed proj key or duplicate day. Start new row \n");
-			
-		//	if($colIndex != 1) { // close off previous row if this is not the first time through
-		//		LogFile::write("Closing previous row. colIndex: ". $colIndex. "\n"); 
-		//		finishRow($rowIndex, $colIndex, $rowTotal, "no"); // "no" means no disabled input fields
-		//		$rowTotal = 0;
-		//		$colIndex = 1; // reset column index
-		//		$rowIndex++; // count no rows
-		//		$previousDay = $currentDay; // reset previous day
-		//	}
+
 			
 		//	printFormRow($rowIndex, $layout, $data); // print client/proj/task etc
 			// set colIndex to match the day of the incoming record
@@ -368,8 +394,9 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		//	printTime($rowIndex, $colIndex, $data['trans_num'], $hours, $minutes);
 			$rowTotal += $data['duration'];
 			$allTasksDayTotals[$colIndex-1] += $data['duration']; 
+			$prevColIndex = $colIndex; 
 			$colIndex++; 
-			LogFile::write("Continue existing row colIndex++: ". $colIndex. "\n"); 
+			LogFile::write("Continue existing row ". $rowIndex. " colIndex++: ". $colIndex. "\n"); 
 			
 		
 		

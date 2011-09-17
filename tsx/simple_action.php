@@ -88,7 +88,12 @@ for ($i=0; $i<$totalRows; $i++) {
 	if ($otaskId < 1 && $taskId < 1) // when the taskId is < 1 indicates an unused blank last row: ignore
 		continue;
 	$workDescription = '';
-	//TODO handle change of description
+	$changedDescription = "n"; // note if flag set to indicate description has changed
+	if (array_key_exists("desc_row" . $i, $_REQUEST)) {
+		if ($_REQUEST["desc_row" . $i] > 0)
+			$changedDescription = "y";
+	}
+	
 	if (array_key_exists("description_row" . $i, $_REQUEST)) {
 		// does not exist if simple timesheet layout = "no work description field"!
 		$workDescription = mysql_real_escape_string($_REQUEST["description_row" . $i]);
@@ -145,11 +150,18 @@ for ($i=0; $i<$totalRows; $i++) {
 				//}
 				//else {
 					// update record with new duration and new end time
-					$updateQuery = "UPDATE ". tbl::getTimesTable(). " SET end_time = '" . $etsStr . "', duration = " . $minutes .
+					$updateQuery = "UPDATE ". tbl::getTimesTable(). " SET end_time = '" . $etsStr . "', duration = '" . $minutes . "', log_message = '" . $workDescription . "'" .
 						" WHERE trans_num = " . $trans_num;
 					list($qu1, $num1) = dbQuery($updateQuery); // update the times record
 					LogFile::write("new end time: " . $newEndTime . " and duration updated ". $minutes);
 				//}
+			}
+			
+			if (($changedDescription == "y") and ($trans_num > 0)) { // description has changed
+				$updateDescQuery = "UPDATE ". tbl::getTimesTable(). " SET log_message = '" . $workDescription . "'" .
+					" WHERE trans_num = " . $trans_num;
+				list($qu1, $num1) = dbQuery($updateDescQuery); // update the times record
+				LogFile::write("updated description: " . $workDescription . " on trans_num: ". $trans_num);
 			}
 			
 			if($trans_num == 0) { 
