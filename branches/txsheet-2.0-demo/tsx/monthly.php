@@ -268,7 +268,7 @@ if (isset($popup))
 											"&amp;task_id=".gbl::getTaskId()."".
 											"&amp;year=".gbl::getYear()."".
 											"&amp;month=".gbl::getMonth()."".
-											"&amp;day=".gbl::getDay()."".
+											"&amp;day=".$curDay."".
 											"&amp;destination=".urlencode(Rewrite::getShortUri()).
 											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
 		
