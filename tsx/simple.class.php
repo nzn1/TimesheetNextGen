@@ -99,7 +99,7 @@ function printFormRow($rowIndex, $layout, $data) {
 	} // End function printFormRow
 	
  
-  	function finishRow($rowIndex, $colIndex, $rowTotal, $disable) {
+  	function finishRow($rowIndex, $colIndex, $rowTotal, $status, $disable) {
 		$allTasksDayTotals =null;
   		if($disable == "yes" )
   			$disabled = 'disabled="disabled" ';
@@ -114,9 +114,9 @@ function printFormRow($rowIndex, $layout, $data) {
 					//create a string to be used in form input names
 				$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
 			
-				print "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" />";
-				print "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('HR')."</span>";
-				print "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('MN')."</span>";
+				print "<span nowrap=\"\"><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" /></span>";
+				print "<span nowrap=\"\"><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('HR')."</span>";
+				print "<span nowrap=\"\"><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('MN')."</span>";
 					//close the times class
 				print "</span>";
 					//end the column
@@ -131,6 +131,11 @@ function printFormRow($rowIndex, $layout, $data) {
 		print "<span class=\"calendar_total_value_weekly\" align=\"right\" id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
 		
 		$this->printSpaceColumn();
+		// print status
+		print "<td class=\"calendar_delete_cell\" class=\"subtotal\">";
+		print "<span class=\"calendar_total_value_weekly\">$status</span></td>";
+		$this->printSpaceColumn();
+		
 		// print delete button
 		print "<td class=\"calendar_delete_cell\" class=\"subtotal\">";
 		print "<a id=\"delete_row$rowIndex\" href=\"#\" onclick=\"onDeleteRow(this.id); return false;\">x</a></td>";
@@ -149,26 +154,21 @@ function printFormRow($rowIndex, $layout, $data) {
 		echo "<span class=\"task_time_small\">\n";
 		//create a string to be used in form input names
 		$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
-		if ($trans_num == "n") { // indicates copy from previous period, set trans_num field to zero to indicate new data
-			echo "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" />";
-			$trans_num = 1;
+		if ($trans_num == "n") { // if copy previous data is selected
+			$trans_num = 1; // ensure the data is printed, and set trans_num to zero in hidden field to simulate new data
+			echo "<span  nowrap=\"\"><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" /></span>";
 		}
-		else 
-			echo "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"$trans_num\" />";
-		
-
-		if ($trans_num ==  -1)
-			$disabled = 'disabled="disabled" ';
-		else 
-			$disabled = '';
+		else  
+			echo "<span  nowrap=\"\"><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"".$trans_num."\" /></span>";
+		$disabled = '';
 
 		if ($trans_num != 0) { //print a valid field 
-			echo "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$hours\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
-			echo "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$minutes\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
+			echo "<span  nowrap=\"\"><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$hours\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
+			echo "<span  nowrap=\"\"><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$minutes\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
 		}
 		else { // print an empty field
-			echo "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
-			echo "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
+			echo "<span  nowrap=\"\"><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
+			echo "<span  nowrap=\"\"><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
 		}
 		//close the times class
 		echo "</span>\n";
@@ -176,6 +176,7 @@ function printFormRow($rowIndex, $layout, $data) {
 		//end the column
 		echo "</td>\n";
 	}
+	
   public function printEmpty($rowIndex, $currentDay) {
   		
 		//open the column
@@ -185,11 +186,11 @@ function printFormRow($rowIndex, $layout, $data) {
 		echo "<span class=\"task_time_small\">\n";
 		//create a string to be used in form input names
 		$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
-		echo "<input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" />";
+		echo "<span  nowrap=\"\"><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" /></span>";
 		$disabled = '';
 
-		echo "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
-		echo "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
+		echo "<span  nowrap=\"\"><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
+		echo "<span  nowrap=\"\"><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
 
 		//close the times class
 		echo "</span>\n";

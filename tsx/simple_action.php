@@ -111,7 +111,10 @@ for ($i=0; $i<$totalRows; $i++) {
 		//Create the starting timestamp string
 		$stsStr = strftime("%Y-%m-%d %H:%M:%S", $curDaysTimestamp);
 		$etsStr = strftime("%Y-%m-%d %H:%M:%S",$nextDaysTimestamp);
-		$trans_num = $_REQUEST["tid_row" . $i . "_col" . $j];
+		if(isset($_REQUEST["tid_row" . $i . "_col" . $j])) 
+			$trans_num = $_REQUEST["tid_row" . $i . "_col" . $j];
+		else 
+			$trans_num = 0;
 
 		if($taskId == -1) {  //if this row was deleted, taskId is -1, 
 			// delete the transactions in this row for this column

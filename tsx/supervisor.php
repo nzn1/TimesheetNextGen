@@ -48,12 +48,16 @@ if ($mode == "monthly") {
 
 	$endDate = Common::getMonthlyEndDate($todayDateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 month");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 month");	
 }
 if ($mode == "weekly") {
 	list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 week");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 week");
 }
 
 //export data to excel (or not)
@@ -266,9 +270,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					</tr>
 				</table>
 			<td>	
-				<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-				&nbsp;<?php echo ucfirst(JText::_('CHANGE_DATE')).':'; ?>&nbsp;
-				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="images/cal.gif" />
+				<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
 			</td>
 			<?php if (!$print): ?>
 		<td  align="center" width="10%" >
