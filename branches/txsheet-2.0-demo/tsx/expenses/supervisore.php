@@ -51,12 +51,16 @@ if ($mode == "monthly") {
 
 	$endDate = Common::getMonthlyEndDate($todayDateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 month");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 month");	
 }
 if ($mode == "weekly") {
 	list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 week");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 week");
 }
 
 //Setup the variables so we can let the user choose how to order things...
@@ -217,7 +221,8 @@ $Location= Rewrite::getShortUri()."?uid=$uid$ymdStr&orderby=$orderby&client_id=$
 gbl::setPost("uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode");
 //require_once("include/language/datetimepicker_lang.inc");
 ?>
-<script type="text/javascript" src="<?php echo Config::getDocumentRoot()."/js/datetimepicker_css.js";?>"</script>
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
+
 <?php if(!$export_excel) { ?>
 <script type="text/javascript">
 <!--
@@ -280,9 +285,7 @@ ob_end_clean();
 					</tr>
 				</table>
 			<td>	
-				<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-				&nbsp;<?php echo ucfirst(JText::_('CHANGE_DATE')).':'; ?>&nbsp;
-				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="../images/cal.gif" />
+				<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
 			</td>
 			<?php if (!$print): ?>
 		<td  align="center" width="10%" >
