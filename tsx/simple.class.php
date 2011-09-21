@@ -38,15 +38,18 @@ function printFormRow($rowIndex, $layout, $data) {
 						?>
 						<td align="left" style="width:33%;">
 							<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $data['client_id']; ?>" />
-							<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+							<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onchange="onChangeClientSelect(this.id);" style="width: 100%;">
+							</select>
 						</td>
 						<td align="left" style="width:33%;">
 							<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $data['proj_id']; ?>" />
-							<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+							<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onchange="onChangeProjectSelect(this.id);" style="width: 100%;">
+							</select>
 						</td>
 						<td align="left" style="width:33%;">
 							<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $data['task_id']; ?>" />
-							<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+							<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onChangeTaskSelect(this.id);" style="width: 100%;">
+							</select>
 						</td>
 						<?php
 						break;
@@ -56,14 +59,17 @@ function printFormRow($rowIndex, $layout, $data) {
 						?>
 						<td align="left" style="width:100px;">
 							<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $data['client_id']; ?>" />
-							<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
+							<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onchange="onChangeClientSelect(this.id);" style="width: 100%;">
+							</select>
 						</td>
 						<td align="left" style="width:160px;">
 							<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $data['proj_id']; ?>" />
-							<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
+							<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onchange="onChangeProjectSelect(this.id);" style="width: 100%;">
+							</select>
 							<br/>
 							<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $data['task_id']; ?>" />
-							<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
+							<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onChangeTaskSelect(this.id);" style="width: 100%;">
+							</select>
 						</td>
 						<td align="left" style="width:auto;">
 							<textarea rows="2" style="width:100%;" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onKeyUp="onChangeWorkDescription(this.id);"><?php echo $data['log_message']; ?></textarea>
@@ -77,19 +83,22 @@ function printFormRow($rowIndex, $layout, $data) {
 						?>
 						<td align="left">
 							<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $data['client_id']; ?>" />
-							<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" />
+							<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onchange="onChangeClientSelect(this.id);">
+							</select>
 						</td>
 						<td align="left">
-							<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $data['proj_id']; ?>" />
-							<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);"  />
+							<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $data['proj_id']; ?>"/>
+							<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onchange="onChangeProjectSelect(this.id);">
+							</select>
 						</td>
 						<td align="left" >
 							<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $data['task_id']; ?>" />
-							<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" />
+							<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onchange="onChangeTaskSelect(this.id);">
+							</select>
 						</td>
 						<td align="left" >
 							<input type="hidden" id="desc_row<?php echo $rowIndex; ?>" name="desc_row<?php echo $rowIndex; ?>" value="0" />
-							<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onChange="onChangeWorkDescription(this.id);" value="<?php echo $data['log_message']; ?>" />
+							<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onchange="onChangeWorkDescription(this.id);" value="<?php echo $data['log_message']; ?>" />
 						</td>
 						<?php
 						break;
@@ -114,9 +123,9 @@ function printFormRow($rowIndex, $layout, $data) {
 					//create a string to be used in form input names
 				$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
 			
-				print "<span nowrap=\"\"><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" /></span>";
-				print "<span nowrap=\"\"><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('HR')."</span>";
-				print "<span nowrap=\"\"><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('MN')."</span>";
+				print "<span><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" /></span>";
+				print "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('HR')."</span>";
+				print "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\"". $disabled . "/>".JText::_('MN')."</span>";
 					//close the times class
 				print "</span>";
 					//end the column
@@ -127,17 +136,17 @@ function printFormRow($rowIndex, $layout, $data) {
 		$this->printSpaceColumn();
 		//print the total column
 		$weeklyTotalStr = Common::formatMinutes($rowTotal);
-		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\" class=\"subtotal\">";
-		print "<span class=\"calendar_total_value_weekly\" align=\"right\" id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
+		print "<td class=\"calendar_totals_line_weekly\" valign=\"bottom\" align=\"right\">";
+		print "<span class=\"calendar_total_value_weekly\" id=\"subtotal_row" . $rowIndex . "\">$weeklyTotalStr</span></td>";
 		
 		$this->printSpaceColumn();
 		// print status
-		print "<td class=\"calendar_delete_cell\" class=\"subtotal\">";
+		print "<td class=\"calendar_delete_cell\">";
 		print "<span class=\"calendar_total_value_weekly\">$status</span></td>";
 		$this->printSpaceColumn();
 		
 		// print delete button
-		print "<td class=\"calendar_delete_cell\" class=\"subtotal\">";
+		print "<td class=\"calendar_delete_cell\">";
 		print "<a id=\"delete_row$rowIndex\" href=\"#\" onclick=\"onDeleteRow(this.id); return false;\">x</a></td>";
 	
 		//end the row
@@ -156,19 +165,19 @@ function printFormRow($rowIndex, $layout, $data) {
 		$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
 		if ($trans_num == "n") { // if copy previous data is selected
 			$trans_num = 1; // ensure the data is printed, and set trans_num to zero in hidden field to simulate new data
-			echo "<span  nowrap=\"\"><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" /></span>";
+			echo "<span><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" /></span>";
 		}
 		else  
-			echo "<span  nowrap=\"\"><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"".$trans_num."\" /></span>";
+			echo "<span><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"".$trans_num."\" /></span>";
 		$disabled = '';
 
 		if ($trans_num != 0) { //print a valid field 
-			echo "<span  nowrap=\"\"><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$hours\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
-			echo "<span  nowrap=\"\"><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$minutes\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
+			echo "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"$hours\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
+			echo "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"$minutes\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
 		}
 		else { // print an empty field
-			echo "<span  nowrap=\"\"><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
-			echo "<span  nowrap=\"\"><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
+			echo "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
+			echo "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
 		}
 		//close the times class
 		echo "</span>\n";
@@ -186,11 +195,11 @@ function printFormRow($rowIndex, $layout, $data) {
 		echo "<span class=\"task_time_small\">\n";
 		//create a string to be used in form input names
 		$rowCol = "_row" . $rowIndex . "_col" . ($currentDay);
-		echo "<span  nowrap=\"\"><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" /></span>";
+		echo "<span><input type=\"hidden\" id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\" /></span>";
 		$disabled = '';
 
-		echo "<span  nowrap=\"\"><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
-		echo "<span  nowrap=\"\"><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
+		echo "<span><input type=\"text\" id=\"hours" . $rowCol . "\" name=\"hours" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('HR')."</span>\n";
+		echo "<span><input type=\"text\" id=\"mins" . $rowCol . "\" name=\"mins" . $rowCol . "\" size=\"1\" value=\"\" onchange=\"recalculateRowCol(this.id)\" onkeydown=\"setDirty()\" $disabled />".JText::_('MN')."</span>\n";
 
 		//close the times class
 		echo "</span>\n";
