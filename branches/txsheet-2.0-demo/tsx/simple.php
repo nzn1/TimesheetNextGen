@@ -61,7 +61,7 @@ $layout = Common::getLayout();
 //$post="";
 
 if (isset($popup)){
-	PageElements::setBodyOnLoad("window.open('".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&task_id=$task_id','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205');");
+	PageElements::setBodyOnLoad("window.open('".Config::getRelativeRoot()."/clock_popup?proj_id=".gbl::getProjId()."&amp;task_id=$task_id','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=205');");
 }
 	
 ob_start();	
@@ -156,9 +156,9 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		</td>
 		<td  class="outer_table_heading">
 		<?php Common::printDateSelector("weekly", $startDate, $prevDate, $nextDate); ?>
-
-		<td width="15%" style="font-size: 11"><a href="<?php echo Rewrite::getShortUri();?>?&amp;year=<?php echo $year?>&month=<?php echo $month?>&day=<?php echo $day?>&copyprev=1">Copy Previous</a></td>
-          <td width="15%" align="right" >
+		</td>
+		<td width="15%" style="font-size: 11"><a href="<?php echo Rewrite::getShortUri();?>?&amp;year=<?php echo $year?>&amp;month=<?php echo $month?>&amp;day=<?php echo $day?>&amp;copyprev=1">Copy Previous</a></td>
+          <td width="15%" align="right">
       <?php
           if($copyprev) { // if copy the previous week is set, then enable the save changes nutton
       ?>
