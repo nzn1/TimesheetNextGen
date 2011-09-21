@@ -231,10 +231,6 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			</th>
 			<th align="center" width="2">&nbsp;</th>
 				<th class="inner_table_column_heading" align="center" width="50">
-				<?php echo ucfirst(JText::_('STATUS')) ?>
-			</th>
-			<th align="center" width="2">&nbsp;</th>
-				<th class="inner_table_column_heading" align="center" width="50">
 				<?php echo ucfirst(JText::_('DELETE')) ?>
 			</th>
 		</tr>
@@ -298,17 +294,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		$currentWorkDescription = $data["log_message"];
 		$hours = floor($data['duration'] / 60 );
 		$minutes = $data['duration'] - ($hours * 60);
-		switch ($data['subStatus']) {
-			case "Open":
-				$status = JText::_('STATUS_OPEN');
-				break;
-			case "Submitted":
-				$status = JText::_('STATUS_SUBMITTED');
-				break;
-			case "Approved":
-				$status =JText::_('STATUS_APPROVED');
-				break;
-		}
+		$status = $data['subStatus'];
 	
 		// calculate current change key
 		$currentClientProjTaskDesc = $data['client_id'].$data['proj_id']. $data['task_id'].$data['log_message'];
@@ -350,9 +336,9 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		// if new record client/project/task/workdescription has changed, start a new row
 		if (($colIndex >  $prevColIndex) and ($colIndex <= 7)) {
 			if ($copyStartDate) // if we are copying previous data, set the transaction number so that the data appears to be new
-				$simple->printTime($rowIndex, $colIndex, "n", $hours, $minutes); // print this column's data as new data
+				$simple->printTime($rowIndex, $colIndex, "n", $hours, $minutes, $status); // print this column's data as new data
 			else 
-				$simple->printTime($rowIndex, $colIndex, $data["trans_num"], $hours, $minutes); // print this column's data
+				$simple->printTime($rowIndex, $colIndex, $data["trans_num"], $hours, $minutes, $status); // print this column's data
 			$prevColIndex = $colIndex;
 			LogFile::write("\ncontinue same row ". $rowIndex. " colIndex: ". $colIndex. "\n");
 		}
@@ -370,9 +356,9 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				$simple->printEmpty($rowIndex, $col); // print empty day's times
 			}	
 			if ($copyStartDate) // if we are copying previous data, set the transaction number so that the data appears to be new
-				$simple->printTime($rowIndex, $colIndex, "n", $hours, $minutes); // print this column's data as new data
+				$simple->printTime($rowIndex, $colIndex, "n", $hours, $minutes, $status); // print this column's data as new data
 			else 
-				$simple->printTime($rowIndex, $colIndex, $data["trans_num"], $hours, $minutes); // print this column's data
+				$simple->printTime($rowIndex, $colIndex, $data["trans_num"], $hours, $minutes, $status); // print this column's data
 		}
 
 			
@@ -486,7 +472,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	for ($colIndex=1; $colIndex<8; $colIndex++) {
 			
 		echo "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
-		echo "<span class=\"calendar_total_value_weekly\" id=\"subtotal_col" . $col . "\">" .Common::formatMinutes($allTasksDayTotals[$colIndex-1])."</span></td>";
+		echo "<span class=\"calendar_total_value_weekly\" id=\"subtotal_col" . $colIndex . "\">" .Common::formatMinutes($allTasksDayTotals[$colIndex-1])."</span></td>";
 		$grandTotal += $allTasksDayTotals[$colIndex-1];
 	}
 
@@ -497,7 +483,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	echo "</tr>";
 	
 ?>
-
+	</tbody>
 			</table>
 
 
