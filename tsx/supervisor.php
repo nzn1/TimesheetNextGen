@@ -112,6 +112,15 @@ if($orderby == "project") {
 	$colWid[]="width=\"5%\"";
 	$colAlign[]=""; $colWrap[]="";
 	
+	// timezones
+	$colVar[]="timezone";
+	$colWid[]="width=\"5%\"";
+	$colAlign[]=""; $colWrap[]="";
+
+	$colVar[]="tzhours";
+	$colWid[]="width=\"5%\"";
+	$colAlign[]=""; $colWrap[]="";
+
 	$colVar[]="log";
 	$colWid[]="width=\"20%\"";
 	$colAlign[]=""; $colWrap[]="";
@@ -166,6 +175,15 @@ if($orderby == "date") {
 	$colWid[]="width=\"5%\"";
 	$colAlign[]=""; $colWrap[]="";
 		
+		// timezones
+	$colVar[]="timezone";
+	$colWid[]="width=\"5%\"";
+	$colAlign[]=""; $colWrap[]="";
+
+	$colVar[]="tzhours";
+	$colWid[]="width=\"5%\"";
+	$colAlign[]=""; $colWrap[]="";
+	
 	$colVar[]="log";
 	$colWid[]="width=\"20%\"";
 	$colAlign[]=""; $colWrap[]="";
@@ -315,13 +333,17 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 						<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
 						<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>
-							
+						<th><?php echo ucfirst(JText::_('TZONE')); ?></th>
+						<th><?php echo ucfirst(JText::_('TZHOURS')); ?></th>
+									
 						<?php else: ?>
 							<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 							<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 						<th><?php echo JText::_('TASK');?></td>
 						<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
 						<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>
+						<th><?php echo ucfirst(JText::_('TZONE')); ?></th>
+						<th><?php echo ucfirst(JText::_('TZHOURS')); ?></th>
 						<?php endif; ?>
 						<th><?php echo JText::_('WORK_DESCRIPTION');?></td>
 						<th><?php echo JText::_('STATUS');?></td>

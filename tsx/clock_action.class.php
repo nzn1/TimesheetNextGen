@@ -18,6 +18,7 @@ class ClockAction{
 	private $clockOnRadio;
 	private $clockOffRadio;
 	private $location;
+	private $timezone;
 	private $onStamp;
 	private $offStamp;
 	
@@ -172,7 +173,7 @@ class ClockAction{
 
 		//check that we are not already clocked on
 		$querystring = "SELECT timest.start_time, tt.name FROM ".
-  			"".tbl::getTimesTable()." timest, ".tbl::getTaskTable()." tt WHERE ".
+  			"".tbl::getUTCTimesTable()." timest, ".tbl::getTaskTable()." tt WHERE ".
   			"uid='".gbl::getContextUser()."' AND ".
   			"end_time='0000-00-00 00:00:00' AND ".
 		//"start_time>='".gbl::getYear()."-".gbl::getMonth()."-".gbl::getDay()."' AND ".
@@ -190,10 +191,14 @@ class ClockAction{
 		Common::errorPage("You have already clocked on for task '".$resultset['name']."' at ".$resultset['start_time'].".  Please clock off first.", $this->fromPopupWindow);
 
 		$onStr = strftime("%Y-%m-%d %H:%M:%S", $this->onStamp);
-
+		// find timezone of user
+		$timezonequery = "SELECT timezone FROM ".tbl::getUserTzTable(). " WHERE uid = '". gbl::getContextUser()."'";
+		list($qtz,$num) = dbQuery($timezonequery);
+		$data = dbResult($qtz);
+		$timezone = $data['timezone'];
 		//now insert the record for this clock on
-		$querystring = "INSERT INTO ".tbl::getTimesTable()." (uid, start_time, proj_id,task_id) ".
-  			"VALUES ('".gbl::getContextUser()."','$onStr', ".gbl::getProjId().", ".gbl::getTaskId().")";
+		$querystring = "INSERT INTO ".tbl::getUTCTimesTable()." (uid, start_time, proj_id,task_id, timezone) ".
+  			"VALUES ('".gbl::getContextUser()."','$onStr', ".gbl::getProjId().", ".gbl::getTaskId().", '$timezone')";
 		list($qh,$num) = dbQuery($querystring);
 
 		//now output an ok page, the redirect back
@@ -238,7 +243,7 @@ class ClockAction{
 		$offStr = strftime("%Y-%m-%d %H:%M:%S", $this->offStamp);
 
 		//check that we are actually clocked on
-		$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM ".tbl::getTimesTable()." WHERE ".
+		$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM ".tbl::getUTCTimesTable()." WHERE ".
   			"uid='".gbl::getContextUser()."' AND ".
   			"end_time='0000-00-00 00:00:00' AND ".
 		//"start_time >= '".gbl::getYear()."-".gbl::getMonth()."-".gbl::getDay()."' AND ".
@@ -264,7 +269,7 @@ class ClockAction{
 
 		//now insert the record for this clock off
 		$this->logMessage = addslashes($this->logMessage);
-		$querystring = "UPDATE ".tbl::getTimesTable()." SET log_message='".$this->logMessage."', end_time='$offStr', duration='$duration' WHERE ".
+		$querystring = "UPDATE ".tbl::getUTCTimesTable()." SET log_message='".$this->logMessage."', end_time='$offStr', duration='$duration' WHERE ".
   			"uid='".gbl::getContextUser()."' AND ".
   			"proj_id=".gbl::getProjId()." AND ".
   			"end_time=0 AND ".
@@ -298,11 +303,18 @@ class ClockAction{
 		$duration=($this->offStamp - $this->onStamp)/60; //get duration in minutes
 		$onStr = strftime("%Y-%m-%d %H:%M:%S", $this->onStamp);
 		$offStr = strftime("%Y-%m-%d %H:%M:%S", $this->offStamp);
-		 
+
+		// find timezone of user
+		$timezonequery = "SELECT timezone FROM ".tbl::getUserTzTable(). " WHERE uid = '". gbl::getContextUser()."'";
+		list($qtz,$num) = dbQuery($timezonequery);
+		$data = dbResult($qtz);
+		$timezone = $data['timezone'];
+		
 		$this->logMessage = addslashes($this->logMessage);
-		$q = "INSERT INTO ".tbl::getTimesTable()." (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
+		LogFile::write("\nclock_action. start time: ". $onStr. " stop time: ". $offStr. "\n");
+		$q = "INSERT INTO ".tbl::getUTCTimesTable()." (uid, start_time, end_time, duration, proj_id, task_id, log_message, timezone) ".
   			"VALUES ('".gbl::getContextUser()."','$onStr', '$offStr', '$duration', " .
-  			"".gbl::getProjId().", ".gbl::getTaskId().", '".$this->logMessage."')";
+  			"".gbl::getProjId().", ".gbl::getTaskId().", '".$this->logMessage."', $timezone')";
 		
     //list($qh,$num) = dbQuery($queryString);
     if(debug::getSqlStatement()==1)ppr($q,'SQL');

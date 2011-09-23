@@ -76,6 +76,34 @@ class SubmitClass{
 				$formattedTime = sprintf("%02d:%02d",$dateValues["hours"],$dateValues["minutes"]); 
 				print $formattedTime;
 				break;
+			
+			case "start_timetz":
+				$dateValues = getdate($data["start_stamp"]);
+				//$hmStr = "&hour=".$dateValues["hours"] . "&mins=".$dateValues["minutes"];
+				$formattedTime = sprintf("%02d:%02d",$dateValues["hours"],$dateValues["minutes"]); 
+		//	LogFile::write("starttime start_stamp = \"" .  $data["start_stamp"]   ."\" hr =\"" .  $dateValues["hours"]   .
+		//		"\" min =\"" .  $dateValues["minutes"] . "\" formattedtime =\"" .  $formattedTime . "\"\n");
+				print $formattedTime;
+				break;
+				
+			case "stop_timetz":
+				$dateValues = getdate($data["end_stamp"]);
+				//$hmStr = "&hour=".$dateValues["hours"] . "&mins=".$dateValues["minutes"];
+				$formattedTime = sprintf("%02d:%02d",$dateValues["hours"],$dateValues["minutes"]); 
+				print $formattedTime;
+				break;
+			
+			case "timezone":
+				// print the name of the timezone
+				print $data['timezone'];
+				break;
+				
+			case "tzhours":
+				// print the hours difference from UTC
+				$timestart = new DateTime($data['start_time_str'], new DateTimeZone($data['timezone']));
+				$offset = $timestart->getOffset()/60;
+				print $offset/60;
+				break;
 				
 			case "log":
 				if ($data['log_message']) print stripslashes($data['log_message']);

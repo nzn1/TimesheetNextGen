@@ -34,6 +34,8 @@ class tbl{
 	private static $ALLOWANCE_TABLE;
 	private static $EXPENSE_CATEGORY_TABLE;
 	private static $EXPENSE_TABLE;
+	private static $UTCTIMES_TABLE;
+	private static $USERTZ_TABLE;
 		
 	public static function initialise(){
 		if(!file_exists('table_names.inc')){
@@ -58,6 +60,9 @@ class tbl{
 		self::$NEW_CONFIG_TABLE = $NEW_CONFIG_TABLE;
 		self::$EXPENSE_CATEGORY_TABLE = $EXPENSE_CATEGORY_TABLE;
 		self::$EXPENSE_TABLE = $EXPENSE_TABLE;
+		self::$UTCTIMES_TABLE = $UTCTIMES_TABLE;
+                self::$USERTZ_TABLE = $USERTZ_TABLE;
+		
 	}
 
 	public static function getAssignmentsTable(){
@@ -116,5 +121,13 @@ class tbl{
 	}
 	public static function getExpenseTable(){
 		return self::$EXPENSE_TABLE;
+	}
+
+	public static function getUTCTimesTable(){
+		return self::$UTCTIMES_TABLE;
+	}
+	
+	public static function getUserTzTable(){
+		return self::$USERTZ_TABLE;
 	}
 }
