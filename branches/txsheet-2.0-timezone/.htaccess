@@ -1,0 +1,14 @@
+#disable multiviews as this causes everything to break
+Options -MultiViews
+
+<IfModule mod_rewrite.c>
+RewriteEngine on
+
+#if the file exists, then don't process any rules on it
+RewriteCond %{REQUEST_FILENAME} !-f 
+
+#route everything through index.php
+#the actual rewriting is done in php be the Rewrite class
+RewriteRule .* index.php [PT,L]
+
+</IfModule> 

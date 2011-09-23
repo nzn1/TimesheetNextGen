@@ -1,0 +1,5 @@
+#The tsx folder is a pseudo folder for the root directory
+#There is no need to directly access this folder
+#Therefore, deny all access to it
+
+deny from all

@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+#turn off rewrite to reset it from any previous rules in higher level directories
+
+RewriteEngine off
+
+#turn it on!
+RewriteEngine on
+
+#redirect all pages to index2.php to show success message
+RewriteRule .* index2.php [PT,L]
+
+</IfModule>
