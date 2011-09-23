@@ -1,16 +1,28 @@
 <?php
-//$Header: /cvsroot/tsheet/timesheet.php/simple.php,v 1.7 2005/05/23 05:39:39 vexil Exp $
-error_reporting(E_ALL);
-ini_set('display_errors', true);
-
-require("class.AuthenticationManager.php");
-
-if ($authenticationManager->isLoggedIn()) {
-	include_once("common.inc");
-	gotoStartPage();
-} else {
-	header("Location: login.php");
+/*******************************************************************************
+ * Name:                    index.php
+ * Recommended Location:    /
+ * Last Updated:            April 2010
+ * Author:                  Mark Wrightson
+ * Contact:                 mark@voltnet.co.uk
+ *
+ * Description:
+ *
+ *
+ * Copyright:
+ * This script may not be used by any other person without the express
+ * permission of the author.
+ ******************************************************************************/
+if (defined('SESSION_INCLUDED')){
+	ErrorHandler::fatalError("index.php was called from index.php<br />".
+  "Recursive relationships are not allowed<br />
+  <p>Return to <a href=\"".Config::getRelativeRoot()."/\">Home Page</a></p>");
 }
 
-// vim:ai:ts=4:sw=4
+define('JPATH_BASE', dirname(__FILE__).'/include');
+
+require_once('include/site/site.class.php');
+$site = new Site();
+
+
 ?>
