@@ -38,30 +38,31 @@ class Common{
 					"unix_timestamp(start_time) AS start_stamp, ".
 					"unix_timestamp(end_time) AS end_stamp, ".
 					"duration, ".		//duration is stored in minutes 
-					"".tbl::getTimesTable().".status AS subStatus, " . 
+					"".tbl::getUTCTimesTable().".status AS subStatus, " . 
 					"trans_num, ".
-					"".tbl::getTimesTable().".uid, " .
+					"".tbl::getUTCTimesTable().".uid, " .
 					"".tbl::getUserTable().".first_name, " .
 					"".tbl::getUserTable().".last_name, " .
 					"".tbl::getProjectTable().".title AS projectTitle, " .
 					"".tbl::getTaskTable().".name AS taskName, " .
-					"".tbl::getTimesTable().".proj_id, " .
-					"".tbl::getTimesTable().".task_id, " .
-					"".tbl::getTimesTable().".log_message, " .
+					"".tbl::getUTCTimesTable().".proj_id, " .
+					"".tbl::getUTCTimesTable().".task_id, " .
+					"".tbl::getUTCTimesTable().".timezone, " .
+					"".tbl::getUTCTimesTable().".log_message, " .
 					"".tbl::getClientTable().".organisation AS clientName, " .
 					"".tbl::getProjectTable().".client_id " .
-				"FROM ".tbl::getTimesTable().", ".tbl::getUserTable().", ".tbl::getTaskTable().", ".tbl::getProjectTable().", ".tbl::getClientTable()." " .
+				"FROM ".tbl::getUTCTimesTable().", ".tbl::getUserTable().", ".tbl::getTaskTable().", ".tbl::getProjectTable().", ".tbl::getClientTable()." " .
 				"WHERE ";
 
 		if ($uid != '') //otherwise we want all users
-			$query .= "".tbl::getTimesTable().".uid='$uid' AND ";
+			$query .= "".tbl::getUTCTimesTable().".uid='$uid' AND ";
 		if ($projId > 0) //otherwise we want all projects
-			$query .= "".tbl::getTimesTable().".proj_id=$projId AND ";
+			$query .= "".tbl::getUTCTimesTable().".proj_id=$projId AND ";
 		if ($clientId > 0) //otherwise we want all clients
 			$query .= "".tbl::getProjectTable().".client_id=$clientId AND ";
 
-		$query .=	"".tbl::getTimesTable().".uid    = ".tbl::getUserTable().".username AND ".
-					"".tbl::getTaskTable().".task_id = ".tbl::getTimesTable().".task_id AND ".
+		$query .=	"".tbl::getUTCTimesTable().".uid    = ".tbl::getUserTable().".username AND ".
+					"".tbl::getTaskTable().".task_id = ".tbl::getUTCTimesTable().".task_id AND ".
 					"".tbl::getTaskTable().".proj_id = ".tbl::getProjectTable().".proj_id AND ".
 					"".tbl::getProjectTable().".client_id = ".tbl::getClientTable().".client_id AND ".
 					"((start_time    >= '$startStr' AND " . 
@@ -115,10 +116,10 @@ class Common{
 			"unix_timestamp(end_time) As end_time, ".
 			"end_time As end_time_str, ".
 			"start_time AS start_time_str, ".
-			"".tbl::getTaskTable().".name, ".tbl::getTimesTable().".proj_id, ".tbl::getTimesTable().".task_id ".
-			"FROM ".tbl::getTimesTable().", ".tbl::getTaskTable()." WHERE uid='$id' AND ";
+			"".tbl::getTaskTable().".name, ".tbl::getUTCTimesTable().".proj_id, ".tbl::getUTCTimesTable().".task_id ".
+			"FROM ".tbl::getUTCTimesTable().", ".tbl::getTaskTable()." WHERE uid='$id' AND ";
 
-		$query .= "".tbl::getTaskTable().".task_id = ".tbl::getTimesTable().".task_id AND ".
+		$query .= "".tbl::getTaskTable().".task_id = ".tbl::getUTCTimesTable().".task_id AND ".
 			"((start_time >= '$start_year-$start_month-$start_day 00:00:00' AND start_time <= '$end_year-$end_month-$end_day 23:59:59') ".
 			" OR (end_time >= '$start_year-$start_month-$start_day 00:00:00' AND end_time <= '$end_year-$end_month-$end_day 23:59:59') ".
 			" OR (start_time < '$start_year-$start_month-$start_day 00:00:00' AND end_time > '$end_year-$end_month-$end_day 23:59:59')) ".
@@ -484,7 +485,7 @@ class Common{
 
 		$duration = $entry["duration"];
 		$trans_num = $entry["trans_num"];
-		tryDbQuery("UPDATE ".tbl::getTimesTable()." set duration=$duration WHERE trans_num=$trans_num");
+		tryDbQuery("UPDATE ".tbl::getUTCTimesTable()." set duration=$duration WHERE trans_num=$trans_num");
 	}
 
 	public static function fix_entry_endstamp($entry) {
@@ -492,7 +493,7 @@ class Common{
 
 		$etsStr = strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"]);
 		$trans_num = $entry["trans_num"];
-		tryDbQuery("UPDATE ".tbl::getTimesTable()." set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
+		tryDbQuery("UPDATE ".tbl::getUTCTimesTable()." set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
 	}
 
 	public static function get_user_empid($username) {
@@ -529,16 +530,16 @@ class Common{
 
 		$result = array();
 		if ($trans_num > 0) {
-			$query = "SELECT ".tbl::getProjectTable().".client_id, ".tbl::getTimesTable().".proj_id, task_id, log_message, ".
+			$query = "SELECT ".tbl::getProjectTable().".client_id, ".tbl::getUTCTimesTable().".proj_id, task_id, log_message, ".
 							"end_time as end_time_str, ".
 							"start_time as start_time_str, ".
 							"unix_timestamp(start_time) as start_stamp, ".
 							"unix_timestamp(end_time) as end_stamp, ".
 							"duration, " .
 							"trans_num " .
-						"FROM ".tbl::getTimesTable().", ".tbl::getProjectTable()." " .
+						"FROM ".tbl::getUTCTimesTable().", ".tbl::getProjectTable()." " .
 						"WHERE trans_num='$trans_num' AND ".
-							"".tbl::getTimesTable().".proj_id = ".tbl::getProjectTable().".proj_id";
+							"".tbl::getUTCTimesTable().".proj_id = ".tbl::getProjectTable().".proj_id";
 
 			list($my_qh, $num) = dbQuery($query);
 			$result = dbResult($my_qh);
@@ -1543,6 +1544,8 @@ class Common{
 			$info=array();
 			$info["start_stamp"]=$curStamp;
 			$info["end_stamp"]=$endStamp;
+			$info["start_time"]=$data['start_time'];
+			$info["start_time_str"]=$data['start_time_str'];
 			$info["duration"]=$duration;
 			$info["clientName"]=$data["clientName"];
 			$info["projectTitle"]=$data["projectTitle"];
@@ -1556,6 +1559,7 @@ class Common{
 			$info["uid"]=$data["uid"];
 			$info["first_name"]=$data["first_name"];
 			$info["last_name"]=$data["last_name"];
+			$info["timezone"]=$data["timezone"];
 
 			$newarray[$index][]=$info;
 		}

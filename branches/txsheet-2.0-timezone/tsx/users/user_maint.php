@@ -20,12 +20,13 @@ PageElements::setTheme('newcss');
 		}
 	}
 
-	function editUser(uid, firstName, lastName, employee_type, supervisor, username, emailAddress, password, isAdministrator, isManager, isActive) {
+	function editUser(uid, firstName, lastName, employee_type, supervisor, username, timezone, emailAddress, password, isAdministrator, isManager, isActive) {
 		document.userForm.uid.value = uid;
 		document.userForm.first_name.value = firstName;
 		document.userForm.last_name.value = lastName;
 		document.userForm.employee_type.value = employee_type;
 		document.userForm.username.value = username;
+		document.userForm.timezone.value = timezone;
 		document.userForm.supervisor.value = supervisor;
 		document.userForm.email_address.value = emailAddress;
 		document.userForm.password.value = password;
@@ -119,6 +120,7 @@ PageElements::setTheme('newcss');
 		<th align="center"><?php echo JText::_('ACTIVE'); ?></th>
 		<th><?php echo JText::_('ROLE'); ?></th>
 		<th><?php echo JText::_('EMPLOYEE_TYPE'); ?></th>
+		<th><?php echo JText::_('TIMEZONE'); ?></th>
 		<th><?php echo JText::_('SUPERVISOR'); ?></th>
 		<th><?php echo JText::_('LOGIN_NAME'); ?></th>
 		<th><?php echo JText::_('EMAIL_ADDRESS'); ?></th>
@@ -140,7 +142,7 @@ while($svrdata = dbResult($qsvrs)) {
 // create an array of the possible employee types - must match the enum of employee_type in the user table
 $emptypearray = array('Contractor', 'Employee');
 
-list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getuserTable()." WHERE username!='guest' ORDER BY status desc, last_name, first_name");
+list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getUserTzTable()." WHERE username!='guest' ORDER BY status desc, last_name, first_name");
 
 while ($data = dbResult($qh)) {
 	$uid = $data['uid'];
@@ -157,6 +159,7 @@ while ($data = dbResult($qh)) {
 	$isAdministrator = ($data["level"] >= 10);
 	$isManager = ($data["level"] >= 5);
 	$employee_type = empty($data["employee_type"]) ? "&nbsp;": $data["employee_type"];
+	$timezone = $data['timezone'];
 	
 	$supervisor = empty($svr["supervisor"]) ? "None": $svr["supervisor"];
 			
@@ -175,12 +178,13 @@ while ($data = dbResult($qh)) {
 	else
 		print "<td class=\"calendar_cell_middle\">".JText::_('BASIC')."</td>";
 	print "<td class=\"calendar_cell_middle\">$employee_type</td>";
+	print "<td class=\"calendar_cell_middle\">$timezone</td>";
 	print "<td class=\"calendar_cell_middle\">$supervisor</td>";
 	print "<td class=\"calendar_cell_middle\">$usernameField</td>";
 	print "<td class=\"calendar_cell_middle\">$emailAddressField</td>";
 	print "<td class=\"calendar_cell_disabled_right\">";
 	print "	<a href=\"javascript:deleteUser('$data[uid]', '$data[username]')\">".JText::_('DELETE')."</a>,&nbsp;\n";
-	print "	<a href=\"javascript:editUser('$data[uid]', '$data[first_name]', '$data[last_name]', '$data[employee_type]', '$data[supervisor]', '$data[username]', '$data[email_address]', '$data[password]', '$isAdministrator', '$isManager', '$isActive')\">".JText::_('EDIT')."</a>\n";
+	print "	<a href=\"javascript:editUser('$data[uid]', '$data[first_name]', '$data[last_name]', '$data[employee_type]', '$data[supervisor]', '$data[username]', '$data[timezone]', '$data[email_address]', '$data[password]', '$isAdministrator', '$isManager', '$isActive')\">".JText::_('EDIT')."</a>\n";
 	print "</td>\n";
 	print "</tr>\n";
 }
@@ -208,6 +212,7 @@ while ($data = dbResult($qh)) {
 		<th><?php echo JText::_('LAST_NAME'); ?></th>
 		<th><?php echo JText::_('EMPLOYEE_TYPE'); ?></th>
 		<th><?php echo JText::_('SUPERVISOR'); ?></th>
+		<th><?php echo JText::_('TIMEZONE'); ?></th>
 		<th><?php echo JText::_('USERNAME'); ?></th>
 		<th><?php echo JText::_('EMAIL_ADDRESS'); ?></th>
 		<th><?php echo JText::_('PASSWORD'); ?></th>
@@ -221,6 +226,27 @@ while ($data = dbResult($qh)) {
 		<td><input name="last_name"></td>
 		<td><?php Common::emp_button("employee_type", $emptypearray, $employee_type)?></td>
 		<td><?php Common::svr_button("supervisor", $svruids, $svrunames, "none")?></td>
+		<td>
+		<select id="timezone" name="timezone">
+    <?php
+    $timezone_identifiers = DateTimeZone::listIdentifiers();
+    $continent = "";
+    foreach( $timezone_identifiers as $value ){
+            $ex=explode("/",$value);//obtain continent,city   
+            if ($continent!=$ex[0]){
+                if ($continent!="") echo '</optgroup>';
+                echo '<optgroup label="'.$ex[0].'">';
+            }
+   
+            $city=$ex[1];
+            $continent=$ex[0];
+            echo '<option value="'.$value.'">'.$city.'</option>';               
+        
+    }
+    ?>
+        </optgroup>
+    </select>
+</td>
 		<td><input name="username" /></td>
 		<td><input name="email_address" /></td>
 		<td><input type="password" size="20" name="password"  AUTOCOMPLETE="OFF" /></td>
