@@ -7,10 +7,7 @@ PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/banner-n
 
 Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:back()"));
 
-//get the logged in user
-$loggedInUser = $_SESSION['loggedInUser'];
-
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 //load local vars from request/post/get
