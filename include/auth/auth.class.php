@@ -40,10 +40,10 @@ class Auth
 
   public static function requestAuth($privilegeGroup,$privilegeName){
   
-  if(PageElements::getPageAuth()->authGroup =='Open'){
+    if($privilegeGroup =='Open'){
 			return Auth::ACCESS_GRANTED;
 		}
-		$auth = Site::getAuthenticationManager()->hasAccess(PageElements::getPageAuth()->authGroup);
+		$auth = Site::getAuthenticationManager()->hasAccess($privilegeGroup);
 		
 		if($auth == 0){
 				return Auth::ACCESS_DENIED;
