@@ -547,6 +547,10 @@ class Common{
 	}
 
 	public static function get_acl_level($page) {
+	
+	  if($page == 'Administrator')return 'Administrator';
+	  if($page == 'Manager')return 'Manager';
+	  if($page == 'Basic')return 'Basic';
 		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences,aclExpenses,aclECategories,aclTApproval FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
 		$configData = dbResult($qhq);
 		if(array_key_exists($page,$configData)){
@@ -1604,6 +1608,10 @@ class Common{
 	}
 	
 	public static function fixStartEndDuration(&$data) {
+	
+	 if($data instanceof stdClass){
+    ErrorHandler::fatalError('fixStartEndDuration cannot be used with objects!');
+   }
 		//Due to a bug in mysql with converting to unix timestamp from the string,
 		//we are going to use php's strtotime to make the timestamp from the string.
 		//the problem has something to do with timezones.
@@ -1613,8 +1621,6 @@ class Common{
 		//If not, figure out the duration
 		if(isset($data["duration"]) && ($data["duration"] > 0) ) {
 			$new_end_stamp = self::get_end_date_time($data["start_stamp"], $data["duration"]);			
-
-			
 			
 			if($data["end_stamp"] != $new_end_stamp) {
 				$old_end_stamp = $data["end_stamp"];
@@ -1625,7 +1631,8 @@ class Common{
 				if(strftime("%Y-%m-%d %H:%M:%S", $old_end_stamp) != strftime("%Y-%m-%d %H:%M:%S", $new_end_stamp))
 					self::fix_entry_endstamp($data);
 			}
-		} else {
+		} 
+    else {
 			if($data["end_time_str"] != '0000-00-00 00:00:00') {
 				$data["end_stamp"] = strtotime($data["end_time_str"]);
 				$data["duration"]=self::get_duration($data["start_stamp"], $data["end_stamp"], 1);

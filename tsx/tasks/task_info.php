@@ -6,8 +6,6 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 PageElements::setTheme('txsheet2');
 PageElements::setTemplate('popup_template.php');
 
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
 //load local vars from request/post/get
 $task_id = $_REQUEST['task_id'];
 

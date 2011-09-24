@@ -3,9 +3,7 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclProjects'))return;
 
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 

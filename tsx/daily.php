@@ -166,7 +166,7 @@ else {
 		echo "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('".Config::getRelativeRoot()."/clients/client_info?client_id=$data[client_id]','Client Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$clientName</a></td>\n";
 		echo "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('".Config::getRelativeRoot()."/projects/proj_info?proj_id=$data[proj_id]','Project Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=500,height=200')\">$projectTitle</a></td>\n";
 		echo "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"javascript:window.open('".Config::getRelativeRoot()."/tasks/task_info?task_id=$data[task_id]','Task Info','location=0,directories=no,status=no,scrollbar=yes,menubar=no,resizable=1,width=300,height=150')\">$taskName</a></td>\n";
-		echo "<td class=\"calendar_cell_middle\">" . $data['log_message'] . "</td>\n";
+		echo "<td class=\"calendar_cell_middle\">" . nl2br($data['log_message']) . "</td>\n";
 		
 		if ($data["duration"] > 0) {
 			//format printable times

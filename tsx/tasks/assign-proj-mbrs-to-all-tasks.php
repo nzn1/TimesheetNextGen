@@ -1,7 +1,6 @@
 <?php
 // Authenticate
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 $assignTasks = isset($_REQUEST["assignTasks"]) ? $_REQUEST["assignTasks"]: false;
 

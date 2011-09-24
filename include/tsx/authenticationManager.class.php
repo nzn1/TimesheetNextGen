@@ -87,6 +87,8 @@ class AuthenticationManager {
 	*/
 	var $ldapCfgInfo;
 
+  public function __construct(){
+  }
 	/* authentication function: this is called by
 	*   each page to ensure that there is an authenticated user
 	*/
@@ -291,7 +293,6 @@ class AuthenticationManager {
 	*/
 	function hasAccess($page) {
 		
-
 		$acl = Common::get_acl_level($page);			
 			
 		switch ($acl) {
@@ -555,11 +556,4 @@ class AuthenticationManager {
 	}
 }
 
-//create the instance so its availiable by just including this file
-if(!class_exists('Site')) {
-	$authenticationManager = new AuthenticationManager();
-	$authenticationManager->getLDAPcfgInfo();
-}
-
-// vim:ai:ts=4:sw=4
 ?>

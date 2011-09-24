@@ -5,7 +5,6 @@ if(!class_exists('Site'))die('Restricted Access');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 PageElements::setTemplate('popup_template.php');
 PageElements::setTheme('txsheet2');
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
 
 //load local vars from request/post/get
 $proj_id = $_REQUEST['proj_id'];

@@ -9,9 +9,7 @@ if(!class_exists('Site')){
 }
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclExpenses'))return;
 
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
 	errorPage("Could not determine the logged in user");
 
 

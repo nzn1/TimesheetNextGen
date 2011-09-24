@@ -72,7 +72,7 @@ function printFormRow($rowIndex, $layout, $data) {
 							<option value="-1">None</option></select>
 						</td>
 						<td align="left" style="width:auto;">
-							<textarea rows="2" style="width:100%;" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onKeyUp="onChangeWorkDescription(this.id);"><?php echo $data['log_message']; ?></textarea>
+							<textarea rows="2" style="width:100%;" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onKeyUp="onChangeWorkDescription(this.id);"><?php echo nl2br($data['log_message']); ?></textarea>
 						</td>
 						<?php
 						break;
@@ -98,7 +98,7 @@ function printFormRow($rowIndex, $layout, $data) {
 						</td>
 						<td align="left" >
 							<input type="hidden" id="desc_row<?php echo $rowIndex; ?>" name="desc_row<?php echo $rowIndex; ?>" value="0" />
-							<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onchange="onChangeWorkDescription(this.id);" value="<?php echo $data['log_message']; ?>" />
+							<input type="text" id="description_row<?php echo $rowIndex; ?>" name="description_row<?php echo $rowIndex; ?>" onchange="onChangeWorkDescription(this.id);" value="<?php echo nl2br($data['log_message']); ?>" />
 						</td>
 						<?php
 						break;

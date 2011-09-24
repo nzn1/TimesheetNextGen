@@ -29,9 +29,7 @@ if($export_excel){
 } else
 	$time_fmt = "time";
 
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
 	errorPage("Could not determine the logged in user");
 
 //load local vars from request/post/get

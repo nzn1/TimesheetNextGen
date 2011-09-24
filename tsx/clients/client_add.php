@@ -6,9 +6,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
 PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/banner-no-menu.inc');
 
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 //define the command menu

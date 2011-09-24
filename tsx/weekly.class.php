@@ -65,7 +65,7 @@ class WeeklyPage{
 		$currentTaskName = $data["taskName"];
 		$currentProjectTitle = $data["projectTitle"];
 		$currentProjectId = $data["proj_id"];
-		$currentWorkDescription =  $data['log_message'];
+		$currentWorkDescription =  nl2br($data['log_message']);
 		$currentClientName = $data["clientName"];
 		$currentClientId = $data["client_id"];
 
