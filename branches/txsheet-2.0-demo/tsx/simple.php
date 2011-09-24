@@ -1,6 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
-
+PageElements::setTheme('txsheet2');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
@@ -133,6 +133,7 @@ ob_end_clean();
 PageElements::setBodyOnLoad('populateExistingSelects();');
 
 	?>
+
 <form name="simpleForm" action="<?php echo Config::getRelativeRoot();?>/simple_action" method="post">
 <input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
 <input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
@@ -176,25 +177,27 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 	</tr>
 </table>
 
-<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
+<div id ="simple">
+
+<table class="simpleTable">
 	<thead>
-		<tr>
-			<th class="inner_table_column_heading" align="center">
+		<tr class="table_head">
+			<th>
 				<?php 
 					echo JText::_('CLIENT'); 
 				?>
 			</th>
-			<th class="inner_table_column_heading" align="center">
+			<th>
 			<?php 
 				echo JText::_('PROJECT'); 
 			?>
 			</th>
-			<th class="inner_table_column_heading" align="center">
+			<th>
 				<?php 
 					echo JText::_('TASK'); 
 				?>
 			</th>
-			<th class="inner_table_column_heading" align="center" width="20%">
+			<th width="30%">
 				<?php 
 					if(strstr($layout, 'no work description') == '')
 						echo JText::_('WORK_DESCRIPTION');
@@ -212,27 +215,27 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				$dstadj[]=$dst_adjustment;
 				$minsinday = ((24*60*60) - $dst_adjustment)/60;
 				$daysOfWeek[$i] = date("d", $currentDayDate);
-
-				echo
-					"<th class=\"inner_table_column_heading\" align=\"center\" width=\"5%\">"								
-					  ."<input type=\"hidden\" id=\"minsinday_".($i+1)."\" value=\"$minsinday\" />"
-						."$currentDayStr<br />" .
-						//Output the numerical date in the form of day of the month
-						date("d", $currentDayDate) . 
-					"</th>";
+        ?>
+        
+				<th width="50">								
+					  <input type="hidden" id="minsinday_<?php echo($i+1);?> " value ="<?php echo $minsinday;?>" />
+						<?php echo $currentDayStr."<br />".date("d", $currentDayDate);?> 
+				</th>
+				<?php
 				$currentDayDate = strtotime(date("d M Y H:i:s",$currentDayDate) . " +1 days");
 			}
 			?>
-			<th align="center" width="2">&nbsp;</th>
-				<th class="inner_table_column_heading" align="center" width="6%">
+			<th width="2">&nbsp;</th>
+			<th width="5%">
 				<?php echo ucfirst(JText::_('TOTAL')) ?>
 			</th>
-			<th align="center" width="2">&nbsp;</th>
-				<th class="inner_table_column_heading" align="center" width="50">
+			<th width="2">&nbsp;</th>
+			<th width="50">
 				<?php echo ucfirst(JText::_('DELETE')) ?>
 			</th>
 		</tr>
 	</thead>
+	
 	<tbody>
 <?php
 
@@ -289,7 +292,6 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		$currentTaskName = stripslashes($data["taskName"]);
 		$currentProjectTitle = stripslashes($data["projectTitle"]);
 		$currentProjectId = $data["proj_id"];
-		$currentWorkDescription = nl2br($data["log_message"]);
 		$hours = floor($data['duration'] / 60 );
 		$minutes = $data['duration'] - ($hours * 60);
 		$status = $data['subStatus'];
@@ -476,13 +478,15 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 
 	//print grand total
 	echo "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
-	echo "<td class=\"calendar_totals_line_monthly\" align=\"right\">\n";
-	echo "<span class=\"calendar_total_value_monthly\" id=\"grand_total\">" .Common::formatMinutes($grandTotal)."</span></td>";
+	echo "<td class=\"calendar_totals_line_weekly_right\" align=\"right\">\n";
+	echo "<span class=\"calendar_total_value_weekly\" id=\"grand_total\">" .Common::formatMinutes($grandTotal)."</span></td>";
+	echo "<td class=\"calendar_cell_disabled_middle\" width=\"2\">&nbsp;</td>\n";
 	echo "</tr>";
 	
 ?>
 	</tbody>
 			</table>
-
+</div>
 
 </form>
+
