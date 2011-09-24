@@ -69,3 +69,47 @@ CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__std_tasks` (
   PRIMARY KEY (`task_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=187 ;
 
+--
+-- Table structure for table `ts1_utctimes`
+--
+
+CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__utctimes` (
+  `uid` varchar(32) NOT NULL DEFAULT '',
+  `start_time` datetime NOT NULL DEFAULT '1970-01-01 00:00:00',
+  `end_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `timezone` varchar(30) NOT NULL,
+  `duration` smallint(5) unsigned DEFAULT NULL,
+  `trans_num` int(11) NOT NULL AUTO_INCREMENT,
+  `proj_id` int(11) NOT NULL DEFAULT '1',
+  `task_id` int(11) NOT NULL DEFAULT '1',
+  `log_message` text,
+  `status` enum('Open','Submitted','Approved') NOT NULL DEFAULT 'Open',
+  UNIQUE KEY `trans_num` (`trans_num`),
+  KEY `uid` (`uid`,`trans_num`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=237 ;
+
+
+
+--
+-- Table structure for table `ts1_usertz`
+--
+
+CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__usertz` (
+  `username` varchar(32) NOT NULL DEFAULT '',
+  `level` int(11) NOT NULL DEFAULT '0',
+  `password` varchar(41) NOT NULL DEFAULT '',
+  `first_name` varchar(64) NOT NULL DEFAULT '',
+  `last_name` varchar(64) NOT NULL DEFAULT '',
+  `email_address` varchar(63) NOT NULL DEFAULT '',
+  `status` enum('INACTIVE','ACTIVE') NOT NULL DEFAULT 'ACTIVE',
+  `time_stamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `uid` int(11) NOT NULL AUTO_INCREMENT,
+  `timezone` varchar(30) NOT NULL,
+  `supervisor` int(11) DEFAULT NULL,
+  `employee_type` enum('Contractor','Employee') NOT NULL DEFAULT 'Employee',
+  `session` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`username`),
+  KEY `uid` (`uid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+
+--

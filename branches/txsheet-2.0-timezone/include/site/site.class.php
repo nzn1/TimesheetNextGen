@@ -108,12 +108,12 @@ class Site {
     require_once("include/tsx/globals.class.php");	
 		require_once("include/tsx/common.class.php");
 		new Common();
-		gbl::initialize();
-
+		
 		require("include/tsx/authenticationManager.class.php");
 		self::$authenticationManager = new AuthenticationManager();
-
-
+    
+    gbl::initialize();
+  	
 		require("include/tsx/commandmenu.class.php");
 		self::$commandMenu = new CommandMenu();
 

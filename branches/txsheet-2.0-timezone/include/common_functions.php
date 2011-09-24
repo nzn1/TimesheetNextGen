@@ -283,4 +283,8 @@ function ampersandEncode($str){
   return htmlspecialchars($str); 
 }
 
+function isEmpty($var){
+  return empty($var);
+}
+
 ?>
