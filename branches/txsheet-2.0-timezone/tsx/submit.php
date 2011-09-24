@@ -4,9 +4,8 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 define("NR_FIELDS", 9); // number of fields to iterate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
 
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 	
 include('submit.class.php');
