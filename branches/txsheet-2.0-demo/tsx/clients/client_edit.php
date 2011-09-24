@@ -8,9 +8,8 @@ PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/banner-n
 
 PageElements::setTheme('newcss');
 ob_end_clean();
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
 
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 //define the command menu

@@ -8,93 +8,50 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
 include('monthly.class.php');
 $mc = new MonthlyClass();
 
-//define the command menu & we get these variables from $_REQUEST:
-//  $month gbl::getDay() ".gbl::getYear()." gbl::getClientId() gbl::getProjId() ".gbl::getTaskId()."
-
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 
 // Check project assignment.
 if (gbl::getProjId() != 0) { // id 0 means 'All Projects'
 	list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getAssignmentsTable()." WHERE proj_id='".gbl::getProjId()."' AND username='".gbl::getContextUser()."'");
-	if ($num < 1)
+	if ($num < 1){
 		Common::errorPage(JText::sprintf('NOT_ASSIGNED_TO_IT',JText::_('PROJECT')));
+	}
 } 
 else{
 	gbl::setTaskId(0);
 }
-//get the context date
-if (isset($_REQUEST['date1'])) {
-	 $date1 = $_REQUEST["date1"];
-	$newdate = explode("-", $date1);
-	$year=$newdate[2];
-	$month=$newdate[1];
-	$day=$newdate[0];
-	
-}
-else {
-	$month = gbl::getMonth();
-	$day = gbl::getDay(); 
-	$year = gbl::getYear();
-}
+
+//work out the start date by subtracting days to get to beginning of week
+gbl::setDay(1);
+
+$startDate = strtotime(date("d M Y",gbl::getContextTimestamp()));
+$startStr = date("Y-m-d H:i:s",$startDate);
+$endDate = Common::getMonthlyEndDate(gbl::getContextDate());
+$endStr = date("Y-m-d H:i:s",$endDate);
+//ppr($endDate,'end date');
+//ppr($endStr,'end str');
+
+$previousDate = strtotime(date("d M Y H:i:s",gbl::getContextTimestamp()) . " -1 month");
+$nextDate = strtotime(date("d M Y H:i:s",gbl::getContextTimestamp()) . " +1 month");
 
 $mode="monthly";
-$startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
-//work out the start date by subtracting days to get to beginning of week
-$todayDate = mktime(0, 0, 0, $month, 1, $year);
-$startDate = strtotime(date("d M Y",$todayDate));
-
-// Calculate the previous month.
-$last_month = $month - 1;
-$last_year = $year;
-if (!checkdate($last_month, 1, $last_year)) {
-	$last_month += 12;
-	$last_year --;
-}
-$previousDate = strtotime(date("d M Y H:i:s",$todayDate) . " -1 month");
-
-//calculate the next month
-$next_month = $month+1;
-$next_year = $year;
-if (!checkdate($next_month, 1, $next_year)) {
-	$next_year++;
-	$next_month -= 12;
-}
-$nextDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 month");
-
-$mode="monthly";
-$startDayOfWeek = Common::getWeekStartDay();  //needed by NavCalendar
-//work out the start date by subtracting days to get to beginning of week
-$todayDate = mktime(0, 0, 0, $month, 1, $year);
-$startDate = strtotime(date("d M Y",$todayDate));
-
-$dateValues = getdate($todayDate);
 
 //the day the week should start on: 0=Sunday, 1=Monday
 $startDayOfWeek = Common::getWeekStartDay();
-
-$startStr = date("Y-m-d H:i:s",$startDate);
-
 // Get day of week of 1st of month
 $dowForFirstOfMonth = date('w',$startDate);
 
 //get the number of lead in days
 $leadInDays = $dowForFirstOfMonth - $startDayOfWeek;
-if ($leadInDays < 0)
+if ($leadInDays < 0){
 	$leadInDays += 7;
+}
 
 //get the first printed date
 $firstPrintedDate = strtotime(date("d M Y H:i:s",$startDate) . " -$leadInDays days");
 
-$endDate = Common::getMonthlyEndDate($dateValues);
-$endStr = date("Y-m-d H:i:s",$endDate);
-//ppr($endDate,'end date');
-//ppr($endStr,'end str');
 
-//get the timeformat
-$CfgTimeFormat = Common::getTimeFormat();
 
 ob_start();
 echo "<title>".Config::getMainTitle()." | ".JText::_('MONTHLY_TIMESHEET')." | ".gbl::getContextUser()."</title>";
@@ -117,11 +74,6 @@ if (isset($popup))
 
 
 <form name="monthForm" action="<?php echo Rewrite::getShortUri(); ?>" method="get">
-<!--<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />-->
-<!--<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />-->
-<!--<input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />-->
-
-
 
 <!-- Overall table covering month cells, client and project and date -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -180,20 +132,27 @@ if (isset($popup))
 
 	// Print last months' days spots.
 	for ($i=0; $i<$leadInDays; $i++) {
-	//while (($dayCol < $dowForFirstOfMonth) && ($dowForFirstOfMonth != 0)) {
 		echo "<td width=\"14%\" height=\"25%\" class=\"calendar_cell_disabled_middle\">&nbsp;</td>\n ";
 		$dayCol++;
 	}
 
-	// Get the Monthly data.
-	list($num, $qh) = Common::get_time_records($startStr, $endStr, gbl::getContextUser(), gbl::getProjId(), gbl::getClientId());
+  require(Config::getDocumentRoot().'/include/tsx/tsxtimelist.class.php');
+  $tl = new TsxTimeList();
+  // Get the Monthly data.
+  $tl->search($startStr,$endStr);
+  
+	
 	list($qhol, $holnum) = Common::get_absences(gbl::getMonth(), gbl::getYear(), gbl::getContextUser());
 
 	$ihol = 0; $holtitle = "";
 	if ($holnum>$ihol)
 		$holdata = dbResult($qhol, $ihol);
 
-	$a=0; $b=0; $curDay = 1; $monthlyTotal = 0; $weeklyTotal = 0;
+	$trackFirstItem=0; 
+  $trackLastItem=0; 
+  $curDay = 1; 
+  $monthlyTotal = 0; 
+  $weeklyTotal = 0;
 
 	while (checkdate(gbl::getMonth(), $curDay, gbl::getYear())) {
 		$curStamp = mktime(0,0,0, gbl::getMonth(), $curDay, gbl::getYear());
@@ -256,12 +215,7 @@ if (isset($popup))
 			echo "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"".$cellstyle."\">\n";
 		}
 
-
-
 		// Print out date.
-
-		$ymdStr = "&amp;year=".gbl::getYear() . "&amp;month=".gbl::getMonth() . "&amp;day=".$curDay;
-
 		$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
 											"?client_id=".gbl::getClientId()."".
 											"&amp;proj_id=".gbl::getProjId()."".
@@ -296,10 +250,10 @@ if (isset($popup))
 		//works out to be O=N^2, ie. way inefficient.
 
 		//Here we need to keep track of how far back we need to keep checking the time entries
-		//and how far forward we need to check them, in variables $a and $b respectively.
-		//As tasks finish, $a can be incremented, as we check additional entries, $b is
+		//and how far forward we need to check them, in variables $trackFirstItem and $trackLastItem respectively.
+		//As tasks finish, $trackFirstItem can be incremented, as we check additional entries, $trackLastItem is
 		//incremented.  If tasks are nested, ie. one starts and stops in the middle of another
-		//task, we have to keep $a from being incremented until the end of the outer most nested
+		//task, we have to keep $trackFirstItem from being incremented until the end of the outer most nested
 		//task is finished. This complicated logic changes the code to be O=2N at worst, and can
 		//be very close to O=N at best. In either case, this is much more efficient than O=N^2.
 
@@ -308,96 +262,79 @@ if (isset($popup))
 		//world time card, in fact nesting tasks is probably a highly questionable practice.)
 
 		//set data to the earliest set of data we need to check
-		$i=$a;
-		$data = dbResult($qh,$i);
-
-    //ppr($data);
+		$i = $trackFirstItem;
+    if($i >= $tl->getLength()){
+      $data = new TsxTime();
+    }
+    else{
+      $data = $tl->getTime($i);
+    }
     
 		$todaysTotal = 0;
 
-		if($i<$num) {
-			//There are several potential problems with the date/time data comming from the database
-			//because this application hasn't taken care to cast the time data into a consistent TZ.
-			//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
-			//So, we handle it as best we can for now...
-
-			Common::fixStartEndDuration($data);
-
+		if($i<$tl->getLength()) {
 			//set some booleans
-			$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
-			$endsToday =   (($data["end_stamp"] > $curStamp ) && ($data["end_stamp"] <= $tomorrowStamp));
-			$startsBeforeToday = ($data["start_stamp"] < $curStamp);
-			$endsAfterToday = ($data["end_stamp"] > $tomorrowStamp);
+			$data->setBooleans(mktime(0,0,0, gbl::getMonth(), $curDay, gbl::getYear()));
 
 			$todaysData=array();
 
 			$can_change_a = 1;
 
 			// If the day has data, gather the info...
-			while($i <= $b ) {
-				if(($startsBeforeToday && $endsAfterToday) ||
-				  ($startsBeforeToday && $endsToday) ||
-				  ($startsToday && $endsToday) ||
-				  ($startsToday && $endsAfterToday) ) {
+			while($i <= $trackLastItem ) {
+				if(($data->startsBeforeToday && $data->endsAfterToday) || ($data->startsBeforeToday && $data->endsToday) ||
+				  ($data->startsToday && $data->endsToday) || ($data->startsToday && $data->endsAfterToday) ) {
 
 					// This day has data in it.  Therefore we want to print out a summary at the bottom of each day.
 					$data_seen = 1;
 
-					//format printable times
-					if ($CfgTimeFormat == "12") {
-						$formattedStartTime = date("g:iA",$data["start_stamp"]);
-						$formattedEndTime = date("g:iA",$data["end_stamp"]);
-					} else {
-						$formattedStartTime = date("G:i",$data["start_stamp"]);
-						$formattedEndTime = date("G:i",$data["end_stamp"]);
-					}
-
-					if ($startsBeforeToday && $endsAfterToday) {
-						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= "...-...";
+					if ($data->startsBeforeToday && $data->endsAfterToday) {
+						$todaysData[$data->clientName][$data->projectTitle][$data->taskName][]= "...-...";
 						$todaysTotal += Common::get_duration($curStamp, $tomorrowStamp);
-					} else if ($startsBeforeToday && $endsToday) {
-						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= "...-" . $formattedEndTime;
-						$todaysTotal += Common::get_duration($curStamp, $data["end_stamp"]);
-
-					} else if ($startsToday && $endsToday) {
-						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= $formattedStartTime . "-" . $formattedEndTime;
-						$todaysTotal += $data["duration"];
-					} else if ($startsToday && $endsAfterToday) {
-						$todaysData[$data["clientName"]][$data["projectTitle"]][$data["taskName"]][]= $formattedStartTime . "-...";
-						$todaysTotal += Common::get_duration($data["start_stamp"],$tomorrowStamp);
-
-					} else {
+					} 
+          else if ($data->startsBeforeToday && $data->endsToday) {
+						$todaysData[$data->clientName][$data->projectTitle][$data->taskName][]= "...-" . $data->getFormattedEndTime();
+						$todaysTotal += Common::get_duration($curStamp, $data->end_stamp);
+					} 
+          else if ($data->startsToday && $data->endsToday) {
+						$todaysData[$data->clientName][$data->projectTitle][$data->taskName][]= $data->getFormattedStartTime() . "-" . $data->getFormattedEndTime();
+						$todaysTotal += $data->duration;
+					} 
+          else if ($data->startsToday && $data->endsAfterToday) {
+						$todaysData[$data->clientName][$data->projectTitle][$data->taskName][]= $data->getFormattedStartTime() . "-...";
+						$todaysTotal += Common::get_duration($data->start_stamp,$tomorrowStamp);
+					} 
+          else {
 						echo "Error: time booleans are in a confused state<br />\n";
 					}
 
 
-					if($can_change_a && $endsAfterToday) {
-						$a=$i;
+					if($can_change_a && $data->endsAfterToday) {
+						$trackFirstItem=$i;
 						$can_change_a = 0;
 					}
 
-					if($can_change_a  && $endsToday) $a=$i+1;
-
-					if($b<=$i) $b=$i+1;
+					if($can_change_a  && $data->endsToday){
+            $trackFirstItem=$i+1;
+          }
+					if($trackLastItem<=$i){
+            $trackLastItem=$i+1;
+          }
 
 				}
 				$i++;
 
-				if($i<$num) {
-					$data = dbResult($qh,$i);
-					Common::fixStartEndDuration($data);
-
-
-					$startsToday = (($data["start_stamp"] >= $curStamp ) && ( $data["start_stamp"] < $tomorrowStamp ));
-					$endsToday =   (($data["end_stamp"] > $curStamp ) && ($data["end_stamp"] <= $tomorrowStamp));
-					$startsBeforeToday = ($data["start_stamp"] < $curStamp);
-					$endsAfterToday = ($data["end_stamp"] > $tomorrowStamp);
-				} else {
-					$startsToday=false;
-					$endsToday=false;
-					$startsBeforeToday=false;
-					$endsAftertoday=true;
-				}
+				if($i< $tl->getLength()) {				
+				  $data = $tl->getTime($i);
+          $data->setBooleans(mktime(0,0,0, gbl::getMonth(), $curDay, gbl::getYear()));
+				} 
+        else {
+					$data->startsToday=false;
+					$data->endsToday=false;
+					$data->startsBeforeToday=false;
+					$data->endsAftertoday=true;
+				} 
+				
 			}
 		}
 
@@ -451,5 +388,3 @@ if (isset($popup))
 				</table>
   </div><!--end monthly div-->
 </form>
-
-

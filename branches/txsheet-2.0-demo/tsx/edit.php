@@ -6,9 +6,6 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
-
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
 //load local vars from request/post/get
 $save_changes = isset($_REQUEST['save_changes']) ? $_REQUEST['save_changes']: false;
 $task_id = $_REQUEST['task_id'];

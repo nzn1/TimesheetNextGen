@@ -166,7 +166,7 @@ function printInfo($type, $data, $time_fmt) {
 		$formattedDate = sprintf("%04d-%02d-%02d",$dateValues["year"],$dateValues["mon"],$dateValues["mday"]); 
 		make_daily_link($ymdStr,0,$formattedDate); 
 	} else if($type == "log") {
-		if ($data['log_message']) print stripslashes($data['log_message']);
+		if ($data['log_message']) print nl2br(stripslashes($data['log_message']));
 		else print "&nbsp;";
 	} else print "type unknown: $type &nbsp;";
 }

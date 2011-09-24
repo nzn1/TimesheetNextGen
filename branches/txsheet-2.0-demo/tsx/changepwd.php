@@ -6,8 +6,6 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
 $passwd1 = "";
 $passwd2 = "";
 $old_pass = "";
@@ -22,7 +20,7 @@ if (isset($_POST["action"])) {
 }
 
 //check for guest user
-if ($loggedInUser == 'guest')
+if (gbl::getLoggedInUser() == 'guest')
 	$errormsg = "Guest may not change password.";
 
 //check that passwords match

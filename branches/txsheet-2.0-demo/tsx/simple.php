@@ -5,12 +5,10 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
 require_once('simple.class.php');
 $simple = new SimplePage();
 
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
 	
 		$uid = gbl::getContextUser();
@@ -291,7 +289,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		$currentTaskName = stripslashes($data["taskName"]);
 		$currentProjectTitle = stripslashes($data["projectTitle"]);
 		$currentProjectId = $data["proj_id"];
-		$currentWorkDescription = $data["log_message"];
+		$currentWorkDescription = nl2br($data["log_message"]);
 		$hours = floor($data['duration'] / 60 );
 		$minutes = $data['duration'] - ($hours * 60);
 		$status = $data['subStatus'];

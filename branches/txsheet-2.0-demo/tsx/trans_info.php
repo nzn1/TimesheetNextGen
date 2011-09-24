@@ -93,7 +93,7 @@ include ("header.inc");
 					<tr>
 						<td valign="top" align="left">
 							<span class="label">Log Message:</span>
-								<?php echo $data["log_message"]; ?>
+								<?php echo nl2br($data["log_message"]); ?>
 						</td>
 					<tr>
 				</table>

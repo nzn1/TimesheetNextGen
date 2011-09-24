@@ -28,24 +28,39 @@ class gbl{
 		self::$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: self::$todayDate["mon"];
 		self::$day = isset($_REQUEST["day"]) ? $_REQUEST["day"]: self::$todayDate["mday"];
 		self::$mode = isset($_REQUEST["mode"]) ? $_REQUEST["mode"]: 0;
+		
+		/*
+		//this code was copied out of timesheet_menu.inc
+		//@TODO - decide whether this code is required
+		// View mode (monthly, weekly, all)
+    if (isset($_REQUEST['mode']))
+    	$mode = $_REQUEST['mode'];
+    else
+    	$mode = "all";
+    if (!($mode == "all" || $mode == "monthly" || $mode == "weekly"))
+    	$mode = "all";
+	*/
+		
 		self::$proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 		self::$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 		self::$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;		
 		self::$uid = isset($_REQUEST["uid"]) ? $_REQUEST["uid"]: "";	
 		
 	if(isset($_REQUEST['date1'])){
-//if the date1 variable exists, which comes from the java date picker
-
+    //if the date1 variable exists, which comes from the java date picker
 		/* @TODO - add validation to this!!!*/
 		$d = explode('-',$_REQUEST['date1']);
-
-		gbl::setYear(intval($d[2])); // not sure what the purpose of this is
 		self::$year = intval($d[2]);
 		self::$month = intval($d[1]);
 		self::$day = intval($d[0]);
-
 	}    
 		
+		if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator','page')){
+		  if(isset($_REQUEST["contextuid"])){ 
+			 $_SESSION['contextUser'] = $_REQUEST['contextuid'];
+      }	
+  	}
+	
 		if (isset($_SESSION['contextUser']))
 			self::$contextUser = strtolower($_SESSION['contextUser']);
 		if (isset($_SESSION['loggedInUser']))
@@ -59,20 +74,33 @@ class gbl{
 	}
 		
 	/**
-	 * getNow returns a date object for NOW
+	 * getNow returns a date object for NOW.
+	 * Today means realtime and not the system context date	 
 	 */   	
 	public static function getNow(){
 		return self::$todayDateTime;
 	}
 	/**
 	 * Returns a date object for today at 00:00:00 hours
+	 * Today means realtime and not the system context date	 
 	 */   	
 	public static function getTodayDate(){
 		return self::$todayDate;
 	}
+	/**
+	 * Today means realtime and not the system context date
+	 */   	
 	public static function getTodayDateStamp(){
 		return self::$todayDate[0];
 	}
+	
+	public static function getContextTimestamp(){
+     return mktime(0, 0, 0, self::getMonth(), self::getDay(), self::getYear());
+  }
+	public static function getContextDate(){
+     return getdate(self::getContextTimestamp());
+  }
+	
 	public static function getYear(){
 		return self::$year;
 	}

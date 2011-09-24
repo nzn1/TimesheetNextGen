@@ -7,9 +7,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 // Connect to database.
 
-$loggedInUser = strtolower($_SESSION['loggedInUser']);
-
-if (empty($loggedInUser))
+if (isEmpty(gbl::getLoggedInUser()))
         errorPage("Could not determine the logged in user");
 
 

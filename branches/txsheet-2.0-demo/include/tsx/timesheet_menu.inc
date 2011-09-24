@@ -1,31 +1,12 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 ////get todays values
-if(!isset($realToday))
+if(!isset($realToday)){
 	$realToday = getdate(time());
-
-if(class_exists('Site')){
-	if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator','page'))
-		if(isset($_REQUEST["contextuid"])) 
-			$_SESSION['contextUser'] = $_REQUEST['contextuid'];	
-} 
-else 
-{
-	if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator','page'))
-		if(isset($_REQUEST["contextuid"]))
-			$_SESSION['contextUser'] = $_REQUEST['contextuid'];
 }
 
-// View mode (monthly, weekly, all)
-if (isset($_REQUEST['mode']))
-	$mode = $_REQUEST['mode'];
-else
-	$mode = "all";
-if (!($mode == "all" || $mode == "monthly" || $mode == "weekly"))
-	$mode = "all";
-
 if(Site::getAuthenticationManager()->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Site::getCommandMenu()->add(new Command("<form action=\"".urlencode($_SERVER['REQUEST_URI'])."\" method=\"get\">",true,false));
+	Site::getCommandMenu()->add(new Command("<form action=\"".ampersandEncode(Rewrite::getUri())."\" method=\"get\">",true,false));
 	Site::getCommandMenu()->add(new Command(
 		"<input type=\"hidden\" name=\"year\" value=\"".gbl::getYear()."\" />" .
 		"<input type=\"hidden\" name=\"month\" value=\"".gbl::getMonth()."\" />" .
