@@ -7,8 +7,11 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
 include('submit.class.php');
 $sc = new SubmitClass();
 
-if (isset($_REQUEST['uid']))
+if (isset($_REQUEST['uid'])) {
 	$uid = gbl::getUid();
+	LogFile::write("\n uid:" . $uid. " context user " . gbl::getContextUser());
+	$user = gbl::getContextUser();
+}
 else {
 	// need to find the first user managed by this supervisor, contextuser, otherwise we display the supervisor's times
 	//$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getuserTable()." " .
@@ -16,12 +19,13 @@ else {
 	list($qh, $num) = Common::get_users_for_supervisor(gbl::getContextUser());
 	if ($num > 0) {
 		$data = dbResult($qh);
-		$uid = $data['uid'];
+		$user = $data['username'];
 	}
 	else
 	// no user
-		$uid = "0";
+		$user = gbl::getContextUser();
 }
+	LogFile::write(" overall uid:" . $uid. " user ". $user. " context user " . gbl::getContextUser());
 
 if (isset($_REQUEST['print']))
 	$print = true;
@@ -81,22 +85,29 @@ $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 //LogFile::->write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
 //LogFile::->write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
 
+// get the timezone of the user
+list($qtz, $num) = dbQuery("SELECT timezone FROM ".tbl::getUserTzTable().
+			" WHERE username = '". gbl::getContextUser(). "'");
+$tzdata = dbResult($qtz);
+LogFile::write("\ntzquery uid ". $uid. " username ". $user. " timezone ". $tzdata['timezone']);
+$usertimezone = new DateTimeZone($tzdata['timezone']);
+
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
-list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, $proj_id, $client_id);
+list($num, $qh) = Common::get_time_records($startStr, $endStr, $user, $proj_id, $client_id);
 
 if($orderby == "project") {
 	$subtotal_label[]= JText::_('PROJECT_TOTAL');
 	$colVar[]="projectTitle";
 	$colWid[]="width=\"15%\"";
 	//$colWid[]="";
-	$colAlign[]=""; $colWrap[]="nowrap";
+	$colAlign[]=""; $colWrap[]="";
 
 	$subtotal_label[]= JText::_('TASK_TOTAL');
 	$colVar[]="taskName";
 	$colWid[]="width=\"15%\"";
 	//$colWid[]="";
-	$colAlign[]=""; $colWrap[]="nowrap";
+	$colAlign[]=""; $colWrap[]="";
 
 	$colVar[]="start_stamp";
 	$colWid[]="width=\"7%\"";
@@ -119,7 +130,7 @@ if($orderby == "project") {
 
 	$colVar[]="tzhours";
 	$colWid[]="width=\"5%\"";
-	$colAlign[]=""; $colWrap[]="";
+	$colAlign[]="align=\"center\""; $colWrap[]="";
 
 	$colVar[]="log";
 	$colWid[]="width=\"20%\"";
@@ -294,6 +305,13 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		<td  align="center" width="10%" >
 			<a href="<?php echo Rewrite::getShortUri();?>?<?php echo $_SERVER["QUERY_STRING"];?>&export_excel=1" class="export"><img src="images/export_data.gif" name="esporta_dati" border=0><br />&rArr;&nbsp;Excel </a>
 		</td>
+		<td  align="center" width="10%" >
+			<select style="width:100%;" on onchange="submit();" name="tzdisplay">
+				<option value="none">Select Display</option>
+				<option value="mytz">Display times relative to my timezone</option>
+				<option value="theirtz">Display times in users timezones</option>
+			</select>
+		</td>
 		<td align="center">
 			<?php 
 				print "<button onClick=\"popupPrintWindow()\">". ucfirst(JText::_('PRINT_REPORT'))."</button></td>\n"; 
@@ -375,11 +393,39 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			//if entry doesn't have an end time or duration, it's an incomplete entry
 			//fixStartEndDuration returns a 0 if the entry is incomplete.
 			
-			if(!Common::fixStartEndDuration($data)) continue;
+			//if(!Common::fixStartEndDuration($data)) continue;
 			
+			// now need to change dates into user timezone
+			date_default_timezone_set($tzdata['timezone']); 
+			$gmtTimezone = new DateTimeZone('GMT');
+			//$gmttime = new DateTime($data["start_time_str"], new DateTimeZone('UTC'));
+			// now create datetime objects associated with UTC
+			$datastart = new DateTime($data["start_time_str"], $gmtTimezone);
+			$datastop = new DateTime($data["end_time_str"], $gmtTimezone);
+			// now calculate offset from UTC for start and end times
+			//$startoffset = $usertimezone->getOffset($datastart);
+			//$stopoffset = $usertimezone->getOffset($datastop);
+			
+			// now convert to local time
+			$datastart->setTimezone($usertimezone);
+			$datastop->setTimezone($usertimezone);
+			//$datastart = new DateTime($data["start_time_str"], $usertimezone);
+			//$datastop = new DateTime($data["end_time_str"], $usertimezone);
+			//$datastart = date('Y-m-d H:i:s', $data["start_stamp"]);
+			//$datastop = date('Y-m-d H:i:s', $data["end_stamp"]);
+			LogFile::write("\nbefore change dates ". $data['log_message']. " start_time_str " .$data["start_time_str"]. " end_time_str " .$data["end_time_str"]. 
+				" start_stamp " .$data["start_stamp"]. " stop_stamp " . $data["end_stamp"]);
+			//$data["start_time_str"] = date('Y-m-d H:i:s', $datastart->format('U') + $startoffset);
+			$data["start_time_str"] = date('Y-m-d H:i:s', $datastart->format('U'));
+			//$data["start_time_str"] = $datastart;
+			$data["end_time_str"] = date('Y-m-d H:i:s', $datastop->format('U'));
+			$data["start_stamp"] = date('U', $datastart->format('U'));
+			$data["end_stamp"] = date('U', $datastop->format('U'));
+			LogFile::write("\nafter change dates start_time_str " .$data["start_time_str"]. " end_time_str " .$data["end_time_str"]. 
+				" start_stamp " .$data["start_stamp"]. " stop_stamp " . $data["end_stamp"]);
 			array_push($dati_total,$data);
 
-			//Since we're allowing entries that may span date boundaries, this complicates
+			//Since we are allowing entries that may span date boundaries, this complicates
 			//our life quite a lot.  We need to "pre-process" the results to split those
 			//entries that do span date boundaries into multiple entries that stop and then
 			//re-start on date boundaries.

@@ -66,7 +66,7 @@ PageElements::setTheme('newcss');
 	<tr>
 		<td><?php echo (JText::_('SYSTEM_TZONE')) ?>
 		<span><?php
-			$systz = date_default_timezone_get();
+			$systz = gbl::getSystemTimezone();
 			if ($systz != "") echo $systz;
 			else echo JText::_('NO_TZONE');
 			?></span></td> 

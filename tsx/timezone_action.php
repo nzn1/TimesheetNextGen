@@ -16,7 +16,7 @@ elseif ($action == "settimezone") {
 		// set the default timezone
 		//$winter = date_create('2010-12-21', timezone_open('America/New_York'));
 		//echo $winter->getOffset() . "\n";
-		//date_default_timezone_set($timezone); 
+		date_default_timezone_set($timezone); 
 		
 		// now get each times record for user, and adjust start and stop times according to the timezone
 

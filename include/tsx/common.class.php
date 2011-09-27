@@ -82,14 +82,14 @@ class Common{
 	public static function get_users_for_supervisor($username) {
 		if ($username) {
 			//build the database query and select by $uid if present
-			$query = "SELECT uid, last_name, first_name, status FROM ".tbl::getUserTable(). 
+			$query = "SELECT uid, last_name, first_name, username, status FROM ".tbl::getUserTable(). 
 				" WHERE (select uid FROM " .tbl::getUserTable(). " s WHERE s.username = '$username') = supervisor " .
 				" ORDER BY status DESC, last_name, first_name";
 			//print $query;
 		}
 		else {
 			//build the database query and get all users
-			$query = "SELECT uid, last_name, first_name, status FROM ".tbl::getUserTable(). 
+			$query = "SELECT uid, last_name, first_name, username, status FROM ".tbl::getUserTable(). 
 				" ORDER BY status DESC, last_name, first_name";
 			
 		}
@@ -1548,8 +1548,8 @@ class Common{
 			$info=array();
 			$info["start_stamp"]=$curStamp;
 			$info["end_stamp"]=$endStamp;
-			$info["start_time"]=$data['start_time'];
 			$info["start_time_str"]=$data['start_time_str'];
+			$info["end_time_str"]=$data['end_time_str'];
 			$info["duration"]=$duration;
 			$info["clientName"]=$data["clientName"];
 			$info["projectTitle"]=$data["projectTitle"];
@@ -1657,6 +1657,51 @@ class Common{
 		exit();
 	}
 	
+	/**
+ 	* UTCtoLocalTime converts a UTC date into a DateTime object in the supplied timezone
+ 	* @params String $usertimezone - the timezone to convert to e.g. Australia/Melbourne
+ 	* @params String $date - the UTC date to be converted to local, in the form yyyy-mm-dd hh:mm:ss
+ 	* @returns DateTime object - the timestamp converted into the supplied timezone.
+  	*/
+	public static function UTCtoLocalTime($usertimezone, $date) {
+		// change a date into user's timezone
+		date_default_timezone_set($usertimezone);
+		$newdate = new DateTime($date, new DateTimeZone('GMT'));
+		// now convert to local time
+		$newdate->setTimezone(new DateTimeZone($usertimezone));
+		//return $datastart->format('Y-m-d H:i:s');
+		return $newdate;
+	}
+	/**
+ 	* LocaltoUTCTime converts a local time in the supplied timezone to UTC 
+ 	* @params String $usertimezone - the timezone to convert from e.g. Australia/Melbourne
+ 	* @params String $date - the local date to be converted to UTC, in the form yyyy-mm-dd hh:mm:ss
+ 	* @returns String - the timestamp converted into UTC in the form yyyy-mm-dd hh:mm:ss
+  	*/
+	public static function LocaltoUTCTime($usertimezone, $date) {
+		date_default_timezone_set($usertimezone); 
+		return gmdate("Y-m-d H:i:s", $date);
+	}
+	/**
+ 	* getUserTimezone retrieves the user's timezone from the user table. 
+ 	* If the user doesn't have a timezone set
+ 	* then the timezone of the system will be returned 
+ 	* @params String $username - the logon user name
+ 	* @returns String - the timezone e.g. Australia/Melbourne
+  	*/
+	public static function getUserTimezone($username) {
+		// find timezone of user
+		if (!empty($username)) 
+			list($qtz,$num) = dbQuery("SELECT username, timezone FROM ".tbl::getUserTzTable(). " WHERE username = '". $username."'");
+		else 
+			list($qtz,$num) = dbQuery("SELECT username, timezone FROM ".tbl::getUserTzTable(). " WHERE username = '". gbl::getContextUser()."'");
+		$data = dbResult($qtz);
+		if (empty($data['timezone'])) // if no timezone set, then return the system timezone
+			return gbl::getSystemTimezone();
+		else 
+			return $data['timezone'];
+	}
+		
 	public static function printDateSelector($mode, $startDate, $previous_date, $next_date) {
 		// calculate previous and next dates
 		$last_year = date("Y", $previous_date);

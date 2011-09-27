@@ -300,23 +300,29 @@ class ClockAction{
 		  $this->getLogMessage();
 		}
 
-		$duration=($this->offStamp - $this->onStamp)/60; //get duration in minutes
-		$onStr = strftime("%Y-%m-%d %H:%M:%S", $this->onStamp);
-		$offStr = strftime("%Y-%m-%d %H:%M:%S", $this->offStamp);
-
 		// find timezone of user
-		$timezonequery = "SELECT timezone FROM ".tbl::getUserTzTable(). " WHERE uid = '". gbl::getContextUser()."'";
+		$timezonequery = "SELECT username, timezone FROM ".tbl::getUserTzTable(). " WHERE username = '". gbl::getContextUser()."'";
 		list($qtz,$num) = dbQuery($timezonequery);
 		$data = dbResult($qtz);
 		$timezone = $data['timezone'];
+		$username = $data['username'];
+
+		// now convert times to UTC
+		$duration=($this->offStamp - $this->onStamp)/60; //get duration in minutes
+		//$onStr = strftime("%Y-%m-%d %H:%M:%S", $this->onStamp);
+		//$offStr = strftime("%Y-%m-%d %H:%M:%S", $this->offStamp);
+		date_default_timezone_set($timezone); 
+		$onStr = Common::LocaltoUTCTime($timezone, $this->onStamp);
+		$offStr = Common::LocaltoUTCTime($timezone, $this->offStamp);
+		
 		
 		$this->logMessage = addslashes($this->logMessage);
-		LogFile::write("\nclock_action. start time: ". $onStr. " stop time: ". $offStr. "\n");
+		LogFile::write("\nclock_action for ". $username. " start time: ". $onStr. " stop time: ". $offStr. " log: " . $this->logMessage ."\n");
 		$q = "INSERT INTO ".tbl::getUTCTimesTable()." (uid, start_time, end_time, duration, proj_id, task_id, log_message, timezone) ".
   			"VALUES ('".gbl::getContextUser()."','$onStr', '$offStr', '$duration', " .
-  			"".gbl::getProjId().", ".gbl::getTaskId().", '".$this->logMessage."', $timezone')";
+  			"".gbl::getProjId().", ".gbl::getTaskId().", '".$this->logMessage."', '$timezone')";
 		
-    //list($qh,$num) = dbQuery($queryString);
+    //list($qh,$num) = dbQuery($q);
     if(debug::getSqlStatement()==1)ppr($q,'SQL');
 		$retval['status'] = Database::getInstance()->query($q);
 		$retval['id'] = mysql_insert_id(Database::getInstance()->getConnection());
