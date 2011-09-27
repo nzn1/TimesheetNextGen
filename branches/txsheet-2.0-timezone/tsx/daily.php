@@ -20,6 +20,8 @@ $startDate = strtotime(date("d M Y",$todayDate));
 
 $tomorrowDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 days");
 $yesterdayDate = strtotime(date("d M Y H:i:s",$todayDate) . " -1 days");
+
+LogFile::write("\ndaily todaydate: ". $todayDate. " tomorrowdate: ". $tomorrowDate);
 //get the timeformat
 $CfgTimeFormat = Common::getTimeFormat();
 
@@ -105,9 +107,16 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 <?php
 
+// get the timezone of the user
+$tzone = Common::getUserTimezone(gbl::getContextUser());
+LogFile::write("\ntzquery uid ". gbl::getUId(). " username ". gbl::getContextUser() . " timezone ". $tzone);
+$usertimezone = new DateTimeZone($tzone);
+
 //Get the data
 $startStr = date("Y-m-d H:i:s",$todayDate);
 $endStr = date("Y-m-d H:i:s",$tomorrowDate);
+$startStr = gmdate("Y-m-d H:i:s", $todayDate);
+$endStr = gmdate("Y-m-d H:i:s", $tomorrowDate);
 
 $order_by_str = "start_stamp, ".tbl::getClientTable().".organisation, ".tbl::getProjectTable().".title, ".tbl::getTaskTable().".name, end_stamp";
 list($num, $qh) = Common::get_time_records($startStr, $endStr, gbl::getContextUser(), 0, 0, $order_by_str);
@@ -145,8 +154,35 @@ else {
 		//because this application hasn't taken care to cast the time data into a consistent TZ.
 		//See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
 		//So, we handle it as best we can for now...
-		Common::fixStartEndDuration($data);
+		//Common::fixStartEndDuration($data);
 
+		// now need to change dates into user timezone
+		//date_default_timezone_set($tzdata['timezone']); 
+		//$gmtTimezone = new DateTimeZone('GMT');
+		//$gmttime = new DateTime($data["start_time_str"], new DateTimeZone('UTC'));
+		// now create datetime objects associated with UTC
+		//$datastart = new DateTime($data["start_time_str"], $gmtTimezone);
+		//$datastop = new DateTime($data["end_time_str"], $gmtTimezone);
+			// now calculate offset from UTC for start and end times
+			//$startoffset = $usertimezone->getOffset($datastart);
+			//$stopoffset = $usertimezone->getOffset($datastop);
+			
+			// now convert to local time
+		//$datastart->setTimezone($usertimezone);
+		//$datastop->setTimezone($usertimezone);
+		$datastart = Common::UTCtoLocalTime($tzone, $data["start_time_str"]);
+		$datastop = Common::UTCtoLocalTime($tzone, $data["end_time_str"]);
+		LogFile::write("\ndaily.php before change dates ". $data['log_message']. " start_time_str " .$data["start_time_str"]. " end_time_str " .$data["end_time_str"]. 
+				" start_stamp " .$data["start_stamp"]. " stop_stamp " . $data["end_stamp"]);
+		// and override timestamps
+		$data["start_stamp"] = $datastart->format('U');
+		$data["end_stamp"] = $datastop->format('U');
+		$data["start_time_str"] = $datastart->format('Y-m-d H:i:s');
+		$data["end_time_str"] = $datastop->format('Y-m-d H:i:s');
+		
+		LogFile::write("\ndaily.php after change dates start_time_str " .$data["start_time_str"]. " end_time_str " .$data["end_time_str"]. 
+			" start_stamp " .$data["start_stamp"]. " stop_stamp " . $data["end_stamp"]);
+		
 		$dateValues = getdate($data["start_stamp"]);
 		$ymdStrSd = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 		$dateValues = getdate($data["end_stamp"]);
@@ -177,7 +213,8 @@ else {
 				$formattedStartTime = date("G:i",$data["start_stamp"]);
 				$formattedEndTime = date("G:i",$data["end_stamp"]);
 			}
-
+		LogFile::write("\ndaily.php formattedStartTime " .$formattedStartTime. " formattedEndTime " . $formattedEndTime);
+			
 			//if both start and end time are not today
 			if ($data["start_stamp"] < $todayDate && $data["end_stamp"] > $tomorrowDate) {
 				//all day - no one should work this hard!

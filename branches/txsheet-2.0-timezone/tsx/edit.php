@@ -37,9 +37,13 @@ if ($action == "saveChanges") {
 	$clock_off_time_string = "$clock_off_date_year-$clock_off_date_month-$clock_off_date_day $clock_off_time_hour:$clock_off_time_min:00";
 
 	$duration = Common::get_duration(strtotime($clock_on_time_string),strtotime($clock_off_time_string));
+	
+	// now convert to UTC
+	$onStr = gmdate("Y-m-d H:i:s", mktime($clock_on_time_hour, $clock_on_time_min, 0, $clock_on_date_month, $clock_on_date_day, $clock_on_date_year));
+	$offStr = gmdate("Y-m-d H:i:s", mktime($clock_off_time_hour, $clock_off_time_min, 0, $clock_off_date_month, $clock_off_date_day, $clock_off_date_year));
 
-	$q = "UPDATE ".tbl::getTimesTable()." SET start_time='$clock_on_time_string', ".
-								"end_time='$clock_off_time_string', ".
+	$q = "UPDATE ".tbl::getTimesTable()." SET start_time='$onStr', ".
+								"end_time='$offStr', ".
 								"duration=$duration, " .
 								"log_message='$log_message', ".
 								"task_id='$task_id', " .
@@ -66,7 +70,7 @@ $trans_info = Common::get_trans_info($trans_num);
 //because this application hasn't taken care to cast the time data into a consistent TZ.
 //See: http://jokke.dk/blog/2007/07/timezones_in_mysql_and_php & read comments
 //So, we handle it as best we can for now...
-Common::fixStartEndDuration($trans_info);
+//Common::fixStartEndDuration($trans_info);
 
 if ($action != "saveChanges") {
 	$proj_id = $trans_info["proj_id"];

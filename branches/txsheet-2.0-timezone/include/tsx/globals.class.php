@@ -14,6 +14,7 @@ class gbl{
 	private static $uid;
 	private static $post;
 	private static $contextUser;
+	private static $systemTimezone;
 	private static $loggedInUser;	
 	private static $breakRatio = 0;
 	private static $siteClosed = false;
@@ -23,6 +24,8 @@ class gbl{
 		self::$todayDateTime = getdate(time());
 		self::$todayDate = getdate(mktime(0, 0, 0,self::$todayDateTime['mon'],self::$todayDateTime['mday'], self::$todayDateTime['year']));
 		
+		// get timezone details
+		self::$systemTimezone = date_default_timezone_get();
 		//load local vars from request/post/get
 		self::$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: self::$todayDate["year"];
 		self::$month = isset($_REQUEST["month"]) ? $_REQUEST["month"]: self::$todayDate["mon"];
@@ -169,7 +172,14 @@ class gbl{
   	}
   	public static function setSiteClosed($s){
     	self::$siteClosed = $s;
-  }
-  
+  	}
+  	/** 
+  	 * getSystemTimezone returns the timezone of the underlying system 
+  	 * e.g. Australia/Melbourne
+  	 */
+	public static function getSystemTimezone(){
+    	return self::$systemTimezone;
+  	}
+  	
 }
 ?>
