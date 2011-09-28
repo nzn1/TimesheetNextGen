@@ -99,7 +99,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 			$userprojcnt++;
 
 			foreach($task_array[$proj_id] as $task_id => $value) {	
-				$sql = "INSERT into ".tbl::getTaskAssignmentsTable()." VALUES ($task_id,'$username',$proj_id)";
+				$sql = "INSERT into ".tbl::getTaskAssignmentsTable()." (task_id, username, proj_id) VALUES ($task_id,'$username',$proj_id)";
 				$rslt = do_query($sql);
 				$usertaskcnt++;
 			}

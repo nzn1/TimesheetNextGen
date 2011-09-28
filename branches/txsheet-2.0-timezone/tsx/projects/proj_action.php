@@ -71,7 +71,7 @@ elseif ($action == "add") {
 		/*
 		 * Had to add '0.00' to make the query match up to the database
 		 */
-		dbQuery("INSERT INTO  ".tbl::getAssignmentsTable()."  VALUES ($proj_id, '$username', 1)");
+		dbQuery("INSERT INTO  ".tbl::getAssignmentsTable()." (proj_id, username, rate_id) VALUES ($proj_id, '$username', 1)");
 		dbQuery("INSERT INTO  ".tbl::getTaskAssignmentsTable()." (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
 	}
 	if (!$leader_added) {
@@ -79,7 +79,7 @@ elseif ($action == "add") {
 		/*
 		 * Had to add '0.00' to make the query match up to the database
 		 */
-		dbQuery("INSERT INTO  ".tbl::getAssignmentsTable()."  VALUES ($proj_id, '$project_leader', 1)");
+		dbQuery("INSERT INTO  ".tbl::getAssignmentsTable()." (proj_id, username, rate_id) VALUES ($proj_id, '$project_leader', 1)");
 		dbQuery("INSERT INTO  ".tbl::getTaskAssignmentsTable()." (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$project_leader')");
 	}
 
@@ -106,9 +106,10 @@ elseif ($action == "edit") {
 	list($qh,$num) = dbquery($query);
 
 	if ($assigned) {
+		// @TODO why delete and then insert?
 		dbQuery("DELETE FROM  ".tbl::getAssignmentsTable()."  WHERE proj_id = $proj_id");
 		while (list(,$username) = each($assigned)) {
-			dbQuery("INSERT INTO  ".tbl::getAssignmentsTable()."  VALUES ($proj_id, '$username', 1)");
+			dbQuery("INSERT INTO  ".tbl::getAssignmentsTable()." (proj_id, username, rate_id) VALUES ($proj_id, '$username', 1)");
 		}
 	}
 

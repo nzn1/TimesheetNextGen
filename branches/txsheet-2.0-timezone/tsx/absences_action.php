@@ -59,7 +59,7 @@ if ($action!=0) {
 
 
 		if ($AMtype != '0' && $AMtype != null && $AMtype != 'Public') {
-			$q = "INSERT INTO ".tbl::getAbsenceTable()." VALUES ".
+			$q = "INSERT INTO ".tbl::getAbsenceTable()." (entry_id, date, AM_PM, subject, type, user) VALUES ".
 				"(0,'$year-$month-$i 00:00:00','AM','$AMtext','$AMtype','$uid')";
 				
 			if(Debug::getSqlStatement())ppr($q);
@@ -73,7 +73,7 @@ if ($action!=0) {
     
 
 		if ($PMtype != '0' && $PMtype != null && $PMtype != 'Public') {
-			$q = "INSERT INTO ".tbl::getAbsenceTable()." VALUES ".
+			$q = "INSERT INTO ".tbl::getAbsenceTable()." (entry_id, date, AM_PM, subject, type, user) VALUES ".
 				"(0,'$year-$month-$i 00:00:00','PM','$PMtext','$PMtype','$uid')";
 				
 			if(Debug::getSqlStatement())ppr($q);

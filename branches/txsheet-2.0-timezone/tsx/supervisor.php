@@ -25,12 +25,22 @@ else {
 	// no user
 		$user = gbl::getContextUser();
 }
-	LogFile::write(" overall uid:" . $uid. " user ". $user. " context user " . gbl::getContextUser());
+	LogFile::write(" overall user ". $user. " context user " . gbl::getContextUser());
 
 if (isset($_REQUEST['print']))
 	$print = true;
 else
 	$print = false;
+	
+if (isset($_REQUEST['tz']))
+	$displaytimezone = $_REQUEST['tz'];
+else
+	$displaytimezone = "mytz"; // set to default my timezone
+// get the timezone of the user
+$Susertimezone = Common::getUserTimezone(gbl::getContextUser());
+
+LogFile::write("\ntzquery username ". $user. " timezone ". $Susertimezone);
+$DTZusertimezone = new DateTimeZone($Susertimezone);
 
 //get the context date
 $todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
@@ -85,12 +95,7 @@ $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 //LogFile::->write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
 //LogFile::->write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
 
-// get the timezone of the user
-list($qtz, $num) = dbQuery("SELECT timezone FROM ".tbl::getUserTzTable().
-			" WHERE username = '". gbl::getContextUser(). "'");
-$tzdata = dbResult($qtz);
-LogFile::write("\ntzquery uid ". $uid. " username ". $user. " timezone ". $tzdata['timezone']);
-$usertimezone = new DateTimeZone($tzdata['timezone']);
+
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
@@ -231,8 +236,8 @@ function make_index($data,$order) {
 	return $index;
 }
 
-$Location= Rewrite::getShortUri()."?uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode";
-gbl::setPost("uid=$uid$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode");
+$Location= Rewrite::getShortUri()."?uid=$user$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode";
+gbl::setPost("uid=$user$ymdStr&orderby=$orderby&client_id=$client_id&mode=$mode");
 //require_once("include/language/datetimepicker_lang.inc");
 
 ?>
@@ -280,7 +285,13 @@ PageElements::setBodyOnLoad('doOnLoad();');
 <input type="hidden" name="month" value="<?php echo $month; ?>">
 <input type="hidden" name="day" value="<?php echo $day; ?>">
 <input type="hidden" name="mode" value="<?php echo $mode; ?>">
-
+<h3><?php 
+	if ($displaytimezone == "theirtz") 
+		echo (JText::_('TZTHEIR'));
+	else 
+		echo (JText::_('TZMY'))." ". $Susertimezone;  
+	?>
+</h3>
 <table>
 		<tr>
 			<td>
@@ -288,13 +299,13 @@ PageElements::setBodyOnLoad('doOnLoad();');
 					<tr>
 						<td><?php echo (JText::_('CLIENT')).':'; ?></td>
 						<td>
-							<?php Common::client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
+							<?php Common::client_select_list($client_id, $user, false, false, true, false, "submit();"); ?>
 						</td>
 					</tr>
 					<tr>
 						<td><?php echo (JText::_('USER')).':'; ?></td>
 						<td>
-							<?php Common::supervised_user_select_droplist($uid, false,"100%"); ?>
+							<?php Common::supervised_user_select_droplist($user, false,"100%"); ?>
 						</td>
 					</tr>
 				</table>
@@ -343,8 +354,8 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		<thead>
 			<tr>
 				<?php 
-					$projPost="uid=$uid$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
-					$datePost="uid=$uid$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
+					$projPost="uid=$user$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
+					$datePost="uid=$user$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
 					if($orderby== 'project'): ?>
 						<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 						<th><?php echo JText::_('TASK');?></th>
@@ -396,23 +407,22 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			//if(!Common::fixStartEndDuration($data)) continue;
 			
 			// now need to change dates into user timezone
-			date_default_timezone_set($tzdata['timezone']); 
+			date_default_timezone_set($Susertimezone); 
 			$gmtTimezone = new DateTimeZone('GMT');
-			//$gmttime = new DateTime($data["start_time_str"], new DateTimeZone('UTC'));
 			// now create datetime objects associated with UTC
 			$datastart = new DateTime($data["start_time_str"], $gmtTimezone);
 			$datastop = new DateTime($data["end_time_str"], $gmtTimezone);
-			// now calculate offset from UTC for start and end times
-			//$startoffset = $usertimezone->getOffset($datastart);
-			//$stopoffset = $usertimezone->getOffset($datastop);
+			if ($displaytimezone == "mytz") { // times are to be displayed relative to contextuser
+				// now convert to local time
+				$datastart->setTimezone($DTZusertimezone);
+				$datastop->setTimezone($DTZusertimezone);
+			}
+			else {
+				$DTZtimestimezone = new DateTimeZone($data['timezone']);
+				$datastart->setTimezone($DTZtimestimezone);
+				$datastop->setTimezone($DTZtimestimezone);
+			}
 			
-			// now convert to local time
-			$datastart->setTimezone($usertimezone);
-			$datastop->setTimezone($usertimezone);
-			//$datastart = new DateTime($data["start_time_str"], $usertimezone);
-			//$datastop = new DateTime($data["end_time_str"], $usertimezone);
-			//$datastart = date('Y-m-d H:i:s', $data["start_stamp"]);
-			//$datastop = date('Y-m-d H:i:s', $data["end_stamp"]);
 			LogFile::write("\nbefore change dates ". $data['log_message']. " start_time_str " .$data["start_time_str"]. " end_time_str " .$data["end_time_str"]. 
 				" start_stamp " .$data["start_stamp"]. " stop_stamp " . $data["end_stamp"]);
 			//$data["start_time_str"] = date('Y-m-d H:i:s', $datastart->format('U') + $startoffset);

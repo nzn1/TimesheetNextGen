@@ -173,7 +173,7 @@ class ClockAction{
 
 		//check that we are not already clocked on
 		$querystring = "SELECT timest.start_time, tt.name FROM ".
-  			"".tbl::getUTCTimesTable()." timest, ".tbl::getTaskTable()." tt WHERE ".
+  			"".tbl::getTimesTable()." timest, ".tbl::getTaskTable()." tt WHERE ".
   			"uid='".gbl::getContextUser()."' AND ".
   			"end_time='0000-00-00 00:00:00' AND ".
 		//"start_time>='".gbl::getYear()."-".gbl::getMonth()."-".gbl::getDay()."' AND ".
@@ -197,7 +197,7 @@ class ClockAction{
 		$data = dbResult($qtz);
 		$timezone = $data['timezone'];
 		//now insert the record for this clock on
-		$querystring = "INSERT INTO ".tbl::getUTCTimesTable()." (uid, start_time, proj_id,task_id, timezone) ".
+		$querystring = "INSERT INTO ".tbl::getTimesTable()." (uid, start_time, proj_id,task_id, timezone) ".
   			"VALUES ('".gbl::getContextUser()."','$onStr', ".gbl::getProjId().", ".gbl::getTaskId().", '$timezone')";
 		list($qh,$num) = dbQuery($querystring);
 
@@ -243,7 +243,7 @@ class ClockAction{
 		$offStr = strftime("%Y-%m-%d %H:%M:%S", $this->offStamp);
 
 		//check that we are actually clocked on
-		$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM ".tbl::getUTCTimesTable()." WHERE ".
+		$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM ".tbl::getTimesTable()." WHERE ".
   			"uid='".gbl::getContextUser()."' AND ".
   			"end_time='0000-00-00 00:00:00' AND ".
 		//"start_time >= '".gbl::getYear()."-".gbl::getMonth()."-".gbl::getDay()."' AND ".
@@ -269,7 +269,7 @@ class ClockAction{
 
 		//now insert the record for this clock off
 		$this->logMessage = addslashes($this->logMessage);
-		$querystring = "UPDATE ".tbl::getUTCTimesTable()." SET log_message='".$this->logMessage."', end_time='$offStr', duration='$duration' WHERE ".
+		$querystring = "UPDATE ".tbl::getTimesTable()." SET log_message='".$this->logMessage."', end_time='$offStr', duration='$duration' WHERE ".
   			"uid='".gbl::getContextUser()."' AND ".
   			"proj_id=".gbl::getProjId()." AND ".
   			"end_time=0 AND ".
@@ -318,7 +318,7 @@ class ClockAction{
 		
 		$this->logMessage = addslashes($this->logMessage);
 		LogFile::write("\nclock_action for ". $username. " start time: ". $onStr. " stop time: ". $offStr. " log: " . $this->logMessage ."\n");
-		$q = "INSERT INTO ".tbl::getUTCTimesTable()." (uid, start_time, end_time, duration, proj_id, task_id, log_message, timezone) ".
+		$q = "INSERT INTO ".tbl::getTimesTable()." (uid, start_time, end_time, duration, proj_id, task_id, log_message, timezone) ".
   			"VALUES ('".gbl::getContextUser()."','$onStr', '$offStr', '$duration', " .
   			"".gbl::getProjId().", ".gbl::getTaskId().", '".$this->logMessage."', '$timezone')";
 		
