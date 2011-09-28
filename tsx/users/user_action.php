@@ -24,7 +24,7 @@ $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIV
 
 
 if ($action == "delete") {
-	dbquery("DELETE FROM ".tbl::getUserTzTable()." WHERE uid='$uid'");
+	dbquery("DELETE FROM ".tbl::getUserTable()." WHERE uid='$uid'");
 	dbquery("DELETE FROM ".tbl::getAssignmentsTable()." WHERE username='$username'");
 	dbquery("DELETE FROM ".tbl::getTaskAssignmentsTable()." WHERE username='$username'");
 } else if ($action == "addupdate") {
@@ -37,7 +37,7 @@ if ($action == "delete") {
 		$level = 1;
 
 	//check whether the user exists, and get his encrypted password.
-	list($qh,$num) = dbQuery("SELECT username, password FROM ".tbl::getUserTzTable()." WHERE uid='$uid'");
+	list($qh,$num) = dbQuery("SELECT username, password FROM ".tbl::getUserTable()." WHERE uid='$uid'");
 
 	//if there is a match
 	if ($data = dbResult($qh)) {
@@ -48,12 +48,12 @@ if ($action == "delete") {
 			dbQuery("UPDATE ".tbl::getAssignmentsTable()." SET username='$username' WHERE username='$data[username]'");
 			dbQuery("UPDATE ".tbl::getTaskAssignmentsTable()." SET username='$username' WHERE username='$data[username]'");
 			dbQuery("UPDATE ".tbl::getProjectTable()." SET proj_leader='$username' WHERE proj_leader='$data[username]'");
-			dbQuery("UPDATE ".tbl::getTimesTable()." SET uid='$username' WHERE uid='$data[username]'");
+			dbQuery("UPDATE ".tbl::getTimesTable()." SET username='$username' WHERE username='$data[username]'");
 		}
 
 		if ($data["password"] == $password) {
 			//then we are not updating the password
-			dbquery("UPDATE ".tbl::getUserTzTable()." SET first_name='$first_name', last_name='$last_name', ".
+			dbquery("UPDATE ".tbl::getUserTable()." SET first_name='$first_name', last_name='$last_name', ".
 								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
@@ -64,7 +64,7 @@ if ($action == "delete") {
 								"WHERE uid='$uid'");
 		} else {
 			//set the password as well
-			dbquery("UPDATE ".tbl::getUserTzTable()." SET first_name='$first_name', last_name='$last_name', ".
+			dbquery("UPDATE ".tbl::getUserTable()." SET first_name='$first_name', last_name='$last_name', ".
 								"status='$status', " .
 								"username='$username', " .
 								"email_address='$email_address', ".
@@ -77,15 +77,15 @@ if ($action == "delete") {
 		}
 	} else {
 		// a new user
-		dbquery("INSERT INTO ".tbl::getUserTzTable()." (username, level, password, first_name, ".
+		dbquery("INSERT INTO ".tbl::getUserTable()." (username, level, password, first_name, ".
 							"last_name, employee_type, timezone, supervisor, email_address, time_stamp, status) " .
 						"VALUES ('$username','$level',". config::getDbPwdFunction()."('$password'),'$first_name',".
                                         "'$last_name','$employee_type','$timezone','$supervisor','$email_address',0,'$status')");   
-		dbquery("INSERT INTO ".tbl::getAssignmentsTable()." VALUES (1,'$username', 1)"); // add default project.
-		dbquery("INSERT INTO ".tbl::getTaskAssignmentsTable()." VALUES (1,'$username', 1)"); // add default task
+		dbquery("INSERT INTO ".tbl::getAssignmentsTable()." (proj_id, username, rate_id) VALUES (1,'$username', 1)"); // add default project.
+		dbquery("INSERT INTO ".tbl::getTaskAssignmentsTable()."  (task_id, username, proj_id) VALUES (1,'$username', 1)"); // add default task
 		//create a time string for >>now<<
 		$today_stamp = date("Y-m-d H:i:00");
-		dbquery("INSERT INTO ".tbl::getAllowanceTable()." VALUES (NULL,'$username', '$today_stamp', 0, 0.0)"); // add default allowance
+		dbquery("INSERT INTO ".tbl::getAllowanceTable()." (entry_id, username, date, Holiday, glidetime) VALUES (NULL,'$username', '$today_stamp', 0, 0.0)"); // add default allowance
 	}
 }
 

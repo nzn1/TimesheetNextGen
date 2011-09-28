@@ -492,8 +492,8 @@ class AuthenticationManager {
 						"email_address, time_stamp, status) " .
 						"VALUES ('$username',1,$pwdstr,'$firstName',".
 						"'$lastName','$emailAddress',0,'ACTIVE')");
-			dbquery("INSERT INTO ".tbl::getAssignmentsTable()." VALUES (1,'$username', 1)"); // add default project.
-			dbquery("INSERT INTO ".tbl::getTaskAssignmentsTable()." VALUES (1,'$username', 1)"); // add default task
+			dbquery("INSERT INTO ".tbl::getAssignmentsTable()." (proj_id, username, rate_id) VALUES (1,'$username', 1)"); // add default project.
+			dbquery("INSERT INTO ".tbl::getTaskAssignmentsTable()." (task_id, username, proj_id) VALUES (1,'$username', 1)"); // add default task
 		} else {
 			//get the existing user details
 			list($qh, $num) = dbQuery("SELECT first_name, last_name, email_address, status " .

@@ -142,7 +142,7 @@ while($svrdata = dbResult($qsvrs)) {
 // create an array of the possible employee types - must match the enum of employee_type in the user table
 $emptypearray = array('Contractor', 'Employee');
 
-list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getUserTzTable()." WHERE username!='guest' ORDER BY status desc, last_name, first_name");
+list($qh,$num) = dbQuery("SELECT * FROM ".tbl::getUserTable()." WHERE username!='guest' ORDER BY status desc, last_name, first_name");
 
 while ($data = dbResult($qh)) {
 	$uid = $data['uid'];

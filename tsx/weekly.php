@@ -34,6 +34,10 @@ list($startDate,$endDate) = Common::getWeeklyStartEndDates($contextTimeStamp);
 $startStr = date("Y-m-d H:i:s",$startDate);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
+// get the timezone of the user
+$Susertimezone = Common::getUserTimezone(gbl::getContextUser());
+$DTZusertimezone = new DateTimeZone($Susertimezone);
+
 $nextWeekDate = strtotime(date("d M Y H:i:s",$contextTimeStamp) . " +1 week");
 $prevWeekDate = strtotime(date("d M Y H:i:s",$contextTimeStamp) . " -1 week");
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('WEEKLY_TIMESHEET')." | ".gbl::getContextUser()."</title>");
@@ -73,7 +77,6 @@ if (isset($popup)){
 <input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
 <input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
 <input type="hidden" name="task_id" value="<?php echo gbl::getTaskId(); ?>" />
-
 
 <!-- date selection table -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
