@@ -69,7 +69,17 @@ $simpleTimesheetLayout = $_REQUEST["simpleTimesheetLayout"];
 $startPage = $_REQUEST["startPage"];
 
 //LogFile::write("startPage is $startPage\n");
+// reset values in the new configuration table 
+	function resetConfigurationValue($fieldName) {
+		include("table_names.inc");
 
+		//get the default value
+		$fieldName;
+
+		//set it
+		dbQuery("UPDATE ".tbl::getConfigurationTable()." SET value = '$fieldName=' WHERE name = '$fieldName';");
+	}
+	
 	function resetConfigValue($fieldName) {
 		include("table_names.inc");
 
@@ -139,6 +149,52 @@ elseif ($action == "edit") {
 		"simpleTimesheetLayout= '$simpleTimesheetLayout', " .
 		"startPage='$startPage' " .
 		"WHERE config_set_id='1';";
+	
+	// now change values in new configuration table
+
+		changeConfig("headerhtm", $headerhtml);
+		changeConfig("bodyhtml", $bodyhtml);
+		changeConfig("footerhtml", $footerhtml);
+		changeConfig("errorhtml", $errorhtml);
+		changeConfig("bannerhtml", $bannerhtml);
+		changeConfig("tablehtml", $tablehtml);
+		changeConfig("locale", $locale);
+		changeConfig("timezone", $timezone);
+		changeConfig("timeformat", $timeformat);
+		changeConfig("weekstartday", $weekstartday);
+		changeConfig("project_items_per_page", $projectItemsPerPage);
+		changeConfig("task_items_per_page", $taskItemsPerPage);
+		changeConfig("useLDAP", $useLDAP);
+		changeConfig("LDAPScheme", $LDAPScheme);
+		changeConfig("LDAPHost", $LDAPHost);
+		changeConfig("LDAPPort", $LDAPPort);
+		changeConfig("LDAPBaseDN", $LDAPBaseDN);
+		changeConfig("LDAPUsernameAttribute", $LDAPUsernameAttribute);
+		changeConfig("LDAPSearchScope", $LDAPSearchScope);
+		changeConfig("LDAPFilter", $LDAPFilter);
+		changeConfig("LDAPProtocolVersion", $LDAPProtocolVersion);
+		changeConfig("LDAPBindUsername", $LDAPBindUsername);
+		changeConfig("LDAPBindPassword", $LDAPBindPassword);
+		changeConfig("LDAPBindByUser", $LDAPBindByUser);
+		changeConfig("LDAPReferrals", $LDAPReferrals);
+		changeConfig("LDAPFallback", $LDAPFallback);
+		changeConfig("aclStopwatch", $aclStopwatch);
+		changeConfig("aclDaily", $aclDaily);
+		changeConfig("aclWeekly", $aclWeekly);
+		changeConfig("aclMonthly", $aclMonthly);
+		changeConfig("aclSimple", $aclSimple);
+		changeConfig("aclClients", $aclClients);
+		changeConfig("aclProjects", $aclProjects);
+		changeConfig("aclTasks", $aclTasks);
+		changeConfig("aclReports", $aclReports);
+		changeConfig("aclRates", $aclRates);
+		changeConfig("aclAbsences", $aclAbsences);
+		changeConfig("aclExpenses", $aclExpenses);
+		changeConfig("aclECategories", $aclECategories);
+		changeConfig("aclTApproval", $aclTApproval);
+		changeConfig("simpleTimesheetLayout", $simpleTimesheetLayout);
+		changeConfig("startPage", $startPage);
+		
 	//LogFile::write("$query\n");
 	list($qh,$num) = dbquery($query);
 
