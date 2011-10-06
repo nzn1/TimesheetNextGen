@@ -445,7 +445,15 @@ class Config extends ConfigFactory {
 	public static function getStartPage() {
 		return self::$startPage;
 	}
-	
+	/**
+	* Configuration Routine set configuration item in Configuration table set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setHeaderHtml($value) {
+		self::$headerhtml = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET headerhtml = '$value'";
+				
+	}
 	/**
 	* Configuration Routine set configuration item in Configuration table set configuration item in Configuration table
 	* @params String $value - the value of the parameter to be changed
@@ -830,7 +838,7 @@ class Config extends ConfigFactory {
 	
 	/**
 	*	* Configuration Routine reset configuration item to the default
-	* @params String $value - the value of the parameter to be changed
+	* @params String $value - the value of the parameter to be reset to default
 	*/
 	public static function resetConfigValue($name) {
 		if(property_exists('Config',$obj->name)){
