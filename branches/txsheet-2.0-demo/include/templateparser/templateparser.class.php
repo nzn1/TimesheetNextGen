@@ -65,8 +65,6 @@ class TemplateParser extends AbstractTemplateParser{
 		$this->pageElements->getTagByName('debugInfoTop')->appendOutput(ob_get_contents());		
 		ob_end_clean();
 		
-		
-		ob_end_clean();
 		//die(ppr($this->pageElements->getTagByName('debugInfoTop')));
 		ob_start();
 		$var = null;
