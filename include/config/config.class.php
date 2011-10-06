@@ -142,8 +142,8 @@ class Config extends ConfigFactory {
 
 	}
 	
-		/**
-	 * "foo" => "bar"
+	/**
+	 * 
 	 * Default values for configuration
 	 * @var unknown_type
 	 */ 
@@ -193,226 +193,654 @@ class Config extends ConfigFactory {
 	self::$defaultConfig->startPage =  "monthly";
 	self::$defaultConfig->timeZone =  'Europe/London';
 	}
-		/**
-	 *
-	 */
+	/**
+	* Configuration Routine getTimeZone
+	*/
 	public static function getTimeZone() {
 		return self::$timeZone;
 	}
+	/**
+	* Configuration Routine getHeaderHtml
+	*/
+	public static function getHeaderHtml() {
+		return self::$headerhtml;
+	}
+	/**
+	* Configuration Routine getBodyHtml
+	*/
+	public static function getBodyHtml() {
+		return self::$bodyhtml;
+	}
+	/**
+	* Configuration Routine getFooterHtml
+	*/
+	public static function getFooterHhtml() {
+		return self::$footerhtml;
+	}
+	/**
+	* Configuration Routine getErrorHtml
+	*/
+	public static function getErrorHtml() {
+		return self::$errorhtml;
+	}
+	/**
+	* Configuration Routine getBbannerHtml
+	*/
+	public static function getBannerHtml() {
+		return self::$bannerhtml;
+	}
+	/**
+	* Configuration Routine getTtableHhtml
+	*/
+	public static function getTtableHtml() {
+		return self::$tablehtml;
+	}
+	/**
+	* Configuration Routine getLocale
+	*/
+	public static function getLocale() {
+		return self::$locale;
+	}
+	/**
+	* Configuration Routine getTimeFormat
+	*/
+	public static function getTimeFormat() {
+		return self::$timeformat;
+	}
+	/**
+	* Configuration Routine getWeekStartDay
+	*/
+	public static function getWeekStartDay() {
+		return self::$weekstartday;
+	}
+	/**
+	* Configuration Routine getProjectItemsPerPage
+	*/
+	public static function getProjectItemsPerPage() {
+		return self::$projectItemsPerPage;
+	}
+	/**
+	* Configuration Routine getTaskItemsPerPage
+	*/
+	public static function getTaskItemsPerPage() {
+		return self::$taskItemsPerPage;
+	}
+	/**
+	* Configuration Routine getUseLDAP
+	*/
+	public static function getUseLDAP() {
+		return self::$useLDAP;
+	}
+	/**
+	* Configuration Routine getLDAPScheme
+	*/
+	public static function getLDAPScheme() {
+		return self::$LDAPScheme;
+	}
+	/**
+	* Configuration Routine getLDAPHost
+	*/
+	public static function getLDAPHost() {
+		return self::$LDAPHost;
+	}
+	/**
+	* Configuration Routine getLDAPPort
+	*/
+	public static function getLDAPPort() {
+		return self::$LDAPPort;
+	}
+	/**
+	* Configuration Routine getLDAPBaseDN
+	*/
+	public static function getLDAPBaseDN() {
+		return self::$LDAPBaseDN;
+	}
+	/**
+	* Configuration Routine getLDAPUsernameAttribute
+	*/
+	public static function getLDAPUsernameAttribute() {
+		return self::$LDAPUsernameAttribute;
+	}
+	/**
+	* Configuration Routine getLDAPSearchScope
+	*/
+	public static function getLDAPSearchScope() {
+		return self::$LDAPSearchScope;
+	}
+	/**
+	* Configuration Routine
+	*/
+	public static function getLDAPFilter() {
+		return self::$LDAPFilter;
+	}
+	/**
+	* Configuration Routine getLDAPProtocolVersion
+	*/
+	public static function getLDAPProtocolVersion() {
+		return self::$LDAPProtocolVersion;
+	}
+	/**
+	* Configuration Routine getLDAPBindUsername
+	*/
+	public static function getLDAPBindUsername() {
+		return self::$LDAPBindUsername;
+	}
+	/**
+	* Configuration Routine getLDAPBindPassword
+	*/
+	public static function getLDAPBindPassword() {
+		return self::$LDAPBindPassword;
+	}
+	/**
+	* Configuration Routine getLDAPBindByUser
+	*/
+	public static function getLDAPBindByUser() {
+		return self::$LDAPBindByUser;
+	}
+	/**
+	* Configuration Routine getLDAPReferrals
+	*/
+	public static function getLDAPReferrals() {
+		return self::$LDAPReferrals;
+	}
+	/**
+	* Configuration Routine getLDAPFallback
+	*/
+	public static function getLDAPFallback() {
+		return self::$LDAPFallback;
+	}
+	/**
+	* Configuration Routine getAclStopwatch
+	*/
+	public static function getAclStopwatch() {
+		return self::$aclStopwatch;
+	}
+	/**
+	* Configuration Routine getAclDaily
+	*/
+	public static function getAclDaily() {
+		return self::$aclDaily;
+	}
+	/**
+	* Configuration Routine getAclWeekly
+	*/
+	public static function getAclWeekly() {
+		return self::$aclWeekly;
+	}
+	/**
+	* Configuration Routine getAclMonthly
+	*/
+	public static function getAclMonthly() {
+		return self::$aclMonthly;
+	}
+	/**
+	* Configuration Routine getAclSimple
+	*/
+	public static function getAclSimple() {
+		return self::$aclSimple;
+	}
+	/**
+	* Configuration Routine getAclClients
+	*/
+	public static function getAclClients() {
+		return self::$aclClients;
+	}
+	/**
+	* Configuration Routine getAclProjects
+	*/
+	public static function getAclProjects() {
+		return self::$aclProjects;
+	}
+	/**
+	* Configuration Routine getAclTasks
+	*/
+	public static function getAclTasks() {
+		return self::$aclTasks;
+	}
+	/**
+	* Configuration Routine getAclReports
+	*/
+	public static function getAclReports() {
+		return self::$aclReports;
+	}
+	/**
+	* Configuration Routine getAclRates
+	*/
+	public static function getAclRates() {
+		return self::$aclRates;
+	}
+	/**
+	* Configuration Routine getAclAbsences
+	*/
+	public static function getAclAbsences() {
+		return self::$aclAbsences;
+	}
+	/**
+	* Configuration Routine getAclExpenses
+	*/
+	public static function getAclExpenses() {
+		return self::$aclExpenses;
+	}
+	/**
+	* Configuration Routine getAclECategories
+	*/
+	public static function getAclECategories() {
+		return self::$aclECategories;
+	}
+	/**
+	* Configuration Routine getAclTApproval
+	*/
+	public static function getAclTApproval() {
+		return self::$aclTApproval;
+	}
+	/**
+	* Configuration Routine getSimpleTimesheetLayout
+	*/
+	public static function getSimpleTimesheetLayout() {
+		return self::$simpleTimesheetLayout;
+	}
+	/**
+	* Configuration Routine getStartPage
+	*/
+	public static function getStartPage() {
+		return self::$startPage;
+	}
 	
-	public static function 	configbodyhtml($bodyhtml) {
+	/**
+	* Configuration Routine set configuration item in Configuration table set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setBodyHtml($value) {
 		self::$bodyhtml = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET bodyhtml = '$value'";
 				
-}
-	public static function configfooterhtml($footerhtml) {
-				self::$footerhtml = $value;
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setFooterHtml($value) {
+		self::$footerhtml = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET footerhtml = '$value'";
 		
-}
-	public static function 	configerrorhtml($errorhtml) {
+		}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setErrorHtml($value) {
 				self::$errorhtml = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET errorhtml = '$value'";
 		
-}
-	public static function 	configbannerhtml($bannerhtml) {
+		}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setBannerHtml($value) {
 		self::$bannerhtml = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET bannerhtml = '$value'";
 		
-}
-	public static function 	configtablehtml($tablehtml) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setTableHtml($value) {
 		self::$tablehtml = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET tablehtml = '$value'";
 		
-}
-	public static function 	configlocale($locale) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLocale($value) {
 		self::$locale = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET locale = '$value'";
 		
-}
-	public static function 	configtimezone($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setTimeZone($value) {
 		self::$timezone = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET timezone = '$value'";
 		
-}
-	public static function 	configtimeformat($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setTimeFormat($value) {
 		self::$timeformat = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET timeformat = '$value'";
 		
-}
-	public static function 	configweekstartday($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setWeekStartDay($value) {
 		self::$weekstartday = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET weekstartday = '$value'";
 		
-}
-	public static function 	configproject_items_per_page($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setProjectItemsPerPage($value) {
 		self::$project_items_per_page = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET project_items_per_page = '$value'";
 		
-}
-	public static function 	configtask_items_per_page($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setTaskIemsPerPage($value) {
 		self::$task_items_per_page = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET task_items_per_page = '$value'";
 		
-}
-	public static function 	configuseLDAP($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setUseLDAP($value) {
 		self::$useLDAP = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET useLDAP = '$value'";
 		
-}
-	public static function 	configLDAPScheme($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPScheme($value) {
 		self::$LDAPScheme = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPScheme = '$value'";
 		
-}
-/*	public static function 	configLDAPHost($value) {
-		self::$ = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET  = '$value'";
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPHost($value) {
+		self::$LDAPHost = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPHost = '$value'";
 		
-}
-	public static function 	configLDAPPort($value) {
-		self::$ = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET  = '$value'";
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPPort($value) {
+		self::$LDAPPort = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPPort = '$value'";
 		
-}
-	public static function 	configLDAPBaseDN($value) {
-		self::$ = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET  = '$value'";
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPBaseDN($value) {
+		self::$LDAPBaseDN = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPBaseDN = '$value'";
 		
-}
-	public static function 	configLDAPUsernameAttribute($value) {
-		self::$ = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET  = '$value'";
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPUsernameAttribute($value) {
+		self::$LDAPUsernameAttribute = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPUsernameAttribute = '$value'";
 		
-}
-	public static function 	configLDAPSearchScope($value) {
-		self::$ = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET  = '$value'";
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPSearchScope($value) {
+		self::$LDAPSearchScope = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPSearchScope = '$value'";
 		
-}
-	public static function 	configLDAPFilter($value) {
-		self::$ = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET  = '$value'";
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPFilter($value) {
+		self::$LDAPFilter = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPFilter = '$value'";
 		
-}
-	public static function 	configLDAPProtocolVersion($value) {
-		self::$ = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET  = '$value'";
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPProtocolVersion($value) {
+		self::$LDAPProtocolVersion = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPProtocolVersion = '$value'";
 		
-}
-	public static function 	configLDAPBindUsername($value) {
-		self::$ = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET  = '$value'";
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPBindUsername($value) {
+		self::$LDAPBindUsername = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPBindUsername = '$value'";
 		
-}
-	public static function 	configLDAPBindPassword($value) {
-		self::$ = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET  = '$value'";
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPBindPassword($value) {
+		self::$LDAPBindPassword = $value;
+		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPBindPassword = '$value'";
 		
-}
-*/
-	public static function 	configLDAPBindByUser($value) {
+	}
+
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPBindByUser($value) {
 		self::$LDAPBindByUser = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPBindByUser = '$value'";
 		
-}
-	public static function 	configLDAPReferrals($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPReferrals($value) {
 		self::$LDAPReferrals = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPReferrals = '$value'";
 		
-}
-	public static function 	configLDAPFallback($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setLDAPFallback($value) {
 		self::$LDAPFallback = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPFallback = '$value'";
 		
-}
-	public static function 	configaclStopwatch($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclStopwatch($value) {
 		self::$aclStopwatch = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclStopwatch = '$value'";
 		
-}
-	public static function 	configaclDaily($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclDaily($value) {
 		self::$aclDaily = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclDaily = '$value'";
 		
-}
-	public static function 	configaclWeekly($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclWeekly($value) {
 		self::$aclWeekly = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclWeekly = '$value'";
 		
-}
-	public static function 	configaclMonthly($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclMonthly($value) {
 		self::$aclMonthly = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclMonthly = '$value'";
 		
-}
-	public static function 	configaclSimple($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclSimple($value) {
 		self::$aclSimple = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclSimple = '$value'";
 		
-}
-	public static function 	configaclClients($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclClients($value) {
 		self::$aclClients = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclClients = '$value'";
 		
-}
-public static function 	configaclProjects($value) {
+	}
+/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclProjects($value) {
 		self::$aclProjects = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclProjects = '$value'";
 	
-}
-	public static function 	configaclTasks($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclTasks($value) {
 		self::$aclTasks = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclTasks = '$value'";
 		
-}
-	public static function 	configaclReports($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclReports($value) {
 		self::$aclReports = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclReports = '$value'";
 		
-}
-	public static function 	configaclRates($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclRates($value) {
 		self::$aclRates = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclRates = '$value'";
 		
-}
-	public static function 	configaclAbsences($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclAbsences($value) {
 		self::$aclAbsences = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclAbsences = '$value'";
 		
-}
-	public static function 	configaclExpenses($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclExpenses($value) {
 		self::$aclExpenses = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclExpenses = '$value'";
 		
-}
-	public static function 	configaclECategories($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclECategories($value) {
 		self::$aclECategories = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclECategories = '$value'";
 		
-}
-	public static function 	configaclTApproval($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclTApproval($value) {
 		self::$aclTApproval = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET aclTApproval = '$value'";
 		
-}
-	public static function 	configsimpleTimesheetLayout($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setSimpleTimesheetLayout($value) {
 		self::$simpleTimesheetLayout = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET simpleTimesheetLayout = '$value'";
 		
-}
-	public static function 	configstartPage($value) {
+	}
+	/**
+	* Configuration Routine set configuration item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setStartPage($value) {
 		self::$startPage = $value;
 		$query = "UPDATE ".tbl::getConfigTable()." SET startPage = '$value'";
 		
-}
+	}
 
-	public static function 	changeConfig($name, $value) {
+	/**
+	*	* Configuration Routine set configuration item in Configuration table changeConfig
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function changeConfig($name, $value) {
 		self::$currentConfig['$name'] = $value;
 		$query = "UPDATE ".tbl::getConfigurationTable()." SET '$name' = '$value'";
 		
-}
+	}
+	
+	/**
+	*	* Configuration Routine reset configuration item to the default
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function resetConfigValue($name) {
+		if(property_exists('Config',$obj->name)){
+        	self::$currentConfig['$name'] = $defaultConfig['name'];
+		}
+		$query = "UPDATE ".tbl::getConfigurationTable()." SET '$name' = '" . $defaultConfig['name']."'";
+		
+	}
 
+	
 }//end config class
 
 ?>
