@@ -10,6 +10,9 @@ if(!class_exists('Site'))die('Restricted Access');
 //	exit;
 //}
 
+include('config.class.php');
+$ccl = new Config();
+
 //load local vars from request/post/get
 $action = $_REQUEST["action"];
 $headerhtml = isset($_REQUEST["headerhtml"]) ? $_REQUEST["headerhtml"]: "";
@@ -152,92 +155,92 @@ elseif ($action == "edit") {
 	
 	// now change values in new configuration table
 
-		setHeaderhtm($headerhtml);
-		setBodyHtml($bodyhtml);
-		setFooterHtml($footerhtml);
-		setErrorHtml($errorhtml);
-		setBannerHtml($bannerhtml);
-		setTableHtml($tablehtml);
-		setLocale($locale);
-		setTimeZone($timezone);
-		setTimeFormat($timeformat);
-		setWeekStartDay($weekstartday);
-		setProjectIemsPerPage($projectItemsPerPage);
-		setTaskItemsPerPage($taskItemsPerPage);
-		setUseLDAP($useLDAP);
-		setLDAPScheme($LDAPScheme);
-		setLDAPHost($LDAPHost);
-		setLDAPPort($LDAPPort);
-		setLDAPBaseDN($LDAPBaseDN);
-		setLDAPUsernameAttribute($LDAPUsernameAttribute);
-		setLDAPSearchScope($LDAPSearchScope);
-		setLDAPFilter($LDAPFilter);
-		setLDAPProtocolVersion($LDAPProtocolVersion);
-		setLDAPBindUsername($LDAPBindUsername);
-		setLDAPBindPassword($LDAPBindPassword);
-		setLDAPBindByUser($LDAPBindByUser);
-		setLDAPReferrals($LDAPReferrals);
-		setLDAPFallback($LDAPFallback);
-		setAclStopwatch($aclStopwatch);
-		setAclDaily($aclDaily);
-		setAclWeekly($aclWeekly);
-		setAclMonthly($aclMonthly);
-		setAclSimple($aclSimple);
-		setAclClients($aclClients);
-		setAclProjects($aclProjects);
-		setAclTasks($aclTasks);
-		setAclReports($aclReports);
-		setAclRates($aclRates);
-		setAclAbsences($aclAbsences);
-		setAclExpenses($aclExpenses);
-		setAclECategories($aclECategories);
-		setAclTApproval($aclTApproval);
-		setSimpleTimesheetLayout($simpleTimesheetLayout);
-		setStartPage($startPage);
+		$ccl->setHeaderHtml($headerhtml);
+		$ccl->setBodyHtml($bodyhtml);
+		$ccl->setFooterHtml($footerhtml);
+		$ccl->setErrorHtml($errorhtml);
+		$ccl->setBannerHtml($bannerhtml);
+		$ccl->setTableHtml($tablehtml);
+		$ccl->setLocale($locale);
+		$ccl->setTimeZone($timezone);
+		$ccl->setTimeFormat($timeformat);
+		$ccl->setWeekStartDay($weekstartday);
+		$ccl->setProjectIemsPerPage($projectItemsPerPage);
+		$ccl->setTaskItemsPerPage($taskItemsPerPage);
+		$ccl->setUseLDAP($useLDAP);
+		$ccl->setLDAPScheme($LDAPScheme);
+		$ccl->setLDAPHost($LDAPHost);
+		$ccl->setLDAPPort($LDAPPort);
+		$ccl->setLDAPBaseDN($LDAPBaseDN);
+		$ccl->setLDAPUsernameAttribute($LDAPUsernameAttribute);
+		$ccl->setLDAPSearchScope($LDAPSearchScope);
+		$ccl->setLDAPFilter($LDAPFilter);
+		$ccl->setLDAPProtocolVersion($LDAPProtocolVersion);
+		$ccl->setLDAPBindUsername($LDAPBindUsername);
+		$ccl->setLDAPBindPassword($LDAPBindPassword);
+		$ccl->setLDAPBindByUser($LDAPBindByUser);
+		$ccl->setLDAPReferrals($LDAPReferrals);
+		$ccl->setLDAPFallback($LDAPFallback);
+		$ccl->setAclStopwatch($aclStopwatch);
+		$ccl->setAclDaily($aclDaily);
+		$ccl->setAclWeekly($aclWeekly);
+		$ccl->setAclMonthly($aclMonthly);
+		$ccl->setAclSimple($aclSimple);
+		$ccl->setAclClients($aclClients);
+		$ccl->setAclProjects($aclProjects);
+		$ccl->setAclTasks($aclTasks);
+		$ccl->setAclReports($aclReports);
+		$ccl->setAclRates($aclRates);
+		$ccl->setAclAbsences($aclAbsences);
+		$ccl->setAclExpenses($aclExpenses);
+		$ccl->setAclECategories($aclECategories);
+		$ccl->setAclTApproval($aclTApproval);
+		$ccl->setSimpleTimesheetLayout($simpleTimesheetLayout);
+		$ccl->setStartPage($startPage);
 		
 	//LogFile::write("$query\n");
 	list($qh,$num) = dbquery($query);
 
 	if ($headerReset == true)
-		resetConfigValue("headerhtml");
+		$ccl->resetConfigValue("headerhtml");
 	if ($bodyReset == true)
-		resetConfigValue("bodyhtml");
+		$ccl->$ccl->resetConfigValue("bodyhtml");
 	if ($footerReset == true)
-		resetConfigValue("footerhtml");
+		$ccl->resetConfigValue("footerhtml");
 	if ($errorReset == true)
-		resetConfigValue("errorhtml");
+		$ccl->resetConfigValue("errorhtml");
 	if ($bannerReset == true)
-		resetConfigValue("bannerhtml");
+		$ccl->resetConfigValue("bannerhtml");
 	if ($tableReset == true)
-		resetConfigValue("tablehtml");
+		$ccl->resetConfigValue("tablehtml");
 	if ($localeReset == true)
-		resetConfigValue("locale");
+		$ccl->resetConfigValue("locale");
 	if ($timezoneReset == true)
-		resetConfigValue("timezone");
+		$ccl->resetConfigValue("timezone");
 	if ($timeformatReset == true)
-		resetConfigValue("timeformat");
+		$ccl->resetConfigValue("timeformat");
 	if ($weekStartDayReset == true)
-		resetConfigValue("weekstartday");
+		$ccl->resetConfigValue("weekstartday");
 	if ($projectItemsPerPageReset == true)
-		resetConfigValue("project_items_per_page");
+		$ccl->resetConfigValue("project_items_per_page");
 	if ($taskItemsPerPageReset == true)
-		resetConfigValue("task_items_per_page");
+		$ccl->resetConfigValue("task_items_per_page");
 	if ($aclReset == true)
 	{
-		resetConfigValue("aclStopwatch");
-		resetConfigValue("aclDaily");
-		resetConfigValue("aclWeekly");
-		resetConfigValue("aclMonthly");
-		resetConfigValue("aclSimple");
-		resetConfigValue("aclClients");
-		resetConfigValue("aclProjects");
-		resetConfigValue("aclTasks");
-		resetConfigValue("aclReports");
-		resetConfigValue("aclRates");
-		resetConfigValue("aclAbsences");
-		resetConfigValue("aclExpenses");
-		resetConfigValue("aclECategories");
-		resetConfigValue("aclTApproval");
+		$ccl->resetConfigValue("aclStopwatch");
+		$ccl->resetConfigValue("aclDaily");
+		$ccl->resetConfigValue("aclWeekly");
+		$ccl->resetConfigValue("aclMonthly");
+		$ccl->resetConfigValue("aclSimple");
+		$ccl->resetConfigValue("aclClients");
+		$ccl->resetConfigValue("aclProjects");
+		$ccl->resetConfigValue("aclTasks");
+		$ccl->resetConfigValue("aclReports");
+		$ccl->resetConfigValue("aclRates");
+		$ccl->resetConfigValue("aclAbsences");
+		$ccl->resetConfigValue("aclExpenses");
+		$ccl->resetConfigValue("aclECategories");
+		$ccl->resetConfigValue("aclTApproval");
 	}
 }
 
