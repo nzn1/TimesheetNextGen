@@ -52,6 +52,7 @@ class Config extends ConfigFactory {
 	protected static $useLDAP;
 	protected static $LDAPScheme;
 	protected static $LDAPHost;
+	protected static $LDAPurl;
 	protected static $LDAPPort;
 	protected static $LDAPBaseDN;
 	protected static $LDAPUsernameAttribute;
@@ -81,7 +82,11 @@ class Config extends ConfigFactory {
 	protected static $startPage;
 	protected static $timeZone;
 	
-	private static $defaultConfig = array();	
+  protected static $project_items_per_page;
+  protected static $task_items_per_page;
+  
+	
+	private static $defaultConfig;	
 		
 	/**
 	 * initialise the config class
@@ -841,8 +846,8 @@ class Config extends ConfigFactory {
 	* @params String $value - the value of the parameter to be reset to default
 	*/
 	public static function resetConfigValue($name) {
-		if(property_exists('Config',$obj->name)){
-        	self::$currentConfig['$name'] = $defaultConfig['name'];
+		if(property_exists('Config',$name)){
+		  self::${$name} = self::$defaultConfig->{$name};
 		}
 		$query = "UPDATE ".tbl::getConfigurationTable()." SET '$name' = '" . $defaultConfig['name']."'";
 		
