@@ -10,7 +10,7 @@ if(!class_exists('Site'))die('Restricted Access');
 //	exit;
 //}
 
-include('config.class.php');
+include('include/config/config.class.php');
 $ccl = new Config();
 
 //load local vars from request/post/get
@@ -165,7 +165,7 @@ elseif ($action == "edit") {
 		$ccl->setTimeZone($timezone);
 		$ccl->setTimeFormat($timeformat);
 		$ccl->setWeekStartDay($weekstartday);
-		$ccl->setProjectIemsPerPage($projectItemsPerPage);
+		$ccl->setProjectItemsPerPage($projectItemsPerPage);
 		$ccl->setTaskItemsPerPage($taskItemsPerPage);
 		$ccl->setUseLDAP($useLDAP);
 		$ccl->setLDAPScheme($LDAPScheme);
