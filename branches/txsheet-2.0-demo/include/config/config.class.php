@@ -456,8 +456,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setHeaderHtml($value) {
 		self::$headerhtml = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET headerhtml = '$value'";
-				
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET headerhtml = '$value'";
+		Database::getInstance()->query($query); 		
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table set configuration item in Configuration table
@@ -465,7 +465,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setBodyHtml($value) {
 		self::$bodyhtml = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET bodyhtml = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET bodyhtml = '$value'";
 				
 	}
 	/**
@@ -475,26 +475,26 @@ class Config extends ConfigFactory {
 	*/
 	public static function setFooterHtml($value) {
 		self::$footerhtml = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET footerhtml = '$value'";
-		
-		}
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET footerhtml = '$value'";
+		Database::getInstance()->query($query); 
+	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
 	* @params String $value - the value of the parameter to be changed
 	*/
 	public static function setErrorHtml($value) {
 				self::$errorhtml = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET errorhtml = '$value'";
-		
-		}
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET errorhtml = '$value'";
+		Database::getInstance()->query($query); 
+	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
 	* @params String $value - the value of the parameter to be changed
 	*/
 	public static function setBannerHtml($value) {
 		self::$bannerhtml = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET bannerhtml = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET bannerhtml = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -502,8 +502,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setTableHtml($value) {
 		self::$tablehtml = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET tablehtml = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET tablehtml = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -511,8 +511,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLocale($value) {
 		self::$locale = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET locale = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET locale = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -520,8 +520,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setTimeZone($value) {
 		self::$timezone = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET timezone = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET timezone = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -529,8 +529,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setTimeFormat($value) {
 		self::$timeformat = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET timeformat = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET timeformat = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -538,8 +538,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setWeekStartDay($value) {
 		self::$weekstartday = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET weekstartday = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET weekstartday = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -547,17 +547,17 @@ class Config extends ConfigFactory {
 	*/
 	public static function setProjectItemsPerPage($value) {
 		self::$project_items_per_page = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET project_items_per_page = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET project_items_per_page = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
 	* @params String $value - the value of the parameter to be changed
 	*/
-	public static function setTaskIemsPerPage($value) {
+	public static function setTaskItemsPerPage($value) {
 		self::$task_items_per_page = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET task_items_per_page = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET task_items_per_page = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -565,8 +565,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setUseLDAP($value) {
 		self::$useLDAP = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET useLDAP = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET useLDAP = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -574,8 +574,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPScheme($value) {
 		self::$LDAPScheme = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPScheme = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPScheme = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -583,8 +583,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPHost($value) {
 		self::$LDAPHost = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPHost = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPHost = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -592,8 +592,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPPort($value) {
 		self::$LDAPPort = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPPort = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPPort = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -601,8 +601,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPBaseDN($value) {
 		self::$LDAPBaseDN = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPBaseDN = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPBaseDN = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -610,8 +610,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPUsernameAttribute($value) {
 		self::$LDAPUsernameAttribute = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPUsernameAttribute = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPUsernameAttribute = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -619,8 +619,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPSearchScope($value) {
 		self::$LDAPSearchScope = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPSearchScope = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPSearchScope = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -628,8 +628,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPFilter($value) {
 		self::$LDAPFilter = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPFilter = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPFilter = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -637,8 +637,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPProtocolVersion($value) {
 		self::$LDAPProtocolVersion = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPProtocolVersion = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPProtocolVersion = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -646,8 +646,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPBindUsername($value) {
 		self::$LDAPBindUsername = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPBindUsername = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPBindUsername = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -655,8 +655,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPBindPassword($value) {
 		self::$LDAPBindPassword = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPBindPassword = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPBindPassword = '$value'";
+		Database::getInstance()->query($query); 
 	}
 
 	/**
@@ -665,8 +665,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPBindByUser($value) {
 		self::$LDAPBindByUser = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPBindByUser = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPBindByUser = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -674,8 +674,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPReferrals($value) {
 		self::$LDAPReferrals = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPReferrals = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPReferrals = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -683,8 +683,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPFallback($value) {
 		self::$LDAPFallback = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET LDAPFallback = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPFallback = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -692,8 +692,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclStopwatch($value) {
 		self::$aclStopwatch = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclStopwatch = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclStopwatch = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -701,8 +701,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclDaily($value) {
 		self::$aclDaily = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclDaily = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclDaily = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -710,8 +710,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclWeekly($value) {
 		self::$aclWeekly = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclWeekly = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclWeekly = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -719,8 +719,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclMonthly($value) {
 		self::$aclMonthly = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclMonthly = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclMonthly = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -728,8 +728,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclSimple($value) {
 		self::$aclSimple = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclSimple = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclSimple = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -737,8 +737,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclClients($value) {
 		self::$aclClients = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclClients = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclClients = '$value'";
+		Database::getInstance()->query($query); 
 	}
 /**
 	* Configuration Routine set configuration item in Configuration table
@@ -746,8 +746,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclProjects($value) {
 		self::$aclProjects = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclProjects = '$value'";
-	
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclProjects = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -755,8 +755,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclTasks($value) {
 		self::$aclTasks = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclTasks = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclTasks = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -764,8 +764,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclReports($value) {
 		self::$aclReports = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclReports = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclReports = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -773,8 +773,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclRates($value) {
 		self::$aclRates = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclRates = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclRates = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -782,8 +782,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclAbsences($value) {
 		self::$aclAbsences = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclAbsences = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclAbsences = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -791,8 +791,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclExpenses($value) {
 		self::$aclExpenses = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclExpenses = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclExpenses = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -800,8 +800,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclECategories($value) {
 		self::$aclECategories = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclECategories = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclECategories = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -809,8 +809,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclTApproval($value) {
 		self::$aclTApproval = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET aclTApproval = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclTApproval = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -818,8 +818,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setSimpleTimesheetLayout($value) {
 		self::$simpleTimesheetLayout = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET simpleTimesheetLayout = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET simpleTimesheetLayout = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	/**
 	* Configuration Routine set configuration item in Configuration table
@@ -827,8 +827,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function setStartPage($value) {
 		self::$startPage = $value;
-		$query = "UPDATE ".tbl::getConfigTable()." SET startPage = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET startPage = '$value'";
+		Database::getInstance()->query($query); 
 	}
 
 	/**
@@ -837,8 +837,8 @@ class Config extends ConfigFactory {
 	*/
 	public static function changeConfig($name, $value) {
 		self::$currentConfig['$name'] = $value;
-		$query = "UPDATE ".tbl::getConfigurationTable()." SET '$name' = '$value'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET '$name' = '$value'";
+		Database::getInstance()->query($query); 
 	}
 	
 	/**
@@ -849,8 +849,8 @@ class Config extends ConfigFactory {
 		if(property_exists('Config',$name)){
 		  self::${$name} = self::$defaultConfig->{$name};
 		}
-		$query = "UPDATE ".tbl::getConfigurationTable()." SET '$name' = '" . $defaultConfig['name']."'";
-		
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET '$name' = '" . $defaultConfig['name']."'";
+		Database::getInstance()->query($query); 
 	}
 
 	
