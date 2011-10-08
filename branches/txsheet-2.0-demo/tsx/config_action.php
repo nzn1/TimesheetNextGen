@@ -10,8 +10,7 @@ if(!class_exists('Site'))die('Restricted Access');
 //	exit;
 //}
 
-include('include/config/config.class.php');
-$ccl = new Config();
+
 
 //load local vars from request/post/get
 $action = $_REQUEST["action"];
@@ -155,92 +154,92 @@ elseif ($action == "edit") {
 	
 	// now change values in new configuration table
 
-		$ccl->setHeaderHtml($headerhtml);
-		$ccl->setBodyHtml($bodyhtml);
-		$ccl->setFooterHtml($footerhtml);
-		$ccl->setErrorHtml($errorhtml);
-		$ccl->setBannerHtml($bannerhtml);
-		$ccl->setTableHtml($tablehtml);
-		$ccl->setLocale($locale);
-		$ccl->setTimeZone($timezone);
-		$ccl->setTimeFormat($timeformat);
-		$ccl->setWeekStartDay($weekstartday);
-		$ccl->setProjectItemsPerPage($projectItemsPerPage);
-		$ccl->setTaskItemsPerPage($taskItemsPerPage);
-		$ccl->setUseLDAP($useLDAP);
-		$ccl->setLDAPScheme($LDAPScheme);
-		$ccl->setLDAPHost($LDAPHost);
-		$ccl->setLDAPPort($LDAPPort);
-		$ccl->setLDAPBaseDN($LDAPBaseDN);
-		$ccl->setLDAPUsernameAttribute($LDAPUsernameAttribute);
-		$ccl->setLDAPSearchScope($LDAPSearchScope);
-		$ccl->setLDAPFilter($LDAPFilter);
-		$ccl->setLDAPProtocolVersion($LDAPProtocolVersion);
-		$ccl->setLDAPBindUsername($LDAPBindUsername);
-		$ccl->setLDAPBindPassword($LDAPBindPassword);
-		$ccl->setLDAPBindByUser($LDAPBindByUser);
-		$ccl->setLDAPReferrals($LDAPReferrals);
-		$ccl->setLDAPFallback($LDAPFallback);
-		$ccl->setAclStopwatch($aclStopwatch);
-		$ccl->setAclDaily($aclDaily);
-		$ccl->setAclWeekly($aclWeekly);
-		$ccl->setAclMonthly($aclMonthly);
-		$ccl->setAclSimple($aclSimple);
-		$ccl->setAclClients($aclClients);
-		$ccl->setAclProjects($aclProjects);
-		$ccl->setAclTasks($aclTasks);
-		$ccl->setAclReports($aclReports);
-		$ccl->setAclRates($aclRates);
-		$ccl->setAclAbsences($aclAbsences);
-		$ccl->setAclExpenses($aclExpenses);
-		$ccl->setAclECategories($aclECategories);
-		$ccl->setAclTApproval($aclTApproval);
-		$ccl->setSimpleTimesheetLayout($simpleTimesheetLayout);
-		$ccl->setStartPage($startPage);
+		Config::setHeaderHtml($headerhtml);
+		Config::setBodyHtml($bodyhtml);
+		Config::setFooterHtml($footerhtml);
+		Config::setErrorHtml($errorhtml);
+		Config::setBannerHtml($bannerhtml);
+		Config::setTableHtml($tablehtml);
+		Config::setLocale($locale);
+		Config::setTimeZone($timezone);
+		Config::setTimeFormat($timeformat);
+		Config::setWeekStartDay($weekstartday);
+		Config::setProjectItemsPerPage($projectItemsPerPage);
+		Config::setTaskItemsPerPage($taskItemsPerPage);
+		Config::setUseLDAP($useLDAP);
+		Config::setLDAPScheme($LDAPScheme);
+		Config::setLDAPHost($LDAPHost);
+		Config::setLDAPPort($LDAPPort);
+		Config::setLDAPBaseDN($LDAPBaseDN);
+		Config::setLDAPUsernameAttribute($LDAPUsernameAttribute);
+		Config::setLDAPSearchScope($LDAPSearchScope);
+		Config::setLDAPFilter($LDAPFilter);
+		Config::setLDAPProtocolVersion($LDAPProtocolVersion);
+		Config::setLDAPBindUsername($LDAPBindUsername);
+		Config::setLDAPBindPassword($LDAPBindPassword);
+		Config::setLDAPBindByUser($LDAPBindByUser);
+		Config::setLDAPReferrals($LDAPReferrals);
+		Config::setLDAPFallback($LDAPFallback);
+		Config::setAclStopwatch($aclStopwatch);
+		Config::setAclDaily($aclDaily);
+		Config::setAclWeekly($aclWeekly);
+		Config::setAclMonthly($aclMonthly);
+		Config::setAclSimple($aclSimple);
+		Config::setAclClients($aclClients);
+		Config::setAclProjects($aclProjects);
+		Config::setAclTasks($aclTasks);
+		Config::setAclReports($aclReports);
+		Config::setAclRates($aclRates);
+		Config::setAclAbsences($aclAbsences);
+		Config::setAclExpenses($aclExpenses);
+		Config::setAclECategories($aclECategories);
+		Config::setAclTApproval($aclTApproval);
+		Config::setSimpleTimesheetLayout($simpleTimesheetLayout);
+		Config::setStartPage($startPage);
 		
 	//LogFile::write("$query\n");
 	list($qh,$num) = dbquery($query);
 
 	if ($headerReset == true)
-		$ccl->resetConfigValue("headerhtml");
+		Config::resetConfigValue("headerhtml");
 	if ($bodyReset == true)
-		$ccl->$ccl->resetConfigValue("bodyhtml");
+		Config::resetConfigValue("bodyhtml");
 	if ($footerReset == true)
-		$ccl->resetConfigValue("footerhtml");
+		Config::resetConfigValue("footerhtml");
 	if ($errorReset == true)
-		$ccl->resetConfigValue("errorhtml");
+		Config::resetConfigValue("errorhtml");
 	if ($bannerReset == true)
-		$ccl->resetConfigValue("bannerhtml");
+		Config::resetConfigValue("bannerhtml");
 	if ($tableReset == true)
-		$ccl->resetConfigValue("tablehtml");
+		Config::resetConfigValue("tablehtml");
 	if ($localeReset == true)
-		$ccl->resetConfigValue("locale");
+		Config::resetConfigValue("locale");
 	if ($timezoneReset == true)
-		$ccl->resetConfigValue("timezone");
+		Config::resetConfigValue("timezone");
 	if ($timeformatReset == true)
-		$ccl->resetConfigValue("timeformat");
+		Config::resetConfigValue("timeformat");
 	if ($weekStartDayReset == true)
-		$ccl->resetConfigValue("weekstartday");
+		Config::resetConfigValue("weekstartday");
 	if ($projectItemsPerPageReset == true)
-		$ccl->resetConfigValue("project_items_per_page");
+		Config::resetConfigValue("project_items_per_page");
 	if ($taskItemsPerPageReset == true)
-		$ccl->resetConfigValue("task_items_per_page");
+		Config::resetConfigValue("task_items_per_page");
 	if ($aclReset == true)
 	{
-		$ccl->resetConfigValue("aclStopwatch");
-		$ccl->resetConfigValue("aclDaily");
-		$ccl->resetConfigValue("aclWeekly");
-		$ccl->resetConfigValue("aclMonthly");
-		$ccl->resetConfigValue("aclSimple");
-		$ccl->resetConfigValue("aclClients");
-		$ccl->resetConfigValue("aclProjects");
-		$ccl->resetConfigValue("aclTasks");
-		$ccl->resetConfigValue("aclReports");
-		$ccl->resetConfigValue("aclRates");
-		$ccl->resetConfigValue("aclAbsences");
-		$ccl->resetConfigValue("aclExpenses");
-		$ccl->resetConfigValue("aclECategories");
-		$ccl->resetConfigValue("aclTApproval");
+		Config::resetConfigValue("aclStopwatch");
+		Config::resetConfigValue("aclDaily");
+		Config::resetConfigValue("aclWeekly");
+		Config::resetConfigValue("aclMonthly");
+		Config::resetConfigValue("aclSimple");
+		Config::resetConfigValue("aclClients");
+		Config::resetConfigValue("aclProjects");
+		Config::resetConfigValue("aclTasks");
+		Config::resetConfigValue("aclReports");
+		Config::resetConfigValue("aclRates");
+		Config::resetConfigValue("aclAbsences");
+		Config::resetConfigValue("aclExpenses");
+		Config::resetConfigValue("aclECategories");
+		Config::resetConfigValue("aclTApproval");
 	}
 }
 
