@@ -95,6 +95,8 @@ class Site {
 			}
 
 		}
+    require_once("include/developer.class.php");
+    Developer::checkForDeveloperPrerequisites();
 
 		#if(Database::getInstance()->isConnected())
 		Config::getDbConfig();
@@ -214,5 +216,6 @@ class Site {
 	public static function setCommandMenu($obj) {
 		self::$commandMenu = $obj;
 	}
+	
 }
 ?>
