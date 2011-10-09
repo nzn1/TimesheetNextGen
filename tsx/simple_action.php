@@ -182,7 +182,7 @@ for ($i=0; $i<$totalRows; $i++) {
 					$etsStr = strftime("%Y-%m-%d %H:%M:%S", $ets);
 					
 					//add to database
-					$queryString = "INSERT INTO ".tbl::getTimesTable()." (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
+					$queryString = "INSERT INTO ".tbl::getTimesTable()." (username, start_time, end_time, duration, proj_id, task_id, log_message) ".
 									"VALUES ('".gbl::getContextUser()."','$stsStr', ".
 									"'$etsStr', ".
 									"'$minutes', ".

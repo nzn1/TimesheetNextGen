@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `configuration` (
+CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__configuration` (
   `name` varchar(32) NOT NULL,
   `value` tinytext NOT NULL,
   PRIMARY KEY (`name`)
@@ -28,16 +28,20 @@ insert into configuration values ('LDAPBindUsername',(select (LDAPBindUsername) 
 insert into configuration values ('LDAPBindPassword',(select (LDAPBindPassword) from tsx_config where config_set_id=1));
 insert into configuration values ('LDAPBindByUser',(select (LDAPBindByUser) from tsx_config where config_set_id=1));
 -- new fields
-ALTER TABLE tsx_user  ADD   employee_type enum('Contractor','Employee') NOT NULL DEFAULT 'Employee';
-ALTER TABLE tsx_user  ADD supervisor int(11) DEFAULT NULL;
-ALTER TABLE tsx_config  ADD  aclExpenses enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
-ALTER TABLE tsx_config  ADD  aclECategories enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
-ALTER TABLE tsx_config  ADD  aclTApproval enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
+ALTER TABLE __TABLE_PREFIX__user  ADD   employee_type enum('Contractor','Employee') NOT NULL DEFAULT 'Employee';
+ALTER TABLE __TABLE_PREFIX__user  ADD supervisor int(11) DEFAULT NULL;
+ALTER TABLE __TABLE_PREFIX__config  ADD  aclExpenses enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
+ALTER TABLE __TABLE_PREFIX__config  ADD  aclECategories enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
+ALTER TABLE __TABLE_PREFIX__config  ADD  aclTApproval enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
+
+--- change name of one field in times table
+ALTER TABLE __TABLE_PREFIX__times CHANGE `uid` `username` varchar(32) DEFAULT '' NOT NULL
+
 --
 -- Table structure for table `expense`
 --
 
-CREATE TABLE IF NOT EXISTS `tsx_expense` (
+CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__expense` (
   `eid` int(5) NOT NULL AUTO_INCREMENT,
   `cat_id` int(5) DEFAULT NULL,
   `proj_id` int(11) DEFAULT NULL,
@@ -55,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `tsx_expense` (
 -- Table structure for table `expense_category`
 --
 
-CREATE TABLE IF NOT EXISTS `tsx_category` (
+CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__category` (
   `cat_id` int(8) NOT NULL AUTO_INCREMENT,
   `description` varchar(64) NOT NULL,
   PRIMARY KEY (`cat_id`)
@@ -65,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `tsx_category` (
 -- Table structure for table `tsx_std_tasks`
 --
 
-CREATE TABLE IF NOT EXISTS `tsx_std_tasks` (
+CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__std_tasks` (
   `task_id` int(8) NOT NULL AUTO_INCREMENT,
   `name` varchar(127) DEFAULT NULL,
   `description` text,
@@ -74,4 +78,4 @@ CREATE TABLE IF NOT EXISTS `tsx_std_tasks` (
 
 
 
-ALTER TABLE tsx_times  ADD  `status` enum('Open','Submitted','Approved') NOT NULL DEFAULT 'Open';
+ALTER TABLE __TABLE_PREFIX__times  ADD  `status` enum('Open','Submitted','Approved') NOT NULL DEFAULT 'Open';
