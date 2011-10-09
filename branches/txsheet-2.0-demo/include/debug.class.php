@@ -31,7 +31,7 @@ class Debug{
 	private static $requestUri       = 0;        //display mini session data
 	private static $contentSession   = 0;        //display sesion data within content pane
 	private static $_files           = 0;
-	private static $_post            = 0;        //display POST data
+	private static $_post            = 1;        //display POST data
 	private static $_get             = 0;        //display GET data
 	private static $_server          = 0;        //display server data
 	private static $_cookie          = 0;        //display cookie data
@@ -51,7 +51,7 @@ class Debug{
 	private static $authFull         = 0;        //display user authorisation data detailed
 	private static $authBasic        = 0;        //display user authorisation data basic
 	private static $rewrite          = 0;        //display php rewrite information
-	private static $pprTrace         = 1;        //display the trace log for all ppr commands
+	private static $pprTrace         = 0;        //display the trace log for all ppr commands
 	
 	private static $language         = 0;
 

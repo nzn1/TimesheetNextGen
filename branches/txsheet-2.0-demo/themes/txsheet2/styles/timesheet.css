@@ -24,6 +24,9 @@ width:100%;
 
 /**cell formatting of the enabled days*/
 #monthly .monthTable .calendar_cell_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; }
+
+#monthly .monthTable .calendar_cell_today { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #FF9933; }
+
 #monthly .monthTable .calendar_cell_right { border-bottom: 1px solid #5271CC; background-color: #F2F3FF; }
 /*A day in the week that is disabled.  i.e. the prefill of days from the previous month*/
 #monthly .monthTable .calendar_cell_disabled_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; }
@@ -97,7 +100,7 @@ border-spacing:0;
 #daily .dailyTable .calendar_total_value_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
 
 /*This was done as a global a:link property before*/
-#daily .dailyTable .actions{display:block;text-align:right;}
+#daily .dailyTable .actions{text-align:right;}
 #daily .dailyTable .action_link{text-align:right;}
 #daily .dailyTable a:link { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
 #daily .dailyTable a:visited { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }

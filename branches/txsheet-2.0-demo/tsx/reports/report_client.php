@@ -165,10 +165,10 @@ function printInfo($type, $data, $time_fmt) {
 
 
 	if($type == "projectTitle") {
-		jsPopupInfoLink(Config::getRelativeRoot()."/proj_info", "proj_id", $data["proj_id"], "Project_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/projects/proj_info", "proj_id", $data["proj_id"], "Project_Info");
 		print stripslashes($data["projectTitle"])."</a>&nbsp;\n";
 	} else if($type == "taskName") {
-		jsPopupInfoLink(Config::getRelativeRoot()."/task_info", "task_id", $data["task_id"], "Task_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/tasks/task_info", "task_id", $data["task_id"], "Task_Info");
 		print stripslashes($data["taskName"])."</a>&nbsp;\n";
 	} else if($type == "duration") {
 		//jsPopupInfoLink(Config::getRelativeRoot()."/trans_info", "trans_num", $data["trans_num"], "Time_Entry_Info");

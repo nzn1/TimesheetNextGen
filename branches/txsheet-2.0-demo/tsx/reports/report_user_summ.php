@@ -2,16 +2,17 @@
 
 if(!class_exists('Site'))die('Restricted Access');
 
-// NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
-//        or the export to excel won't work in IE
-session_cache_limiter('public');
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
-//export data to excel (or not)  (ie is broken with respect to buttons, so we have to do it this way)
-$export_excel=false;
-if (isset($_GET["export_excel"]))
-	if($_GET["export_excel"] == "1")
-		$export_excel=true;
+//export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
+if (isset($_REQUEST["export_excel"]) && $_REQUEST["export_excel"] == "1"){
+  $export_excel=true;
+}
+else{
+  $export_excel=false;
+}
 
+ob_start();
 //Create the excel headers now, if needed
 if($export_excel){
 	header('Expires: 0');
@@ -20,68 +21,62 @@ if($export_excel){
 	header('Content-Description: File Transfer');
 	header('Content-Type: application/vnd.ms-excel');
 	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
+	
+	// If exporting data to excel, ensure the numbers written in the spreadsheet 
+  // are in H.F format rather than HH:MI  
+	$time_fmt = "decimal";
+}
+else if (isset($_REQUEST['time_fmt'])){
+	$time_fmt = $_REQUEST['time_fmt'];
+}
+else{
+	$time_fmt = "decimal";
 }
 
-// Authenticate
-
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
-
-$client_id =  gbl::getClientId();
-$year = gbl::getYear();
-$month = gbl::getMonth();
-$day = gbl::getDay();
 //load local vars from request/post/get
-if (isset($_REQUEST['uid']))
-	$uid = $_REQUEST['uid'];
-else
+if (isset($_REQUEST['uid'])){
+	$uid = gbl::getUid();
+}
+else{
 	$uid = gbl::getContextUser();
-	//get the first user from the database
-	//$uid = getFirstUser();
+}
 
-if (isset($_REQUEST['time_fmt']))
-	$time_fmt = $_REQUEST['time_fmt'];
-else
-	$time_fmt = "decimal";
-
-// If exporting data to excel, ensure the numbers written in the spreadsheet 
-// are in H.F format rather than HH:MI  
-if($export_excel)
-	$time_fmt = "decimal";
-
-if (isset($_REQUEST['print']))
+if (isset($_REQUEST['print'])){
 	$print = true;
-else
-	$print = false;
+}
+else{
+  $print = false;
+}
 
 //What bi-monthly period is the context date in?
-if($day < 16) {
+if(gbl::getDay() < 16) {
 	$sday=1; 
 	$eday=15;
 } else {
 	$sday=16;
-	$eday=date('t',strtotime("$year-$month-15"));
+	$eday=date('t',strtotime(gbl::getYear()."-".gbl::getMonth()."-15"));
 }
 
 //get start and end dates for the calendars
 $start_day   = isset($_GET['start_day'])   && $_GET['start_day']   ? (int)$_GET['start_day']   : $sday;
-$start_month = isset($_GET['start_month']) && $_GET['start_month'] ? (int)$_GET['start_month'] : $month;
-$start_year  = isset($_GET['start_year'])  && $_GET['start_year']  ? (int)$_GET['start_year']  : $year;
+$startMonth = isset($_GET['start_month']) && $_GET['start_month'] ? (int)$_GET['start_month'] : gbl::getMonth();
+$startYear  = isset($_GET['start_year'])  && $_GET['start_year']  ? (int)$_GET['start_year']  : gbl::getYear();
 
 $end_day     = isset($_GET['end_day'])     && $_GET['start_day']   ? (int)$_GET['end_day']     : $eday;
-//$end_month   = isset($_GET['end_month'])   && $_GET['start_month'] ? (int)$_GET['end_month']   : $month;
-//$end_year    = isset($_GET['end_year'])    && $_GET['start_year']  ? (int)$_GET['end_year']    : $year;
+//$end_month   = isset($_GET['end_month'])   && $_GET['start_month'] ? (int)$_GET['end_month']   : gbl::getMonth();
+//$end_year    = isset($_GET['end_year'])    && $_GET['start_year']  ? (int)$_GET['end_year']    : gbl::getYear();
 //Since we're only allowing the user to choose a start and end day within the cur. context month 
 //we can do this:  But note: we can't remove the variables altogether, or we'd need yet another set
 //of functions to create the navcal calendars, and at some point we may want to allow more
 //freestyle date choosing...
-$end_month   = $start_month;
-$end_year    = $start_year;
+$end_month   = $startMonth;
+$end_year    = $startYear;
 
-$start_time = strtotime($start_year . '/' . $start_month . '/' . $start_day);
+$startTimestamp = strtotime($startYear . '/' . $startMonth . '/' . $start_day);
 $end_time   = strtotime($end_year   . '/' . $end_month   . '/' . $end_day);
 $end_time2   = strtotime("+1 day",$end_time);  //need last day to be inclusive...
 
-$startStr = date("Y-m-d H:i:s",$start_time);
+$startStr = date("Y-m-d H:i:s",$startTimestamp);
 $endStr = date("Y-m-d H:i:s",$end_time2);
 
 $orderby="project";
@@ -91,20 +86,11 @@ function make_index($data,$order) {
 	return $index;
 }
 
-function format_time($time,$time_fmt) {
-	if($time > 0) {
-		if($time_fmt == "decimal")
-			return Common::minutes_to_hours($time);
-		else 
-			return Common::format_minutes($time);
-	} else 
-		return "-";
-}
+require_once('report.class.php');
+$report = new Report();
 
-$Location= Rewrite::getShortUri()."?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=$start_day&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
+$Location= Rewrite::getShortUri()."?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=$start_day&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
 gbl::setPost("uid=$uid&amp;time_fmt=$time_fmt");
-
-PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USER_SUMMARY')." | ".gbl::getContextUser()."</title>");
 
 if(!$export_excel) {
 	require("report_javascript.inc");
@@ -139,8 +125,6 @@ function init(){
 </script>
 <?php } //end if !export_excel ?>
 
-<html>
-<head>
 <?php 
 	if(!$export_excel) ;
 	else {
@@ -148,37 +132,34 @@ function init(){
 		include ("css/timesheet.css");
 		print "</style>";
 	}
+echo "<title>".Config::getMainTitle()." | ".JText::_('USER_SUMMARY')." | ".gbl::getContextUser()."</title>";
+
+PageElements::setHead(ob_get_contents());
+ob_end_clean();
+
 ?>
-</head>
+
 <h1><?php echo JText::_('USER_SUMMARY'); ?></h1>
 
 <?php
-	if($print) {
-		echo "<body width=\"100%\" height=\"100%\"";
-		//include ("body.inc");
-			echo "onLoad=window.print();";
-		echo ">\n";
-	} else if($export_excel) {
-		echo "<body ";
-		//include ("body.inc");
-		echo ">\n";
-	} else {
-		echo "<body ";
-		//include ("body.inc");
-		echo ">\n";
-		echo "<div id=\"header\">";
 
+	if($print) {
+     PageElements::setBodyOnLoad('window.print();');
+	} 
+  else if($export_excel) {
+	} 
+  else {
 		require_once("include/tsx/navcal/navcal.class.php");
   	$nav = new NavCal();
-	  $nav->navCalWithEndDates($start_time,$end_time,$start_month);  
-		echo "</div>";
+	  $nav->navCalWithEndDates($startTimestamp,$end_time,$startMonth);  
 	}
+
 ?>
 
 <?php if(!$export_excel) { ?>
 <form action="<?php print Rewrite::getShortUri(); ?>" method="get">
-<input type="hidden" name="start_month" value="<?php echo $start_month; ?>" />
-<input type="hidden" name="start_year" value="<?php echo $start_year; ?>" />
+<input type="hidden" name="start_month" value="<?php echo $startMonth; ?>" />
+<input type="hidden" name="start_year" value="<?php echo $startYear; ?>" />
 <input type="hidden" name="end_month" value="<?php echo $end_month; ?>" />
 <input type="hidden" name="end_year" value="<?php echo $end_year; ?>" />
 
@@ -194,8 +175,8 @@ function init(){
 						</td>
 						<td align="center" class="outer_table_heading">
 						<?php
-							echo utf8_encode(strftime("%B", $start_time))." ";
-							Common::day_button("start_day",$start_time);
+							echo utf8_encode(strftime("%B", $startTimestamp))." ";
+							Common::day_button("start_day",$startTimestamp);
 							echo "&nbsp;&nbsp;-&nbsp;&nbsp;";
 							Common::day_button("end_day",$end_time);
 							echo " $end_year";
@@ -210,15 +191,15 @@ function init(){
 							</td>
 							<td align="right">
 							<?php
-								$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=1&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=15";
-								$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=16&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=".date('t',strtotime("$end_year-$end_month-15"));
+								$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=1&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=15";
+								$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=16&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=".date('t',strtotime("$end_year-$end_month-15"));
 							?>
 								<a href="<?PHP print Rewrite::getShortUri()."?".$p1post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_1'); ?></a><br />
 								<a href="<?PHP print Rewrite::getShortUri()."?".$p2post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_2'); ?></a>
 							</td>
 							<td  align="right" width="15%" >
-								<button name="export_excel" onclick="reload2Export(this.form)"><img src="../images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
-								<button onclick="popupPrintWindow()"><img src="../images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="../images/icon_xport-2-excel.gif" alt="Export to Excel"/></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="../images/icon_printer.gif" alt="Print Report"  /></button>
 							</td>
 						<?php endif; ?>
 					</tr>
@@ -232,7 +213,7 @@ function init(){
 else {  //create Excel header
 	list($fn,$ln) = get_users_name($uid);
 	echo "<h4>Report for $ln, $fn<br />";
-	echo date("F d", $start_time)."  to  ";
+	echo date("F d", $startTimestamp)."  to  ";
 	echo date("d", $end_time);
 	echo ", $end_year";
 	echo "</h4>";
@@ -243,7 +224,7 @@ else {  //create Excel header
 
 // ==============================================================================================
 // Fetch data records
-list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, 0, $client_id);
+list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, 0, gbl::getClientId());
 
 if ($num == 0) {
 	print "	<tr>\n";
@@ -252,7 +233,7 @@ if ($num == 0) {
 	print "		</td>\n";
 	print "	</tr>\n";
 } else {
-	$darray = array();
+	$dayArray = array();
 	while ($data = dbResult($qh)) {
 		//if entry doesn't have an end time or duration, it's an incomplete entry
 		//fixStartEndDuration returns a 0 if the entry is incomplete.
@@ -263,10 +244,10 @@ if ($num == 0) {
 		//entries that do span date boundaries into multiple entries that stop and then
 		//re-start on date boundaries.
 		//NOTE: there must be a make_index() function defined in this file for the following function to, well, function
-		Common::split_data_into_discrete_days($data,$orderby,$darray,0);
+		Common::split_data_into_discrete_days($data,$orderby,$dayArray,0);
 	}
 
-	ksort($darray);
+	ksort($dayArray);
 	unset($data);
 
 ?>
@@ -277,62 +258,96 @@ if ($num == 0) {
 						<td class="calendar_cell_disabled_right">Task</td-->
 <?php 
 	$daytotals=array();
-	for ($mm = $start_day; $mm <= $end_day; $mm++) { 
-		$dayStamp = mktime(0,0,0,$start_month,$mm,$start_year);
-		$stamp_to_day_array[$dayStamp]=$mm;
-		$daytotals[$mm]=0;
-
+	
+	//print the days we are going to display
+	
+	$currentTime = $startTimestamp;
+	for ($i = $start_day; $i <= $end_day; $i++) {
+		//$currentDayStr = strftime("%a %d/%m/%y", $currentTime);
+		$currentDayStr = strftime("%d/%m", $currentTime);
+		echo "<th class=\"inner_table_column_heading\" align=\"center\" width=\"10%\">$currentDayStr</th>\n";
+		
+		$dayStamp = mktime(0,0,0,$startMonth,$i,$startYear);
+		$stamp_to_day_array[$dayStamp]=$i;
+		$daytotals[$i]=0;
+		
+		$currentTime = strtotime(date("d M Y H:i:s",$currentTime) . " +1 days"); // increment date to next day
+	}
+	
+	//ppr($daytotals);
+	unset($currentTime);
+  //ppr($stamp_to_day_array); 
 ?>
-						<td class="calendar_cell_disabled_right" align="right" width="50">
-							<?php echo $start_month; ?>/<?php echo $mm; ?>
-						</td>
-<?php } //end for ?>
-						<td class="calendar_cell_disabled_right" align="right">
-							Totals
-						</td>
-					</tr>
+    
+		<td class="calendar_cell_disabled_right" align="right">
+			Totals
+		</td>
+	</tr>
 	<?php
-		$cptarray=array();
-		foreach($darray as $dary){
-			foreach($dary as $data){
+		$completeArray=array();
+		//ppr($dayArray,'darry');
+		
+		foreach($dayArray as $dary){
+		  foreach($dary as $data){
+		    
 				//need to make sure date is in range of what we want...
-				if($data["start_stamp"] < $start_time) continue;
+				if($data["start_stamp"] < $startTimestamp) continue;
 				if($data["start_stamp"] >= $end_time2) continue;
 
-				$cptndx = $data["clientName"]."&nbsp;/ ".$data["projectTitle"]."&nbsp;/ ".$data["taskName"];
-				if(!array_key_exists($cptndx,$cptarray)) {
+				$rowName = $data["clientName"]."&nbsp;/ ".$data["projectTitle"]."&nbsp;/ ".$data["taskName"];
+				
+        //for each rowName that does not yet exist, create it and
+        //add each day in at the same time
+        if(!array_key_exists($rowName,$completeArray)) {
 					for ($mm = $start_day; $mm <= $end_day; $mm++) {
-						$cptarray[$cptndx][$mm]=0;
+						$completeArray[$rowName][$mm]=0;
 					}
 				}
-				$dndx = $stamp_to_day_array[$data["start_stamp"]];
-				$cptarray[$cptndx][$dndx]+=$data["duration"];
-				$daytotals[$dndx]+=$data["duration"];
+        
+        $found = false;
+        //work out which day the start_stamp is from
+        foreach($stamp_to_day_array as $currentTime=>$dayFromStamp){
+            
+            if($data["start_stamp"] <= $currentTime){
+              $completeArray[$rowName][$dayFromStamp]+=$data["duration"];
+				      $daytotals[$dayFromStamp]+=$data["duration"];
+				      $found = true;
+              break;
+            }
+            continue;
+        }
+        if(!$found && $data['start_stamp'] <= strtotime(date("d M Y H:i:s",$currentTime) . " +1 days")){
+          $completeArray[$rowName][$dayFromStamp]+=$data["duration"];
+				      $daytotals[$dayFromStamp]+=$data["duration"];
+				      $found = true;
+        }
+        else if(!$found) {
+          ppr('no match found',$data['start_stamp']);
+        }				
 			}
 		}
+		//ppr($completeArray,'cptarray');
+    unset($rowName);
+    unset($dayFromStamp);   
 
 		$grandtotal=0;
-		foreach($cptarray as $cptname => $cptary){
-	?>
-					<tr>
-						<td class="calendar_cell_right">
-							<?php print $cptname; ?>
-						</td>
-		<?php
+		foreach($completeArray as $rowName => $rowDayArray){
+		  echo "<tr>";
+			echo "<td class=\"calendar_cell_right\">".$rowName."</td>";
 			$tasktotal=0;
-			foreach($cptary as $day => $duration) {
-				$tasktotal+=$duration;
-				$grandtotal+=$duration;
-				$time = format_time($duration,$time_fmt);
-		?>
-						<td class="calendar_cell_right" align="right" width="50">
-							<?php echo $time; ?>
-						</td>
-		<?php } //end foreach $cptary ?>
-						<td class="calendar_cell_right" align="right" style="font-weight: bold;">
-							<?php print format_time($tasktotal,$time_fmt); ?>
-						</td></tr>
-	<?php } //end foreach $cptarray ?>
+      
+      foreach($rowDayArray as $day => $duration) {
+      	$tasktotal+=$duration;
+      	$grandtotal+=$duration;
+      	$time = $report->format_time($duration,$time_fmt);
+      	echo "<td class=\"calendar_cell_right\" align=\"right\" width=\"50\">".$time."</td>";
+      } //end foreach $rowDayArray
+			
+      echo "<td class=\"calendar_cell_right\" align=\"right\" style=\"font-weight: bold;\">";
+			echo $report->format_time($tasktotal,$time_fmt);
+			echo"</td>";
+      echo"</tr>";
+	 } //end foreach $completeArray ?>
 
 					<tr>
 						<td class="calendar_cell_right" style="font-weight: bold;  border-bottom: 0px;">
@@ -340,14 +355,13 @@ if ($num == 0) {
 						</td>
 	<?php
 		for ($mm = $start_day; $mm <= $end_day; $mm++) {
-			$time = format_time($daytotals[$mm],$time_fmt);
 	?>
 						<td class="calendar_cell_right" align="right" style="font-weight: bold; border-bottom: 0px;">
-							<?php echo $time; ?>
+							<?php echo $report->format_time($daytotals[$mm],$time_fmt); ?>
 						</td>
 	<?php }?>
 						<td class="calendar_cell_right" align="right" style="font-weight: bold; border-bottom: 0px;">
-							<?php print format_time($grandtotal,$time_fmt); ?>
+							<?php print $report->format_time($grandtotal,$time_fmt); ?>
 						</td>
 					</tr>
 <?php } //end if $num==0 ?>

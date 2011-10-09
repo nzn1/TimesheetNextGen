@@ -21,7 +21,7 @@ class Developer{
       
         $msg = "The column uid has been modified to username.<br />"
             ."Look in the upgrade sql.in file for the line below and update your db:<br />"
-            ."ALTER TABLE __TABLE_PREFIX__times CHANGE `uid` `username` varchar(32) DEFAULT '' NOT NULL";
+            ."ALTER TABLE times .... `uid` to `username`  (or similar)";
         $title = "Database Update Required";        
         Errorhandler::fatalError($msg.ppr($obj,'SQL Problem Column',true),$title,$title);
       }

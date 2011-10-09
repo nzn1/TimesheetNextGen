@@ -836,7 +836,7 @@ class Config extends ConfigFactory {
 	* @params String $value - the value of the parameter to be changed
 	*/
 	public static function changeConfig($name, $value) {
-		self::$currentConfig['$name'] = $value;
+		self::$currentConfig->{$name} = $value;
 		$query = "UPDATE ".tbl::getNewConfigTable()." SET '$name' = '$value'";
 		Database::getInstance()->query($query); 
 	}
@@ -849,7 +849,7 @@ class Config extends ConfigFactory {
 		if(property_exists('Config',$name)){
 		  self::${$name} = self::$defaultConfig->{$name};
 		}
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET '$name' = '" . $defaultConfig['name']."'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET '$name' = '" . $self->defaultConfig->{$name}."'";
 		Database::getInstance()->query($query); 
 	}
 

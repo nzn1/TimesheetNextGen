@@ -238,7 +238,7 @@ else {
 
 			echo "<td class=\"calendar_cell_disabled_right actions\">\n";
 			if ($data['subStatus'] == "Open") {
-				echo "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">".ucfirst(JText::_('EDIT'))."</a>,&nbsp;\n";
+				echo "	<a href=\"".Config::getRelativeRoot()."/edit?client_id=".$data['client_id']."&amp;proj_id=".$data['proj_id']."&amp;task_id=".$data['task_id']."&amp;trans_num=$data[trans_num]&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay()."\" class=\"action_link\">".ucfirst(JText::_('EDIT'))."</a>,&nbsp;\n";
 				//echo "	<a href=\"".Config::getRelativeRoot()."/delete?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;trans_num=$data[trans_num]\" class=\"action_link\">Delete, </a>\n";
 				echo "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">".ucfirst(JText::_('DELETE')).", </a>\n";
 			} else {
@@ -246,9 +246,9 @@ else {
 				echo  $data['subStatus'] . "&nbsp;\n";
 			}
 			$popup_href = "javascript:void(0)\" onclick=\"window.open('".Config::getRelativeRoot()."/clock_popup".
-											"?client_id=".gbl::getClientId()."".
-											"&amp;proj_id=".gbl::getProjId()."".
-											"&amp;task_id=".gbl::getTaskId()."".
+											"?client_id=".$data['client_id']."".
+											"&amp;proj_id=".$data['proj_id']."".
+											"&amp;task_id=".$data['task_id']."".
 											"$ymdStrSd".
 											"&amp;destination=".Rewrite::getShortUri().
 											"','Popup','location=0,directories=no,status=no,menubar=no,resizable=1,width=420,height=310')";
