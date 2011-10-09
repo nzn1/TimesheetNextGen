@@ -40,13 +40,13 @@ class SubmitClass{
 	public function printInfo($type, $data) {	
 		switch ($type) {
 			case "projectTitle": 
-				self::jsPopupInfoLink(Config::getRelativeRoot()."/client_info", "client_id", $data["client_id"], "Client_Info");
+				self::jsPopupInfoLink(Config::getRelativeRoot()."/clients/client_info", "client_id", $data["client_id"], "Client_Info");
 				print stripslashes($data["clientName"])."</a> / ";
-				self::jsPopupInfoLink(Config::getRelativeRoot()."/proj_info", "proj_id", $data["proj_id"], "Project_Info");
+				self::jsPopupInfoLink(Config::getRelativeRoot()."/projects/proj_info", "proj_id", $data["proj_id"], "Project_Info");
 				print stripslashes($data["projectTitle"])."</a>&nbsp;\n";
 				break;
 			case "taskName":
-				self::jsPopupInfoLink(Config::getRelativeRoot()."/task_info", "task_id", $data["task_id"], "Task_Info");
+				self::jsPopupInfoLink(Config::getRelativeRoot()."/tasks/task_info", "task_id", $data["task_id"], "Task_Info");
 				print stripslashes($data["taskName"])."</a>&nbsp;\n";
 					break;
 			case "duration":

@@ -182,12 +182,12 @@ function printInfo($type, $data) {
 		print "<td valign=\"top\" class=\"calendar_cell_middle\">";
 		print $data["last_name"]."&nbsp;\n";
 	} else if($type == "proj_id") {
-		jsPopupInfoLink(Config::getRelativeRoot()."/client_info", "client_id", $data["client_id"], "Client_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/clients/client_info", "client_id", $data["client_id"], "Client_Info");
 		print stripslashes($data["clientName"])."</a> / ";
-		jsPopupInfoLink(Config::getRelativeRoot()."/proj_info", "proj_id", $data["proj_id"], "Project_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/projects/proj_info", "proj_id", $data["proj_id"], "Project_Info");
 		print stripslashes($data["projectTitle"])."</a>&nbsp;\n";
 	} else if($type == "taskName") {
-		jsPopupInfoLink(Config::getRelativeRoot()."/task_info", "task_id", $data["task_id"], "Task_Info");
+		jsPopupInfoLink(Config::getRelativeRoot()."/tasks/task_info", "task_id", $data["task_id"], "Task_Info");
 		print stripslashes($data["taskName"])."</a>&nbsp;\n";
 	} else if($type == "duration") {
 		print format_time($data["duration"],$time_fmt);

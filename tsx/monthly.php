@@ -157,18 +157,24 @@ if (isset($popup))
 	while (checkdate(gbl::getMonth(), $curDay, gbl::getYear())) {
 		$curStamp = mktime(0,0,0, gbl::getMonth(), $curDay, gbl::getYear());
 		$tomorrowStamp = strtotime(date("d M Y H:i:s",$curStamp) . " +1 day");
-
+    $todayDateStamp = gbl::getTodayDateStamp();
 		// New Week.
 		if ((($dayCol % 7) == 0) && ($dowForFirstOfMonth != 0)) {
 			echo "</tr>\n<!-- --><tr>\n";
 			$mc->print_totals($weeklyTotal, "weekly", gbl::getYear(), gbl::getMonth(), $curDay);
 			$weeklyTotal = 0;
 			echo "</tr>\n<!-- --><tr>\n";
-		} else
+		} 
+    else{
 			$dowForFirstOfMonth = 1;
+		}
 
 		//define subtable
-		if (($dayCol % 7) == 6){
+		
+		if($curStamp == $todayDateStamp){
+      echo "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_today\">\n";
+    }
+		else if (($dayCol % 7) == 6){
 			echo "<td width=\"14%\" height=\"25%\" valign=\"top\" class=\"calendar_cell_holiday_right\">\n";
 		}
 		else if (($dayCol % 7 ) == 5){
@@ -323,7 +329,7 @@ if (isset($popup))
 
 				}
 				$i++;
-
+        ppr($i);
 				if($i< $tl->getLength()) {				
 				  $data = $tl->getTime($i);
           $data->setBooleans(mktime(0,0,0, gbl::getMonth(), $curDay, gbl::getYear()));

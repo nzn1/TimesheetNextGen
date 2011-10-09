@@ -620,10 +620,10 @@ class Common{
 		for($i=1; $i <= $last_day; $i++) {
 			switch($i) {
 			case $dti["mday"]:
-				echo "<option value=\"$i\" selected=\"selected\" >$i\n";
+				echo "<option value=\"$i\" selected=\"selected\" >$i</option>\n";
 				break;
 			default:
-				echo "<option value=\"$i\">$i\n";
+				echo "<option value=\"$i\">$i</option>\n";
 			}
 		}
 		echo "</select>";
@@ -1600,12 +1600,23 @@ class Common{
 
 			// don't reset the start time of all entries
 			//$data["start_stamp"]=$curStamp;
-			$dndx=make_index($data,$orderby);
+			$dndx= self::make_index($data,$orderby);
 			self::__put_data_in_array($darray,$dndx,$data,$curStamp,$endStamp,$duration,$check_log);
 
 			$curStamp = $tomorrowStamp;
 		}
 	}
+	
+	private static function make_index($data,$order) {
+	if($order == "date") {
+		$index=$data["start_stamp"] . sprintf("-%05d",$data["proj_id"]) . 
+			sprintf("-%05d",$data["task_id"]);
+	} else {
+		$index=sprintf("%05d",$data["proj_id"]) .  sprintf("-%05d-",$data["task_id"]) .
+			$data["start_stamp"];
+	}
+	return $index;
+}
 	
 	public static function fixStartEndDuration(&$data) {
 	
@@ -1669,10 +1680,10 @@ class Common{
     	echo utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'), $startDate));
     }
     else if ($mode = "weekly"){
-    	echo utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'), $startDate));
+    	echo utf8_encode(strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $startDate));
     }
     else{ 
-    	echo utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'), $startDate));
+    	echo utf8_encode(strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $startDate));
     }
                  
   	echo "<a href=\"" .Rewrite::getShortUri()."?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day."&amp;mode=".$mode." \">";

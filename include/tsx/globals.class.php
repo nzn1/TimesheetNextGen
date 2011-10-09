@@ -2,7 +2,7 @@
 
 class gbl{
 
-	private static $todayDateTime;
+	private static $nowDate;
 	private static $todayDate;
 	private static $year;
 	private static $month;
@@ -20,8 +20,8 @@ class gbl{
 	
 	public static function initialize(){
 		//get todays values
-		self::$todayDateTime = getdate(time());
-		self::$todayDate = getdate(mktime(0, 0, 0,self::$todayDateTime['mon'],self::$todayDateTime['mday'], self::$todayDateTime['year']));
+		self::$nowDate = getdate(time());
+		self::$todayDate = getdate(mktime(0, 0, 0,self::$nowDate['mon'],self::$nowDate['mday'], self::$nowDate['year']));
 		
 		//load local vars from request/post/get
 		self::$year = isset($_REQUEST["year"]) ? $_REQUEST["year"]: self::$todayDate["year"];
@@ -78,7 +78,7 @@ class gbl{
 	 * Today means realtime and not the system context date	 
 	 */   	
 	public static function getNow(){
-		return self::$todayDateTime;
+		return self::$nowDate;
 	}
 	/**
 	 * Returns a date object for today at 00:00:00 hours
@@ -140,7 +140,7 @@ class gbl{
 	public static function setClientId($id){
     self::$client_id = $id;
   }
-	public static function getUId(){
+	public static function getUid(){
 		return self::$uid;
 	}
 	public static function getPost(){
