@@ -47,7 +47,7 @@ if ($action == "delete") {
 			dbQuery("UPDATE ".tbl::getAssignmentsTable()." SET username='$username' WHERE username='$data[username]'");
 			dbQuery("UPDATE ".tbl::getTaskAssignmentsTable()." SET username='$username' WHERE username='$data[username]'");
 			dbQuery("UPDATE ".tbl::getProjectTable()." SET proj_leader='$username' WHERE proj_leader='$data[username]'");
-			dbQuery("UPDATE ".tbl::getTimesTable()." SET uid='$username' WHERE uid='$data[username]'");
+			dbQuery("UPDATE ".tbl::getTimesTable()." SET username='$username' WHERE username='$data[username]'");
 		}
 
 		if ($data["password"] == $password) {

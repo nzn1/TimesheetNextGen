@@ -29,7 +29,7 @@ class Common{
 
 	}
 	
-	public static function get_time_records($startStr, $endStr, $uid='', $projId=0, $clientId=0, 
+	public static function get_time_records($startStr, $endStr, $username='', $projId=0, $clientId=0, 
 							$order_by = "start_time, proj_id, task_id") {
 
 	//build the database query
@@ -40,7 +40,7 @@ class Common{
 					"duration, ".		//duration is stored in minutes 
 					"".tbl::getTimesTable().".status AS subStatus, " . 
 					"trans_num, ".
-					"".tbl::getTimesTable().".uid, " .
+					"".tbl::getTimesTable().".username, " .
 					"".tbl::getUserTable().".first_name, " .
 					"".tbl::getUserTable().".last_name, " .
 					"".tbl::getProjectTable().".title AS projectTitle, " .
@@ -53,14 +53,14 @@ class Common{
 				"FROM ".tbl::getTimesTable().", ".tbl::getUserTable().", ".tbl::getTaskTable().", ".tbl::getProjectTable().", ".tbl::getClientTable()." " .
 				"WHERE ";
 
-		if ($uid != '') //otherwise we want all users
-			$query .= "".tbl::getTimesTable().".uid='$uid' AND ";
+		if ($username != '') //otherwise we want all users
+			$query .= "".tbl::getTimesTable().".username='$username' AND ";
 		if ($projId > 0) //otherwise we want all projects
 			$query .= "".tbl::getTimesTable().".proj_id=$projId AND ";
 		if ($clientId > 0) //otherwise we want all clients
 			$query .= "".tbl::getProjectTable().".client_id=$clientId AND ";
 
-		$query .=	"".tbl::getTimesTable().".uid    = ".tbl::getUserTable().".username AND ".
+		$query .=	"".tbl::getTimesTable().".username    = ".tbl::getUserTable().".username AND ".
 					"".tbl::getTaskTable().".task_id = ".tbl::getTimesTable().".task_id AND ".
 					"".tbl::getTaskTable().".proj_id = ".tbl::getProjectTable().".proj_id AND ".
 					"".tbl::getProjectTable().".client_id = ".tbl::getClientTable().".client_id AND ".
@@ -116,7 +116,7 @@ class Common{
 			"end_time As end_time_str, ".
 			"start_time AS start_time_str, ".
 			"".tbl::getTaskTable().".name, ".tbl::getTimesTable().".proj_id, ".tbl::getTimesTable().".task_id ".
-			"FROM ".tbl::getTimesTable().", ".tbl::getTaskTable()." WHERE uid='$id' AND ";
+			"FROM ".tbl::getTimesTable().", ".tbl::getTaskTable()." WHERE username='$id' AND ";
 
 		$query .= "".tbl::getTaskTable().".task_id = ".tbl::getTimesTable().".task_id AND ".
 			"((start_time >= '$start_year-$start_month-$start_day 00:00:00' AND start_time <= '$end_year-$end_month-$end_day 23:59:59') ".
@@ -1557,7 +1557,7 @@ class Common{
 			$info["proj_id"]=$data["proj_id"];
 			$info["task_id"]=$data["task_id"];
 			$info["trans_num"]=$data["trans_num"];
-			$info["uid"]=$data["uid"];
+			$info["username"]=$data["username"];
 			$info["first_name"]=$data["first_name"];
 			$info["last_name"]=$data["last_name"];
 

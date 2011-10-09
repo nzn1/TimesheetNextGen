@@ -213,7 +213,7 @@ INSERT INTO __TABLE_PREFIX__task_assignments VALUES ( 1, 'guest', 1);
 #
 DROP TABLE IF EXISTS __TABLE_PREFIX__times;
 CREATE TABLE __TABLE_PREFIX__times (
-  uid varchar(32) DEFAULT '' NOT NULL,
+  username varchar(32) DEFAULT '' NOT NULL,
   start_time datetime DEFAULT '1970-01-01 00:00:00' NOT NULL,
   end_time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
   duration smallint unsigned,
@@ -222,7 +222,7 @@ CREATE TABLE __TABLE_PREFIX__times (
   task_id int(11) DEFAULT '1' NOT NULL,
   log_message TEXT,
   status enum('Open','Submitted','Approved') NOT NULL DEFAULT 'Open',
-  KEY uid (uid,trans_num),
+  KEY username (username,trans_num),
   UNIQUE trans_num (trans_num)
 );
 
