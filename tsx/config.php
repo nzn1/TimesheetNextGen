@@ -7,8 +7,8 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 
 //Get the result set for the config set 1
 
-list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-$resultset = dbResult($qh);
+//list($qh, $num) = dbQuery("SELECT * FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
+//$resultset = dbResult($qh);
 
 ?>
 
@@ -57,13 +57,13 @@ function enableLDAP(value) {
 
 function buildLDAPUrlFromDb() {
 	//get values from database
-	var scheme = '<?php echo $resultset['LDAPScheme']; ?>';
-	var host = '<?php echo $resultset['LDAPHost']; ?>';
-	var port = '<?php echo $resultset['LDAPPort']; ?>';
-	var baseDN = '<?php echo $resultset['LDAPBaseDN']; ?>';
-	var usernameAttribute = '<?php echo $resultset['LDAPUsernameAttribute']; ?>';
-	var searchScope = '<?php echo $resultset['LDAPSearchScope']; ?>';
-	var filter = '<?php echo $resultset['LDAPFilter']; ?>';
+	var scheme = '<?php echo Config::getLDAPScheme(); ?>';
+	var host = '<?php echo Config::getLDAPHost(); ?>';
+	var port = '<?php echo Config::getLDAPPort(); ?>';
+	var baseDN = '<?php echo Config::getLDAPBaseDN(); ?>';
+	var usernameAttribute = '<?php echo Config::getLDAPUsernameAttribute(); ?>';
+	var searchScope = '<?php echo Config::getLDAPSearchScope(); ?>';
+	var filter = '<?php echo Config::getLDAPFilter(); ?>';
 
 	buildLDAPUrl(scheme, host, port, baseDN, usernameAttribute, searchScope, filter);
 }
@@ -205,7 +205,7 @@ PageElements::setTheme('newcss');
 ob_end_clean();
 
 ?>
-<body  onload="enableLDAP(<?php echo $resultset["useLDAP"]?>);">
+<body  onload="enableLDAP(<?php echo Config::getUseLDAP()?>);">
 <div id="inputArea">
 <form action="<?php echo Config::getRelativeRoot(); ?>/config_action" name="configurationForm" method="post">
 <input type="hidden" name="action" value="edit" />
@@ -231,7 +231,7 @@ ob_end_clean();
 			</td>
 			<td align="left" width="100%">
 				<input type="checkbox" name="useLDAPCheck" id="useLDAPCheck" onclick="enableLDAP(this.checked);"
-					 <?php if ($resultset['useLDAP'] == 1) echo "checked=\"checked\""; ?> /><?php echo JText::_('USE_LDAP'); ?>
+					 <?php if (Config::getUseLDAP() == 1) echo "checked=\"checked\""; ?> /><?php echo JText::_('USE_LDAP'); ?>
 				<input type="hidden" name="useLDAP" id="useLDAP" />
 			</td>
 		</tr>
@@ -255,8 +255,8 @@ ob_end_clean();
 								<span class="label"><?php echo JText::_('LDAP_SCHEME'); ?>:</span>
 								</td><td>
 								<select id="LDAPScheme" name="LDAPScheme">
-								<option value="ldap" <?php if ($resultset["LDAPScheme"] == "ldap") echo "selected=\"selected\"";?>>LDAP</option>
-								<option value="ldaps" <?php if ($resultset["LDAPScheme"] == "ldaps") echo "selected=\"selected\"";?>>LDAPS</option>
+								<option value="ldap" <?php if (Config::getLDAPScheme() == "ldap") echo "selected=\"selected\"";?>>LDAP</option>
+								<option value="ldaps" <?php if (Config::getLDAPScheme() == "ldaps") echo "selected=\"selected\"";?>>LDAPS</option>
 								</select>
 								(LDAP=Non SSL, LDAPS=Use SSL)
 							</td>
@@ -265,14 +265,14 @@ ob_end_clean();
 							<td width="50%">
 								<span class="label"><?php echo JText::_('LDAP_HOST'); ?>:</span>
 								</td><td>
-								<input id="LDAPHost" name="LDAPHost" type="text" value="<?php echo $resultset['LDAPHost']; ?>" style="width:100%;" />
+								<input id="LDAPHost" name="LDAPHost" type="text" value="<?php echo config::getLDAPHost(); ?>" style="width:100%;" />
 							</td>
 							</tr>
 							<tr>
 							<td width="50%">
 								<span class="label"><?php echo JText::_('LDAP_PORT'); ?>:</span>
 								</td><td>
-								<input id="LDAPPort" name="LDAPPort" type="text" size="10" maxlength="10" value="<?php echo $resultset['LDAPPort']; ?>" />
+								<input id="LDAPPort" name="LDAPPort" type="text" size="10" maxlength="10" value="<?php echo config::getLDAPPort(); ?>" />
 							</td>
 						</tr>
 						<tr>
@@ -280,7 +280,7 @@ ob_end_clean();
 								<span class="label" ><?php echo JText::_('LDAP_SEARCH_BASE'); ?>:</span>
 							</td>
 							<td width="100%">
-								<input id="LDAPBaseDN" type="text" name="LDAPBaseDN" value="<?php echo $resultset["LDAPBaseDN"]; ?>" style="width:100%;" />
+								<input id="LDAPBaseDN" type="text" name="LDAPBaseDN" value="<?php echo config::getLDAPBaseDN(); ?>" style="width:100%;" />
 							</td>
 						</tr>
 						<tr>
@@ -288,7 +288,7 @@ ob_end_clean();
 								<span class="label" ><?php echo JText::_('LDAP_USERNAME_ATTRIBUTE'); ?>:</span>
 							</td>
 							<td width="100%">
-								<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<?php echo $resultset["LDAPUsernameAttribute"]; ?>" size="30"/>
+								<input id="LDAPUsernameAttribute" name="LDAPUsernameAttribute" type="text" value="<?php echo Config::getLDAPUsernameAttribute(); ?>" size="30"/>
 							</td>
 						</tr>
 						<tr>
@@ -297,9 +297,9 @@ ob_end_clean();
 							</td>
 							<td width="100%">
 								<select id="LDAPSearchScope" name="LDAPSearchScope">
-									<option value="base" <?php if ($resultset["LDAPSearchScope"] == "base") echo "selected=\"selected\""; ?>>Base DN search only (LDAPRead)</option>
-									<option value="one" <?php if ($resultset["LDAPSearchScope"] == "one") echo "selected=\"selected\""; ?>>One level search (LDAPList)</option>
-									<option value="sub" <?php if ($resultset["LDAPSearchScope"] == "sub") echo "selected=\"selected\""; ?>>Full sub-tree search (LDAPSearch)</option>
+									<option value="base" <?php if (config::getLDAPSearchScope() == "base") echo "selected=\"selected\""; ?>>Base DN search only (LDAPRead)</option>
+									<option value="one" <?php if (config::getLDAPSearchScope() == "one") echo "selected=\"selected\""; ?>>One level search (LDAPList)</option>
+									<option value="sub" <?php if (config::getLDAPSearchScope() == "sub") echo "selected=\"selected\""; ?>>Full sub-tree search (LDAPSearch)</option>
 								</select>
 							</td>
 						</tr>
@@ -308,7 +308,7 @@ ob_end_clean();
 								<span class="label" ><?php echo JText::_('FILTER'); ?>:</span>
 							</td>
 							<td width="100%">
-								<input id="LDAPFilter" type="text" name="LDAPFilter" value="<?php echo $resultset["LDAPFilter"]; ?>" style="width:100%;" />
+								<input id="LDAPFilter" type="text" name="LDAPFilter" value="<?php echo config::getLDAPFilter(); ?>" style="width:100%;" />
 							</td>
 						</tr>
 						<tr>
@@ -317,9 +317,9 @@ ob_end_clean();
 							</td>
 							<td width="100%">
 								<select id="LDAPProtocolVersion" name="LDAPProtocolVersion">
-									<option value="3" <?php if ($resultset["LDAPProtocolVersion"] == "3") echo "selected=\"selected\""; ?>>3</option>
-									<option value="2" <?php if ($resultset["LDAPProtocolVersion"] == "2") echo "selected=\"selected\""; ?>>2</option>
-									<option value="1" <?php if ($resultset["LDAPProtocolVersion"] == "1") echo "selected=\"selected\""; ?>>1</option>
+									<option value="3" <?php if (config::getLDAPProtocolVersion() == "3") echo "selected=\"selected\""; ?>>3</option>
+									<option value="2" <?php if (config::getLDAPProtocolVersion() == "2") echo "selected=\"selected\""; ?>>2</option>
+									<option value="1" <?php if (config::getLDAPProtocolVersion() == "1") echo "selected=\"selected\""; ?>>1</option>
 								</select>
 							</td>
 						</tr>
@@ -328,7 +328,7 @@ ob_end_clean();
 								<span class="label" ><?php echo JText::_('LDAP_USE_REFERRALS'); ?>:</span>
 							</td>
 							<td width="100%">
-								<input type="checkbox" name="LDAPReferralsCheck" id="LDAPReferralsCheck" <?php if ( $resultset['LDAPReferrals'] == 1 ) echo "checked=\"checked\""; ?> />
+								<input type="checkbox" name="LDAPReferralsCheck" id="LDAPReferralsCheck" <?php if (config::getLDAPReferrals() == 1 ) echo "checked=\"checked\""; ?> />
 								<input type="hidden" name="LDAPReferrals" id="LDAPReferrals" />
 							</td>
 						</tr>
@@ -337,7 +337,7 @@ ob_end_clean();
 								<span class="label" ><?php echo JText::_('LDAP_FALLBACK'); ?>:</span>
 							</td>
 							<td width="100%">
-								<input type="checkbox" name="LDAPFallbackCheck" id="LDAPFallbackCheck" <?php if ( $resultset['LDAPFallback'] == 1 ) echo "checked=\"checked\""; ?> />
+								<input type="checkbox" name="LDAPFallbackCheck" id="LDAPFallbackCheck" <?php if (Config::getLDAPFallback() == 1 ) echo "checked=\"checked\""; ?> />
 								<input type="hidden" name="LDAPFallback" id="LDAPFallback" />
 							</td>
 						</tr>
@@ -351,7 +351,7 @@ ob_end_clean();
 								<span class="label" ><?php echo JText::_('LDAP_USE_AUTHENTICATION'); ?>:</span>
 							</td>
 							<td width="100%">
-								<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <?php if ($resultset['LDAPBindByUser'] == 1) echo "checked=\"checked\""; ?> />
+								<input type="checkbox" name="LDAPBindByUsercheck" id="LDAPBindByUsercheck" <?php if (config::getLDAPBindByUser() == 1) echo "checked=\"checked\""; ?> />
 								<input type="hidden" name="LDAPBindByUser" id="LDAPBindByUser" />
 							</td>
 						</tr>
@@ -360,7 +360,7 @@ ob_end_clean();
 								<span class="label" ><?php echo JText::_('LDAP_USERNAME'); ?>:</span>
 							</td>
 							<td width="50%">
-								<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<?php echo $resultset["LDAPBindUsername"]; ?>" style="width:100%;" />
+								<input id="LDAPBindUsername" type="text" name="LDAPBindUsername" value="<?php echo config::getLDAPBindUsername(); ?>" style="width:100%;" />
 							</td>
 						</tr>
 						<tr>
@@ -368,7 +368,7 @@ ob_end_clean();
 								<span class="label" ><?php echo JText::_('LDAP_PASSWORD'); ?>:</span>
 							</td>
 							<td width="50%">
-								<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<?php echo $resultset["LDAPBindPassword"]; ?>" style="width:100%;" AUTOCOMPLETE="OFF" />
+								<input id="LDAPBindPassword" type="password" name="LDAPBindPassword" value="<?php echo Config::getLDAPBindPassword(); ?>" style="width:100%;" AUTOCOMPLETE="OFF" />
 							</td>
 						</tr>
 						<tr>
@@ -405,20 +405,20 @@ ob_end_clean();
     		 //TODO FInd a way to replace the nobr tags whilst keeping the menu icons next to the names
     		      	        
         ?>
-					<tr><td><?php echo JText::_('STOPWATCH'); ?>:</td><td><?php Common::acl_select_droplist("aclStopwatch", $resultset["aclStopwatch"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('DAILY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclDaily", $resultset["aclDaily"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('WEEKLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclWeekly", $resultset["aclWeekly"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('MONTHLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclMonthly", $resultset["aclMonthly"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('SIMPLE_WEEKLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclSimple", $resultset["aclSimple"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('CLIENTS'); ?>:</td><td><?php Common::acl_select_droplist("aclClients", $resultset["aclClients"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('PROJECTS'); ?>:</td><td><?php Common::acl_select_droplist("aclProjects", $resultset["aclProjects"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('TASKS'); ?>:</td><td><?php Common::acl_select_droplist("aclTasks", $resultset["aclTasks"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('REPORTS'); ?>:</td><td><?php Common::acl_select_droplist("aclReports", $resultset["aclReports"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('RATES'); ?>:</td><td><?php Common::acl_select_droplist("aclRates", $resultset["aclRates"]); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('ABSENCES'); ?>:</td><td><?php Common::acl_select_droplist("aclAbsences", $resultset["aclAbsences"]); ?>&nbsp;</td></tr>
-					<tr><td>Expenses:</td><td><?php Common::acl_select_droplist("aclExpenses", $resultset["aclExpenses"]); ?>&nbsp;</td></tr>
-					<tr><td>Expense Categories:</td><td><?php Common::acl_select_droplist("aclECategories", $resultset["aclECategories"]); ?>&nbsp;</td></tr>
-					<tr><td>Time Approval:</td><td><?php Common::acl_select_droplist("aclTApproval", $resultset["aclTApproval"]); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('STOPWATCH'); ?>:</td><td><?php Common::acl_select_droplist("aclStopwatch", Config::getAclStopwatch()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('DAILY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclDaily", Config::getAclDaily()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('WEEKLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclWeekly", Config::getAclWeekly()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('MONTHLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclMonthly", Config::getAclMonthly()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('SIMPLE_WEEKLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclSimple", Config::getAclSimple()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('CLIENTS'); ?>:</td><td><?php Common::acl_select_droplist("aclClients", Config::getAclClients()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('PROJECTS'); ?>:</td><td><?php Common::acl_select_droplist("aclProjects", Config::getAclProjects()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('TASKS'); ?>:</td><td><?php Common::acl_select_droplist("aclTasks", Config::getAclTasks()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('REPORTS'); ?>:</td><td><?php Common::acl_select_droplist("aclReports", Config::getAclReports()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('RATES'); ?>:</td><td><?php Common::acl_select_droplist("aclRates", config::getAclRates()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('ABSENCES'); ?>:</td><td><?php Common::acl_select_droplist("aclAbsences", Config::getAclAbsences()); ?>&nbsp;</td></tr>
+					<tr><td>Expenses:</td><td><?php Common::acl_select_droplist("aclExpenses", Config::getAclExpenses()); ?>&nbsp;</td></tr>
+					<tr><td>Expense Categories:</td><td><?php Common::acl_select_droplist("aclECategories", Config::getAclECategories()); ?>&nbsp;</td></tr>
+					<tr><td>Time Approval:</td><td><?php Common::acl_select_droplist("aclTApproval", Config::getAclTApproval()); ?>&nbsp;</td></tr>
 		</table>
 	</table>
 	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
@@ -438,9 +438,9 @@ ob_end_clean();
 				</td>
 				<td align="left" width="100%">
 					<select name="simpleTimesheetLayout" id="simpleTimesheetLayout">
-						<option value="small work description field" <?php if ($resultset["simpleTimesheetLayout"] == 'small work description field') echo "selected=\"selected\"";?>>small work description field</option>
-						<option value="big work description field" <?php if ($resultset["simpleTimesheetLayout"] == 'big work description field') echo "selected=\"selected\"";?>>big work description field</option>
-						<option value="no work description field" <?php if ($resultset["simpleTimesheetLayout"] == 'no work description field') echo "selected=\"selected\"";?>>no work description field</option>
+						<option value="small work description field" <?php if (Config::getSimpleTimesheetLayout() == 'small work description field') echo "selected=\"selected\"";?>>small work description field</option>
+						<option value="big work description field" <?php if (Config::getSimpleTimesheetLayout() == 'big work description field') echo "selected=\"selected\"";?>>big work description field</option>
+						<option value="no work description field" <?php if (Config::getSimpleTimesheetLayout() == 'no work description field') echo "selected=\"selected\"";?>>no work description field</option>
 					</select>
 				</td>
 			</tr>
@@ -463,11 +463,11 @@ ob_end_clean();
 				</td>
 				<td align="left" width="100%">
 					<select name="startPage" id="startPage">
-						<option value="stopwatch" <?php if ($resultset["startPage"] == 'stopwatch') echo "selected=\"selected\"";?>>Stopwatch</option>
-						<option value="daily" <?php     if ($resultset["startPage"] == 'daily')     echo "selected=\"selected\"";?>>Daily Timesheet</option>
-						<option value="weekly" <?php    if ($resultset["startPage"] == 'weekly')    echo "selected=\"selected\"";?>>Weekly Timesheet</option>
-						<option value="monthly" <?php   if ($resultset["startPage"] == 'monthly')   echo "selected=\"selected\"";?>>Monthly View</option>
-						<option value="simple" <?php    if ($resultset["startPage"] == 'simple')    echo "selected=\"selected\"";?>>Simple Timesheet</option>
+						<option value="stopwatch" <?php if (Config::getStartPage() == 'stopwatch') echo "selected=\"selected\"";?>>Stopwatch</option>
+						<option value="daily" <?php     if (Config::getStartPage() == 'daily')     echo "selected=\"selected\"";?>>Daily Timesheet</option>
+						<option value="weekly" <?php    if (Config::getStartPage() == 'weekly')    echo "selected=\"selected\"";?>>Weekly Timesheet</option>
+						<option value="monthly" <?php   if (Config::getStartPage() == 'monthly')   echo "selected=\"selected\"";?>>Monthly View</option>
+						<option value="simple" <?php    if (Config::getStartPage() == 'simple')    echo "selected=\"selected\"";?>>Simple Timesheet</option>
 					</select>
 				</td>
 			</tr>
@@ -489,7 +489,7 @@ ob_end_clean();
 					<input type="checkbox" name="localeReset" value="off" valign="absmiddle" onclick="document.configurationForm.locale.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<input type="text" name="locale" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["locale"]))); ?>" style="width: 100%;" />
+					<input type="text" name="locale" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes(Config::getLocale()))); ?>" style="width: 100%;" />
 				</td>
 			</tr>
 
@@ -510,7 +510,7 @@ ob_end_clean();
 					<input type="checkbox" name="timezoneReset" value="off" onclick="document.configurationForm.timezone.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<input type="text" name="timezone" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["timezone"]))); ?>" style="width: 100%;" />
+					<input type="text" name="timezone" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes(Config::getTimeZone()))); ?>" style="width: 100%;" />
 				</td>
 			</tr>
 
@@ -532,7 +532,7 @@ ob_end_clean();
 				</td>
 				<td align="left" width="100%">
 					<select name="timeformat" style="width: 100%;">
-						<?php if ($resultset["timeformat"] == "12") { ?>
+						<?php if (Config::getTimeFormat() == "12") { ?>
 							<option value="12" selected="selected">12 hour format</option>
 							<option value="24">24 hour format</option>
 						<?php } else { ?>
@@ -572,7 +572,7 @@ ob_end_clean();
 							for ($i=0; $i<7; $i++) {
 								$dowString = strftime("%A", $dowDate);
 								print "<option value=\"$i\"";
-								if ($resultset["weekstartday"] == $i)
+								if (Config::getWeekStartDay() == $i)
 									print " selected=\"selected\"";
 								print ">$dowString</option>";
 								//increment the day
@@ -600,7 +600,7 @@ ob_end_clean();
 					<input type="checkbox" name="projectItemsPerPageReset" value="off" onclick="document.configurationForm.projectItemsPerPage.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<input type="text" name="projectItemsPerPage" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["project_items_per_page"]))); ?>" style="width: 100%;" />
+					<input type="text" name="projectItemsPerPage" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes(Config::getProjectItemsPerPage()))); ?>" style="width: 100%;" />
 				</td>
 			</tr>
 
@@ -621,7 +621,7 @@ ob_end_clean();
 					<input type="checkbox" name="taskItemsPerPageReset" value="off" onclick="document.configurationForm.taskItemsPerPage.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<input type="text" name="taskItemsPerPage" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes($resultset["task_items_per_page"]))); ?>" style="width: 100%;" />
+					<input type="text" name="taskItemsPerPage" size="75" maxlength="254" value="<?php echo htmlentities(trim(stripslashes(Config::getTaskItemsPerPage()))); ?>" style="width: 100%;" />
 				</td>
 			</tr>
 
@@ -643,7 +643,7 @@ ob_end_clean();
 					<input type="checkbox" name="headerReset" value="off" onclick="document.configurationForm.headerhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="headerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["headerhtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="headerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes(Config::getHeaderHtml()))); ?></textarea>
 				</td>
 			</tr>
 
@@ -664,7 +664,7 @@ ob_end_clean();
 					<input type="checkbox" name="bodyReset" value="off" onclick="document.configurationForm.bodyhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="bodyhtml"  style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["bodyhtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="bodyhtml"  style="width: 100%;"><?php echo htmlentities(trim(stripslashes(Config::getBodyHtml()))); ?></textarea>
 				</td>
 			</tr>
 
@@ -685,7 +685,7 @@ ob_end_clean();
 					<input type="checkbox" name="bannerReset" value="off" onclick="document.configurationForm.bannerhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="bannerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["bannerhtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="bannerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes(Config::getbannerhtml()))); ?></textarea>
 				</td>
 			</tr>
 
@@ -706,7 +706,7 @@ ob_end_clean();
 					<input type="checkbox" name="footerReset" value="off" onclick="document.configurationForm.footerhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="footerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["footerhtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="footerhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes(Config::getFooterHhtml()))); ?></textarea>
 				</td>
 			</tr>
 
@@ -727,7 +727,7 @@ ob_end_clean();
 					<input type="checkbox" name="errorReset" value="off" onclick="document.configurationForm.errorhtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="errorhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["errorhtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="errorhtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes(Config::getErrorHtml()))); ?></textarea>
 				</td>
 			</tr>
 
@@ -749,7 +749,7 @@ ob_end_clean();
 					<input type="checkbox" name="tableReset" value="off" onclick="document.configurationForm.tablehtml.disabled=(this.checked);" /><?php echo JText::_('RESET'); ?>
 				</td>
 				<td align="left" width="100%">
-					<textarea rows="5" cols="73" name="tablehtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes($resultset["tablehtml"]))); ?></textarea>
+					<textarea rows="5" cols="73" name="tablehtml" style="width: 100%;"><?php echo htmlentities(trim(stripslashes(Config::getTtableHtml()))); ?></textarea>
 				</td>
 			</tr>
 

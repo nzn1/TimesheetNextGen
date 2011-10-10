@@ -10,8 +10,6 @@ if(!class_exists('Site'))die('Restricted Access');
 //	exit;
 //}
 
-
-
 //load local vars from request/post/get
 $action = $_REQUEST["action"];
 $headerhtml = isset($_REQUEST["headerhtml"]) ? $_REQUEST["headerhtml"]: "";
@@ -67,31 +65,8 @@ $aclAbsences = $_REQUEST["aclAbsences"];
 $aclExpenses = $_REQUEST["aclExpenses"];
 $aclECategories = $_REQUEST["aclECategories"];
 $aclTApproval = $_REQUEST["aclTApproval"];
-$simpleTimesheetLayout = $_REQUEST["simpleTimesheetLayout"];
+$simpleTimesheetLayout = isset($_REQUEST["simpleTimesheetLayout"]) ? $_REQUEST["simpleTimesheetLayout"]: false;
 $startPage = $_REQUEST["startPage"];
-
-//LogFile::write("startPage is $startPage\n");
-// reset values in the new configuration table 
-	function resetConfigurationValue($fieldName) {
-		include("table_names.inc");
-
-		//get the default value
-		$fieldName;
-
-		//set it
-		dbQuery("UPDATE ".tbl::getConfigurationTable()." SET value = '$fieldName=' WHERE name = '$fieldName';");
-	}
-	
-	function resetConfigValue($fieldName) {
-		include("table_names.inc");
-
-		//get the default value
-		list($qh, $num) = dbQuery("SELECT $fieldName FROM ".tbl::getConfigTable()." WHERE config_set_id='0';");
-		$resultset = dbResult($qh);
-
-		//set it
-		dbQuery("UPDATE ".tbl::getConfigTable()." SET $fieldName='" . $resultset[$fieldName] . "' WHERE config_set_id='1';");
-	}
 
 if (!isset($action)) {
 	gotoLocation($HTTP_REFERER);
@@ -107,98 +82,54 @@ elseif ($action == "edit") {
 	$timezone = mysql_real_escape_string(trim($timezone));
 	$projectItemsPerPage = mysql_real_escape_string(trim($projectItemsPerPage));
 	$taskItemsPerPage = mysql_real_escape_string(trim($taskItemsPerPage));
-	$query = "UPDATE ".tbl::getConfigTable()." SET ".
-		"headerhtml='$headerhtml',".
-		"bodyhtml='$bodyhtml',".
-		"footerhtml='$footerhtml',".
-		"errorhtml='$errorhtml',".
-		"bannerhtml='$bannerhtml',".
-		"tablehtml='$tablehtml',".
-		"locale='$locale',".
-		"timezone='$timezone',".
-		"timeformat='$timeformat', ".
-		"weekstartday='$weekstartday', " .
-		"project_items_per_page='$projectItemsPerPage', " .
-		"task_items_per_page='$taskItemsPerPage', " .
-		"useLDAP='$useLDAP', " .
-		"LDAPScheme='$LDAPScheme', " .
-		"LDAPHost='$LDAPHost', " .
-		"LDAPPort='$LDAPPort', " .
-		"LDAPBaseDN='$LDAPBaseDN', " .
-		"LDAPUsernameAttribute='$LDAPUsernameAttribute', " .
-		"LDAPSearchScope='$LDAPSearchScope', " .
-		"LDAPFilter='$LDAPFilter', " .
-		"LDAPProtocolVersion='$LDAPProtocolVersion', " .
-		"LDAPBindUsername='$LDAPBindUsername', ".
-		"LDAPBindPassword='$LDAPBindPassword', ".
-		"LDAPBindByUser='$LDAPBindByUser', " .
-		"LDAPReferrals='$LDAPReferrals', " .
-		"LDAPFallback='$LDAPFallback', " .
-		"aclStopwatch='$aclStopwatch', " .
-		"aclDaily='$aclDaily', " .
-		"aclWeekly='$aclWeekly', " .
-		"aclMonthly='$aclMonthly', " .
-		"aclSimple='$aclSimple', " .
-		"aclClients='$aclClients', " .
-		"aclProjects='$aclProjects', " .
-		"aclTasks='$aclTasks', " .
-		"aclReports='$aclReports', " .
-		"aclRates='$aclRates', " .
-		"aclAbsences='$aclAbsences', " .
-		"aclExpenses = '$aclExpenses', ".
-		"aclECategories = '$aclECategories', ".
-		"aclTApproval = '$aclTApproval', ".
-		"simpleTimesheetLayout= '$simpleTimesheetLayout', " .
-		"startPage='$startPage' " .
-		"WHERE config_set_id='1';";
-	
+
 	// now change values in new configuration table
 
-		Config::setHeaderHtml($headerhtml);
-		Config::setBodyHtml($bodyhtml);
-		Config::setFooterHtml($footerhtml);
-		Config::setErrorHtml($errorhtml);
-		Config::setBannerHtml($bannerhtml);
-		Config::setTableHtml($tablehtml);
-		Config::setLocale($locale);
-		Config::setTimeZone($timezone);
-		Config::setTimeFormat($timeformat);
-		Config::setWeekStartDay($weekstartday);
-		Config::setProjectItemsPerPage($projectItemsPerPage);
-		Config::setTaskItemsPerPage($taskItemsPerPage);
-		Config::setUseLDAP($useLDAP);
-		Config::setLDAPScheme($LDAPScheme);
-		Config::setLDAPHost($LDAPHost);
-		Config::setLDAPPort($LDAPPort);
-		Config::setLDAPBaseDN($LDAPBaseDN);
-		Config::setLDAPUsernameAttribute($LDAPUsernameAttribute);
-		Config::setLDAPSearchScope($LDAPSearchScope);
-		Config::setLDAPFilter($LDAPFilter);
-		Config::setLDAPProtocolVersion($LDAPProtocolVersion);
-		Config::setLDAPBindUsername($LDAPBindUsername);
-		Config::setLDAPBindPassword($LDAPBindPassword);
-		Config::setLDAPBindByUser($LDAPBindByUser);
-		Config::setLDAPReferrals($LDAPReferrals);
-		Config::setLDAPFallback($LDAPFallback);
-		Config::setAclStopwatch($aclStopwatch);
-		Config::setAclDaily($aclDaily);
-		Config::setAclWeekly($aclWeekly);
-		Config::setAclMonthly($aclMonthly);
-		Config::setAclSimple($aclSimple);
-		Config::setAclClients($aclClients);
-		Config::setAclProjects($aclProjects);
-		Config::setAclTasks($aclTasks);
-		Config::setAclReports($aclReports);
-		Config::setAclRates($aclRates);
-		Config::setAclAbsences($aclAbsences);
-		Config::setAclExpenses($aclExpenses);
-		Config::setAclECategories($aclECategories);
-		Config::setAclTApproval($aclTApproval);
-		Config::setSimpleTimesheetLayout($simpleTimesheetLayout);
-		Config::setStartPage($startPage);
+	Config::setHeaderHtml($headerhtml);
+	Config::setBodyHtml($bodyhtml);
+	Config::setFooterHtml($footerhtml);
+	Config::setErrorHtml($errorhtml);
+	Config::setBannerHtml($bannerhtml);
+	Config::setTableHtml($tablehtml);
+	Config::setLocale($locale);
+	Config::setTimeZone($timezone);
+	Config::setTimeFormat($timeformat);
+	Config::setWeekStartDay($weekstartday);
+	Config::setProjectItemsPerPage($projectItemsPerPage);
+	Config::setTaskItemsPerPage($taskItemsPerPage);
+	Config::setUseLDAP($useLDAP);
+	Config::setLDAPScheme($LDAPScheme);
+	Config::setLDAPHost($LDAPHost);
+	Config::setLDAPPort($LDAPPort);
+	Config::setLDAPBaseDN($LDAPBaseDN);
+	Config::setLDAPUsernameAttribute($LDAPUsernameAttribute);
+	Config::setLDAPSearchScope($LDAPSearchScope);
+	Config::setLDAPFilter($LDAPFilter);
+	Config::setLDAPProtocolVersion($LDAPProtocolVersion);
+	Config::setLDAPBindUsername($LDAPBindUsername);
+	Config::setLDAPBindPassword($LDAPBindPassword);
+	Config::setLDAPBindByUser($LDAPBindByUser);
+	Config::setLDAPReferrals($LDAPReferrals);
+	Config::setLDAPFallback($LDAPFallback);
+	Config::setAclStopwatch($aclStopwatch);
+	Config::setAclDaily($aclDaily);
+	Config::setAclWeekly($aclWeekly);
+	Config::setAclMonthly($aclMonthly);
+	Config::setAclSimple($aclSimple);
+	Config::setAclClients($aclClients);
+	Config::setAclProjects($aclProjects);
+	Config::setAclTasks($aclTasks);
+	Config::setAclReports($aclReports);
+	Config::setAclRates($aclRates);
+	Config::setAclAbsences($aclAbsences);
+	Config::setAclExpenses($aclExpenses);
+	Config::setAclECategories($aclECategories);
+	Config::setAclTApproval($aclTApproval);
+	Config::setSimpleTimesheetLayout($simpleTimesheetLayout);
+	Config::setStartPage($startPage);
 		
-	//LogFile::write("$query\n");
-	list($qh,$num) = dbquery($query);
+	//LogFile::write("config_action edit: ", $query. "\n");
+	//list($qh,$num) = dbquery($query);
 
 	if ($headerReset == true)
 		Config::resetConfigValue("headerhtml");

@@ -1,18 +1,13 @@
 <?php
-	//Get the result set for the config set 1
-	
-	list($qhq, $numq) = dbQuery("SELECT locale, timezone FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-	$configdata = dbResult($qhq);
-
 	//set the locale
-	if ($configdata["locale"] != "")
-		setlocale(LC_ALL, stripslashes($configdata["locale"]));
+	if (Config::getLocale() != "")
+		setlocale(LC_ALL, stripslashes(Config::getLocale()));
 
 	//set the timezone
-	if ($configdata["timezone"] != "") {
+	if (Config::getTimeZone() != "") {
 		//for >= PHP 5.1
 		if(function_exists("date_default_timezone_set")) {
-			date_default_timezone_set($configdata["timezone"]);
+			date_default_timezone_set(Config::getTimeZone());
 		// for PHP < 5.1
 		} else {
 			putenv("PHP_TZ=" . stripslashes($configdata["timezone"]));

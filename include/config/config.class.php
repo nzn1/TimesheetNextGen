@@ -47,8 +47,6 @@ class Config extends ConfigFactory {
 	protected static $timezone;
 	protected static $timeformat;
 	protected static $weekstartday;
-	protected static $projectItemsPerPage;
-	protected static $taskItemsPerPage;
 	protected static $useLDAP;
 	protected static $LDAPScheme;
 	protected static $LDAPHost;
@@ -81,9 +79,8 @@ class Config extends ConfigFactory {
 	protected static $simpleTimesheetLayout;
 	protected static $startPage;
 	protected static $timeZone;
-	
-  protected static $project_items_per_page;
-  protected static $task_items_per_page;
+	protected static $project_items_per_page;
+  	protected static $task_items_per_page;
   
 	
 	private static $defaultConfig;	
@@ -153,50 +150,49 @@ class Config extends ConfigFactory {
 	 * @var unknown_type
 	 */ 
 	protected static function initialConfigValues() {
-	self::$defaultConfig = new stdClass();
-	self::$defaultConfig->headerhtml = "<meta name=\"description\" content=\"Timesheet Next Gen\">\r\n<link href=\"css/timesheet.css\" rel=\"stylesheet\" type=\"text/css\">\r\n<link rel=\"shortcut icon\" href=\"images/favicon.ico\">";
-	self::$defaultConfig->bodyhtml =  "link=\"#004E8A\" vlink=\"#171A42\"";
-	self::$defaultConfig->footerhtml = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n<tr><td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">\r\nTimesheetNextGen\r\n<br /><span style=\"font-size: 9px;\"><b>Page generated %time% %date% (%timezone% time)</b></span>\r\n</td></tr></table>";
-	self::$defaultConfig->errorhtml =  "<table border=\"0\" cellpadding=\"5\" width=\"100%\">\r\n<tr>\r\n  <td><font size=\"+2\" color=\"red\">%errormsg%</font></td>\r\n</tr></table>\r\n<p>Please go <a href=\"javascript:history.back()\">Back</a> and try again.</p>";
-	self::$defaultConfig->bannerhtml =  "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>\r\n<td colspan=\"2\" style=\"background-image: url(\'images/timesheet_background_pattern.gif\');\"><img src=\"images/timesheet_banner.gif\" alt=\"Timesheet Banner\" /></td>\r\n</tr><tr>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\">%commandmenu%</td>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">You are logged in as %username%</td>\r\n</tr><tr>\r\n<td colspan=\"2\" height=\"1\" style=\"background-color: #758DD6;\"><img src=\"images/spacer.gif\" alt=\"\" width=\"1\" height=\"1\" /></td>\r\n</tr></table>";
-	self::$defaultConfig->tablehtml =  "";
-	self::$defaultConfig->locale =  "";
-	self::$defaultConfig->timezone =  "Europe/Zurich";
-	self::$defaultConfig->timeformat =  "12";
-	self::$defaultConfig->weekstartday =  "0";
-	self::$defaultConfig->projectItemsPerPage =  "10";
-	self::$defaultConfig->taskItemsPerPage =  "10";
-	self::$defaultConfig->useLDAP =  "0";
-	self::$defaultConfig->LDAPScheme =  "ldap";
-	self::$defaultConfig->LDAPHost =  "10.0.0.1";
-	self::$defaultConfig->LDAPPort =  "389";
-	self::$defaultConfig->LDAPBaseDN =  "dc=timesheet,dc=com";
-	self::$defaultConfig->LDAPUsernameAttribute =  "CN";
-	self::$defaultConfig->LDAPSearchScope =  "base";
-	self::$defaultConfig->LDAPFilter =  "";
-	self::$defaultConfig->LDAPProtocolVersion =  "3";
-	self::$defaultConfig->LDAPBindUsername =  "";
-	self::$defaultConfig->LDAPBindPassword =  "";
-	self::$defaultConfig->LDAPBindByUser =  "0";
-	self::$defaultConfig->LDAPReferrals =  "0";
-	self::$defaultConfig->LDAPFallback =  "0";
-	self::$defaultConfig->aclStopwatch =  "Basic";
-	self::$defaultConfig->aclDaily =  "Basic";
-	self::$defaultConfig->aclWeekly =  "Basic";
-	self::$defaultConfig->aclMonthly =  "Basic";
-	self::$defaultConfig->aclSimple =  "Basic";
-	self::$defaultConfig->aclClients =  "Basic";
-	self::$defaultConfig->aclProjects =  "Basic";
-	self::$defaultConfig->aclTasks =  "Basic";
-	self::$defaultConfig->aclReports =  "Basic";
-	self::$defaultConfig->aclRates =  "Basic";
-	self::$defaultConfig->aclAbsences =  "Basic";
-	self::$defaultConfig->aclExpenses =  "Basic";
-	self::$defaultConfig->aclECategories =  "Basic";
-	self::$defaultConfig->aclTApproval =  "Basic";
-	self::$defaultConfig->simpleTimesheetLayout =  "small work description field";
-	self::$defaultConfig->startPage =  "monthly";
-	self::$defaultConfig->timeZone =  'Europe/London';
+		self::$defaultConfig = new stdClass();
+		self::$defaultConfig->headerhtml = "<meta name=\"description\" content=\"Timesheet Next Gen\">\r\n<link href=\"css/timesheet.css\" rel=\"stylesheet\" type=\"text/css\">\r\n<link rel=\"shortcut icon\" href=\"images/favicon.ico\">";
+		self::$defaultConfig->bodyhtml =  "link=\"#004E8A\" vlink=\"#171A42\"";
+		self::$defaultConfig->footerhtml = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n<tr><td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">\r\nTimesheetNextGen\r\n<br /><span style=\"font-size: 9px;\"><b>Page generated %time% %date% (%timezone% time)</b></span>\r\n</td></tr></table>";
+		self::$defaultConfig->errorhtml =  "<table border=\"0\" cellpadding=\"5\" width=\"100%\">\r\n<tr>\r\n  <td><font size=\"+2\" color=\"red\">%errormsg%</font></td>\r\n</tr></table>\r\n<p>Please go <a href=\"javascript:history.back()\">Back</a> and try again.</p>";
+		self::$defaultConfig->bannerhtml =  "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>\r\n<td colspan=\"2\" style=\"background-image: url(\'images/timesheet_background_pattern.gif\');\"><img src=\"images/timesheet_banner.gif\" alt=\"Timesheet Banner\" /></td>\r\n</tr><tr>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\">%commandmenu%</td>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">You are logged in as %username%</td>\r\n</tr><tr>\r\n<td colspan=\"2\" height=\"1\" style=\"background-color: #758DD6;\"><img src=\"images/spacer.gif\" alt=\"\" width=\"1\" height=\"1\" /></td>\r\n</tr></table>";
+		self::$defaultConfig->tablehtml =  "";
+		self::$defaultConfig->locale =  "";
+		self::$defaultConfig->timezone =  "Europe/Zurich";
+		self::$defaultConfig->timeformat =  "12";
+		self::$defaultConfig->weekstartday =  "0";
+		self::$defaultConfig->project_items_per_page =  "10";
+		self::$defaultConfig->task_items_per_page =  "10";
+		self::$defaultConfig->useLDAP =  "0";
+		self::$defaultConfig->LDAPScheme =  "ldap";
+		self::$defaultConfig->LDAPHost =  "10.0.0.1";
+		self::$defaultConfig->LDAPPort =  "389";
+		self::$defaultConfig->LDAPBaseDN =  "dc=timesheet,dc=com";
+		self::$defaultConfig->LDAPUsernameAttribute =  "CN";
+		self::$defaultConfig->LDAPSearchScope =  "base";
+		self::$defaultConfig->LDAPFilter =  "";
+		self::$defaultConfig->LDAPProtocolVersion =  "3";
+		self::$defaultConfig->LDAPBindUsername =  "";
+		self::$defaultConfig->LDAPBindPassword =  "";
+		self::$defaultConfig->LDAPBindByUser =  "0";
+		self::$defaultConfig->LDAPReferrals =  "0";
+		self::$defaultConfig->LDAPFallback =  "0";
+		self::$defaultConfig->aclStopwatch =  "Basic";
+		self::$defaultConfig->aclDaily =  "Basic";
+		self::$defaultConfig->aclWeekly =  "Basic";
+		self::$defaultConfig->aclMonthly =  "Basic";
+		self::$defaultConfig->aclSimple =  "Basic";
+		self::$defaultConfig->aclClients =  "Basic";
+		self::$defaultConfig->aclProjects =  "Basic";
+		self::$defaultConfig->aclTasks =  "Basic";
+		self::$defaultConfig->aclReports =  "Basic";
+		self::$defaultConfig->aclRates =  "Basic";
+		self::$defaultConfig->aclAbsences =  "Basic";
+		self::$defaultConfig->aclExpenses =  "Basic";
+		self::$defaultConfig->aclECategories =  "Basic";
+		self::$defaultConfig->aclTApproval =  "Basic";
+		self::$defaultConfig->simpleTimesheetLayout =  "small work description field";
+		self::$defaultConfig->startPage =  "monthly";
 	}
 	/**
 	* Configuration Routine getTimeZone
@@ -262,13 +258,13 @@ class Config extends ConfigFactory {
 	* Configuration Routine getProjectItemsPerPage
 	*/
 	public static function getProjectItemsPerPage() {
-		return self::$projectItemsPerPage;
+		return self::$project_items_per_page;
 	}
 	/**
 	* Configuration Routine getTaskItemsPerPage
 	*/
 	public static function getTaskItemsPerPage() {
-		return self::$taskItemsPerPage;
+		return self::$task_items_per_page;
 	}
 	/**
 	* Configuration Routine getUseLDAP
@@ -439,6 +435,16 @@ class Config extends ConfigFactory {
 		return self::$aclTApproval;
 	}
 	/**
+	* Configuration Routine getAclLevel return aclLevel of requested item
+	* @param $value string - name of acl level required
+	*/	
+	public static function getAclLevel($name) {
+		if(property_exists('Config',$name)){
+		  return self::${$name};
+		}
+		else return false;
+	}
+	/**
 	* Configuration Routine getSimpleTimesheetLayout
 	*/
 	public static function getSimpleTimesheetLayout() {
@@ -456,7 +462,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setHeaderHtml($value) {
 		self::$headerhtml = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET headerhtml = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'headerhtml'";
 		Database::getInstance()->query($query); 		
 	}
 	/**
@@ -465,7 +471,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setBodyHtml($value) {
 		self::$bodyhtml = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET bodyhtml = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'bodyhtml'";
 				
 	}
 	/**
@@ -475,7 +481,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setFooterHtml($value) {
 		self::$footerhtml = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET footerhtml = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'footerhtml'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -484,7 +490,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setErrorHtml($value) {
 				self::$errorhtml = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET errorhtml = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'errorhtml'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -493,7 +499,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setBannerHtml($value) {
 		self::$bannerhtml = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET bannerhtml = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'bannerhtml'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -502,7 +508,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setTableHtml($value) {
 		self::$tablehtml = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET tablehtml = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'tablehtml'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -511,7 +517,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLocale($value) {
 		self::$locale = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET locale = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'locale'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -520,7 +526,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setTimeZone($value) {
 		self::$timezone = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET timezone = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'timezone'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -529,7 +535,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setTimeFormat($value) {
 		self::$timeformat = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET timeformat = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'timeformat'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -538,7 +544,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setWeekStartDay($value) {
 		self::$weekstartday = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET weekstartday = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'weekstartday'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -547,7 +553,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setProjectItemsPerPage($value) {
 		self::$project_items_per_page = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET project_items_per_page = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'project_items_per_page'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -556,7 +562,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setTaskItemsPerPage($value) {
 		self::$task_items_per_page = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET task_items_per_page = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'task_items_per_page'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -565,7 +571,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setUseLDAP($value) {
 		self::$useLDAP = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET useLDAP = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'useLDAP'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -574,7 +580,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPScheme($value) {
 		self::$LDAPScheme = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPScheme = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPScheme'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -583,7 +589,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPHost($value) {
 		self::$LDAPHost = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPHost = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPHost'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -592,7 +598,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPPort($value) {
 		self::$LDAPPort = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPPort = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPPort'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -601,7 +607,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPBaseDN($value) {
 		self::$LDAPBaseDN = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPBaseDN = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPBaseDN'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -610,7 +616,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPUsernameAttribute($value) {
 		self::$LDAPUsernameAttribute = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPUsernameAttribute = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPUsernameAttribute'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -619,7 +625,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPSearchScope($value) {
 		self::$LDAPSearchScope = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPSearchScope = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPSearchScope'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -628,7 +634,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPFilter($value) {
 		self::$LDAPFilter = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPFilter = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPFilter'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -637,7 +643,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPProtocolVersion($value) {
 		self::$LDAPProtocolVersion = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPProtocolVersion = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPProtocolVersion'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -646,7 +652,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPBindUsername($value) {
 		self::$LDAPBindUsername = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPBindUsername = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPBindUsername'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -655,7 +661,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPBindPassword($value) {
 		self::$LDAPBindPassword = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPBindPassword = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPBindPassword'";
 		Database::getInstance()->query($query); 
 	}
 
@@ -665,7 +671,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPBindByUser($value) {
 		self::$LDAPBindByUser = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPBindByUser = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPBindByUser'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -674,7 +680,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPReferrals($value) {
 		self::$LDAPReferrals = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPReferrals = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPReferrals'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -683,7 +689,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setLDAPFallback($value) {
 		self::$LDAPFallback = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET LDAPFallback = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'LDAPFallback'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -692,7 +698,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclStopwatch($value) {
 		self::$aclStopwatch = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclStopwatch = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclStopwatch'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -701,7 +707,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclDaily($value) {
 		self::$aclDaily = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclDaily = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclDaily'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -710,7 +716,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclWeekly($value) {
 		self::$aclWeekly = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclWeekly = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclWeekly'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -719,7 +725,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclMonthly($value) {
 		self::$aclMonthly = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclMonthly = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclMonthly'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -728,7 +734,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclSimple($value) {
 		self::$aclSimple = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclSimple = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclSimple'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -737,7 +743,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclClients($value) {
 		self::$aclClients = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclClients = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclClients'";
 		Database::getInstance()->query($query); 
 	}
 /**
@@ -746,7 +752,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclProjects($value) {
 		self::$aclProjects = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclProjects = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclProjects'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -755,7 +761,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclTasks($value) {
 		self::$aclTasks = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclTasks = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclTasks'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -764,7 +770,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclReports($value) {
 		self::$aclReports = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclReports = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclReports'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -773,7 +779,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclRates($value) {
 		self::$aclRates = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclRates = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclRates'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -782,7 +788,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclAbsences($value) {
 		self::$aclAbsences = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclAbsences = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclAbsences'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -791,7 +797,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclExpenses($value) {
 		self::$aclExpenses = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclExpenses = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclExpenses'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -800,7 +806,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclECategories($value) {
 		self::$aclECategories = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclECategories = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclECategories'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -809,7 +815,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setAclTApproval($value) {
 		self::$aclTApproval = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET aclTApproval = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclTApproval'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -818,7 +824,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function setSimpleTimesheetLayout($value) {
 		self::$simpleTimesheetLayout = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET simpleTimesheetLayout = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'simpleTimesheetLayout'";
 		Database::getInstance()->query($query); 
 	}
 	/**
@@ -826,8 +832,9 @@ class Config extends ConfigFactory {
 	* @params String $value - the value of the parameter to be changed
 	*/
 	public static function setStartPage($value) {
+		LogFile::write("\nrsetstartpage: ". $value);
 		self::$startPage = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET startPage = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'startPage'";
 		Database::getInstance()->query($query); 
 	}
 
@@ -837,7 +844,7 @@ class Config extends ConfigFactory {
 	*/
 	public static function changeConfig($name, $value) {
 		self::$currentConfig->{$name} = $value;
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET '$name' = '$value'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = '$name'";
 		Database::getInstance()->query($query); 
 	}
 	
@@ -846,10 +853,12 @@ class Config extends ConfigFactory {
 	* @params String $value - the value of the parameter to be reset to default
 	*/
 	public static function resetConfigValue($name) {
+		LogFile::write("\nconfig.class resetconfigvalue: ". $name);
 		if(property_exists('Config',$name)){
 		  self::${$name} = self::$defaultConfig->{$name};
 		}
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET '$name' = '" . $self->defaultConfig->{$name}."'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '" .self::$defaultConfig->{$name}."' WHERE name = '$name'";
+		LogFile::write("\nconfig.class resetconfigvalue query: ". $query);
 		Database::getInstance()->query($query); 
 	}
 

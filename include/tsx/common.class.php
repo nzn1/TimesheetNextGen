@@ -99,12 +99,7 @@ class Common{
 	
 	public static function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
 
-		list($qhq, $numq) = dbQuery("SELECT timeformat FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-
-		$query = "SELECT date_format(start_time,'%d') AS day_of_month, trans_num, ";
-
-		if ($configData["timeformat"] == "12")
+		if (Config::getTimeFormat() == "12")
 			$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
 		else
 			$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') as start, ";
@@ -551,10 +546,11 @@ class Common{
 	  if($page == 'Administrator')return 'Administrator';
 	  if($page == 'Manager')return 'Manager';
 	  if($page == 'Basic')return 'Basic';
-		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences,aclExpenses,aclECategories,aclTApproval FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		if(array_key_exists($page,$configData)){
-		  return $configData[$page];
+	  //$configData = Config::getAclLevel($page);
+		//list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences,aclExpenses,aclECategories,aclTApproval FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
+		//$configData = dbResult($qhq);
+		if(Config::getAclLevel($page) != false) {
+		  return Config::getAclLevel($page);
 		}
 		else {
 			echo "<pre>The ACL Level Requested (".$page.") could not be found</pre>";
@@ -1445,23 +1441,23 @@ class Common{
 
 	public static function getWeekStartDay() {
 
-		list($qhq, $numq) = dbQuery("SELECT weekstartday FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		return $configData["weekstartday"];
+		//list($qhq, $numq) = dbQuery("SELECT weekstartday FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
+		//$configData = dbResult($qhq);
+		return Config::getWeekStartDay();
 	}
 	
 	public static function getProjectItemsPerPage() {
 
-		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		return $configData["project_items_per_page"];
+		//list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
+		//$configData = dbResult($qhq);
+		return Config::getProjectItemsPerPage();
 	}
 	
 	public static function getTaskItemsPerPage() {
 
-		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		return $configData["task_items_per_page"];
+		//list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
+		//$configData = dbResult($qhq);
+		return Config::getTaskItemsPerPage();
 	}
 
 	public static function getFirstUser() {
@@ -1477,15 +1473,15 @@ class Common{
 
 	public static function getTimeFormat() {
 
-			list($qhq, $numq) = dbQuery("SELECT timeformat FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-			$configData = dbResult($qhq);
-			return $configData["timeformat"];
+			//list($qhq, $numq) = dbQuery("SELECT timeformat FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
+			//$configData = dbResult($qhq);
+			return Config::getTimeFormat();
 	}
 	
 	public static function getLayout() {
-		list($qhq, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
-			$configData = dbResult($qhq);
-			return $configData["simpleTimesheetLayout"];
+		//list($qhq, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM ".tbl::getConfigTable()." WHERE config_set_id = '1'");
+		//	$configData = dbResult($qhq);
+		return Config::getSimpleTimesheetLayout();
 	}
 	
 	public static function getVersion() {
@@ -1657,10 +1653,10 @@ class Common{
 	}
 
 	public static function gotoStartPage() {
-		list($result, $count) = dbQuery("SELECT startPage FROM ".tbl::getConfigTable()." WHERE config_set_id = '1';");
-		list($startPage) = dbResult($result);
+		//list($result, $count) = dbQuery("SELECT startPage FROM ".tbl::getConfigTable()." WHERE config_set_id = '1';");
+		//list($startPage) = dbResult($result);
 		
-		header("Location: $startPage");
+		header("Location: ".Config::getStartPage());
 		exit();
 	}
 	
