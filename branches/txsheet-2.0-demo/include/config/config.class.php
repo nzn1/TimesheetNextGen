@@ -78,9 +78,8 @@ class Config extends ConfigFactory {
 	protected static $aclTApproval;
 	protected static $simpleTimesheetLayout;
 	protected static $startPage;
-	protected static $timeZone;
 	protected static $project_items_per_page;
-  	protected static $task_items_per_page;
+  protected static $task_items_per_page;
   
 	
 	private static $defaultConfig;	
@@ -198,7 +197,7 @@ class Config extends ConfigFactory {
 	* Configuration Routine getTimeZone
 	*/
 	public static function getTimeZone() {
-		return self::$timeZone;
+		return self::$timezone;
 	}
 	/**
 	* Configuration Routine getHeaderHtml

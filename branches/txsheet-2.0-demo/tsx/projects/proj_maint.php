@@ -173,7 +173,7 @@ PageElements::setTheme('newcss');
 						"WHERE end_time > 0 AND tt.proj_id = $data[proj_id] ".
 						"AND at.proj_id = $data[proj_id] ".
 						"AND at.rate_id = rt.rate_id ".
-						"AND at.username = tt.uid ");
+						"AND at.username = tt.username ");
 			$bill_data = dbResult($billqh);
 
 			//start the row
