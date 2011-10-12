@@ -2,7 +2,7 @@
 
 class TsxTime extends stdClass{
 
-  public $uid;      
+  public $username;      
   public $start_time_str;
   public $end_time_str;
   public $start_stamp;
@@ -29,7 +29,7 @@ class TsxTime extends stdClass{
     
     if($timeObj == null)return 0;
     
-    $this->uid = $timeObj->uid;
+    $this->username = $timeObj->username;
     $this->start_time_str = $timeObj->start_time_str;
     $this->end_time_str = $timeObj->end_time_str;
     $this->start_stamp = $timeObj->start_stamp;
