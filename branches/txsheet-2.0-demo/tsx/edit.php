@@ -5,13 +5,13 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
-
+ppr($_POST);
 //load local vars from request/post/get
 $save_changes = isset($_REQUEST['save_changes']) ? $_REQUEST['save_changes']: false;
-$task_id = $_REQUEST['task_id'];
-$proj_id = $_REQUEST['proj_id'];
+$data['task_id'] = $_REQUEST['task_id'];
+$data['proj_id'] = $_REQUEST['proj_id'];
 $client_id = $_REQUEST['client_id'];
-$trans_num = $_REQUEST['trans_num'];
+$data['trans_num'] = $_REQUEST['trans_num'];
 $month = $_REQUEST['month'];
 $day = $_REQUEST['day'];
 $year = $_REQUEST['year'];
@@ -28,21 +28,23 @@ if ($action == "saveChanges") {
 	$clock_on_time_min = $_REQUEST['clock_on_time_min'];
 	$clock_off_time_hour = $_REQUEST['clock_off_time_hour'];
 	$clock_off_time_min = $_REQUEST['clock_off_time_min'];
-	$log_message = $_REQUEST['log_message'];
+	$data['log_message'] = $_REQUEST['log_message'];
 
-	$clock_on_time_string = "$clock_on_date_year-$clock_on_date_month-$clock_on_date_day $clock_on_time_hour:$clock_on_time_min:00";
-	$clock_off_time_string = "$clock_off_date_year-$clock_off_date_month-$clock_off_date_day $clock_off_time_hour:$clock_off_time_min:00";
+	$data['clock_on_time_string'] = "$clock_on_date_year-$clock_on_date_month-$clock_on_date_day $clock_on_time_hour:$clock_on_time_min:00";
+	$data['clock_off_time_string'] = "$clock_off_date_year-$clock_off_date_month-$clock_off_date_day $clock_off_time_hour:$clock_off_time_min:00";
 
-	$duration = Common::get_duration(strtotime($clock_on_time_string),strtotime($clock_off_time_string));
-
-	$q = "UPDATE ".tbl::getTimesTable()." SET start_time='$clock_on_time_string', ".
-								"end_time='$clock_off_time_string', ".
-								"duration=$duration, " .
-								"log_message='$log_message', ".
-								"task_id='$task_id', " .
-								"proj_id='$proj_id' " .
+	$data['duration'] = Common::get_duration(strtotime($data['clock_on_time_string']),strtotime($data['clock_off_time_string']));
+  
+  $data = recursive_mysql_real_escape_string($data);
+	
+  $q = "UPDATE ".tbl::getTimesTable()." SET start_time='".$data['clock_on_time_string']."', ".
+								"end_time='".$data['clock_off_time_string']."', ".
+								"duration=".$data['duration'].", " .
+								"log_message='".$data['log_message']."', ".
+								"task_id='".$data['task_id']."', " .
+								"proj_id='".$data['proj_id']."' " .
 								"WHERE ".
-								"trans_num='$trans_num'";
+								"trans_num='".$data['trans_num']."'";
 
 	 if(debug::getSqlStatement()==1)ppr($q,'SQL');
 	 $retval['status'] = Database::getInstance()->query($q);
@@ -52,12 +54,12 @@ if ($action == "saveChanges") {
 	   Debug::ppr(mysql_error(),'sqlError');
 	 }
 
-	gotoLocation(Config::getRelativeRoot()."/daily?client_id=$client_id&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;month=$month&amp;year=$year&amp;day=$day");
+	gotoLocation(Config::getRelativeRoot()."/daily?client_id=$client_id&amp;proj_id=".$data['proj_id']."&amp;task_id=".$data['task_id']."&amp;month=$month&amp;year=$year&amp;day=$day");
 	exit;
 }
 
 //get trans info
-$trans_info = Common::get_trans_info($trans_num);
+$trans_info = Common::get_trans_info($data['trans_num']);
 
 //There are several potential problems with the date/time data comming from the database
 //because this application hasn't taken care to cast the time data into a consistent TZ.
@@ -66,8 +68,8 @@ $trans_info = Common::get_trans_info($trans_num);
 Common::fixStartEndDuration($trans_info);
 
 if ($action != "saveChanges") {
-	$proj_id = $trans_info["proj_id"];
-	$task_id = $trans_info["task_id"];
+	$data['proj_id'] = $trans_info["proj_id"];
+	$data['task_id'] = $trans_info["task_id"];
 	$client_id = $trans_info["client_id"];
 }
 
@@ -111,9 +113,9 @@ PageElements::setBodyOnLoad("doOnLoad();");
 		<input type="hidden" name="month" value="<?php echo $month; ?>" />
 		<input type="hidden" name="day" value="<?php echo $day; ?>" />
 		<input type="hidden" id="client_id" name="client_id" value="<?php echo $client_id; ?>" />
-		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $proj_id; ?>" />
-		<input type="hidden" id="task_id" name="task_id" value="<?php echo $task_id; ?>" />
-		<input type="hidden" name="trans_num" value="<?php echo $trans_num; ?>" />
+		<input type="hidden" id="proj_id" name="proj_id" value="<?php echo $data['proj_id']; ?>" />
+		<input type="hidden" id="task_id" name="task_id" value="<?php echo $data['task_id']; ?>" />
+		<input type="hidden" name="trans_num" value="<?php echo $data['trans_num']; ?>" />
 		<input type="hidden" name="action" value="saveChanges" />
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 
