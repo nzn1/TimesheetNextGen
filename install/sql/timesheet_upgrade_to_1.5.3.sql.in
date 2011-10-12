@@ -7,26 +7,52 @@ CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__configuration` (
 -- copy stuff from active config to new configuration table 
 
 insert into configuration values ('version','1.5.3');
-insert into configuration values ('timezone',(select (timezone) from tsx_config where config_set_id=1));
 insert into configuration values ('locale',(select (locale) from tsx_config where config_set_id=1));
-insert into configuration values ('startPage',(select (startPage) from tsx_config where config_set_id=1));
+insert into configuration values ('timezone',(select (timezone) from tsx_config where config_set_id=1));
+insert into configuration values ('timeformat',(select (timeformat) from tsx_config where config_set_id=1));
 insert into configuration values ('weekstartday',(select (weekstartday) from tsx_config where config_set_id=1));
-insert into configuration values ('project_items_per_page',(select (project_items_per_page) from tsx_config where config_set_id=1));
-insert into configuration values ('task_items_per_page',(select (task_items_per_page) from tsx_config where config_set_id=1));
-insert into configuration values ('simpleTimesheetLayout',(select (simpleTimesheetLayout) from tsx_config where config_set_id=1));
-
 insert into configuration values ('useLDAP',(select (useLDAP) from tsx_config where config_set_id=1));
 insert into configuration values ('LDAPurl',(select concat((select (LDAPScheme) from tsx_config where config_set_id=1),"://",(select (LDAPHost) from tsx_config where config_set_id=1),":",(select (LDAPPort) from tsx_config where config_set_id=1),"/")));
-insert into configuration values ('LDAPProtocolVersion',(select (LDAPProtocolVersion) from tsx_config where config_set_id=1));
 insert into configuration values ('LDAPBaseDN',(select (LDAPBaseDN) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPFilter',(select (LDAPFilter) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPSearchScope',(select (LDAPSearchScope) from tsx_config where config_set_id=1));
 insert into configuration values ('LDAPUsernameAttribute',(select (LDAPUsernameAttribute) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPFallback',(select (LDAPFallback) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPReferrals',(select (LDAPReferrals) from tsx_config where config_set_id=1));
+insert into configuration values ('LDAPSearchScope',(select (LDAPSearchScope) from tsx_config where config_set_id=1));
+insert into configuration values ('LDAPFilter',(select (LDAPFilter) from tsx_config where config_set_id=1));
+insert into configuration values ('LDAPProtocolVersion',(select (LDAPProtocolVersion) from tsx_config where config_set_id=1));
 insert into configuration values ('LDAPBindUsername',(select (LDAPBindUsername) from tsx_config where config_set_id=1));
 insert into configuration values ('LDAPBindPassword',(select (LDAPBindPassword) from tsx_config where config_set_id=1));
 insert into configuration values ('LDAPBindByUser',(select (LDAPBindByUser) from tsx_config where config_set_id=1));
+insert into configuration values ('LDAPReferrals',(select (LDAPReferrals) from tsx_config where config_set_id=1));
+insert into configuration values ('LDAPFallback',(select (LDAPFallback) from tsx_config where config_set_id=1));
+
+insert into configuration values ('aclStopwatch',(select (aclStopwatch) from tsx_config where config_set_id=1));
+insert into configuration values ('aclDaily',(select (aclDaily) from tsx_config where config_set_id=1));
+insert into configuration values ('aclWeekly',(select (aclWeekly) from tsx_config where config_set_id=1));
+insert into configuration values ('aclMonthly',(select (aclMonthly) from tsx_config where config_set_id=1));
+insert into configuration values ('aclSimple',(select (aclSimple) from tsx_config where config_set_id=1));
+insert into configuration values ('aclClients',(select (aclClients) from tsx_config where config_set_id=1));
+insert into configuration values ('aclProjects',(select (aclProjects) from tsx_config where config_set_id=1));
+insert into configuration values ('aclTasks',(select (aclTasks) from tsx_config where config_set_id=1));
+insert into configuration values ('aclReports',(select (aclReports) from tsx_config where config_set_id=1));
+insert into configuration values ('aclRates',(select (aclRates) from tsx_config where config_set_id=1));
+insert into configuration values ('aclAbsences',(select (aclAbsences) from tsx_config where config_set_id=1));
+insert into configuration values ('aclExpenses',(select (aclExpenses) from tsx_config where config_set_id=1));
+insert into configuration values ('aclECategories',(select (aclECategories) from tsx_config where config_set_id=1));
+insert into configuration values ('aclTApproval',(select (aclTApproval) from tsx_config where config_set_id=1));
+
+
+insert into configuration values ('simpleTimesheetLayout',(select (simpleTimesheetLayout) from tsx_config where config_set_id=1));
+insert into configuration values ('startPage',(select (startPage) from tsx_config where config_set_id=1));
+insert into configuration values ('project_items_per_page',(select (project_items_per_page) from tsx_config where config_set_id=1));
+insert into configuration values ('task_items_per_page',(select (task_items_per_page) from tsx_config where config_set_id=1));
+
+
+
+
+
+
+
+
+
 -- new fields
 ALTER TABLE __TABLE_PREFIX__user  ADD   employee_type enum('Contractor','Employee') NOT NULL DEFAULT 'Employee';
 ALTER TABLE __TABLE_PREFIX__user  ADD supervisor int(11) DEFAULT NULL;
