@@ -1,3 +1,12 @@
+-- new fields
+ALTER TABLE __TABLE_PREFIX__user  ADD   employee_type enum('Contractor','Employee') NOT NULL DEFAULT 'Employee';
+ALTER TABLE __TABLE_PREFIX__user  ADD supervisor int(11) DEFAULT NULL;
+ALTER TABLE __TABLE_PREFIX__config  ADD  aclExpenses enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
+ALTER TABLE __TABLE_PREFIX__config  ADD  aclECategories enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
+ALTER TABLE __TABLE_PREFIX__config  ADD  aclTApproval enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
+
+
+
 CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__configuration` (
   `name` varchar(32) NOT NULL,
   `value` tinytext NOT NULL,
@@ -6,59 +15,55 @@ CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__configuration` (
 
 -- copy stuff from active config to new configuration table 
 
-insert into configuration values ('version','1.5.3');
-insert into configuration values ('locale',(select (locale) from tsx_config where config_set_id=1));
-insert into configuration values ('timezone',(select (timezone) from tsx_config where config_set_id=1));
-insert into configuration values ('timeformat',(select (timeformat) from tsx_config where config_set_id=1));
-insert into configuration values ('weekstartday',(select (weekstartday) from tsx_config where config_set_id=1));
-insert into configuration values ('useLDAP',(select (useLDAP) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPurl',(select concat((select (LDAPScheme) from tsx_config where config_set_id=1),"://",(select (LDAPHost) from tsx_config where config_set_id=1),":",(select (LDAPPort) from tsx_config where config_set_id=1),"/")));
-insert into configuration values ('LDAPBaseDN',(select (LDAPBaseDN) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPUsernameAttribute',(select (LDAPUsernameAttribute) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPSearchScope',(select (LDAPSearchScope) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPFilter',(select (LDAPFilter) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPProtocolVersion',(select (LDAPProtocolVersion) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPBindUsername',(select (LDAPBindUsername) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPBindPassword',(select (LDAPBindPassword) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPBindByUser',(select (LDAPBindByUser) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPReferrals',(select (LDAPReferrals) from tsx_config where config_set_id=1));
-insert into configuration values ('LDAPFallback',(select (LDAPFallback) from tsx_config where config_set_id=1));
+insert into __TABLE_PREFIX____TABLE_PREFIX__configuration values ('version','__TIMESHEET_VERSION__');
+insert into __TABLE_PREFIX__configuration values ('locale',(select (locale) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('timezone',(select (timezone) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('timeformat',(select (timeformat) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('weekstartday',(select (weekstartday) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('simpleTimesheetLayout',(select (simpleTimesheetLayout) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('startPage',(select (startPage) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('project_items_per_page',(select (project_items_per_page) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('task_items_per_page',(select (task_items_per_page) from __TABLE_PREFIX__config where config_set_id=1));
 
-insert into configuration values ('aclStopwatch',(select (aclStopwatch) from tsx_config where config_set_id=1));
-insert into configuration values ('aclDaily',(select (aclDaily) from tsx_config where config_set_id=1));
-insert into configuration values ('aclWeekly',(select (aclWeekly) from tsx_config where config_set_id=1));
-insert into configuration values ('aclMonthly',(select (aclMonthly) from tsx_config where config_set_id=1));
-insert into configuration values ('aclSimple',(select (aclSimple) from tsx_config where config_set_id=1));
-insert into configuration values ('aclClients',(select (aclClients) from tsx_config where config_set_id=1));
-insert into configuration values ('aclProjects',(select (aclProjects) from tsx_config where config_set_id=1));
-insert into configuration values ('aclTasks',(select (aclTasks) from tsx_config where config_set_id=1));
-insert into configuration values ('aclReports',(select (aclReports) from tsx_config where config_set_id=1));
-insert into configuration values ('aclRates',(select (aclRates) from tsx_config where config_set_id=1));
-insert into configuration values ('aclAbsences',(select (aclAbsences) from tsx_config where config_set_id=1));
-insert into configuration values ('aclExpenses',(select (aclExpenses) from tsx_config where config_set_id=1));
-insert into configuration values ('aclECategories',(select (aclECategories) from tsx_config where config_set_id=1));
-insert into configuration values ('aclTApproval',(select (aclTApproval) from tsx_config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('headerhtml',(select (headerhtml) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('footerhtml',(select (footerhtml) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('bannerhtml',(select (bannerhtml) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('tablehtml',(select (tablehtml) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('errorhtml',(select (errorhtml) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('bodyhtml',(select (bodyhtml) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('useLDAP',(select (useLDAP) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPurl',(select concat((select (LDAPScheme) from __TABLE_PREFIX__config where config_set_id=1),"://",(select (LDAPHost) from __TABLE_PREFIX__config where config_set_id=1),":",(select (LDAPPort) from __TABLE_PREFIX__config where config_set_id=1),"/")));
+insert into __TABLE_PREFIX__configuration values ('LDAPBaseDN',(select (LDAPBaseDN) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPUsernameAttribute',(select (LDAPUsernameAttribute) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPSearchScope',(select (LDAPSearchScope) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPFilter',(select (LDAPFilter) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPProtocolVersion',(select (LDAPProtocolVersion) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPBindUsername',(select (LDAPBindUsername) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPBindPassword',(select (LDAPBindPassword) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPBindByUser',(select (LDAPBindByUser) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPReferrals',(select (LDAPReferrals) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPFallback',(select (LDAPFallback) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPHost',(select (LDAPHost) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPPort',(select (LDAPPort) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('LDAPScheme',(select (LDAPScheme) from __TABLE_PREFIX__config where config_set_id=1));
+
+insert into __TABLE_PREFIX__configuration values ('aclStopwatch',(select (aclStopwatch) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclDaily',(select (aclDaily) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclWeekly',(select (aclWeekly) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclMonthly',(select (aclMonthly) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclSimple',(select (aclSimple) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclClients',(select (aclClients) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclProjects',(select (aclProjects) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclTasks',(select (aclTasks) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclReports',(select (aclReports) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclRates',(select (aclRates) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclAbsences',(select (aclAbsences) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclExpenses',(select (aclExpenses) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclECategories',(select (aclECategories) from __TABLE_PREFIX__config where config_set_id=1));
+insert into __TABLE_PREFIX__configuration values ('aclTApproval',(select (aclTApproval) from __TABLE_PREFIX__config where config_set_id=1));
 
 
-insert into configuration values ('simpleTimesheetLayout',(select (simpleTimesheetLayout) from tsx_config where config_set_id=1));
-insert into configuration values ('startPage',(select (startPage) from tsx_config where config_set_id=1));
-insert into configuration values ('project_items_per_page',(select (project_items_per_page) from tsx_config where config_set_id=1));
-insert into configuration values ('task_items_per_page',(select (task_items_per_page) from tsx_config where config_set_id=1));
 
-
-
-
-
-
-
-
-
--- new fields
-ALTER TABLE __TABLE_PREFIX__user  ADD   employee_type enum('Contractor','Employee') NOT NULL DEFAULT 'Employee';
-ALTER TABLE __TABLE_PREFIX__user  ADD supervisor int(11) DEFAULT NULL;
-ALTER TABLE __TABLE_PREFIX__config  ADD  aclExpenses enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
-ALTER TABLE __TABLE_PREFIX__config  ADD  aclECategories enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
-ALTER TABLE __TABLE_PREFIX__config  ADD  aclTApproval enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';
 
 --- change name of one field in times table
 ALTER TABLE __TABLE_PREFIX__times CHANGE `uid` `username` varchar(32) DEFAULT '' NOT NULL
@@ -101,7 +106,5 @@ CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__std_tasks` (
   `description` text,
   PRIMARY KEY (`task_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=187 ;
-
-
 
 ALTER TABLE __TABLE_PREFIX__times  ADD  `status` enum('Open','Submitted','Approved') NOT NULL DEFAULT 'Open';
