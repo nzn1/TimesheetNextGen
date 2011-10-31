@@ -1137,13 +1137,12 @@ class Common{
 	public static function client_select_droplist($clientId=1, $disabled=false, $info=true) {
 
 		$query = "SELECT client_id, organisation FROM ".tbl::getClientTable()." ORDER BY organisation";
-
-		//print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td width=\"100%\">";
-		print "<select name=\"client_id\" onchange=\"submit()\" style=\"width: 100%;\"";
-		if ($disabled)
-			print " disabled=\"disabled\"";
-		print ">\n";
-
+    ?>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="100%">
+		    <select name="client_id" onchange="submit()" style="width: 100%;" <?php if ($disabled)echo " disabled=\"disabled\"";?>>
+    <?php
 		list($qh, $num) = dbQuery($query);
 		if ($num > 0) {
 			while ($return = dbResult($qh)) {
@@ -1156,25 +1155,27 @@ class Common{
 			}
 			print "</select>";
 			if($info) {
-				print "</td><td width=\"0\">";
-				print "<input type=\"button\" name=\"info\" value=\"Info\"";
-				print "onclick=\"window.open('".Config::getRelativeRoot()."/client_info?client_id=$clientId',";
-				print "'Client_Info',";
-				print "'location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200') />";
-			}
-			//print "</td></tr></table>";
+			?>
+				</td>
+        <td width="0">
+				<input type="button" name="info" value="Info" onclick="window.open('<?php echo Config::getRelativeRoot();?>/clients/client_info?client_id=<?php echo $clientId;?>','Client_Info','location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=200')" />
+			<?php
+      }
+			?>
+      </td>
+      </tr>
+      </table>
+      <?php
 		}
-		else
+		else{
 			print "</select>";
-			//print "</td></tr></table>";
+			print "</td></tr></table>";
+		}
 	}
 
 	public static function project_select_droplist($projId=1, $disabled='false') {
 
-			$query = "SELECT " .
-							"proj_id, " .
-							"title, " .
-							"organisation " .
+			$query = "SELECT proj_id, title, organisation " .
 							"FROM ".tbl::getProjectTable().", ".tbl::getClientTable()." ".
 							"WHERE ".tbl::getProjectTable().".client_id = ".tbl::getClientTable().".client_id ".
 							"ORDER BY ".tbl::getClientTable().".organisation, ".tbl::getProjectTable().".title";
@@ -1211,45 +1212,7 @@ class Common{
 
 
 	public static function present_log_message($action) {
-		global $check_in_time_hour, $check_out_time_hour,$check_in_time_min, $check_out_time_min, $destination;
-	?>
-<HTML>
-<body bgcolor="#FFFFFF" >
-<form action="<?php echo Config::getRelativeRoot(); ?>/clock_action" method="post">
-<table border="1" align="center">
-	<?php {
-	if ($destination)
-		print "<input type=\"hidden\" name=destination value=$destination />\n";
-		print "<input type=\"hidden\" name=check_in_time_hour value=\"$check_in_time_hour\" />\n";
-		print "<input type=\"hidden\" name=check_out_time_hour value=\"$check_out_time_hour\" />\n";
-		print "<input type=\"hidden\" name=check_in_time_min value=\"$check_in_time_min\" />\n";
-		print "<input type=\"hidden\" name=check_out_time_min value=\"$check_out_time_min\" />\n";
-		print "<input type=\"hidden\" name=year value=\"".gbl::getYear()."\" />\n";
-		print "<input type=\"hidden\" name=month value=\"".gbl::getMonth()."\" />\n";
-		print "<input type=\"hidden\" name=day value=\"".gbl::getDay()."\" />\n";
-		print "<input type=\"hidden\" name=proj_id value=\"".gbl::getProjId()."\" />\n";
-		print "<input type=\"hidden\" name=task_id value=\"".gbl::getTaskId()."\" />\n";
-		switch($action) {
-		case "inout":
-			print "<input type=\"hidden\" name=\"check_in_out_x\" value=\"1\" />\n";
-			break;
-		case "at":
-			print "<input type=\"hidden\" name=\"check_out_at_x\" value=\"1\" />\n";
-			break;
-		case "now":
-			print "<input type=\"hidden\" name=\"check_out_now_x\" value=\"1\" />\n";
-		}
-		print "<input type=\"hidden\" name=\"log_message_presented\" value=\"1\" />\n";
-}?>
-
-	<tr><td><?php echo JText::_('ENTER_LOG_MESSAGE'); ?></td></tr>
-	<tr><td><TEXTAREA name=log_message COLS=60 ROWS=4></TEXTAREA></td></tr>
-	<tr><td><input type="submit" value="Done" /></td></tr>
-</table>
-</FORM>
-</body>
-</HTML>
-<?php
+	   ErrorHandler::fatalError('Common::present_log_message($action) has been removed on 31-10-2011 as it does not appear to be used.','Deprecated Method','Deprecated Method');
 	}
 
 	public static function proj_status_list($name, $status='',$size='') {

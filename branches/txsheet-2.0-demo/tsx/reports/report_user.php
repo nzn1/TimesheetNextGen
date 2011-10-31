@@ -139,6 +139,7 @@ if($orderby == "date") {
 	$colVar[]="log";
 	$colWid[]="width=\"35%\"";
 	$colAlign[]=""; $colWrap[]="";
+
 // add status field
 	$colVar[]="status";
 	$colWid[]="width=\"5%\"";
@@ -311,7 +312,7 @@ else {  //create Excel header
 	if ($num == 0) {
 	 ?>
 		<tr>
-      <td align=\"center\">
+      <td align="center">
         <i><br />No hours recorded.<br /><br /></i>
       </td>    
     </tr>
@@ -354,7 +355,8 @@ else {  //create Excel header
 					}
 					$level_total[1]=0;
 				}
-				if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
+				
+        if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
 					if($grand_total_time) {
 						$formatted_time = $report->format_time($level_total[0],$time_fmt);
 						echo "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
@@ -369,12 +371,12 @@ else {  //create Excel header
 					echo "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
-							$report->printInfo($colVar[$i], $data);
+							$report->printInfo($colVar[$i], $data, $time_fmt);
 							$last_colVar[$i]=$data[$colVar[$i]];
 						} else
 							echo "&nbsp;";
 					} else
-							$report->printInfo($colVar[$i], $data);
+							$report->printInfo($colVar[$i], $data, $time_fmt);
 					echo "</td>";
 				}
 				echo "</tr>";
@@ -435,22 +437,9 @@ else {  //create Excel header
 		</td>
 	</tr>
 </table>
-<?php if ($print) { ?>
-	<table width="100%" border="1" cellspacing="0" cellpadding="0">
-		<tr>
-			<td width="30%"><table><tr><td><?php echo JText::_('EMPLOYEE_SIGNATURE'); ?>:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-		</tr>
-		<tr>
-			<td width="30%"><table><tr><td><?php echo JText::_('MANAGER_SIGNATURE'); ?>:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-		</tr>
-		<tr>
-			<td width="30%"><table><tr><td><?php echo JText::_('CLIENT_SIGNATURE'); ?>:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-		</tr>
-	</table>		
-<?php } //end if($print) 
+<?php if ($print) {
+  $report->displaySignature(true,true,true);
+} 
 ?>
 
 </form>

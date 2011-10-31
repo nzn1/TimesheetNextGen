@@ -48,7 +48,7 @@ class Developer{
 
   public static function configTable(){
 
-    $q = "SHOW COLUMNS FROM ".tbl::getTimesTable().";";    
+    $q = "SHOW COLUMNS FROM ".tbl::getConfigTable().";";    
     $data = Database::getInstance()->sql($q,Database::TYPE_OBJECT);
     $aclExpenses = FALSE;
     $aclECategories = FALSE;
@@ -62,7 +62,7 @@ class Developer{
       if($obj->Field == 'aclECategories'){
       	$aclECategories = TRUE;
       }
-      if($obj->Field == '$aclTApproval'){
+      if($obj->Field == 'aclTApproval'){
       	$aclTApproval = TRUE;
       }
     }
@@ -81,7 +81,7 @@ class Developer{
     if ($aclTApproval == FALSE) {
         $msg .= "A new column aclTApproval has been added to the config table.<br />"
             ."Look in the upgrade sql.in file for the line below and update your db:<br />"
-            ."ALTER TABLE __TABLE_PREFIX__config  ADD  aclECategories enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';";
+            ."ALTER TABLE __TABLE_PREFIX__config  ADD  aclTApproval enum('Admin','Mgr','Basic','None') NOT NULL DEFAULT 'Basic';";
         $title = "Database Update Required";  
     }
     if ($title != "") {
