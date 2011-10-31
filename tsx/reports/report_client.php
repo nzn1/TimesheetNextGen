@@ -2,24 +2,23 @@
 
 if(!class_exists('Site'))die('Restricted Access');
 
-// NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
-//        or the export to excel won't work in IE
-session_cache_limiter('public');
-
-if(!class_exists('Site')){
-	die('remove .php from the url to access this page');
-}
-
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
 //export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
-$export_excel=false;
-if (isset($_GET["export_excel"]))
-	if($_GET["export_excel"] == "1")
-		$export_excel=true;
+if (isset($_REQUEST["export_excel"]) && $_REQUEST["export_excel"] == "1"){
+  $export_excel=true;
+}
+else{
+  $export_excel=false;
+}
 
+ob_start();
+//Create the excel headers now, if needed
 if($export_excel){
-	header('Expires: 0');
+  // NOTE:  The session cache limiter and the excel stuff must appear before the session_start call, or the export to excel won't work in IE
+  session_cache_limiter('public');
+	
+  header('Expires: 0');
 	header('Cache-control: public');
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 	header('Content-Description: File Transfer');
@@ -29,54 +28,62 @@ if($export_excel){
 	// When exporting data to excel, ensure the numbers written in the spreadsheet 
 	// are in H.F format rather than HH:MI  
 	$time_fmt = "decimal";
-} else
+} else{
 	$time_fmt = "time";
-
+}
 
 //load local vars from request/post/get
-if (isset($_REQUEST['uid']))
-	$uid = $_REQUEST['uid'];
-else
-	//get the first user from the database
-	//$uid = getFirstUser();
+if (isset($_REQUEST['uid'])){
+	$uid = gbl::getUid();
+}
+else{
 	$uid = gbl::getContextUser();
+}
 
-if (isset($_REQUEST['print']))
+if (isset($_REQUEST['print'])){
 	$print = true;
-else
-	$print = false;
-$client_id =  gbl::getClientId();
-if ($client_id == 0)
+}
+else{
+  $print = false;
+}
+
+if (gbl::getClientId() == 0){
 	//get the first project
-	$client_id = Common::getFirstClient();
+	gbl::setClientId(Common::getFirstClient());
+}
 
-//Need them all
-$uid=''; $proj_id=0;
+//I think UID must be set to '' as we want all client data - not user specific
+$uid=''; 
 
-//get the context date
-$proj_id = gbl::getProjId();
-$year = gbl::getYear();
-$month = gbl::getMonth();
-$day = gbl::getDay();
-
-$todayDate = mktime(0, 0, 0, $month, $day, $year);
-$dateValues = getdate($todayDate);
+$dateValues = gbl::getContextDate();
 $ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
-if (gbl::getMode() == "all" || gbl::getMode() == "monthly") $mode = "monthly";
-	else $mode = "weekly";
+if (gbl::getMode() == "all" || gbl::getMode() == "monthly"){
+  $mode = "monthly";
+}
+else{
+  $mode = "weekly";
+}
+
 if ($mode == "monthly") {
 	$startDate = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
 	$startStr = date("Y-m-d H:i:s",$startDate);
 
 	$endDate = Common::getMonthlyEndDate($dateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 month");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 month");		
 }
-if ($mode == "weekly") {
-	list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
+else if ($mode == "weekly") {
+	list($startDate,$endDate) = Common::getWeeklyStartEndDates(gbl::getContextTimestamp());
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 week");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 week");	
+	
+
+
 }
 
 //Setup the variables so we can let the user choose how to order things...
@@ -84,20 +91,20 @@ $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
-list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, $proj_id, $client_id);
+list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, gbl::getProjId(), gbl::getClientId());
 
 if($orderby == "project") {
 	$subtotal_label[]="Project total";
 	$colVar[]="projectTitle";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
-	$colAlign[]=""; $colWrap[]="nowrap";
+	$colAlign[]=""; $colWrap[]="nowrap=\"nowrap\"";
 
 	$subtotal_label[]="Task total";
 	$colVar[]="taskName";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
-	$colAlign[]=""; $colWrap[]="nowrap";
+	$colAlign[]=""; $colWrap[]="nowrap=\"nowrap\"";
 
 	$colVar[]="start_stamp";
 	$colWid[]="width=\"10%\"";
@@ -105,6 +112,11 @@ if($orderby == "project") {
 
 	$colVar[]="log";
 	$colWid[]="width=\"35%\"";
+	$colAlign[]=""; $colWrap[]="";
+
+  // add status field
+	$colVar[]="status";
+	$colWid[]="width=\"5%\"";
 	$colAlign[]=""; $colWrap[]="";
 
 	$colVar[]="duration";
@@ -123,129 +135,79 @@ if($orderby == "date") {
 	$colVar[]="projectTitle";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
-	$colAlign[]=""; $colWrap[]="nowrap";
+	$colAlign[]=""; $colWrap[]="nowrap=\"nowrap\"";
 
 	$colVar[]="taskName";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
-	$colAlign[]=""; $colWrap[]="nowrap";
+	$colAlign[]=""; $colWrap[]="nowrap=\"nowrap\"";
 
 	$colVar[]="log";
 	$colWid[]="width=\"35%\"";
 	$colAlign[]=""; $colWrap[]="";
 
+// add status field
+	$colVar[]="status";
+	$colWid[]="width=\"5%\"";
+	$colAlign[]=""; $colWrap[]="";
+	
 	$colVar[]="duration";
 	$colWid[]="width=\"10%\"";
 	$colAlign[]="align=\"right\"";
 	$colWrap[]="";
 }
 
-function format_time($time,$time_fmt) {
-	if($time > 0) {
-		if($time_fmt == "decimal")
-			return Common::minutes_to_hours($time);
-		else 
-			return Common::format_minutes($time);
-	} else 
-		return "-";
+require_once('report.class.php');
+$report = new Report();
+
+$Location= Rewrite::getShortUri()."?$ymdStr&amp;orderby=$orderby&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
+gbl::setPost("&amp;orderby=$orderby&amp;client_id=".gbl::getClientId()."&amp;mode=$mode");
+
+if(!$export_excel){ 
+
+?>
+<script type="text/javascript">
+report = new Object();
+report.location = "<?php echo $Location;?>";
+</script>
+
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/reports.js"></script>
+
+<?php
+
 }
 
-function jsPopupInfoLink($script, $variable, $info, $title = "Info") {
-	print "<a href=\"javascript:void(0)\" onclick=\"window.open('" . $script .
-		"?$variable=$info','$title','location=0,directories=no,status=no,scrollbar=yes," .
-		"menubar=no,resizable=1,width=500,height=200')\">";
-}
-
-function make_daily_link($ymdStr, $proj_id, $string) {
-	echo "<a href=\"".Config::getRelativeRoot()."/daily?" .  $ymdStr .  "&amp;proj_id=$proj_id\">" . 
-		$string .  "</a>&nbsp;"; 
-}
-
-function printInfo($type, $data, $time_fmt) {
-
-
-	if($type == "projectTitle") {
-		jsPopupInfoLink(Config::getRelativeRoot()."/projects/proj_info", "proj_id", $data["proj_id"], "Project_Info");
-		print stripslashes($data["projectTitle"])."</a>&nbsp;\n";
-	} else if($type == "taskName") {
-		jsPopupInfoLink(Config::getRelativeRoot()."/tasks/task_info", "task_id", $data["task_id"], "Task_Info");
-		print stripslashes($data["taskName"])."</a>&nbsp;\n";
-	} else if($type == "duration") {
-		//jsPopupInfoLink(Config::getRelativeRoot()."/trans_info", "trans_num", $data["trans_num"], "Time_Entry_Info");
-		print format_time($data["duration"],$time_fmt);
-	} else if($type == "start_stamp") {
-		$dateValues = getdate($data["start_stamp"]);
-		$ymdStr = "&year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
-		$formattedDate = sprintf("%04d-%02d-%02d",$dateValues["year"],$dateValues["mon"],$dateValues["mday"]); 
-		make_daily_link($ymdStr,0,$formattedDate); 
-	} else if($type == "log") {
-		if ($data['log_message']) print nl2br(stripslashes($data['log_message']));
-		else print "&nbsp;";
-	} else print "type unknown: $type &nbsp;";
-}
-
-function make_index($data,$order) {
-	if($order == "date") {
-		$index=$data["start_stamp"] . sprintf("-%05d",$data["task_id"]) . 
-			sprintf("-%05d",$data["task_id"]);
-	} else {
-		$index=sprintf("%05d",$data["proj_id"]) .  sprintf("-%05d-",$data["task_id"]) .
-			$data["start_stamp"];
+echo"<title>".Config::getMainTitle()." | ".JText::_('CLIENT_REPORT')." | ".gbl::getContextUser()."</title>";
+ 
+if($export_excel){
+  echo "<style type=\"text/css\"> ";
+	 include ("css/timesheet.css");
+echo "</style>";
 	}
-	return $index;
-}
-
-$Location= Rewrite::getShortUri()."?$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
-gbl::setPost("&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode");
-
-PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('CLIENT_REPORT')." | ".gbl::getContextUser()."</title>");
-
-if(!$export_excel) 
-	require("report_javascript.inc");
+PageElements::setHead(ob_get_contents());
+ob_end_clean();
 ?>
 
-<html>
-<head>
-<?php 
-	if(!$export_excel) ; //include ("header.inc");
-	else {
-		print "<style type=\"text/css\"> ";
-		include ("css/timesheet.css");
-		print "</style>";
-	}
-?>
-</head>
 <h1><?php echo JText::_('CLIENT_REPORT'); ?></h1>
 
 <?php
 	if($print) {
-		echo "<body width=\"100%\" height=\"100%\"";
-		//include ("body.inc");
-
-		echo "onLoad=window.print();";
-		echo ">\n";
-	} else if($export_excel) {
-		echo "<body ";
-		//include ("body.inc");
-		echo ">\n";
-	} else {
-		echo "<body ";
-		//include ("body.inc");
-		echo ">\n";
-		echo "<div id=\"header\">";
-		//include ("banner.inc");
-		$motd = 0;  //don't want the motd printed
+     PageElements::setBodyOnLoad('window.print();');
+	} 
+  else if($export_excel) {
+	} 
+  else {
 		require_once("include/tsx/navcal/navcal.class.php");
 	  $nav = new NavCal();
-    
-    if($mode=='weekly'){
-			$nav->navCalNormal();
-		}
+	
+		if($mode=='weekly'){
+      $nav->navCalNormal();
+    }
 		else{
-		    $nav->navCalMonthly();
-		}
-		echo "</div>";
+      $nav->navCalMonthly();
+    }
 	}
+
 ?>
 
 <?php if(!$export_excel) { ?>
@@ -258,57 +220,41 @@ if(!$export_excel)
 </script>
 <form action="<?php echo Rewrite::getShortUri(); ?>" method="post" name="subreport">
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
-<input type="hidden" name="year" value="<?php echo $year; ?>" />
-<input type="hidden" name="month" value="<?php echo $month; ?>" />
-<input type="hidden" name="day" value="<?php echo $day; ?>" />
-<input type="hidden" name="proj_id" value="<?php echo $proj_id; ?>" />
+<input type="hidden" name="year" value="<?php echo gbl::getYear(); ?>" />
+<input type="hidden" name="month" value="<?php echo gbl::getMonth(); ?>" />
+<input type="hidden" name="day" value="<?php echo gbl::getDay(); ?>" />
+<input type="hidden" name="proj_id" value="<?php echo gbl::getProjId(); ?>" />
 <input type="hidden" name="mode" value="<?php echo $mode; ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td class="face_padding_cell">
 
-<!-- include the timesheet face up until the heading start section -->
-
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" width="35%">
-							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
+							<table width="100%" border="0" cellpadding="1" cellspacing="2">
 								<tr>
 									<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('CLIENT'); ?>:</td>
 									<td align="left" width="100%">
-											<?php Common::client_select_droplist($client_id, false, !$print); ?>
+											<?php Common::client_select_droplist(gbl::getClientId(), false, !$print); ?>
 									</td>
 								</tr>
 							</table>
 						</td>
 						<td align="center" class="outer_table_heading">
-						<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $startDate); ?>" />
-						&nbsp;&nbsp;&nbsp;
-						<?php
-						if ($mode == "monthly") {
-							echo JText::_('SELECT_OTHER_MONTH').": ";
-						?>
-							<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
-						<?php 
-						}
-						else { 
-							echo JText::_('SELECT_OTHER_WEEK').": ";
-						?>
-							<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
-						<?php
-						} 
-						?>
-			</td>
-						<?php if (!$print): ?>
+						<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
+						</td>
+						
+						<?php //}
+							if (!$print){ ?>
 							<td  align="right" width="15%" >
-								<button name="export_excel" onclick="reload2Export()" value="1"><img src="../images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
-								<button onclick="popupPrintWindow()"><img src="../images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_xport-2-excel.gif" alt="Export to Excel" /></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_printer.gif" alt="Print Report" /></button>
 							</td>
-						<?php endif; ?>
+						<?php }?>
 					</tr>
 				</table>
-
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -316,7 +262,7 @@ if(!$export_excel)
 
 <?php } // end if !export_excel
 else {  //create Excel header
-	$cn = get_client_name($client_id);
+	$cn = get_client_name(gbl::getClientId());
 	echo "<h4>Report for $cn<br />";
 	if ($mode == "weekly") {
 		$sdStr = date("M d, Y",$startDate);
@@ -324,29 +270,36 @@ else {  //create Excel header
 		//could mess things up, so go back 6 hours...
 		$edStr = date("M d, Y",$endDate - 6*60*60); 
 		echo "Week: $sdStr&nbsp;&nbsp;-&nbsp;&nbsp;$edStr"; 
-	} else
+	} 
+  else{
 		echo "Month of ".date('F, Y',$startDate);
+	}
 	echo "</h4>";
 }
 ?>
-
 				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
 					<!-- Table header line -->
 					<tr class="inner_table_head">
 					<?php 
-						$projPost="$ymdStr&amp;orderby=project&amp;client_id=$client_id&amp;mode=$mode";
-						$datePost="$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
-						if($orderby== 'project'): ?>
+						$projPost="$ymdStr&amp;orderby=project&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
+						$datePost="$ymdStr&amp;orderby=date&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
+						if($orderby== 'project'){ ?>
 							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('PROJECT'); ?></a></td>
 							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
 							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
-						<?php else: ?>
+						<?php 
+						}
+            else {
+            ?>
 							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
 							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('PROJECT'); ?></a></td>
 							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
-						<?php endif; ?>
+						<?php
+            }
+            ?>
 						<td class="inner_table_column_heading"><?php echo JText::_('DESCRIPTION'); ?></td>
-						<td class="inner_table_column_heading"><?php echo JText::_('DURATION'); ?></td>
+						<td class="inner_table_column_heading"><?php echo JText::_('STATUS'); ?></td>
+            <td class="inner_table_column_heading"><?php echo JText::_('DURATION'); ?></td>
 					</tr>
 <?php
 	$darray=array();
@@ -354,11 +307,13 @@ else {  //create Excel header
 	$grand_total_time = 0;
 
 	if ($num == 0) {
-		print "	<tr>\n";
-		print "		<td align=\"center\">\n";
-		print "			<i><br />No hours recorded.<br /><br /></i>\n";
-		print "		</td>\n";
-		print "	</tr>\n";
+	 ?>
+		<tr>
+      <td align="center">
+        <i><br />No hours recorded.<br /><br /></i>
+      </td>    
+    </tr>
+		<?php
 	} else {
 		//Setup for two levels of subtotals
 		$last_colVar[0]='';
@@ -391,36 +346,37 @@ else {  //create Excel header
 
 				if(isset($subtotal_label[1]) && (($last_colVar[1] != $data[$colVar[1]]) || ($last_colVar[0] != $data[$colVar[0]]))) {
 					if($grand_total_time) {
-						$formatted_time = format_time($level_total[1],$time_fmt);
-						print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
+						$formatted_time = $report->format_time($level_total[1],$time_fmt);
+						echo "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 					}
 					$level_total[1]=0;
 				}
-				if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
+				
+        if(isset($subtotal_label[0]) && ($last_colVar[0] != $data[$colVar[0]])) {
 					if($grand_total_time) {
-						$formatted_time = format_time($level_total[0],$time_fmt);
-						print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
+						$formatted_time = $report->format_time($level_total[0],$time_fmt);
+						echo "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 							$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 					}
 					$level_total[0]=0;
 					$last_colVar[1]="";
 				}
 
-				print "<tr>";
-				for($i=0; $i<5; $i++) {
-					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
+				echo "<tr>";
+				for($i=0; $i<6; $i++) {
+					echo "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
-							printInfo($colVar[$i], $data, $time_fmt);
+							$report->printInfo($colVar[$i], $data, $time_fmt);
 							$last_colVar[$i]=$data[$colVar[$i]];
 						} else
-							print "&nbsp;";
+							echo "&nbsp;";
 					} else
-							printInfo($colVar[$i], $data, $time_fmt);
-					print "</td>";
+							$report->printInfo($colVar[$i], $data, $time_fmt);
+					echo "</td>";
 				}
-				print "</tr>";
+				echo "</tr>";
 
 				$level_total[0] += $data["duration"];
 				$level_total[1] += $data["duration"];
@@ -429,22 +385,21 @@ else {  //create Excel header
 		}
 
 		if (isset($subtotal_label[1]) && $level_total[1]) {
-			$formatted_time = format_time($level_total[1],$time_fmt);
-			print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
+			$formatted_time = $report->format_time($level_total[1],$time_fmt);
+			echo "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[1].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[1].": <span class=\"report_sub_total1\">$formatted_time</span></td></tr>\n";
 		}
 		if (isset($subtotal_label[0]) && $level_total[0]) {
-			$formatted_time = format_time($level_total[0],$time_fmt);
-			print "<tr><td colspan=\"5\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
+			$formatted_time = $report->format_time($level_total[0],$time_fmt);
+			echo "<tr><td colspan=\"6\" align=\"right\" class=\"calendar_totals_line_weekly_right\">" .
 				//$subtotal_label[0].": <span class=\"calendar_total_value_weekly\">$formatted_time</span></td></tr>\n";
 				$subtotal_label[0].": <span class=\"report_total\">$formatted_time</span></td></tr>\n";
 		}
-		$formatted_time = format_time($grand_total_time,$time_fmt);
+		$formatted_time = $report->format_time($grand_total_time,$time_fmt);
 	}
+
 ?>
-						</tr>
-					</td>
 				</table>
 			</td>
 		</tr>
@@ -457,13 +412,13 @@ else {  //create Excel header
 					<tr>
 						<td align="right" class="report_grand_total">
 <?php
-	if ($mode == "weekly")
-		print "Weekly";
-	else
-		print "Monthly";
+	if ($mode == "weekly"){
+		echo "Weekly total: ".$formatted_time;
+	}
+	else{
+		echo "Monthly total: ".$formatted_time;
+	}
 ?>
-							total:
-							<?php echo $formatted_time; ?>
 						</td>
 					</tr>
 				</table>
@@ -476,27 +431,19 @@ else {  //create Excel header
 
 <?php if(!$export_excel) { ?>
 
-
 		</td>
 	</tr>
 </table>
-<?php if ($print) { ?>
-	<table width="100%" border="1" cellspacing="0" cellpadding="0">
-		<tr>
-			<td width="30%"><table><tr><td><?php echo JText::_('MANAGER_SIGNATURE'); ?>:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-		</tr>
-		<tr>
-			<td width="30%"><table><tr><td><?php echo JText::_('CLIENT_SIGNATURE'); ?>:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-		</tr>
-	</table>		
-<?php } //end if($print) ?>
+<?php if ($print) {
+  $report->displaySignature(true,true,true);
+} 
+?>
+
 </form>
-<?php if (!$print) {
-		echo "<div id=\"footer\">"; 
-		//include ("footer.inc"); 
-		echo "</div>";
-	}
+<?php
 } //end if !export_excel 
+
+if($export_excel){
+exit();
+}
 ?>
