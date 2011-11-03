@@ -246,7 +246,7 @@ ob_end_clean();
 						<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
 						</td>
 						
-						<?php //}
+						<?php
 							if (!$print){ ?>
 							<td  align="right" width="15%" >
 								<button name="export_excel" onclick="reload2Export(this.form)"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_xport-2-excel.gif" alt="Export to Excel" /></button> &nbsp;

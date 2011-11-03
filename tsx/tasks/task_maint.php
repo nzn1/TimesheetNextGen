@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
 
-
+$proj_id = gbl::getProjId();
 if (empty($proj_id))
 	$proj_id = 1;
 

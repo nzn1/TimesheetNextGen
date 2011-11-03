@@ -637,10 +637,10 @@ class Common{
 		while ($i <= 12) {
 			switch($i) {
 			case $month:
-				echo "<option value=\"$i\" selected=\"selected\" >" . utf8_encode(strftime("%b",mktime(0,0,0,$i,1,1999))) . "\n";
+				echo "<option value=\"$i\" selected=\"selected\" >" . utf8_encode(strftime("%b",mktime(0,0,0,$i,1,1999))) . "</option>\n";
 			break;
 			default:
-				echo "<option value=\"$i\">". utf8_encode(strftime("%b",mktime(0,0,0,$i,1,1999))) . "\n";
+				echo "<option value=\"$i\">". utf8_encode(strftime("%b",mktime(0,0,0,$i,1,1999))) . "</option>\n";
 			}
 			$i++;
 		}
@@ -660,10 +660,10 @@ class Common{
 		while ($i <= $year+5) {
 			switch($i) {
 			case $year:
-				echo "<option value=\"$i\" selected=\"selected\" >$i\n";
+				echo "<option value=\"$i\" selected=\"selected\" >".$i."</option>\n";
 				break;
 			default:
-				echo "<option value=\"$i\">$i\n";
+				echo "<option value=\"$i\">".$i."</option>\n";
 			}
 			$i++;
 		}

@@ -3,6 +3,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
+PageElements::setTheme('newcss');
 
 //export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
 if (isset($_REQUEST["export_excel"]) && $_REQUEST["export_excel"] == "1"){

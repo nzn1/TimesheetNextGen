@@ -100,6 +100,35 @@ public function displaySignature($employee=true,$manager=true,$client=true){
 }
 
 /*
+/**********************************************************************************************************
+ * This function assists the routine in common.inc that splits tasks into discrete days
+ * called split_data_into_discrete_days();   That function needs to put things into a new 
+ * array, and in order to get things out of that array in the order we want them in, we 
+ * need to help that function out by telling it how to make an index for that array.
+ */
+/*
+function make_index($data,$order) {
+	if($order == "date") {
+		$index=$data["start_stamp"] . sprintf("-%05d",$data["proj_id"]) . 
+			sprintf("-%05d",$data["task_id"]);
+	} else {
+		$index=sprintf("%05d",$data["proj_id"]) .  sprintf("-%05d-",$data["task_id"]) .
+			$data["start_stamp"];
+	}
+	return $index;
+}
+
+function format_time($time,$time_fmt) {
+	if($time > 0) {
+		if($time_fmt == "decimal")
+			return Common::minutes_to_hours($time);
+		else 
+			return Common::format_minutes($time);
+	} else 
+		return "-";
+}
+*/
+/*
 function format_time($time,$time_fmt) {
 	if($time > 0) {
 		if($time_fmt == "decimal")

@@ -196,6 +196,58 @@ border-spacing:0;
 #simple .simpleTable .task_time_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #00066F; display:block;}
 /*********************************************************************/
 
+/******************* REPORT GRID CLIENT USER *************************/
+
+		table.report {
+			border-collapse:collapse;
+			margin:1em;
+		}
+		table.report th.project{
+			text-align:center;
+			font-style:italic;
+		}
+		table.report td, table.report th{
+			padding:0.2em 0.7em;
+			text-align:right;
+			border:1px solid #5271CC;
+		}
+		table.report th.first{
+			border:none;
+		}
+		table.report tr.weekend td{
+			background-color:#CCCCCC;
+		}
+		table.report th {
+			text-align:left;
+			font-size:0.7em;
+		}
+		table.report td.grandtotal{
+			color:red;
+			font-size:0.8em;
+		}
+
+		@media print{
+			div#header { display:none; }
+			div#footer { display:none; }
+			a.export { display:none; }
+			td.print { display:none; }
+			td.next_prev_links {display:none;}
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .align_right{text-align:right;}
 .align_center{text-align:center;}
 
