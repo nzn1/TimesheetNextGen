@@ -76,7 +76,7 @@ list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, $proj_id, $
 
 if($orderby == "username") {
 	$subtotal_label[]="User total";
-	$colVar[]="uid";
+	$colVar[]="username";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
 	$colAlign[]=""; $colWrap[]="nowrap";
@@ -113,7 +113,7 @@ else if($orderby == "project") {
 	$colAlign[]=""; $colWrap[]="nowrap";
 
 //	$subtotal_label[]="User total";
-	$colVar[]="uid";
+	$colVar[]="username";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
 	$colAlign[]=""; $colWrap[]="nowrap";
@@ -138,7 +138,7 @@ else if($orderby == "task") {
 	$colAlign[]=""; $colWrap[]="";
 
 //	$subtotal_label[]="User total";
-	$colVar[]="uid";
+	$colVar[]="username";
 //	$colWid[]="width=\"15%\"";
 	$colWid[]="";
 	$colAlign[]=""; $colWrap[]="nowrap";
@@ -174,8 +174,8 @@ function make_user_link($uid, $string) {
 function printInfo($type, $data) {
 	global $ymdStr, $time_fmt;	
 
-	if($type == "uid") {
-		make_user_link($data["uid"],$data["uid"]);
+	if($type == "username") {
+		make_user_link($data["username"],$data["username"]);
 		print "</td>";
 		print "<td valign=\"top\" class=\"calendar_cell_middle\">";
 		print $data["first_name"]."&nbsp;</td>";
@@ -195,7 +195,7 @@ function printInfo($type, $data) {
 }
 
 function printBlanks($type) {
-	if($type == "uid") {
+	if($type == "username") {
 		print "&nbsp;</td>";
 		print "<td valign=\"top\" class=\"calendar_cell_middle\">";
 		print "&nbsp;</td>";
@@ -212,16 +212,16 @@ function printBlanks($type) {
 
 function make_index($data,$order) {
 	if($order == "username") {
-		$index=sprintf("%-25.25s",$data["uid"]) .  sprintf("-%05d-",$data["proj_id"]) . sprintf("-%05d-",$data["task_id"]);
+		$index=sprintf("%-25.25s",$data["username"]) .  sprintf("-%05d-",$data["proj_id"]) . sprintf("-%05d-",$data["task_id"]);
 	} else if($order == "project") {
-		$index=sprintf("-%05d",$data["proj_id"]) . sprintf("-%05d",$data["task_id"]) . sprintf("%-25.25s",$data["uid"]);
+		$index=sprintf("-%05d",$data["proj_id"]) . sprintf("-%05d",$data["task_id"]) . sprintf("%-25.25s",$data["username"]);
 	} else {
-		$index=sprintf("-%-25.25s",$data["taskName"]) . sprintf("-%05d",$data["proj_id"]) . sprintf("%-25.25s",$data["uid"]);
+		$index=sprintf("-%-25.25s",$data["taskName"]) . sprintf("-%05d",$data["proj_id"]) . sprintf("%-25.25s",$data["username"]);
 	}
 	return $index;
 }
 
-$Location=" Rewrite::getShortUri()."?$ymdStr&amp;orderby=$orderby";
+$Location= Rewrite::getShortUri()."?$ymdStr&amp;orderby=$orderby";
 gbl::setPost("&amp;orderby=$orderby");
 
 if(!$export_excel) 

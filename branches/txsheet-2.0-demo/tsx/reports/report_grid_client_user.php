@@ -4,58 +4,72 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
-// NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
-//        or the export to excel won't work in IE
-session_cache_limiter('public');
+PageElements::setTheme('txsheet2');
 
-//export data to excel (or not)  (ie is broken with respect to buttons, so we have to do it this way)
-$export_excel=false;
-if (isset($_GET["export_excel"]))
-	if($_GET["export_excel"] == "1")
-		$export_excel=true;
+//export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
+if (isset($_REQUEST["export_excel"]) && $_REQUEST["export_excel"] == "1"){
+  $export_excel=true;
+}
+else{
+  $export_excel=false;
+}
 
+ob_start();
 //Create the excel headers now, if needed
 if($export_excel){
+  // NOTE:  The session cache limiter and the excel stuff must appear before the session_start call, or the export to excel won't work in IE
+  session_cache_limiter('public');
 	header('Expires: 0');
 	header('Cache-control: public');
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 	header('Content-Description: File Transfer');
 	header('Content-Type: application/vnd.ms-excel');
 	header("Content-Disposition: attachment; filename=\"Timesheet_" . date("Y-m").".xls" . "\"");
-
+	
+	// If exporting data to excel, ensure the numbers written in the spreadsheet 
+  // are in H.F format rather than HH:MI  
 	$time_fmt = "decimal";
-} else
-	$time_fmt = "time";
-
-//default client
-$client_id =  gbl::getClientId();
-if ($client_id == 0)
-	//get the first project
-	$client_id = Common::getFirstClient();
+}
+else if (isset($_REQUEST['time_fmt'])){
+	$time_fmt = $_REQUEST['time_fmt'];
+}
+else{
+	$time_fmt = "decimal";
+}
 
 //load local vars from request/post/get
-if (isset($_REQUEST['uid']))
-	$uid = $_REQUEST['uid'];
-else
-	$uid = strtolower($_SESSION['contextUser']);
+if (isset($_REQUEST['uid'])){
+	$uid = gbl::getUid();
+}
+else{
+	$uid = gbl::getContextUser();
+}
 
-if (isset($_REQUEST['print']))
+if (isset($_REQUEST['print'])){
 	$print = true;
-else
-	$print = false;
+}
+else{
+  $print = false;
+}
+
+
+
+
+
+
+
 
 //get start and end dates for the calendars
+$startDay   = isset($_GET['start_day'])   && $_GET['start_day']   ? (int)$_GET['start_day']   : 1;
+$startMonth = isset($_GET['start_month']) && $_GET['start_month'] ? (int)$_GET['start_month'] : gbl::getMonth();
+$startYear  = isset($_GET['start_year'])  && $_GET['start_year']  ? (int)$_GET['start_year']  : gbl::getYear();
 
-$start_day   = isset($_GET['start_day'])   && $_GET['start_day']   ? (int)$_GET['start_day']   : 1;
-$start_month = isset($_GET['start_month']) && $_GET['start_month'] ? (int)$_GET['start_month'] : gbl::getMonth();
-$start_year  = isset($_GET['start_year'])  && $_GET['start_year']  ? (int)$_GET['start_year']  : gbl::getYear();
+$endDay     = isset($_GET['end_day'])     && $_GET['start_day']   ? (int)$_GET['end_day']     : date('t',strtotime(gbl::getYear()."-".gbl::getMonth()."-15"));
+$endMonth   = isset($_GET['end_month'])   && $_GET['start_month'] ? (int)$_GET['end_month']   : gbl::getMonth();
+$endYear    = isset($_GET['end_year'])    && $_GET['start_year']  ? (int)$_GET['end_year']    : gbl::getYear();
 
-$end_day     = isset($_GET['end_day'])     && $_GET['start_day']   ? (int)$_GET['end_day']     : date('t',strtotime(gbl::getYear()."-".gbl::getMonth()."-15"));
-$end_month   = isset($_GET['end_month'])   && $_GET['start_month'] ? (int)$_GET['end_month']   : gbl::getMonth();
-$end_year    = isset($_GET['end_year'])    && $_GET['start_year']  ? (int)$_GET['end_year']    : gbl::getYear();
-
-if(!checkdate($end_month,$end_day,$end_year)) {
-	$end_day=Common::get_last_day($end_month,$end_year);
+if(!checkdate($endMonth,$endDay,$endYear)) {
+	$endDay=Common::get_last_day($endMonth,$endYear);
 }
 
 //define working variables
@@ -64,95 +78,30 @@ $last_task_id = -1;
 $total_time = 0;
 $grand_total_time = 0;
 
-$start_time = strtotime($start_year . '/' . $start_month . '/' . $start_day);
-$end_time   = strtotime($end_year   . '/' . $end_month   . '/' . $end_day);
-$end_time2   = strtotime("+1 day",$end_time);  //need last day to be inclusive...
+$startTimestamp = strtotime($startYear . '/' . $startMonth . '/' . $startDay);
+$endTimestamp   = strtotime($endYear   . '/' . $endMonth   . '/' . $endDay);
+$endTimestamp2   = strtotime("+1 day",$endTimestamp);  //need last day to be inclusive...
 
-$startStr = date("Y-m-d H:i:s",$start_time);
-$endStr = date("Y-m-d H:i:s",$end_time2);
+$startStr = date("Y-m-d H:i:s",$startTimestamp);
+$endStr = date("Y-m-d H:i:s",$endTimestamp2);
 
-/**********************************************************************************************************
- * This function assists the routine in common.inc that splits tasks into discrete days
- * called split_data_into_discrete_days();   That function needs to put things into a new 
- * array, and in order to get things out of that array in the order we want them in, we 
- * need to help that function out by telling it how to make an index for that array.
- */
+$ymdStr = "&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=$startDay".
+		  "&amp;end_year=$endYear&amp;end_month=$endMonth&amp;end_day=$endDay";
+$Location= Rewrite::getShortUri()."?$ymdStr&amp;client_id=".gbl::getClientId();
 
-function make_index($data,$order) {
-	if($order == "date") {
-		$index=$data["start_stamp"] . sprintf("-%05d",$data["proj_id"]) . 
-			sprintf("-%05d",$data["task_id"]);
-	} else {
-		$index=sprintf("%05d",$data["proj_id"]) .  sprintf("-%05d-",$data["task_id"]) .
-			$data["start_stamp"];
-	}
-	return $index;
-}
+require_once('report.class.php');
+$report = new Report();
 
-function format_time($time,$time_fmt) {
-	if($time > 0) {
-		if($time_fmt == "decimal")
-			return Common::minutes_to_hours($time);
-		else 
-			return Common::format_minutes($time);
-	} else 
-		return "-";
-}
-
-$ymdStr = "&amp;start_year=$start_year&amp;start_month=$start_month&amp;start_day=$start_day".
-		  "&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
-$Location= Rewrite::getShortUri()."?$ymdStr&amp;client_id=$client_id";
-
+if(!$export_excel){ 
 ?>
-<html>
-<head>
-<title>Report: Timesheet Summary, <?php echo date('F Y');?></title>
-<?php if(!$export_excel) ?>
-	<style type="text/css">
-		/*
-		 * These CSS styles should be moved to an external stylesheet. For now,
-		 * I wanted this report to be stand-alone, so I have included them inline.
-		 */
-		table.report {
-			border-collapse:collapse;
-			margin:1em;
-		}
-		table.report th.project{
-			text-align:center;
-			font-style:italic;
-		}
-		table.report td, table.report th{
-			padding:0.2em 0.7em;
-			text-align:right;
-			border:1px solid #5271CC;
-		}
-		table.report th.first{
-			border:none;
-		}
-		table.report tr.weekend td{
-			background-color:#CCCCCC;
-		}
-		table.report th {
-			text-align:left;
-			font-size:0.7em;
-		}
-		table.report td.grandtotal{
-			color:red;
-			font-size:0.8em;
-		}
+<script type="text/javascript">
+report = new Object();
+report.location = "<?php echo $Location;?>";
+</script>
 
-		@media print{
-			div#header { display:none; }
-			div#footer { display:none; }
-			a.export { display:none; }
-			td.print { display:none; }
-			td.next_prev_links {display:none;}
-		}
-	</style>
-	<?php if(!$export_excel) {
-		require("report_javascript.inc");
-	?>
-	<script type="text/javascript">
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/reports.js"></script>
+
+<script type="text/javascript">
 	   /*
 		* Setup Javascript events for date drop-down lists. Again, this should be included in
 		* an external js file, but for now I want this report to be self-contained
@@ -178,32 +127,35 @@ $Location= Rewrite::getShortUri()."?$ymdStr&amp;client_id=$client_id";
 			end_year.onchange    = function (){this.form.submit();};
 		}
 	</script>
-	<?php } ?>
-</head>
-<?php
-	if($print) {
-		echo "<body width=\"100%\" height=\"100%\"";
-		//include ("body.inc");
+<?php	
+}
 
-		echo "onLoad=window.print();";
-		echo ">\n";
-	} else if($export_excel) {
-		echo "<body ";
-		//include ("body.inc");
-		echo ">\n";
-	} else {
-		echo "<body ";
-		//include ("body.inc");
-		echo ">\n";
-		echo "<div id=\"header\">";
-		//include ("banner.inc");
-		
+if($export_excel){
+  echo "<style type=\"text/css\"> ";
+	 include ("css/timesheet.css");
+  echo "</style>";
+}
+echo"<title>".Config::getMainTitle()." | Report: Timesheet Summary, ".date('F Y')."</title>";
+
+PageElements::setHead(ob_get_contents());
+ob_end_clean();
+?>
+
+<h1><?php echo JText::_('GRID_CLIENT_REPORT'); ?></h1>
+
+<?php
+
+	if($print) {
+     PageElements::setBodyOnLoad('window.print();');
+	} 
+  else if($export_excel) {
+	} 
+  else {
 		require_once("include/tsx/navcal/navcal.class.php");
 	  $nav = new NavCal();
-    $nav->navCalWithEndDates($start_time,$end_time,$start_month);
-		echo "</div>";
+		$nav->navCalWithEndDates($startTimestamp,$endTimestamp,$startMonth);
 	}
-?>
+?>		
 
 <?php if(!$export_excel) { ?>
 <form action="<?php echo Rewrite::getShortUri(); ?>" method="get">
@@ -211,65 +163,60 @@ $Location= Rewrite::getShortUri()."?$ymdStr&amp;client_id=$client_id";
 	<tr>
 		<td class="face_padding_cell">
 
-
-
-				<table width="100%" border="0">
+        <table width="100%" border="0">
 					<tr>
-						<td align="left" width="25%">
-							<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
-								<tr>
-									<td align="right" width="0" class="outer_table_heading">Client:</td>
+						<td align="left" width="35%">
+							<table width="100%" border="0" cellpadding="1" cellspacing="2">
+                <tr>
+									<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('CLIENT'); ?>:</td>
 									<td align="left" width="100%">
-										<?php Common::client_select_droplist($client_id, false, !$print); ?>
-									</td>
+											<?php Common::client_select_droplist(gbl::getClientId(), false, !$print); ?>
+									</td>									
 								</tr>
 								<tr>
-									<td align="right" width="0" class="outer_table_heading">User:</td>
+									<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('USER'); ?>:</td>
 									<td align="left" width="100%">
-										<?php Common::user_select_droplist($uid, false, "100%"); ?>
+											<?php Common::user_select_droplist($uid, false, "100%"); ?>
 									</td>
 								</tr>
 							</table>
 						</td>
-						<td width="25%">
+						<td width="25%"><!-- <td align="center" class="outer_table_heading">-->
 							<table border="0" cellpadding="1" cellspacing="2">
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">Start Date:</td>
-									<td align="left"><?php Common::day_button("start_day",$start_time); Common::month_button("start_month",$start_month); Common::year_button("start_year",$start_year); ?></td>
+									<td align="left"><?php Common::day_button("start_day",$startTimestamp); Common::month_button("start_month",$startMonth); Common::year_button("start_year",$startYear); ?></td>
 								</tr>
 								<tr>
 									<td align="right" width="0" class="outer_table_heading">End Date:</td>
-									<td align="left"><?php Common::day_button("end_day",$end_time); Common::month_button("end_month",$end_month); Common::year_button("end_year",$end_year); ?></td>
+									<td align="left"><?php Common::day_button("end_day",$endTimestamp); Common::month_button("end_month",$endMonth); Common::year_button("end_year",$endYear); ?></td>
 								</tr>
 							</table>
 						</td>
-						<td align="center" class="outer_table_heading" width="10%">
-							<?php echo date('F Y',strtotime($start_year . '/' . $start_month . '/' . $start_day));?>
+            <?php						
+						if (!$print){ ?>
+						<td  align="right" width="15%" >
+							<button name="export_excel" onclick="reload2Export(this.form)"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_xport-2-excel.gif" alt="Export to Excel" /></button> &nbsp;
+							<button onclick="popupPrintWindow()"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_printer.gif" alt="Print Report" /></button>
 						</td>
-						<?php if (!$print): ?>
-							<td  align="right" width="15%" >
-								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
-								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
-							</td>
-						<?php endif; ?>
-					</tr>
-				</table>
+					<?php }?>
+				</tr>
+			</table>
 
-
-				<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-					<tr>
-						<td>
+			<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
+				<tr>
+					<td>
 <?php
 } //end if(!$export_excel)
 else {  //create Excel header
 	list($fn,$ln) = get_users_name($uid);
-	$cn = get_client_name($client_id);
+	$cn = get_client_name(gbl::getClientId());
 	echo "<h4>Report for $cn<br />";
 	echo "User: $ln, $fn<br />";
-	$sdStr = date("M d, Y",$start_time);
+	$sdStr = date("M d, Y",$startTimestamp);
 	//just need to go back 1 second most of the time, but DST 
 	//could mess things up, so go back 6 hours...
-	$edStr = date("M d, Y",$end_time2 - 6*60*60); 
+	$edStr = date("M d, Y",$endTimestamp2 - 6*60*60); 
 	echo "$sdStr&nbsp;&nbsp;-&nbsp;&nbsp;$edStr"; 
 	echo "</h4>";
 }
@@ -277,21 +224,22 @@ else {  //create Excel header
 // ==========================================================================================================
 // FETCH REPORT DATA AND DISPLAY
 
-list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, 0, $client_id);
+list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, 0, gbl::getClientId());
 
 //no records were found
 if ($num == 0) {
+  
 	print '<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">';
 	print "	<tr>\n";
 	print "		<td align=\"center\">\n";
 	print "			<i><br />No hours recorded.<br /></i>\n";
-	if($end_time2 <= $start_time)
+	if($endTimestamp2 <= $startTimestamp)
 		print "			<i><b><br /><font color=\"red\">End time is before Start time!</font><br /></b></i>\n";
 	print "		<br /></td>\n";
 	print "	</tr>\n";
 	print " </table>\n";
 } else {
-	$darray = array();
+	$dayArray = array();
 	$crosstab = array();
 	$projects = array();
 
@@ -308,92 +256,142 @@ if ($num == 0) {
 		//re-start on date boundaries.
 		//NOTE: there must be a make_index() function defined in this file for the following function to, well, function
 		$orderby = 'date';
-		Common::split_data_into_discrete_days($data,$orderby,$darray,0);
+		Common::split_data_into_discrete_days($data,$orderby,$dayArray,0);
 	}
 
-	ksort($darray);
-	unset($data);
+	ksort($dayArray);
+  unset($data);
 
-	foreach($darray as $dary){
+/*
+	//print the days we are going to display
+	
+	$currentTime = $startTimestamp;
+	for ($i = $startDay; $i <= $endDay; $i++) {
+		//$currentDayStr = strftime("%a %d/%m/%y", $currentTime);
+		$currentDayStr = strftime("%d/%m", $currentTime);
+		echo "<th class=\"inner_table_column_heading\" align=\"center\" width=\"10%\">$currentDayStr</th>\n";
+		
+		$dayStamp = mktime(0,0,0,$startMonth,$i,$startYear);
+		$stamp_to_day_array[$dayStamp]=$i;
+		$daytotals[$i]=0;
+
+
+
+		
+		$currentTime = strtotime(date("d M Y H:i:s",$currentTime) . " +1 days"); // increment date to next day
+	}
+	
+	//ppr($daytotals);
+	unset($currentTime);
+  //ppr($stamp_to_day_array); 
+   
+		<td class="calendar_cell_disabled_right" align="right">
+			Totals
+		</td>
+	</tr>
+		$completeArray=array();
+		//ppr($dayArray,'darry');
+		*/
+
+  foreach($dayArray as $dary){
 		foreach($dary as $data){
-			//need to make sure date is in range of what we want...
-			if($data["start_stamp"] < $start_time) continue;
-			if($data["start_stamp"] >= $end_time2) continue;
 
-			if(!isset($crosstab[$data['start_stamp']]))
+			//need to make sure date is in range of what we want...
+			if($data["start_stamp"] < $startTimestamp) continue;
+			if($data["start_stamp"] >= $endTimestamp2) continue;
+
+      //we need to extract just the day part of the stamp.  the minutes/seconds are unimportant      
+      $startStampDate = getdate($data["start_stamp"]);
+      //overwrite the startstamp with the start of day stamp
+      $data['start_stamp'] = mktime(0, 0, 0,$startStampDate['mon'],$startStampDate['mday'],$startStampDate['year']);
+
+			if(!isset($crosstab[$data['start_stamp']])){
 				$crosstab[$data['start_stamp']] = array();
+			}
 
 			$crosstab[$data['start_stamp']][$data['task_id']] = $data['duration'];
 
-			if(!isset($crosstab[$data['start_stamp']]['total']))
+			if(!isset($crosstab[$data['start_stamp']]['total'])){
 				$crosstab[$data['start_stamp']]['total'] = 0;
+			}
 
 			$crosstab[$data['start_stamp']]['total'] += $data['duration'];
 
-			if(!array_key_exists($data['proj_id'], $projects))
+			if(!array_key_exists($data['proj_id'], $projects)){
 				$projects[$data['proj_id']] = array('title' => $data['projectTitle'], 'total' => 0, 'tasks' => array());
+			}
 
-			if(!array_key_exists($data['task_id'], $projects[$data['proj_id']]['tasks']))
+			if(!array_key_exists($data['task_id'], $projects[$data['proj_id']]['tasks'])){
 				$projects[$data['proj_id']]['tasks'][$data['task_id']] = array('title' => $data['taskName'], 'total' => 0);
+			}
+			
+			$projects[$data['proj_id']]['tasks'][$data['task_id']]['total'] += $data['duration'];
+			$projects[$data['proj_id']]['total'] += $data['duration'];
 		}
 	}
 
 	asort($projects);
-
-	echo '<table border="1" cellpadding="0" cellspacing="0" class="table_body report">';
-	echo '<thead>';
-
-	echo '<tr>';
-	echo '<th class="first">&nbsp;</th>';
-	echo '<th class="first">&nbsp;</th>';
+  
+  //ppr($projects,'projects');
+  //ppr($crosstab,'crosstab');
+  ?>
+  
+	<table border="1" cellpadding="0" cellspacing="0" class="table_body report">
+	 <thead>
+    <tr>
+      <th class="first">&nbsp;</th>
+      <th class="first">&nbsp;</th>
+    <?php
 		foreach($projects as $project_id => $project){
 			echo '<th class="project" colspan="' . count($project['tasks']) . '">' . htmlentities($project['title']) . '</th>';
 		}
-	echo '</tr>';
-
-	echo '<tr>';
-	echo '<th class="first">&nbsp;</th>';
-	echo '<th>Total</th>';
-
-	foreach($projects as $project_id => $project){
-		foreach($project['tasks'] as $task_id => $task)
-			echo '<th>' . htmlentities($task['title']) . '</th>';
-	}
-
-	echo '</tr>';
-	echo '</thead>';
-	echo '<tbody>';
-
-	while($start_time <= $end_time){
-		if(array_key_exists($start_time,$crosstab))
-			$data = $crosstab[$start_time];
+		?>
+	  </tr>
+    <tr>
+	   <th class="first">&nbsp;</th>
+	   <th>Total</th>
+     <?php
+    	foreach($projects as $project_id => $project){
+    		foreach($project['tasks'] as $task_id => $task)
+    			echo '<th>' . htmlentities($task['title']) . '</th>';
+    	}
+    ?>
+    </tr>
+	</thead>
+  <?php
+	while($startTimestamp <= $endTimestamp){
+	  //ppr($startTimestamp, 'startTimestamp');
+    
+		if(array_key_exists($startTimestamp,$crosstab))
+			$data = $crosstab[$startTimestamp];
 		else
 			$data = array();
-
-		if(in_array(date('N',$start_time), array(6,7)))
+      
+		if(in_array(date('N',$startTimestamp), array(6,7))){
 			echo '<tr class="weekend">';
-		else
+		}
+    else{
 			echo '<tr>';
+    }
+		echo '<td class="date"><strong>' . date('D, jS M, Y',$startTimestamp) . '</strong></td>';
 
-		echo '<td class="date"><strong>' . date('D, jS M, Y',$start_time) . '</strong></td>';
-
-		if($data)
-			echo '<td><strong>' . format_time($data['total'],$time_fmt) . '</strong></td>';
-		else
+		if($data){
+			echo '<td><strong>' . $report->format_time($data['total'],$time_fmt) . '</strong></td>';
+		}
+		else{
 			echo '<td>&nbsp;</td>';
+		}
 
 		foreach($projects as $project_id => $project){
 			foreach($project['tasks'] as $task_id => $task){
 				echo '<td class="cell">';
-
 				if(array_key_exists($task_id, $data)){
-					echo htmlentities(format_time($data[$task_id],$time_fmt));
-
-					$projects[$project_id]['tasks'][$task_id]['total'] += $data[$task_id];
-					$grand_total_time                                  += $data[$task_id];
+					echo htmlentities($report->format_time($data[$task_id],$time_fmt));
+					$grand_total_time += $data[$task_id];
 				}
-				else
+				else{
 					echo '&nbsp;';
+				}
 
 				echo '</td>';
 			}
@@ -401,58 +399,42 @@ if ($num == 0) {
 
 		echo '</tr>';
 
-		$start_time = strtotime(date('d-M-Y',$start_time) . ' + 1 Day');
+		$startTimestamp = strtotime(date('d-M-Y',$startTimestamp) . ' + 1 Day');
 	}
-
-	echo '</tbody>';
-	echo '<tfoot>';
-	echo '<tr>';
-	echo '<td class="grandtotal"><strong>TOTAL</strong></td>';
-	echo '<td class="grandtotal"><strong>' . format_time($grand_total_time,$time_fmt) . '</strong></td>';
-
-	foreach($projects as $project_id => $project){
-		foreach($project['tasks'] as $task_id => $task)
-			echo '<td class="total"><strong>' . htmlentities(format_time($task['total'],$time_fmt)) . '</strong></td>';
-	}
-
-	echo '</tr>';
-	echo '</tfoot>';
-	echo '</table>';
+  ?>
+  
+	<tr>
+	   <td class="grandtotal"><strong>TOTAL</strong></td>
+	   <td class="grandtotal"><strong> <?php echo $report->format_time($grand_total_time,$time_fmt);?></strong></td>
+    <?php
+  	foreach($projects as $project_id => $project){
+  		foreach($project['tasks'] as $task_id => $task)
+  			echo '<td class="total"><strong>' . htmlentities($report->format_time($task['total'],$time_fmt)) . '</strong></td>';
+  	}
+    ?>
+  </tr>
+</table>
+<?php
 }
 
-//====================================================================================================================
-// close off report
-if(!$export_excel){
-?>
-					</td>
-				</tr>
-			</table>
-
+if(!$export_excel) { ?>
 
 		</td>
 	</tr>
 </table>
-<?php if ($print) { ?>
-	<table width="100%" border="1" cellspacing="0" cellpadding="0">
-		<tr>
-			<td width="30%"><table><tr><td>Employee Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-		</tr>
-		<tr>
-			<td width="30%"><table><tr><td>Manager Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-		</tr>
-		<tr>
-			<td width="30%"><table><tr><td>Client Signature:</td></tr></table></td>
-			<td width="70%"><img src="images/spacer.gif" width="150" height="1" alt="" /></td>
-		</tr>
-	</table>		
-<?php } //end if($print) ?>
+<?php if ($print) {
+  $report->displaySignature(false,true,true);
+} 
+?>
+
+  		</td>
+	</tr>
+</table>
 </form>
-<?php if (!$print) {
-		echo "<div id=\"footer\">"; 
-		//include ("footer.inc"); 
-		echo "</div>";
-	}
+<?php
 } //end if !export_excel 
+
+if($export_excel){
+exit();
+}
 ?>

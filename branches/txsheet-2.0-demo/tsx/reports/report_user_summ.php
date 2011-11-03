@@ -15,6 +15,8 @@ else{
 ob_start();
 //Create the excel headers now, if needed
 if($export_excel){
+  // NOTE:  The session cache limiter and the excel stuff must appear before the session_start call, or the export to excel won't work in IE
+  session_cache_limiter('public');
 	header('Expires: 0');
 	header('Cache-control: public');
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -58,45 +60,45 @@ if(gbl::getDay() < 16) {
 }
 
 //get start and end dates for the calendars
-$start_day   = isset($_GET['start_day'])   && $_GET['start_day']   ? (int)$_GET['start_day']   : $sday;
+$startDay   = isset($_GET['start_day'])   && $_GET['start_day']   ? (int)$_GET['start_day']   : $sday;
 $startMonth = isset($_GET['start_month']) && $_GET['start_month'] ? (int)$_GET['start_month'] : gbl::getMonth();
 $startYear  = isset($_GET['start_year'])  && $_GET['start_year']  ? (int)$_GET['start_year']  : gbl::getYear();
 
-$end_day     = isset($_GET['end_day'])     && $_GET['start_day']   ? (int)$_GET['end_day']     : $eday;
-//$end_month   = isset($_GET['end_month'])   && $_GET['start_month'] ? (int)$_GET['end_month']   : gbl::getMonth();
-//$end_year    = isset($_GET['end_year'])    && $_GET['start_year']  ? (int)$_GET['end_year']    : gbl::getYear();
+$endDay     = isset($_GET['end_day'])     && $_GET['start_day']   ? (int)$_GET['end_day']     : $eday;
+//$endMonth   = isset($_GET['end_month'])   && $_GET['start_month'] ? (int)$_GET['end_month']   : gbl::getMonth();
+//$endYear    = isset($_GET['end_year'])    && $_GET['start_year']  ? (int)$_GET['end_year']    : gbl::getYear();
 //Since we're only allowing the user to choose a start and end day within the cur. context month 
 //we can do this:  But note: we can't remove the variables altogether, or we'd need yet another set
 //of functions to create the navcal calendars, and at some point we may want to allow more
 //freestyle date choosing...
-$end_month   = $startMonth;
-$end_year    = $startYear;
+$endMonth   = $startMonth;
+$endYear    = $startYear;
 
-$startTimestamp = strtotime($startYear . '/' . $startMonth . '/' . $start_day);
-$end_time   = strtotime($end_year   . '/' . $end_month   . '/' . $end_day);
-$end_time2   = strtotime("+1 day",$end_time);  //need last day to be inclusive...
+$startTimestamp = strtotime($startYear . '/' . $startMonth . '/' . $startDay);
+$endTimestamp   = strtotime($endYear   . '/' . $endMonth   . '/' . $endDay);
+$endTimestamp2   = strtotime("+1 day",$endTimestamp);  //need last day to be inclusive...
 
 $startStr = date("Y-m-d H:i:s",$startTimestamp);
-$endStr = date("Y-m-d H:i:s",$end_time2);
+$endStr = date("Y-m-d H:i:s",$endTimestamp2);
 
-$orderby="project";
-function make_index($data,$order) {
-	$index=sprintf("%05d-%05d-%05d",$data["client_id"], $data["proj_id"], $data["task_id"]);
-	$index.="-".$data["start_stamp"];
-	return $index;
-}
+
 
 require_once('report.class.php');
 $report = new Report();
 
-$Location= Rewrite::getShortUri()."?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=$start_day&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=$end_day";
+$Location= Rewrite::getShortUri()."?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=$startDay&amp;end_year=$endYear&amp;end_month=$endMonth&amp;end_day=$endDay";
 gbl::setPost("uid=$uid&amp;time_fmt=$time_fmt");
 
 if(!$export_excel) {
-	require("report_javascript.inc");
 ?>
 <script type="text/javascript">
-<!--
+report = new Object();
+report.location = "<?php echo $Location;?>";
+</script>
+
+<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/reports.js"></script>
+
+<script type="text/javascript">
 /*
 * Setup Javascript events for date drop-down lists. Again, this should be included in
 * an external js file, but for now I want this report to be self-contained
@@ -121,22 +123,19 @@ function init(){
 	//end_month.onchange   = function (){this.form.submit();};
 	//end_year.onchange    = function (){this.form.submit();};
 }
-//-->
 </script>
-<?php } //end if !export_excel ?>
-
 <?php 
-	if(!$export_excel) ;
-	else {
-		print "<style type=\"text/css\"> ";
-		include ("css/timesheet.css");
-		print "</style>";
-	}
+} 
+
+if($export_excel){
+  echo "<style type=\"text/css\"> ";
+	 include ("css/timesheet.css");
+echo "</style>";
+}
 echo "<title>".Config::getMainTitle()." | ".JText::_('USER_SUMMARY')." | ".gbl::getContextUser()."</title>";
 
 PageElements::setHead(ob_get_contents());
 ob_end_clean();
-
 ?>
 
 <h1><?php echo JText::_('USER_SUMMARY'); ?></h1>
@@ -151,7 +150,7 @@ ob_end_clean();
   else {
 		require_once("include/tsx/navcal/navcal.class.php");
   	$nav = new NavCal();
-	  $nav->navCalWithEndDates($startTimestamp,$end_time,$startMonth);  
+	  $nav->navCalWithEndDates($startTimestamp,$endTimestamp,$startMonth);  
 	}
 
 ?>
@@ -160,8 +159,8 @@ ob_end_clean();
 <form action="<?php print Rewrite::getShortUri(); ?>" method="get">
 <input type="hidden" name="start_month" value="<?php echo $startMonth; ?>" />
 <input type="hidden" name="start_year" value="<?php echo $startYear; ?>" />
-<input type="hidden" name="end_month" value="<?php echo $end_month; ?>" />
-<input type="hidden" name="end_year" value="<?php echo $end_year; ?>" />
+<input type="hidden" name="end_month" value="<?php echo $endMonth; ?>" />
+<input type="hidden" name="end_year" value="<?php echo $endYear; ?>" />
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -178,8 +177,8 @@ ob_end_clean();
 							echo utf8_encode(strftime("%B", $startTimestamp))." ";
 							Common::day_button("start_day",$startTimestamp);
 							echo "&nbsp;&nbsp;-&nbsp;&nbsp;";
-							Common::day_button("end_day",$end_time);
-							echo " $end_year";
+							Common::day_button("end_day",$endTimestamp);
+							echo " $endYear";
 						?> 
 						</td>
 						<?php if (!$print): ?>
@@ -191,15 +190,15 @@ ob_end_clean();
 							</td>
 							<td align="right">
 							<?php
-								$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=1&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=15";
-								$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=16&amp;end_year=$end_year&amp;end_month=$end_month&amp;end_day=".date('t',strtotime("$end_year-$end_month-15"));
+								$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=1&amp;end_year=$endYear&amp;end_month=$endMonth&amp;end_day=15";
+								$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=16&amp;end_year=$endYear&amp;end_month=$endMonth&amp;end_day=".date('t',strtotime("$endYear-$endMonth-15"));
 							?>
-								<a href="<?PHP print Rewrite::getShortUri()."?".$p1post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_1'); ?></a><br />
-								<a href="<?PHP print Rewrite::getShortUri()."?".$p2post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_2'); ?></a>
+								<a href="<?php echo Rewrite::getShortUri()."?".$p1post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_1'); ?></a><br />
+								<a href="<?php echo Rewrite::getShortUri()."?".$p2post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_2'); ?></a>
 							</td>
 							<td  align="right" width="15%" >
-								<button name="export_excel" onclick="reload2Export(this.form)"><img src="../images/icon_xport-2-excel.gif" alt="Export to Excel"/></button> &nbsp;
-								<button onclick="popupPrintWindow()"><img src="../images/icon_printer.gif" alt="Print Report"  /></button>
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_xport-2-excel.gif" alt="Export to Excel"/></button> &nbsp;
+								<button onclick="popupPrintWindow()"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_printer.gif" alt="Print Report"  /></button>
 							</td>
 						<?php endif; ?>
 					</tr>
@@ -214,8 +213,8 @@ else {  //create Excel header
 	list($fn,$ln) = get_users_name($uid);
 	echo "<h4>Report for $ln, $fn<br />";
 	echo date("F d", $startTimestamp)."  to  ";
-	echo date("d", $end_time);
-	echo ", $end_year";
+	echo date("d", $endTimestamp);
+	echo ", $endYear";
 	echo "</h4>";
 }
 ?>
@@ -244,6 +243,7 @@ if ($num == 0) {
 		//entries that do span date boundaries into multiple entries that stop and then
 		//re-start on date boundaries.
 		//NOTE: there must be a make_index() function defined in this file for the following function to, well, function
+		$orderby="project";
 		Common::split_data_into_discrete_days($data,$orderby,$dayArray,0);
 	}
 
@@ -262,7 +262,7 @@ if ($num == 0) {
 	//print the days we are going to display
 	
 	$currentTime = $startTimestamp;
-	for ($i = $start_day; $i <= $end_day; $i++) {
+	for ($i = $startDay; $i <= $endDay; $i++) {
 		//$currentDayStr = strftime("%a %d/%m/%y", $currentTime);
 		$currentDayStr = strftime("%d/%m", $currentTime);
 		echo "<th class=\"inner_table_column_heading\" align=\"center\" width=\"10%\">$currentDayStr</th>\n";
@@ -292,14 +292,14 @@ if ($num == 0) {
 		    
 				//need to make sure date is in range of what we want...
 				if($data["start_stamp"] < $startTimestamp) continue;
-				if($data["start_stamp"] >= $end_time2) continue;
+				if($data["start_stamp"] >= $endTimestamp2) continue;
 
 				$rowName = $data["clientName"]."&nbsp;/ ".$data["projectTitle"]."&nbsp;/ ".$data["taskName"];
 				
         //for each rowName that does not yet exist, create it and
         //add each day in at the same time
         if(!array_key_exists($rowName,$completeArray)) {
-					for ($mm = $start_day; $mm <= $end_day; $mm++) {
+					for ($mm = $startDay; $mm <= $endDay; $mm++) {
 						$completeArray[$rowName][$mm]=0;
 					}
 				}
@@ -354,7 +354,7 @@ if ($num == 0) {
 							Totals
 						</td>
 	<?php
-		for ($mm = $start_day; $mm <= $end_day; $mm++) {
+		for ($mm = $startDay; $mm <= $endDay; $mm++) {
 	?>
 						<td class="calendar_cell_right" align="right" style="font-weight: bold; border-bottom: 0px;">
 							<?php echo $report->format_time($daytotals[$mm],$time_fmt); ?>
