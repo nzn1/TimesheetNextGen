@@ -856,7 +856,7 @@ class Config extends ConfigFactory {
 		if(property_exists('Config',$name)){
 		  self::${$name} = self::$defaultConfig->{$name};
 		}
-		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '" .self::$defaultConfig->{$name}."' WHERE name = '$name'";
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '" .mysql_real_escape_string(self::$defaultConfig->{$name})."' WHERE name = '$name'";
 		LogFile::write("\nconfig.class resetconfigvalue query: ". $query);
 		Database::getInstance()->query($query); 
 	}
