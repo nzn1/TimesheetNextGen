@@ -32,7 +32,7 @@ PageElements::setTheme('newcss');
 		<tr>
 			<td  colspan="2">
 =======
-		<td width="100%" class="face_padding_cell">
+		<td class="face_padding_cell">
 
 			<table width="100%" border="0">
 				<tr>

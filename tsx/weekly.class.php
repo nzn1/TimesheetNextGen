@@ -31,7 +31,7 @@ class WeeklyPage{
 
 	//echo "<p>Query: $query </p>";
 	//echo "<p>there were $num3 results</p>";
-
+	LogFile::write("\nweekly.class. query: ". $qh3. " no rows: " .$num3. "\n");
 
 	//we're going to put the data into an array of
 	//different (unique) TASKS

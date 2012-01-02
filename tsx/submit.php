@@ -3,7 +3,7 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 define("NR_FIELDS", 9); // number of fields to iterate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTsubmission'))return;
 
 if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));

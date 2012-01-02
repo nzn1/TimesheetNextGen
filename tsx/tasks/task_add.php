@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');
 }
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTasks'))return;
 
 //load local vars from request/post/get
 $proj_id = gbl::getProjId(); //$_REQUEST['proj_id'];
@@ -20,7 +20,7 @@ PageElements::setTheme('newcss');
 <form action="<?php echo Config::getRelativeRoot(); ?>/tasks/task_action" method="post">
 <input type="hidden" name="action" value="add" />
 <input type="hidden" name="proj_id" value="<?php echo $proj_id ?>" />
-<div id="inputArea">
+<div class="inputArea">
 <?php 
 // get name of project and client name using project id
 
@@ -32,32 +32,19 @@ PageElements::setTheme('newcss');
 	LogFile::write(" Get title organisation  Query = \"$queryString\" and rows returned is \"$num\"\n");
 	
 ?>
+<h2><?php echo JText::_('ADD_NEW_TASK_IN_PROJECT'). "<i>".$data['title']."</i>".
+	 JText::_('FOR_CLIENT'). "<i>". $data['organisation'] ."</i>"; ?>:</h2>
+<div><label><?php echo (JText::_('TASK_NAME')) ?>:</label><input type="text" name="name" size="42" /></div>
+<div><label><?php echo (JText::_('DESCRIPTION')) ?>:</label><textarea name="description" rows="4" cols="40" wrap="virtual"></textarea></div>
+<div><label><?php echo (JText::_('STATUS')) ?>:</label><?php Common::proj_status_list("task_status", "Started"); ?></div>
+<div><label><?php echo (JText::_('TASK_MEMBERS')) ?>:</label><?php Common::multi_user_select_list("assigned[]"); ?></div>
+
 <table class="noborder">
 	<tbody class="nobground">
+
 	<tr>
 		<td class="outer_table_heading">
-			<h2><?php echo JText::_('ADD_NEW_TASK_IN_PROJECT'). $data['title']. JText::_('FOR_CLIENT'). $data['organisation']; ?>:</h2>
-		</td>
-	</tr>
-	<tr>
-		<td align="right"><?php echo (JText::_('TASK_NAME')) ?>:</td>
-		<td><input type="text" name="name" size="42" /></td>
-	</tr>
-	<tr>
-		<td align="right" valign="top"><?php echo (JText::_('DESCRIPTION')) ?>:</td>
-		<td><textarea name="description" rows="4" cols="40" wrap="virtual"></textarea></td>
-	</tr>
-	<tr>
-		<td align="right"><?php echo (JText::_('STATUS')) ?>:</td>
-		<td><?php Common::proj_status_list("task_status", "Started"); ?></td>
-	</tr>
-	<tr>
-		<td align="right" valign="top"><?php echo (JText::_('TASK_MEMBERS')) ?>:</td>
-		<td><?php Common::multi_user_select_list("assigned[]"); ?></td>
-	</tr>
-	<tr>
-		<td class="outer_table_heading">
-			<h2><?php echo JText::_('ADD_STANDARD_TASKS_IN_PROJECT'). $data['title']. JText::_('FOR_CLIENT'). $data['organisation']; ?>:</h2>
+			<h2><?php echo JText::_('ADD_STANDARD_TASKS_IN_PROJECT'). "<i>". $data['title']. "</i>". JText::_('FOR_CLIENT'). "<i>". $data['organisation']. "</i>"; ?>:</h2>
 		</td>
 	</tr>
 </table>
@@ -74,7 +61,7 @@ PageElements::setTheme('newcss');
 <table width="70%">
 	<thead>
 		<tr>
-			<th><?php echo JText::_('SELECT_ADD'); ?></t>
+			<th><?php echo JText::_('SELECT_ADD'); ?></th>
 			<th><?php echo JText::_('TASK_NAME'); ?></th>
 			<th><?php echo JText::_('DESCRIPTION'); ?></th>
 			<th><?php echo JText::_('STATUS'); ?></th>

@@ -4,7 +4,7 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_PROJ
 PageElements::setTheme('newcss');
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclProjects'))return;
 
 if (isEmpty(gbl::getLoggedInUser()))
 	errorPage("Could not determine the logged in user");

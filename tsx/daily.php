@@ -78,13 +78,13 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 <table>
 	<tr>
-		<td>
+		<td class="outer_table_heading">
 			<?php echo JText::_('CURRENT_DATE').': '?><span><?php echo utf8_encode(strftime(JText::_('DFMT_WKDY_MONTH_DAY_YEAR'), $todayDate)); ?></span>
 		</td>
+		<td width=50>&nbsp;</td>
 		<td  class="outer_table_heading">
-				<?php Common::printDateSelector("daily", $startDate, $yesterdayDate, $tomorrowDate); ?>
-		
-			</td>
+			<?php Common::printDateSelector("daily", $startDate, $yesterdayDate, $tomorrowDate); ?>
+		</td>
 
 	</tr>
 </table>

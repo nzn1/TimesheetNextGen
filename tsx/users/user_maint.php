@@ -1,8 +1,8 @@
 <?php
 
 // Authenticate
-
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('level2'))return;
+// if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USERS')."</title>");
 ob_start();	
 PageElements::setTheme('newcss');

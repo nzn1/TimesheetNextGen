@@ -1,6 +1,6 @@
 <?php
 // Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTasks'))return;
 
 $assignTasks = isset($_REQUEST["assignTasks"]) ? $_REQUEST["assignTasks"]: false;
 

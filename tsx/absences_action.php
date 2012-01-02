@@ -3,7 +3,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclAbsences'))return;
 
 // Connect to database.
 

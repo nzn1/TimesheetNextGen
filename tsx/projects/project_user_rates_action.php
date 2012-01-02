@@ -2,7 +2,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclProjects'))return;
 
 //load local vars from request/post/get
 $action = $_REQUEST["action"];

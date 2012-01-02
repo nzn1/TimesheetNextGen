@@ -7,7 +7,7 @@ PageElements::setTheme('newcss');
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');
 }
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclExpenses'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclECategories'))return;
 
 if (isEmpty(gbl::getLoggedInUser()))
 	errorPage("Could not determine the logged in user");
