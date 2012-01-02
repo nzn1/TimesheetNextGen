@@ -150,8 +150,7 @@ class Site {
 		}
 
 		$tp = new TemplateParser();
-		//apply the theme configuration
-		require_once('themes/'.PageElements::getTheme().'/config.php');
+
 
 
 		$filename = Config::getDocumentRoot()."/modules/".Rewrite::getModule()."/config.php";

@@ -78,9 +78,19 @@ class PageElements{
 					ErrorHandler::fatalError('Tag type cannot be changed to file type');
 				}
 				
+				if($obj->getOutput() != null){
+          //the tag being replaced has already been parsed!
+          //so lets just ignore the action for now.
+          
+          //TODO handle tags being changed and re add them to the parsing queue.
+          $match = true;
+				  break;
+        }
+        else{
 				self::$elements[$key] = new FileTag($name,$file);				
 				$match = true;
 				break;
+				}
 			}
 		}
 		if(false == $match){
@@ -105,7 +115,10 @@ class PageElements{
 		foreach (self::$elements as $key=>$obj){
 			/* @var $obj Tag */
 			if($obj->getName() == $tag->getName()){
-				trigger_error('this tag name ('.$tag->getName().') already exists in the datastructure');
+				//trigger_error('this tag name ('.$tag->getName().') already exists in the datastructure');
+				
+				//TODO handle this correctly as it may not actually be an error.
+				//i.e. when a template is changed, and a tag is readded, it is technically not an error
 				$match = true;
 				break;
 			}
@@ -285,6 +298,8 @@ class PageElements{
 	 */
 	public static function setTheme($s){
 		self::$theme = $s;
+		//apply the theme configuration
+		require('themes/'.self::$theme.'/config.php');
 	}	
 	
 	
