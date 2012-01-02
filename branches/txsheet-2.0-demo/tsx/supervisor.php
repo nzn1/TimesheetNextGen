@@ -1,7 +1,7 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclDaily'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTApproval'))return;
 
 // Note supervisor form uses the same functions as the submit form.
 include('submit.class.php');

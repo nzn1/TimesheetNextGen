@@ -228,12 +228,11 @@ function CallBack_WithNewDateSelected(strDate)
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EXPENSE_LIST')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('txsheet2');
+PageElements::setTheme('newcss');
 ob_end_clean();
 
+if(!$export_excel) { 
 ?>
-
-<?php if(!$export_excel) { ?>
 <form action="<?php echo Config::getRelativeRoot();?>/expenses/exp_submit_action" method="post" name="subexpenses" >
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="mode" value="<?php echo $mode; ?>">
@@ -294,13 +293,13 @@ ob_end_clean();
 		<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 
 	<?php } ?>
-			<th><?php echo JText::_('DESCRIPTION');?></td>
+		<th><?php echo JText::_('DESCRIPTION');?></td>
 		<th><?php echo ucfirst(JText::_('CATEGORY')); ?></th>
 		<th><?php echo ucfirst(JText::_('AMOUNT')); ?></th>
-					<th><?php echo JText::_('BILLABLE');?></td>
-			<th><?php echo JText::_('STATUS');?></td>
-			<th><?php echo JText::_('ACTIONS');?></td>
-			</tr>
+		<th><?php echo JText::_('BILLABLE');?></td>
+		<th><?php echo JText::_('STATUS');?></td>
+		<th><?php echo JText::_('ACTIONS');?></td>
+		</tr>
 	</thead>
 	<tbody>
 		
@@ -373,7 +372,8 @@ ob_end_clean();
 			}
 			print "</td>";
 			if ($data['status'] == "Open") 
-				print "<td><input type=\"checkbox\" name=\"sub[]\" value=\"" . $data["eid"] . "\"></td>";
+				print "<td><input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\">";
+				print "<input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\"></td>";
 			else 
 				print "<td>&nbsp;</td>";
 			print "</tr>";

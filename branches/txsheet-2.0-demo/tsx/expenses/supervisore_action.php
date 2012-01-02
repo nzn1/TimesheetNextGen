@@ -2,7 +2,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclEcategories'))return;
 
 // Config::getRelativeRoot()."submit.php?uid=peter&amp;orderby=project&amp;client_id=0&amp;mode=monthly&amp;year=2010&amp;month=8&amp;day=1"
 //load local vars from request/post/get

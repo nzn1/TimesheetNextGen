@@ -3,7 +3,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclAbsences'))return;
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ABSENCE_ENTRY')." | ".gbl::getContextUser()."</title>");
 
 if (isEmpty(gbl::getLoggedInUser()))

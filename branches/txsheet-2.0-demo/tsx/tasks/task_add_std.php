@@ -3,7 +3,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTasks'))return;
 
 $contextUser = strtolower($_SESSION['contextUser']);
 

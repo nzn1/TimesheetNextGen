@@ -1,7 +1,7 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclExpenses'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclEcategories'))return;
 
 // Note supervisor form uses the same functions as the submit form.
 require_once(Config::getDocumentRoot().'/tsx/submit.class.php'); 
