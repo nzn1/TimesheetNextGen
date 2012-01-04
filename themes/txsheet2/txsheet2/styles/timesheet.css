@@ -1,0 +1,279 @@
+
+/*menu items*/
+.command:link { color: #000788; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; font-size: 11px; }
+.command:visited { color: #000788; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; font-size: 11px; }
+.command:hover { color: #6D72C6; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; font-size: 11px; }
+.command_current { color: #6D72C6; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; font-size: 11px; }
+.nobr {white-space: nowrap}
+
+/***************** MONTHLY TABLE**************************/
+
+
+#monthly{
+  padding:5px;
+}
+
+
+#monthly .monthTable{
+border: 1px solid black;
+width:100%;
+}
+
+/*header row of the table*/
+#monthly .monthTable .table_head { border-bottom: 1px solid #5271CC; background-color: #433B94;color:white; }
+
+/**cell formatting of the enabled days*/
+#monthly .monthTable .calendar_cell_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; }
+
+#monthly .monthTable .calendar_cell_today { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #FF9933; }
+
+#monthly .monthTable .calendar_cell_right { border-bottom: 1px solid #5271CC; background-color: #F2F3FF; }
+/*A day in the week that is disabled.  i.e. the prefill of days from the previous month*/
+#monthly .monthTable .calendar_cell_disabled_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; }
+/*Last day of the week that is disabled:i.e. the days after the last day of the month that is a Sunday*/
+#monthly .monthTable .calendar_cell_disabled_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; text-align: center;}
+
+/*Days that are classed as holidays i.e. weekends*/
+#monthly .monthTable .calendar_cell_holiday_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4DDC4; }
+#monthly .monthTable .calendar_cell_holiday_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4DDC4; }
+
+/*the row that sums up the total hours*/
+#monthly .monthTable .calendar_totals_line_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: black; background-color: #fff0f0; }
+#monthly .monthTable .calendar_totals_line_weekly { border-bottom: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
+#monthly .monthTable .calendar_totals_line_weekly_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
+
+#monthly .monthTable .calendar_total_value_weekly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
+#monthly .monthTable .calendar_total_value_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
+
+/*increase the padding between all span tags within the month table*/
+#monthly .monthTable span{padding:2px;}
+
+#monthly .monthTable .client_name_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #555555; font-weight: bold; display:block;}
+#monthly .monthTable .project_name_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #E9AD4D; font-weight: bold; display:block;}
+#monthly .monthTable .task_name_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #00066F; font-weight: bold; display:block;}
+#monthly .monthTable .holiday_title_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #00066F;}
+#monthly .monthTable .task_time_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #00066F; display:block;}
+#monthly .monthTable .task_time_total_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: red; display:block;}
+
+
+/***************** DAILY TABLE**************************/
+
+
+#daily{
+  padding:5px;
+}
+
+
+#daily .dailyTable{
+border: 1px solid black;
+width:100%;
+background-color: #F2F3FF;
+border-collapse:collapse;
+border-spacing:0;
+}
+
+#daily .dailyTable td {}
+
+/*header row of the table*/
+#daily .dailyTable .table_head { border-bottom: 1px solid #5271CC; background-color: #433B94;color:white;}
+#daily .dailyTable .table_head td { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC;} 
+#daily .dailyTable tr.diff td { background:#C4C4C4; }
+                                                
+/**cell formatting of the enabled days*/
+#daily .dailyTable .calendar_cell_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; }
+#daily .dailyTable .calendar_cell_right { border-bottom: 1px solid #5271CC; background-color: #F2F3FF; }
+/*A day in the week that is disabled.  i.e. the prefill of days from the previous month*/
+#daily .dailyTable .calendar_cell_disabled_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; }
+/*Last day of the week that is disabled:i.e. the days after the last day of the month that is a Sunday*/
+#daily .dailyTable .calendar_cell_disabled_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; text-align: center;}
+
+/*Days that are classed as holidays i.e. weekends*/
+#daily .dailyTable .calendar_cell_holiday_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4DDC4; }
+#daily .dailyTable .calendar_cell_holiday_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4DDC4; }
+
+/*the row that sums up the total hours*/
+#daily .dailyTable .calendar_totals_line_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: black; background-color: #fff0f0; }
+#daily .dailyTable .calendar_totals_line_weekly { border-bottom: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
+#daily .dailyTable .calendar_totals_line_weekly_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
+
+#daily .dailyTable .calendar_total_value_weekly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
+#daily .dailyTable .calendar_total_value_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
+
+/*This was done as a global a:link property before*/
+#daily .dailyTable .actions{text-align:right;}
+#daily .dailyTable .action_link{text-align:right;}
+#daily .dailyTable a:link { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
+#daily .dailyTable a:visited { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
+#daily .dailyTable a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
+
+/***************** WEEKLY TABLE**************************/
+
+
+#weekly{
+  padding:5px;
+}
+
+
+#weekly .weekTable{
+border: 1px solid black;
+width:100%;
+border:0;
+background-color: #F2F3FF;
+border-collapse:collapse;
+border-spacing:0; 
+}
+
+/*header row of the table*/
+#weekly .weekTable .table_head { border-bottom: 1px solid #5271CC; background-color: #433B94;color:white; }
+#weekly .weekTable tr.diff td { background:#C4C4C4; }
+
+#weekly .weekTable .client_name_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #555555; font-weight: bold;} /*no display:block;*/
+#weekly .weekTable .project_name_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #E9AD4D; font-weight: bold;} /*no display:block;*/
+#weekly .weekTable .task_name_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #00066F; font-weight: bold;} /*no display:block;*/
+#weekly .weekTable .task_time_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #00066F; display:block;}
+#weekly .weekTable .task_time_total_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: red; display:block;}
+
+#weekly .weekTable .calendar_total_value_weekly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
+#weekly .weekTable .calendar_total_value_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
+
+/*This was done as a global a:link property before*/
+#weekly .weekTable .actions{display:block;text-align:right;}
+#weekly .weekTable .action_link{text-align:right;}
+#weekly .weekTable a:link { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
+#weekly .weekTable a:visited { color: #00066F; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
+#weekly .weekTable a:hover { color: #9494B7; font-weight: bold; font-family: Verdana, Arial, sans-serif; text-decoration: none; }
+
+/*the row that sums up the total hours*/
+#weekly .weekTable .calendar_totals_line_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: black; background-color: #fff0f0; }
+#weekly .weekTable .calendar_totals_line_weekly { border-bottom: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
+#weekly .weekTable .calendar_totals_line_weekly_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
+
+/**cell formatting of the enabled days*/
+#weekly .weekTable .calendar_cell_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; }
+#weekly .weekTable .calendar_cell_right { border-bottom: 1px solid #5271CC; background-color: #F2F3FF; }
+/*A day in the week that is disabled.  i.e. the prefill of days from the previous month*/
+#weekly .weekTable .calendar_cell_disabled_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; }
+/*Last day of the week that is disabled:i.e. the days after the last day of the month that is a Sunday*/
+#weekly .weekTable .calendar_cell_disabled_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; text-align: center;}
+
+/***************** SIMPLE TABLE**************************/
+
+
+#simple{
+  padding:5px;
+}
+
+
+#simple .simpleTable{
+border: 1px solid black;
+width:100%;
+background-color: #F2F3FF;
+border-collapse:collapse;
+border-spacing:0;
+}
+
+#simple .simpleTable td {}
+
+#simple .simpleTable .table_head { border-bottom: 1px solid #5271CC; background-color: #433B94;color:white; }
+#simple .simpleTable tr.diff td { background:#C4C4C4; }
+
+/**cell formatting of the enabled days*/
+#simple .simpleTable .calendar_cell_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #F2F3FF; }
+#simple .simpleTable .calendar_cell_right { border-bottom: 1px solid #5271CC; background-color: #F2F3FF; }
+/*A day in the week that is disabled.  i.e. the prefill of days from the previous month*/
+#simple .simpleTable .calendar_cell_disabled_middle { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; }
+/*Last day of the week that is disabled:i.e. the days after the last day of the month that is a Sunday*/
+#simple .simpleTable .calendar_cell_disabled_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; background-color: #C4C4C4; text-align: center;}
+
+/*the row that sums up the total hours*/
+#simple .simpleTable .calendar_totals_line_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: black; background-color: #fff0f0; }
+#simple .simpleTable .calendar_totals_line_weekly { border-bottom: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
+#simple .simpleTable .calendar_totals_line_weekly_right { border-bottom: 1px solid #5271CC; border-right: 1px solid #5271CC; font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: normal; color: black;  background-color: #EAEAEA; }
+
+#simple .simpleTable .calendar_total_value_weekly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
+#simple .simpleTable .calendar_total_value_monthly { font-size: 10px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: red; }
+
+#simple .simpleTable .task_time_small { font-size: 9px; font-family: Tahoma, Arial, sans-serif; color: #00066F; display:block;}
+/*********************************************************************/
+
+/******************* REPORT GRID CLIENT USER *************************/
+
+		table.report {
+			border-collapse:collapse;
+			margin:1em;
+		}
+		table.report th.project{
+			text-align:center;
+			font-style:italic;
+		}
+		table.report td, table.report th{
+			padding:0.2em 0.7em;
+			text-align:right;
+			border:1px solid #5271CC;
+		}
+		table.report th.first{
+			border:none;
+		}
+		table.report tr.weekend td{
+			background-color:#CCCCCC;
+		}
+		table.report th {
+			text-align:left;
+			font-size:0.7em;
+		}
+		table.report td.grandtotal{
+			color:red;
+			font-size:0.8em;
+		}
+
+		@media print{
+			div#header { display:none; }
+			div#footer { display:none; }
+			a.export { display:none; }
+			td.print { display:none; }
+			td.next_prev_links {display:none;}
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.align_right{text-align:right;}
+.align_center{text-align:center;}
+
+#daily .clock{
+width:50%; margin:auto auto;
+background-color: #F2F3FF;
+
+}
+
+#clockOnOffTable{
+border:1px solid #5271CC;
+border-collapse:collapse;
+border-spacing:0;
+margin:auto auto;
+}
+/*.clock_on_box { border: 1px solid #00BF00; background-color: #EAEAEA; }*/
+.clock_on_box { border: 1px solid #00BF00; }
+/*.clock_off_box { border: 1px solid #FF1010; background-color: #EAEAEA; }*/
+.clock_off_box { border: 1px solid #FF1010; }
+
+.clock_on_text { color: #00BF00; }
+
+.clock_off_text { color: #FF1010; }
+
+.calendar_delete_cell {text-align:center; }
+
+.calendar_delete_cell a:link, .calendar_delete_cell a:visited {color:#e04040; }
+
+
