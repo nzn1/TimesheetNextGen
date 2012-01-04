@@ -2,7 +2,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
-//if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Administrator'))return;
 
 
 //if ((!Site::getSession()->isLoggedIn()) || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
@@ -64,6 +64,7 @@ $aclRates = $_REQUEST["aclRates"];
 $aclAbsences = $_REQUEST["aclAbsences"];
 $aclExpenses = $_REQUEST["aclExpenses"];
 $aclECategories = $_REQUEST["aclECategories"];
+$aclTsubmission = $_REQUEST["aclTsubmission"];
 $aclTApproval = $_REQUEST["aclTApproval"];
 $simpleTimesheetLayout = isset($_REQUEST["simpleTimesheetLayout"]) ? $_REQUEST["simpleTimesheetLayout"]: false;
 $startPage = $_REQUEST["startPage"];
@@ -124,6 +125,7 @@ elseif ($action == "edit") {
 	Config::setAclAbsences($aclAbsences);
 	Config::setAclExpenses($aclExpenses);
 	Config::setAclECategories($aclECategories);
+	Config::setAclTsubmission($aclTsubmission);
 	Config::setAclTApproval($aclTApproval);
 	Config::setSimpleTimesheetLayout($simpleTimesheetLayout);
 	Config::setStartPage($startPage);
@@ -170,6 +172,7 @@ elseif ($action == "edit") {
 		Config::resetConfigValue("aclAbsences");
 		Config::resetConfigValue("aclExpenses");
 		Config::resetConfigValue("aclECategories");
+		Config::resetConfigValue("aclTsubmission");
 		Config::resetConfigValue("aclTApproval");
 	}
 }

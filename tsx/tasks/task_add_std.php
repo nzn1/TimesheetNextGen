@@ -57,7 +57,11 @@ PageElements::setTheme('newcss');
 		print "</tr>"; // end this row
 	}
 ?>
-
+	<tr>
+		<td align="center" colspan="3">
+			<input type="submit" value="Add and Delete Selected New Standard Tasks">
+		</td>
+	</tr>
 </table>
 <h3>Delete Existing Standard Tasks</h3>
 <table>
@@ -83,10 +87,7 @@ PageElements::setTheme('newcss');
 		print("<tr><td>" . JText::_('NO_EXISTING_TASKS') . "</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 	}
 ?>
-	<tr>
-		<td align="center" colspan="3">
-			<input type="submit" value="Add and Delete Selected New Standard Tasks">
-		</td>
+
 	</table>
 
 </form>

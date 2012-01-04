@@ -1,7 +1,7 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTasks'))return;
 
 $assignTasks = isset($_REQUEST["assignTasks"]) ? $_REQUEST["assignTasks"]: false;
 

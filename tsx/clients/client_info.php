@@ -3,7 +3,7 @@ if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 PageElements::setTemplate('popup_template.php');
-PageElements::setTheme('txsheet2');
+PageElements::setTheme('newcss');
 PageElements::setHead("<title>".Config::getMainTitle()." - ".JText::_('CLIENT_INFO')."</title>");
 
 

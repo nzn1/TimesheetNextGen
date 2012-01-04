@@ -3,7 +3,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Administrator'))return;
 
 //Get the result set for the config set 1
 
@@ -416,9 +416,10 @@ ob_end_clean();
 					<tr><td><?php echo JText::_('REPORTS'); ?>:</td><td><?php Common::acl_select_droplist("aclReports", Config::getAclReports()); ?>&nbsp;</td></tr>
 					<tr><td><?php echo JText::_('RATES'); ?>:</td><td><?php Common::acl_select_droplist("aclRates", config::getAclRates()); ?>&nbsp;</td></tr>
 					<tr><td><?php echo JText::_('ABSENCES'); ?>:</td><td><?php Common::acl_select_droplist("aclAbsences", Config::getAclAbsences()); ?>&nbsp;</td></tr>
-					<tr><td>Expenses:</td><td><?php Common::acl_select_droplist("aclExpenses", Config::getAclExpenses()); ?>&nbsp;</td></tr>
-					<tr><td>Expense Categories:</td><td><?php Common::acl_select_droplist("aclECategories", Config::getAclECategories()); ?>&nbsp;</td></tr>
-					<tr><td>Time Approval:</td><td><?php Common::acl_select_droplist("aclTApproval", Config::getAclTApproval()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('EXPENSES'); ?>:</td><td><?php Common::acl_select_droplist("aclExpenses", Config::getAclExpenses()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('EXPENSE_CATEGORIES_APPROVAL'); ?>:</td><td><?php Common::acl_select_droplist("aclECategories", Config::getAclECategories()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('TIMESHEET_SUBMISSION'); ?>:</td><td><?php Common::acl_select_droplist("aclTsubmission", Config::getAclTsubmission()); ?>&nbsp;</td></tr>
+					<tr><td><?php echo JText::_('TIMESHEET_APPROVAL'); ?>:</td><td><?php Common::acl_select_droplist("aclTApproval", Config::getAclTApproval()); ?>&nbsp;</td></tr>
 		</table>
 	</table>
 	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">

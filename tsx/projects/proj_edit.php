@@ -55,56 +55,34 @@ while ($datanext = dbResult($qh)) {
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 <div id="inputArea">
-<!--  table width="600" align="center" border="0" cellspacing="0" cellpadding="0" -->
-<table class="noborder">
-	<tbody class="nobground">
-		<td class="outer_table_heading">
-			<h1><?php echo JText::_('EDIT_PROJECT').": ".stripslashes($data["title"]); ?> </h1>
-		</td>
-	</tr>
+	<h2><?php echo JText::_('EDIT_PROJECT').": <i>".stripslashes($data["title"]); ?> </i></h2>
 
-	<tr>
-		<td align="right"><?php echo JText::_('PROJECT_TITLE'); ?>:</td>
-		<td><input type="text" name="title" size="42" value="<?php echo stripslashes($data["title"]); ?>" style="width: 100%;" maxlength="200" /></td>
-	</tr>
-	<tr>
-		<td align="right">Client:</td>
-		<td><?php Common::client_select_list($data["client_id"], 0, false, false, false, true, "", false); ?></td>
-	</tr>
-	<tr>
-		<td align="right" valign="top">Description:</td>
-		<td><textarea name="description" rows="4" cols="40" wrap="virtual" style="width: 100%;"><?php $data["description"] = stripslashes($data["description"]); echo $data["description"]; ?></textarea></td>
-	</tr>
-	<tr>
-		<td align="right"><?php echo JText::_('START_DATE'); ?>:</td>
-		<td><?php Common::day_button("start_day",$data["start_stamp"],0); Common::month_button("start_month",$start_month); Common::year_button("start_year",$start_year); ?></td>
-	</tr>
-	<tr>
-		<td align="right"><?php echo JText::_('DUE_DATE'); ?>:</td>
-		<td><?php Common::day_button("end_day",$data["end_stamp"],0); Common::month_button("end_month",$end_month); Common::year_button("end_year",$end_year); ?></td>
-	</tr>
-	<tr>
-		<td align="right"><?php echo JText::_('STATUS'); ?>:</td>
-		<td><?php Common::proj_status_list("proj_status", $data["proj_status"]); ?></td>
-	</tr>
-	<tr>
-		<td align="right">URL:</td>
-		<td><input type="text" name="url" size="42" value="<?php echo $data["http_link"]; ?>" style="width: 100%;" /></td>
-	</tr>
-	<tr>
-		<td align="right" valign="top"><?php echo JText::_('PROJECT_MEMBERS'); ?>:</td>
-		<td><?php Common::multi_user_select_list("assigned[]",$selected_array); ?></td>
-	</tr>
-	<tr>
-		<td align="right"><?php echo JText::_('PROJECT_LEADER'); ?>:</td>
-		<td><?php Common::single_user_select_list("project_leader", $data["proj_leader"]); ?></td>
-	</tr>
-	<tr>
-			<!--  table width="100%" border="0" class="table_bottom_panel" -->
-		<td align="center">
+	<div><label><?php echo JText::_('PROJECT_TITLE'); ?>:</label>
+		<input type="text" name="title" size="42" value="<?php echo stripslashes($data["title"]); ?>" maxlength="200" /></div>
+
+	<div><label>Client:</label>
+		<?php Common::client_select_list($data["client_id"], 0, false, false, false, true, "", false); ?></div>
+
+	<div><label>Description:</label>
+		<textarea name="description" rows="4" cols="40"><?php $data["description"] = stripslashes($data["description"]); echo $data["description"]; ?></textarea></div>
+
+	<div><label><?php echo JText::_('START_DATE'); ?>:</label>
+		<?php Common::day_button("start_day",$data["start_stamp"],0); Common::month_button("start_month",$start_month); Common::year_button("start_year",$start_year); ?></div>
+
+	<div><label><?php echo JText::_('DUE_DATE'); ?>:</label>
+		<?php Common::day_button("end_day",$data["end_stamp"],0); Common::month_button("end_month",$end_month); Common::year_button("end_year",$end_year); ?></div>
+
+	<div><label><?php echo JText::_('STATUS'); ?>:</label>
+		<?php Common::proj_status_list("proj_status", $data["proj_status"]); ?></div>
+
+	<div><label>URL:</label>
+		<input type="text" name="url" size="42" value="<?php echo $data["http_link"]; ?>" /></div>
+
+	<div><label><?php echo JText::_('PROJECT_MEMBERS'); ?>:</label>
+		<?php Common::multi_user_select_list("assigned[]",$selected_array); ?></div>
+	
+	<div><label><?php echo JText::_('PROJECT_LEADER'); ?>:</label>
+		<?php Common::single_user_select_list("project_leader", $data["proj_leader"]); ?></div>
 			<input type="submit" value="<?php echo JText::_('SUBMIT_CHANGES'); ?>" />
-		</td>
-	</tr>
-</table>
 </div>
 </form>

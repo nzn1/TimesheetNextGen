@@ -99,6 +99,7 @@ class Common{
 	
 	public static function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
 
+		$query = "SELECT date_format(start_time,'%d') AS day_of_month, trans_num, ";
 		if (Config::getTimeFormat() == "12")
 			$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
 		else
@@ -798,7 +799,7 @@ class Common{
 						"FROM ".tbl::getClientTable()." ORDER BY organisation");
 		}
 
-		print "<select name=\"client_id\" onchange=\"$onChange\" style=\"width:100%;\"";
+		print "<select name=\"client_id\" onchange=\"$onChange\" ";
 		if ($isMultiple)
 			print "multiple size=\"4\"";
 		print ">\n";
@@ -941,7 +942,7 @@ class Common{
 			return;
 		}
 
-		print "<select name=\"proj_id\" onchange=\"$onChange\" style=\"width:100%;\"";
+		print "<select name=\"proj_id\" onchange=\"$onChange\" ";
 		if ($disabled == 'true')
 			print " disabled=\"disabled\"";
 		print ">\n";
@@ -1631,7 +1632,7 @@ class Common{
 		$next_year = date("Y", $next_date);
 		$next_month = date("m", $next_date);
 		$next_day = date("d", $next_date);
-		echo JText::_('Date').": "; 
+		echo JText::_('CHANGE_DATE').": "; 
   	echo "<span style=\"color:#00066F;\">";
     echo "<a href=\"" . Rewrite::getShortUri(). "?client_id=".gbl::getClientId()."&amp;proj_id=".gbl::getProjId()."&amp;task_id=".gbl::getTaskId()."&amp;year=".$last_year."&amp;month=".$last_month."&amp;day=".$last_day."&amp;mode=".$mode. "\" >";
     echo "<img src=\"{relativeRoot}/images/cal_reverse.gif\" alt=\"prev\" /></a>";

@@ -41,7 +41,7 @@ PageElements::setTheme('newcss');
 <input type="hidden" name="task_id" value="<?php echo $data["task_id"]; ?>" />
 <div id="inputArea">
 
-<div><label><?php echo (JText::_('TASK_NAME')) ?>:</label><input type="text" name="name" size="42" /></div>
+<div><label><?php echo (JText::_('TASK_NAME')) ?>:</label><input type="text" name="name" size="42" value="<?php echo $data['name']?>"/></div>
 <div><label><?php echo JText::_('DESCRIPTION'); ?>:</label><textarea name="description" rows="4" cols="40"><?php $data["description"] = stripslashes($data["description"]); echo $data["description"]; ?></textarea></div>
 <div><label><?php echo JText::_('STATUS'); ?>:</label><?php Common::proj_status_list("task_status", $data["status"]); ?></div>
 <div><label><?php echo JText::_('TASK_MEMBERS'); ?>:</label><?php Common::multi_user_select_list("assigned[]",$selected_array); ?></div>

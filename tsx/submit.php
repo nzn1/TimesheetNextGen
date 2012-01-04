@@ -194,9 +194,8 @@ function make_index($data,$order) {
 	return $index;
 }
 //require_once("include/language/datetimepicker_lang.inc");
-?>
 
-<?php 
+
 PageElements::setTheme('newcss');
 ob_start();
 ?>
@@ -237,9 +236,7 @@ function CallBack_WithNewDateSelected(strDate)
 PageElements::setHead(ob_get_contents());
 ob_end_clean();
 
-?>
-
-<?php if(!$export_excel) { ?>
+if(!$export_excel) { ?>
 <form action="<?php echo Config::getRelativeRoot();?>/submit_action" method="post" name="subtimes" >
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
 <input type="hidden" name="year" value="<?php echo $year; ?>" />
@@ -262,7 +259,7 @@ ob_end_clean();
 		<td>
 		<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
 			
-			</td>
+		</td>
 	<?php if (!$print): ?>
 		<td>
 			<a href="<?php echo Rewrite::getShortUri();?>?<?php echo ampersandEncode($_SERVER["QUERY_STRING"]);?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" alt="" name="esporta_dati" border="0" /><br />&rArr;&nbsp;Excel </a>
@@ -286,13 +283,17 @@ ob_end_clean();
 <table>
 	<thead>
 		<tr>
-
+		
 <?php } // end if !export_excel 
 
 	$projPost="uid=$uid$ymdStr&amp;orderby=project&amp;client_id=$client_id&amp;mode=$mode";
 	$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
-	if($orderby== 'project'): ?>
-		<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
+	if($orderby== 'project'): 	?> 
+		<th>
+		<a href=" <?php echo Rewrite::getShortUri();?>?<?php echo $projPost;?> " >
+		<?php echo JText::_('CLIENT')." / ".JText::_('PROJECT');?>
+		</a></th>
+	
 		<th><?php echo JText::_('TASK');?></th>
 		<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 		<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
@@ -313,6 +314,7 @@ ob_end_clean();
 			<th><?php echo JText::_('CONFIRM');?></th>
 		</tr>
 	</thead>
+	<tbody>
 <?php
 	$dati_total=array();
 	$darray=array();

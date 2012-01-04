@@ -94,8 +94,8 @@ if(!($val === ''))
 							<a href="report_all?<?php print $ymdStr; ?>&amp;mode=monthly"><?php echo JText::_('MONTH'); ?></a>
 						</td>
 					</tr>
-<?php } ?>
-<?php if (Site::getAuthenticationManager()->hasAccess('aclAbsences')) { ?>
+<?php } 
+	if (Site::getAuthenticationManager()->hasAccess('aclAbsences')) { ?>
 					<tr class="inner_table_head">
 						<td class="inner_table_column_heading"><?php echo JText::_('ATTENDANCE_REPORTS'); ?></td>
 						<td class="inner_table_column_heading"><?php echo JText::_('PERIOD'); ?></td>

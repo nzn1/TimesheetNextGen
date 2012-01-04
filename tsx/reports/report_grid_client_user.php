@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
-PageElements::setTheme('txsheet2');
+PageElements::setTheme('newcss');
 
 //export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
 if (isset($_REQUEST["export_excel"]) && $_REQUEST["export_excel"] == "1"){
@@ -141,7 +141,7 @@ PageElements::setHead(ob_get_contents());
 ob_end_clean();
 ?>
 
-<h1><?php echo JText::_('GRID_CLIENT_REPORT'); ?></h1>
+<h1><?php echo JText::_('CLIENT_USER_GRID_REPORT'); ?></h1>
 
 <?php
 

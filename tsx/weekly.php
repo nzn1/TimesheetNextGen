@@ -2,7 +2,7 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclWeekly'))return;
-PageElements::setTheme('txsheet2');
+PageElements::setTheme('newcss');
 
 if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));
@@ -79,7 +79,7 @@ if (isset($popup)){
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 	<tr>
-		<td width="30%" align="center" class="outer_table_heading">
+		<td  align="center" class="outer_table_heading">
 			<?php
 				$sdStr = utf8_encode(strftime(JText::_('DFMT_MONTH_DAY_YEAR'),$startDate));
 				//just need to go back 1 second most of the time, but DST 
@@ -88,10 +88,11 @@ if (isset($popup)){
 				echo JText::_('CURRENT_WEEK').': <span style="color:#00066F;">'.$sdStr.' - '.$edStr.'</span>';
 			?>
 		</td>
-		<td width="15%" align="center">
+		<td>&nbsp;</td>
+		<td  align="center">
   		<?php Common::printDateSelector($mode, $startDate, $prevWeekDate, $nextWeekDate); ?>
 		</td>
-		<td width="5%" align="right"><?php echo JText::_('FILTER')?>:</td>
+		<td  align="right"><?php echo JText::_('FILTER')?>:</td>
 
 		<td  align="left">
 		<?php 

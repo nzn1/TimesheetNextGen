@@ -41,12 +41,18 @@ PageElements::setTheme('newcss');
 
 <table class="noborder">
 	<tbody class="nobground">
-
+		<tr>
+		<td align="center" colspan="2">
+			<input type="submit" value="<?php echo (JText::_('ADD_NEW_TASK')) ?>" />
+		</td>
+		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+	</tr>
 	<tr>
 		<td class="outer_table_heading">
 			<h2><?php echo JText::_('ADD_STANDARD_TASKS_IN_PROJECT'). "<i>". $data['title']. "</i>". JText::_('FOR_CLIENT'). "<i>". $data['organisation']. "</i>"; ?>:</h2>
 		</td>
 	</tr>
+
 </table>
 	<?php 
 		// add standard tasks to the selection list
@@ -89,12 +95,7 @@ PageElements::setTheme('newcss');
 	}
 	
 	?>
-	<tr>
-		<td align="center" colspan="2">
-			<input type="submit" value="<?php echo (JText::_('ADD_NEW_TASK')) ?>" />
-		</td>
-		<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
-	</tr>
+
 
 </table>
 </div>
