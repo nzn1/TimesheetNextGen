@@ -2,7 +2,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTasks'))return;
 
 $proj_id = gbl::getProjId();
 if (empty($proj_id))
@@ -167,8 +167,12 @@ PageElements::setTheme('newcss');
 		//foreach($data_task as $data) {
 			$data_task = dbResult($qh_task);
 			//start the row
-?>
-		<tr>
+
+			if (($j % 2) == 1)
+				echo "<tr class=\"diff\">\n";
+			else
+				echo "<tr>\n";
+			?>
 			<td valign="center">
 				<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
 			</td>		

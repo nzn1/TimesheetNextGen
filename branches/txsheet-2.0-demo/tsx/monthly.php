@@ -1,6 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
-PageElements::setTheme('txsheet2');
+PageElements::setTheme('newcss');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;
@@ -36,7 +36,7 @@ $previousDate = strtotime(date("d M Y H:i:s",gbl::getContextTimestamp()) . " -1 
 $nextDate = strtotime(date("d M Y H:i:s",gbl::getContextTimestamp()) . " +1 month");
 
 $mode="monthly";
-
+$sdStr = utf8_encode(strftime(JText::_('DFMT_MONTH_YEAR'),$startDate));
 //the day the week should start on: 0=Sunday, 1=Monday
 $startDayOfWeek = Common::getWeekStartDay();
 // Get day of week of 1st of month
@@ -78,7 +78,8 @@ if (isset($popup))
 <!-- Overall table covering month cells, client and project and date -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td ><h1 style="margin:0;padding:0;"><?php echo JText::_('MONTHLY_TIMESHEET'); ?></h1></td>
+		<td ><h1 style="margin:0;padding:0;"><?php echo JText::_('MONTHLY_TIMESHEET') ." " .
+			JText::_('FOR'). " ". $sdStr ; ?></h1></td>
 
 	</tr>
 	<tr>

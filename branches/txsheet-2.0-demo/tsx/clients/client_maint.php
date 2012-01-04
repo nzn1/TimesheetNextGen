@@ -31,7 +31,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 	<table>
 		<tr>
-		<td align="right">
+		<td  class="outer_table_heading" align="right">
 			<a href="client_add" class="outer_table_action"><?php echo JText::_('ADD_NEW_CLIENT')?></a>
 		</td>
 		</tr>

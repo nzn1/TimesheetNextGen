@@ -3,7 +3,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
 if (isEmpty(gbl::getLoggedInUser()))
         errorPage("Could not determine the logged in user");
@@ -29,6 +29,12 @@ $day = $todayDateValues["mday"];
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 $dateValues = getdate($todayDate);
 $ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+
+$startDate = strtotime(date("d M Y",gbl::getContextTimestamp()));
+$previousDate = strtotime(date("d M Y H:i:s",gbl::getContextTimestamp()) . " -1 month");
+$nextDate = strtotime(date("d M Y H:i:s",gbl::getContextTimestamp()) . " +1 month");
+
+$mode="monthly";
 
 //run the query
 list($qh,$num) = Common::get_absences($month, $year, $uid);
@@ -65,7 +71,7 @@ function popupPrintWindow() {
 </script>
 
 
-<title>Report: Monthly Absences</title>
+<?php echo"<title>".Config::getMainTitle()." | ".JText::_('ABSENCE_REPORT')." | ".gbl::getContextUser()."</title>";?>
 
 </head>
 <?php
@@ -108,15 +114,8 @@ function popupPrintWindow() {
 			<td align="left" > <?php Common::user_select_droplist($uid, false); ?>
 			</td>
 			<td align="center" class="outer_table_heading">
-			<input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $todayDate); ?>" />
-			&nbsp;&nbsp;&nbsp;
-			<?php
-				echo JText::_('SELECT_OTHER_MONTH').": ";
-			?>
-				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
-				</td><td><td>	&nbsp;&nbsp;&nbsp;</td><td>
-			<?php echo date('F Y',$todayDate); ?>
-			</td>
+		<?php Common::printDateSelector($mode, $startDate, $previousDate, $nextDate); ?>
+		</td>
 			<?php if (!$print): 
 				//<td  align="center" >
 				//<a href="#" onclick="javascript:esporta('user')" ><img src="images/export_data.gif" name="esporta_dati" border="0" alt="" /></a>

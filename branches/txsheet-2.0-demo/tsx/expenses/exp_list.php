@@ -239,16 +239,18 @@ if(!$export_excel) {
 
 <table>
 	<tr>
-		<td><?php echo JText::_('CLIENT').": "; ?></td>
-		<td>
+		<td text-align="right" class="outer_table_heading"><?php echo JText::_('CLIENT').": "; ?></td>
+		<td  class="outer_table_heading">
 			<?php Common::client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
 		</td>
-	</tr>
-	<tr>
-		<td><?php echo JText::_('USER').": "; ?></td>
+
+		<td text-align="right"><?php echo JText::_('USER').": "; ?></td>
 		<td>
 			<?php Common::user_select_droplist($uid, false,"100%"); ?>
 		</td>
+		<td></td><td></td>
+	</tr>
+	<tr>
 		<td>
 		<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
 			
@@ -304,6 +306,7 @@ if(!$export_excel) {
 	<tbody>
 		
 <?php
+	$count = 0; // used to change the background of each alternate line
 	$query = "SELECT eid, title as project, organisation as client, billable, amount, e.description, " .
 			" date, status, t.description as category FROM ".
 			tbl::getExpenseTable(). " e , " . tbl::getProjectTable(). " p, " . tbl::getClientTable()." c, " . tbl::getExpenseCategoryTable().
@@ -335,7 +338,10 @@ if(!$export_excel) {
 
 
 		while ($data = dbResult($qh)) {
-			print "<tr>";
+			if (($count % 2) == 1)
+				print "<tr class=\"diff\">\n";
+			else
+				print "<tr>\n";
 			print "<td>" . $data['client']. " / " .  $data['project']. "</td>";
 			print "<td>" . $data['date']. "</td>";
 			print "<td>" . $data['description']. "</td>";
@@ -371,12 +377,14 @@ if(!$export_excel) {
 					break;
 			}
 			print "</td>";
-			if ($data['status'] == "Open") 
+			if ($data['status'] == "Open") {
 				print "<td><input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\">";
 				print "<input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\"></td>";
+			}
 			else 
 				print "<td>&nbsp;</td>";
 			print "</tr>";
+			$count++;
 			$level_total[0] = $level_total[0] + $data['amount'];
 		}
 		
@@ -391,7 +399,7 @@ if(!$export_excel) {
 		echo JText::_('WEEKLY_TOTAL'). ": ";
 	else
 		echo JText::_('MONTHLY_TOTAL'). ": ";
-	echo $level_total[0];
+	printf("%8.2f", $level_total[0]);
 ?>
 		</td>
 		<td colspan="3">&nbsp;</td>

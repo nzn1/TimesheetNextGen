@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 ppr($_POST);
 //load local vars from request/post/get
 $save_changes = isset($_REQUEST['save_changes']) ? $_REQUEST['save_changes']: false;

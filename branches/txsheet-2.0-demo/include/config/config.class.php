@@ -75,11 +75,12 @@ class Config extends ConfigFactory {
 	protected static $aclAbsences;
 	protected static $aclExpenses;
 	protected static $aclECategories;
+	protected static $aclTsubmission;
 	protected static $aclTApproval;
 	protected static $simpleTimesheetLayout;
 	protected static $startPage;
 	protected static $project_items_per_page;
-  protected static $task_items_per_page;
+  	protected static $task_items_per_page;
   
 	
 	private static $defaultConfig;	
@@ -189,6 +190,7 @@ class Config extends ConfigFactory {
 		self::$defaultConfig->aclAbsences =  "Basic";
 		self::$defaultConfig->aclExpenses =  "Basic";
 		self::$defaultConfig->aclECategories =  "Basic";
+		self::$defaultConfig->aclTsubmission = "Basic";
 		self::$defaultConfig->aclTApproval =  "Basic";
 		self::$defaultConfig->simpleTimesheetLayout =  "small work description field";
 		self::$defaultConfig->startPage =  "monthly";
@@ -428,7 +430,13 @@ class Config extends ConfigFactory {
 		return self::$aclECategories;
 	}
 	/**
-	* Configuration Routine getAclTApproval
+	* Configuration Routine getAclTsubmission for submitting timesheets 
+	*/
+	public static function getAclTsubmission() {
+		return self::$aclTsubmission;
+	}
+	/**
+	* Configuration Routine getAclTApproval for approval of submitted timesheets 
 	*/
 	public static function getAclTApproval() {
 		return self::$aclTApproval;
@@ -791,7 +799,7 @@ class Config extends ConfigFactory {
 		Database::getInstance()->query($query); 
 	}
 	/**
-	* Configuration Routine set configuration item in Configuration table
+	* Configuration Routine set Acl allow recording of expenses configuration item in Configuration table
 	* @params String $value - the value of the parameter to be changed
 	*/
 	public static function setAclExpenses($value) {
@@ -800,7 +808,7 @@ class Config extends ConfigFactory {
 		Database::getInstance()->query($query); 
 	}
 	/**
-	* Configuration Routine set configuration item in Configuration table
+	* Configuration Routine set Acl Set expense categories and approve expenses item in Configuration table
 	* @params String $value - the value of the parameter to be changed
 	*/
 	public static function setAclECategories($value) {
@@ -809,7 +817,16 @@ class Config extends ConfigFactory {
 		Database::getInstance()->query($query); 
 	}
 	/**
-	* Configuration Routine set configuration item in Configuration table
+	* Configuration Routine set Acl Timesheet submision item in Configuration table
+	* @params String $value - the value of the parameter to be changed
+	*/
+	public static function setAclTsubmission($value) {
+		self::$aclTsubmission = $value;
+		$query = "UPDATE ".tbl::getNewConfigTable()." SET value = '$value' WHERE name = 'aclTsubmission'";
+		Database::getInstance()->query($query); 
+	}
+	/**
+	* Configuration Routine set Acl Timesheet approval item in Configuration table
 	* @params String $value - the value of the parameter to be changed
 	*/
 	public static function setAclTApproval($value) {
