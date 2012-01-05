@@ -2,7 +2,7 @@
 
 if(!class_exists('Site'))die('Restricted Access');
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_EXPENSE_CATEGORY')."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 // Authenticate
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');

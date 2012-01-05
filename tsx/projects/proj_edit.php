@@ -1,7 +1,7 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_PROJECT')."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclProjects'))return;
@@ -55,7 +55,7 @@ while ($datanext = dbResult($qh)) {
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="proj_id" value="<?php echo $data["proj_id"]; ?>" />
 <div id="inputArea">
-	<h2><?php echo JText::_('EDIT_PROJECT').": <i>".stripslashes($data["title"]); ?> </i></h2>
+	<h1><?php echo JText::_('EDIT_PROJECT').": <i>".stripslashes($data["title"]); ?> </i></h1>
 
 	<div><label><?php echo JText::_('PROJECT_TITLE'); ?>:</label>
 		<input type="text" name="title" size="42" value="<?php echo stripslashes($data["title"]); ?>" maxlength="200" /></div>

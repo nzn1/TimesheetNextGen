@@ -1,11 +1,11 @@
 <?php
 
 // Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('level2'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Manager'))return;
 // if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USERS')."</title>");
 ob_start();	
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ?>
 
 <script type="text/javascript">
@@ -86,21 +86,13 @@ PageElements::setTheme('newcss');
 	PageElements::setHead(ob_get_contents());
 	ob_end_clean(); 
 ?>
-<h1><?php echo JText::_('USERS'); ?></h1>
+<h1><?php echo JText::_('EMPLOYEES_CONTRACTORS_LIST'); ?></h1>
 <form action="user_action" name="userForm" method="post">
 <input type="hidden" name="action" value="" />
 <input type="hidden" name="uid" value="" />
 
 <table>
-	<tr>
-		<!--  td width="100%" class="face_padding_cell" -->
-		<td align="left" class="outer_table_heading">
-			<?php echo JText::_('EMPLOYEES_CONTRACTORS_LIST'); ?>
-		</td>
-		<td align="right" >
-			&nbsp;
-		</td>
-	</tr>
+
 	<tr>
 		<!--  td width="100%" class="face_padding_cell" -->
 		<td align="left" class="outer_table_heading">
@@ -111,8 +103,9 @@ PageElements::setTheme('newcss');
 		</td>
 	</tr>
 </table>
-<table>
-<thead>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 	<tr>
 		<th><?php echo JText::_('FIRST_NAME'); ?></th>
 		<th><?php echo JText::_('LAST_NAME'); ?></th>
@@ -200,8 +193,9 @@ while ($data = dbResult($qh)) {
 		</td>
 	</tr>
 </table>
-<table>
-	<thead>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 	<tr>
 
 		<th><?php echo JText::_('FIRST_NAME'); ?></th>
@@ -240,10 +234,10 @@ while ($data = dbResult($qh)) {
 		</td>
 
 		<td align="center">
-			<input type="button" name="addupdate" value="Add/Update Employee/Contractor" onclick="javascript:addUser()" class="bottom_panel_button" />
+			<input type="button" name="addupdate" value="<?php echo JText::_('ADD_UPDATE_USER')?>" onclick="javascript:addUser()" class="bottom_panel_button" />
 		</td>
 		<td align="center">
-			<input type="button" name="clearfield" value="Clear Fields" onclick="this.form.reset()" class="bottom_panel_button" />
+			<input type="button" name="clearfield" value="<?php echo JText::_('CLEAR_FIELDS')?>" onclick="this.form.reset()" class="bottom_panel_button" />
 		</td>
 	</tr>
 	</tbody>

@@ -2,7 +2,7 @@
 
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Manager'))return;
 //N.B. This page should be authorised to administrators only!
 
 //load local vars from request/post/get

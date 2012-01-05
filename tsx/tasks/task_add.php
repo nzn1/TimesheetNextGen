@@ -13,14 +13,14 @@ $proj_id = gbl::getProjId(); //$_REQUEST['proj_id'];
 Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ADD_NEW_TASK')."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 
 ?>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/tasks/task_action" method="post">
 <input type="hidden" name="action" value="add" />
 <input type="hidden" name="proj_id" value="<?php echo $proj_id ?>" />
-<div class="inputArea">
+
 <?php 
 // get name of project and client name using project id
 
@@ -32,8 +32,8 @@ PageElements::setTheme('newcss');
 	LogFile::write(" Get title organisation  Query = \"$queryString\" and rows returned is \"$num\"\n");
 	
 ?>
-<h2><?php echo JText::_('ADD_NEW_TASK_IN_PROJECT'). "<i>".$data['title']."</i>".
-	 JText::_('FOR_CLIENT'). "<i>". $data['organisation'] ."</i>"; ?>:</h2>
+<h1><?php echo JText::_('ADD_NEW_TASK_IN_PROJECT'). "<i>".$data['title']."</i>".
+	 JText::_('FOR_CLIENT'). "<i>". $data['organisation'] ."</i>"; ?>:</h1>
 <div><label><?php echo (JText::_('TASK_NAME')) ?>:</label><input type="text" name="name" size="42" /></div>
 <div><label><?php echo (JText::_('DESCRIPTION')) ?>:</label><textarea name="description" rows="4" cols="40" wrap="virtual"></textarea></div>
 <div><label><?php echo (JText::_('STATUS')) ?>:</label><?php Common::proj_status_list("task_status", "Started"); ?></div>
@@ -49,7 +49,7 @@ PageElements::setTheme('newcss');
 	</tr>
 	<tr>
 		<td class="outer_table_heading">
-			<h2><?php echo JText::_('ADD_STANDARD_TASKS_IN_PROJECT'). "<i>". $data['title']. "</i>". JText::_('FOR_CLIENT'). "<i>". $data['organisation']. "</i>"; ?>:</h2>
+			<h1><?php echo JText::_('ADD_STANDARD_TASKS_IN_PROJECT'). "<i>". $data['title']. "</i>". JText::_('FOR_CLIENT'). "<i>". $data['organisation']. "</i>"; ?>:</h1>
 		</td>
 	</tr>
 
@@ -64,8 +64,9 @@ PageElements::setTheme('newcss');
 		$size = 4; // selects size of multi_user_select_list. Minimum of 4 to get a vert scroll bar
 		if($numtasks > 0) {
 	?>
-<table width="70%">
-	<thead>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 		<tr>
 			<th><?php echo JText::_('SELECT_ADD'); ?></th>
 			<th><?php echo JText::_('TASK_NAME'); ?></th>
@@ -79,12 +80,15 @@ PageElements::setTheme('newcss');
 		for($i = 0; $i < $numtasks; $i++) {
 			$data = dbResult($stdtasks, $i);
 			$task_id = $data["task_id"];
+			if(($i % 2) ==1)
+				print "<tr class=\"diff\">\n";
+			else
+				print "<tr>\n";
 	?>
-			<tr>
-				<td>
+				<td class="calendar_cell_middle">
 					<input type="checkbox" name="add<?php echo $i; ?>"></td>
-				<td><?php echo $data["name"]; ?></td>
-				<td><?php echo $data["description"]; ?></td>
+				<td class="calendar_cell_middle"><?php echo $data["name"]; ?></td>
+				<td class="calendar_cell_middle"><?php echo $data["description"]; ?></td>
 	<?php 
 			print("<td><input type=\"hidden\" name=\"id$i\" value=\"$task_id\">");
 				Common::proj_status_list("task_status$i", "Pending");

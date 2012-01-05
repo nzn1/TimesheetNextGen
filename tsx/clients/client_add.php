@@ -1,7 +1,7 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ADD_NEW_CLIENT')."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
 PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/banner-no-menu.inc');

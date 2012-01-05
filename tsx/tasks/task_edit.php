@@ -30,10 +30,10 @@ while ($datanext = dbResult($qh)) {
 }
 
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_TASK') ." | ".$data["name"]."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ?>
-<h2><?php echo JText::_('EDIT_TASK'). "<i>  " . $data["name"]."</i>  ".JText::_('FOR_PROJECT').
-			    "  <i>" .$data['title']."</i>  ". JText::_('FOR_CLIENT'). " <i>".$data['organisation']. "</i>"; ?>:</h2>
+<h1><?php echo JText::_('EDIT_TASK'). "<i>  " . $data["name"]."</i>  ".JText::_('FOR_PROJECT').
+			    "  <i>" .$data['title']."</i>  ". JText::_('FOR_CLIENT'). " <i>".$data['organisation']. "</i>"; ?>:</h1>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/tasks/task_action" method="post">
 <input type="hidden" name="action" value="edit" />

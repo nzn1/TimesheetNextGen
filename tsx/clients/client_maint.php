@@ -21,7 +21,7 @@ if (isEmpty(gbl::getLoggedInUser()))
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('CLIENTS')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ob_end_clean();
 PageElements::setBodyOnLoad('doOnLoad();');
 ?>
@@ -37,7 +37,9 @@ PageElements::setBodyOnLoad('doOnLoad();');
 		</tr>
 	</table>
 
-	<table>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 		
 <?php
 
@@ -50,7 +52,7 @@ if ($num == 0) {
 	print "<a href=\"client_add\" class=\"outer_table_action\">".JText::_('CLICK_HERE_TO_ADD_ONE')."</a><br /><br /></td></tr>";
 } else {
 
-	print "<thead><tr>";
+	print "<tr>";
 	print "<th>".ucfirst(JText::_('ORGANISATION'))."</th>";
 	print "<th>".ucfirst(JText::_('CONTACT_NAME'))."</th>";
 	print "<th>".ucfirst(JText::_('EMAIL'))."</th>";
@@ -74,11 +76,11 @@ if ($num == 0) {
 			print "<tr class=\"diff\">";
 		else
 			print "<tr>";
-		print "<td><a href=\"javascript:void(0)\" onclick=\"window.open('client_info?client_id=$data[client_id]','ClientInfo','location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=260')\">$organisationField</a></td>";
-		print "<td>$contactNameField</td>";
-		print "<td>$emailField</td>";
-		print "<td>$phoneField</td>";
-		print "<td>\n";
+		print "<td class=\"calendar_cell_middle\"><a href=\"javascript:void(0)\" onclick=\"window.open('client_info?client_id=$data[client_id]','ClientInfo','location=0,directories=no,status=no,menubar=no,resizable=1,width=480,height=260')\">$organisationField</a></td>";
+		print "<td class=\"calendar_cell_middle\">$contactNameField</td>";
+		print "<td class=\"calendar_cell_middle\">$emailField</td>";
+		print "<td class=\"calendar_cell_middle\">$phoneField</td>";
+		print "<td class=\"calendar_cell_middle\">\n";
 		print "	<a href=\"client_edit?client_id=$data[client_id]\">".JText::_('EDIT')."</a>,&nbsp;\n";
 		print "	<a href=\"javascript:delete_client($data[client_id]);\">".JText::_('DELETE')."</a>\n";
 		print "</td>\n";

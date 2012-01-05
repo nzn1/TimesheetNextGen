@@ -2,7 +2,7 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclWeekly'))return;
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 
 if (isEmpty(gbl::getLoggedInUser()))
 	errorPage(JText::_('WHO_IS_LOGGED_IN'));

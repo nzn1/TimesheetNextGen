@@ -1,7 +1,7 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclEcategories'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclECategories'))return;
 
 // Note supervisor form uses the same functions as the submit form.
 require_once(Config::getDocumentRoot().'/tsx/submit.class.php'); 
@@ -84,7 +84,7 @@ if($export_excel){
 	// list the expense data
 
 		$query = "SELECT eid, title as project, organisation as client, billable, amount, e.description, " .
-			" date, status, t.description as category FROM ".
+			" DATE(date) as date, status, t.description as category FROM ".
 			tbl::getExpenseTable(). " e , " . tbl::getProjectTable(). " p, " . tbl::getClientTable()." c, " . tbl::getExpenseCategoryTable().
 			 " t WHERE user_id = '" . $uid . "' AND p.proj_id = e.proj_id AND c.client_id = e.client_id ".
 			 " AND e.cat_id = t.cat_id ORDER BY e.proj_id, e.client_id, e.date";
@@ -250,41 +250,43 @@ function CallBack_WithNewDateSelected(strDate)
 //-->
 </script>
 <?php 
-PageElements::setHead("<title>".Config::getMainTitle()." | Expenses Approval for ".gbl::getContextUser()."</title>");
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('SUPERVISE_EXPENSES') . " " .JText::_('FOR'). " ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 
 PageElements::setHead(PageElements::getHead().ob_get_contents());
 ob_end_clean();
 
 
  if(!$export_excel) { ?>
+
+ <div id ="simple">
 <form name="subtimes" action="<?php echo Config::getRelativeRoot(); ?>/expenses/supervisore_action" method="post">
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="year" value="<?php echo $year; ?>">
 <input type="hidden" name="month" value="<?php echo $month; ?>">
 <input type="hidden" name="day" value="<?php echo $day; ?>">
 <input type="hidden" name="mode" value="<?php echo $mode; ?>">
-
+ <h1> <?php echo JText::_('SUPERVISE_EXPENSES') . " " .JText::_('FOR'). " " .gbl::getContextUser() ; ?></h1>
 <table>
 		<tr>
 			<td>
 				<table>
 					<tr>
-						<td><?php echo (JText::_('CLIENT')).':'; ?></td>
-						<td>
+						<td>  class="outer_table_heading"<?php echo (JText::_('CLIENT')).':'; ?></td>
+						<td class="outer_table_heading">
 							<?php Common::client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
 						</td>
 					</tr>
 					<tr>
-						<td><?php echo (JText::_('USER')).':'; ?></td>
-						<td>
+						<td class="outer_table_heading"><?php echo (JText::_('USER')).':'; ?></td>
+						<td class="outer_table_heading">
 							<?php Common::supervised_user_select_droplist($uid, false,"100%"); ?>
 						</td>
 					</tr>
 				</table>
-			<td>	
+			<td class="outer_table_heading">	
 				<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
 			</td>
 			<?php if (!$print): ?>
@@ -318,9 +320,9 @@ ob_end_clean();
 			<td>
 
 <?php } // end if !export_excel ?>
-	<table>
+	<table  class="simpleTable">
 		<thead>
-			<tr>
+			<tr  class="table_head">
 				<?php 
 					$projPost="uid=$uid$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
 					$datePost="uid=$uid$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
@@ -344,7 +346,7 @@ ob_end_clean();
 		</thead>
 <?php
 	if ($num == 0) {
-		print "	<tr>\n";
+		print "	<tr class=\"calendar_cell_middle\">\n";
 		print "		<td align=\"center\">\n";
 		print "			<i><br>".JText::_('NO_EXPENSES_RECORDED') ." ".date("Y-m-d",$startDate).".<br><br></i>\n";
 		print "		</td>\n";
@@ -361,14 +363,14 @@ ob_end_clean();
 
 		while ($data = dbResult($qh)) {
 			print "<tr>";
-			print "<td>" . $data['client']. " / " .  $data['project']. "</td>";
-			print "<td>" . $data['date']. "</td>";
-			print "<td>" . $data['description']. "</td>";
-			print "<td>" . $data['category']. "</td>";
-			print "<td>" . $data['amount']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['client']. " / " .  $data['project']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['date']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['description']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['category']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['amount']. "</td>";
 			if ($data['billable']) {
 				// print the different billable descriptions internationalised
-				print "<td>";
+				print "<td class=\"calendar_cell_middle\">";
 				switch($data['billable']) {
 					case "Billable":
 						print JText::_('BILLABLE');
@@ -383,7 +385,7 @@ ob_end_clean();
 				print "</td>";
 			}
 			// print the different status descriptions internationalised
-			print "<td>";
+			print "<td class=\"calendar_cell_middle\">";
 			switch($data['status']) {
 				case "Open":
 					print JText::_('STATUS_OPEN');
@@ -397,11 +399,11 @@ ob_end_clean();
 			}
 			print "</td>";
 			if ($data['status'] == "Submitted") { // if expense has been submitted, then allow approval or rejection
-				print "<td><input type=\"checkbox\" name=\"approve[]\" value=\"" . $data["eid"] . "\"></td>";
-				print "<td><input type=\"checkbox\" name=\"reject[]\" value=\"" . $data["eid"] . "\"></td>";
+				print "<td class=\"calendar_cell_middle\"><input type=\"checkbox\" name=\"approve[]\" value=\"" . $data["eid"] . "\"></td>";
+				print "<td class=\"calendar_cell_middle\"><input type=\"checkbox\" name=\"reject[]\" value=\"" . $data["eid"] . "\"></td>";
 			} else
 			{
-				print "<td>&nbsp;</td><td>&nbsp;</td>";
+				print "<td class=\"calendar_cell_middle\">&nbsp;</td><td class=\"calendar_cell_middle\">&nbsp;</td>";
 			}
 			print "</tr>";
 			$level_total[0] = $level_total[0] + $data['amount'];
@@ -411,8 +413,9 @@ ob_end_clean();
 	if ($num > 0) {
 ?>
 
-		<tr class="mtotalr">
-		<td class="textproject" colspan="5">
+		<tr>
+		<td  colspan="4">&nbsp;</a>
+		<td class="calendar_total_value_weekly">
 <?php
 	if ($mode == "weekly")
 		echo JText::_('WEEKLY_TOTAL'). ": ";

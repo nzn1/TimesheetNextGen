@@ -238,7 +238,7 @@ function CallBack_WithNewDateSelected(strDate)
 PageElements::setHead("<title>".Config::getMainTitle()." | Timesheet for ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 
 PageElements::setHead(PageElements::getHead().ob_get_contents());
 ob_end_clean();
@@ -303,8 +303,9 @@ PageElements::setBodyOnLoad('doOnLoad();');
 			<td>
 
 <?php } // end if !export_excel ?>
-	<table>
-		<thead>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 			<tr>
 				<?php 
 					$projPost="uid=$uid$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
@@ -319,16 +320,18 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						<?php else: ?>
 							<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 							<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
-						<th><?php echo JText::_('TASK');?></td>
+						<th><?php echo JText::_('TASK');?></th>
 						<th><?php echo ucfirst(JText::_('START_TIME')); ?></th>
 						<th><?php echo ucfirst(JText::_('END_TIME')); ?></th>
 						<?php endif; ?>
-						<th><?php echo JText::_('WORK_DESCRIPTION');?></td>
-						<th><?php echo JText::_('STATUS');?></td>
-						<th><?php echo JText::_('DURATION');?></td>
-						<th><?php echo JText::_('APPROVE');?></td>
-						<th><?php echo JText::_('REJECT');?></td>
-					</tr>
+						<th><?php echo JText::_('WORK_DESCRIPTION');?></th>
+						<th><?php echo JText::_('STATUS');?></th>
+						<th><?php echo JText::_('DURATION');?></th>
+						<th><?php echo JText::_('APPROVE');?></th>
+						<th><?php echo JText::_('REJECT');?></th>
+				</tr>
+		</thead>
+		<tbody></a>
 <?php
 	$dati_total=array();
 	$darray=array();
@@ -403,7 +406,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 				print "<tr>";
 				// max value equals number of columns plus 1 to print
 				for($i=0; $i<10; $i++) {
-					print "<td valign=\"top\" class=\"calendar_cell_right\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
+					print "<td class=\"calendar_cell_middle\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
 							$sc->printInfo($colVar[$i], $data);

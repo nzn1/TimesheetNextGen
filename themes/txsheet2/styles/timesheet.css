@@ -276,4 +276,10 @@ margin:auto auto;
 
 .calendar_delete_cell a:link, .calendar_delete_cell a:visited {color:#e04040; }
 
-
+/******************* DATA ENTRY FORMS *************************/
+label {
+	clear: left;
+	float: left;
+	text-align: right;
+	width: 16em; 
+}

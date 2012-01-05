@@ -3,7 +3,7 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 PageElements::setTemplate('popup_template.php');
 
 //load local vars from request/post/get

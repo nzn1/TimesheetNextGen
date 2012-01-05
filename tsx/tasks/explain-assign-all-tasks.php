@@ -18,35 +18,20 @@ function do_query($sql) {
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EXPLAIN_ASSIGN_ALL_TASKS')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-<<<<<<< .mine
+
 		<tr>
 			<td colspan="2">
-				<h2><?php echo JText::_('EXPLAIN_ASSIGN_ALL_TASKS'); ?></h2>
+				<h1><?php echo JText::_('EXPLAIN_ASSIGN_ALL_TASKS'); ?></h1>
 			</td>
 		</tr>
 		<tr>
 			<td  colspan="2">
-=======
-		<td class="face_padding_cell">
 
-			<table width="100%" border="0">
-				<tr>
-					<td align="center">
-						<h2>Explaination of Assign all Tasks to all Project Members</h2>
-					</td>
-				</tr>
-			</table>
-
-			<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-				<tr>
-					<td width="40">&nbsp;</td>
-					<td>
->>>>>>> .r341
 Ok, suppose we have 15 tasks each for 20 projects.  I don't know about you, but I'm not going to enjoy assigning 15 tasks for each project that a user may be assigned to. So, I wrote a script that would just assign all 15 tasks to each user for every project they were assigned to, and the GUI interface on the last page allows you to run that script.<br /><br />
 If that is still not clear enough, suppose we have the following: 
 <td></tr>

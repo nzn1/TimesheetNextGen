@@ -1,7 +1,7 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Manager'))return;
 
 if (isEmpty(gbl::getLoggedInUser()))
 	errorPage("Could not determine the logged in user");
@@ -37,18 +37,18 @@ ob_start();
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('USER_RATES')."</title>");
 
 //PageElements::setHead(PageElements::getHead().ob_get_contents());
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 	ob_end_clean();
 ?>
-
+<h1><?php echo JText::_('USER_RATES'); ?>:</h1>
 <form action="<?php echo Config::getRelativeRoot(); ?>/users/rate_action" name="rateForm" method="post">
 <input type="hidden" name="action" value="" />
 <input type="hidden" name="rate_id" value="" />
 
-<h1><?php echo JText::_('USER_RATES'); ?>:</h1>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<thead>
 	<tr>
 		<th><?php echo JText::_('RATE_ID'); ?></td>
 		<th><?php echo JText::_('BILLING_RATE_BYHOUR'); ?></td>

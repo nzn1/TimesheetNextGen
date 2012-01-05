@@ -6,12 +6,9 @@ if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclProjects'))return;
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_RATES')." | ".gbl::getContextUser()."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ?>
-<head>
 
-
-</head>
 
 <h1><?php echo JText::_('PROJECT_RATES'); ?></h1>
 
@@ -24,13 +21,16 @@ PageElements::setTheme('newcss');
 		<td >&nbsp;</td>
 	</tr>
 	</table>
-	<table>
-	<thead>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 	<tr>
 		<td>&nbsp;<?php echo JText::_('PROJECT_TITLE') ?></td>
 		<td>&nbsp;<?php echo JText::_('CLIENT') ?></td>
 		<td>&nbsp;<i><?php echo JText::_('ACTIONS') ?></i></td>
 	</tr>
+	</thead>
+	<tbody>
 <?php
 
 
@@ -60,5 +60,7 @@ while ($data = dbResult($qh)) {
 
 	</td>
 	</tr>
+	</tbody>
+	</div>
 </table>
 

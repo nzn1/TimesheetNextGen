@@ -1,6 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclMonthly'))return;

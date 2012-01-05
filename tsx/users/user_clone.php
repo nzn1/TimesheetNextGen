@@ -1,7 +1,7 @@
 <?php
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Manager'))return;
 
 //load local vars from request/post/get
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : "";
@@ -99,7 +99,7 @@ ob_start();
 	</script>
 <?php 
 PageElements::setHead(PageElements::getHead().ob_get_contents());
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ob_end_clean();
 print "</div>";
 

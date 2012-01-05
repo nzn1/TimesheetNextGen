@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('Open'))return;
 PageElements::setTemplate('popup_template.php');
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 
 //load local vars from request/post/get
 $proj_id = $_REQUEST['proj_id'];
