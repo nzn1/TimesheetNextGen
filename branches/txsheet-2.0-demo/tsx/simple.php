@@ -1,6 +1,6 @@
 <?php
 if(!class_exists('Site'))die(JText::_('RESTRICTED_ACCESS'));
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclSimple'))return;
@@ -128,7 +128,7 @@ echo "var None_option = '".JText::_('VALUE_NONE')."';";
 echo "<script type=\"text/javascript\" src=\"".Config::getRelativeRoot()."/js/simple.js\"></script>";
 
 PageElements::setHead(ob_get_contents());
-//PageElements::setTheme('newcss');
+
 ob_end_clean();
 PageElements::setBodyOnLoad('populateExistingSelects();');
 

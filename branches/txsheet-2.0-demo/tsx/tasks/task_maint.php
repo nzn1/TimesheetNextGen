@@ -78,7 +78,7 @@ $query_task_page = "SELECT DISTINCT task_id, name, description,status, ".
 //$num_task_page = Database::getNumRows();
 list($qh_task_page, $num_task_page) = dbQuery($query_task_page);
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('TASKS')."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ?>
 
 <html>
@@ -127,9 +127,11 @@ PageElements::setTheme('newcss');
 	</tr>
 </table>
 
-<table>
+<div id ="simple">
+
+<table class="simpleTable">
 	<thead>
-		<tr>
+		<tr class="table_head">
 			<th><?php echo JText::_('TASK_NAME') ?></th>
 			<th><?php echo JText::_('STATUS') ?></th>
 			<th><?php echo JText::_('DESCRIPTION') ?></th>
@@ -173,16 +175,16 @@ PageElements::setTheme('newcss');
 			else
 				echo "<tr>\n";
 			?>
-			<td valign="center">
+			<td class="calendar_cell_middle">
 				<span class="project_title"><?php echo stripslashes($data_task["name"]); ?></span>
 			</td>		
-			<td>
+			<td class="calendar_cell_middle">
 				<span class="project_status"><?php echo JText::_($data_task["status"]); ?></span>
 			</td>
-			<td>
+			<td class="calendar_cell_middle">
 				<?php echo stripslashes($data_task["description"]); ?>
 			</td>
-			<td>
+			<td class="calendar_cell_middle">
 				<?php
 					//get assigned users
 					list($qh3, $num_3) = dbQuery("SELECT username, task_id FROM ".tbl::getTaskAssignmentsTable()." WHERE task_id=$data_task[task_id]");
@@ -196,7 +198,7 @@ PageElements::setTheme('newcss');
 					}
 					?>
 			</td>
-			<td align="right" valign="top">
+			<td align="right"  class="calendar_cell_middle">
 				<a href="task_edit?task_id=<?php echo $data_task["task_id"]; ?>"><?php echo (JText::_('EDIT')) ?></a>,
 				<a href="javascript:delete_task(<?php echo $proj_id; ?>,<?php echo $data_task["task_id"]; ?>);"><?php echo (JText::_('DELETE')) ?></a>
 			</td>

@@ -47,7 +47,7 @@ function writePageLinks($page, $results_per_page, $num_task_page)
 }
 
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EDIT_CATEGORIES')."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ?>
 
 <h1> <?php echo (JText::_('EDIT_CATEGORIES')) ?> </h1>
@@ -57,15 +57,15 @@ PageElements::setTheme('newcss');
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td><?php echo (JText::_('CATEGORY')) ?>:</td>
+		
 		<td>
 				<a href="cat_add"><?php echo (JText::_('ADD_NEW_CATEGORY')) ?></a>
 		</td>
 	</tr>
 </table>
-
-<table>
-	<thead>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 		<tr>
 			<th><?php echo JText::_('CATEGORY') ?></th>
 			<th><?php echo JText::_('ACTIONS') ?></th>
@@ -88,15 +88,17 @@ list($qh, $num) = dbQuery($query_categories);
 		for ($j=0; $j<$num; $j++) {
 			$data_cat = dbResult($qh);
 			//start the row
+			if(($j % 2) ==1)
+				print "<tr class=\"diff\">\n";
+			else
+				print "<tr>\n";
 ?>
-		<tr>
-			<td valign="center">
+			<td class="calendar_cell_middle">
 				<input type="hidden" name="catId" value="<?php echo $data_cat['cat_id']; ?>">
 				<?php echo stripslashes($data_cat["description"]); ?>
 			</td>		
 
-			</td>
-			<td align="right" valign="top">
+			<td align="right" class="calendar_cell_middle">
 				<a href="cat_edit?cat_id=<?php echo $data_cat["cat_id"]; ?>"><?php echo (JText::_('EDIT')) ?></a>,
 				<a href="javascript:delete_task(<?php echo $data_cat["cat_id"]; ?>);"><?php echo (JText::_('DELETE')) ?></a>
 			</td>
@@ -106,7 +108,8 @@ list($qh, $num) = dbQuery($query_categories);
 		}
 	}
 ?>
-				</table>
-
+			
+</table>
+</div>
 
 </form>

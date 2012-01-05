@@ -18,28 +18,20 @@ $query = "SELECT task_id, name, description from " .tbl::getStdTaskTable(). " OR
 
 list($stdtasks, $numtasks) = dbQuery($query);
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('STANDARD_TASKS')."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ?>
 <!-- form action="task_test.php" method="post" -->
 
 <form action="task_std_action" method="post">
 <input type="hidden" name="action" value="add">
 
-<table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 
-					<tr>
-						<td align="left" class="outer_table_heading" >
-							<?php echo JText::_('ADD_NEW_STANDARD_TASK') ?>
-						</td>
-					</tr>
-				</table>
-
-
-
-<h3><?php echo JText::_('ADD_NEW_STANDARD_TASK') ?></h3>
+<h1><?php echo JText::_('ADD_NEW_STANDARD_TASK') ?></h1>
 <?php echo JText::_('STANDARD_TASK') ?>
-<table>
-<thead>
+
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 <tr>
 	<th>Add</th>
 	<th>Task Name</th>
@@ -50,41 +42,47 @@ PageElements::setTheme('newcss');
 
 <?php 
 	for ($row = 0; $row < 10; $row++) {
-		print "<tr>"; // start a new  row
-		print "<td><input type=\"checkbox\" name=\"add" .$row. "\" size=\"4\"></td>";
-		print "<td><input type=\"text\" name=\"task" .$row . "\" size=\"42\"></td>";
-		print "<td><input type=\"text\" name=\"descr" . $row. "\" size=\"42\"></td>";
+		
+		print "<tr>\n";
+		print "<td class=\"calendar_cell_middle\"><input type=\"checkbox\" name=\"add" .$row. "\" size=\"4\"></td>";
+		print "<td class=\"calendar_cell_middle\"><input type=\"text\" name=\"task" .$row . "\" size=\"42\"></td>";
+		print "<td class=\"calendar_cell_middle\"><input type=\"text\" name=\"descr" . $row. "\" size=\"42\"></td>";
 		print "</tr>"; // end this row
 	}
 ?>
 	<tr>
 		<td align="center" colspan="3">
-			<input type="submit" value="Add and Delete Selected New Standard Tasks">
+			<input type="submit" value="<?php echo JText::_('ADD_DEL_STD_TASKS')?>">
 		</td>
 	</tr>
 </table>
-<h3>Delete Existing Standard Tasks</h3>
-<table>
-<thead>
-<tr>
-	<th>Del</th>
-	<th>Task Name</th>
-	<th>Description</th>
+<h1><?php echo JText::_('DELETE_EXISTING_STD_TASKS');?> </h1>
+<table class="simpleTable">
+	<thead class="table_head">
+	<tr>
+	<th><?php echo JText::_('DELETE');?></th>
+	<th><?php echo JText::_('TASK_NAME');?></th>
+	<th><?php echo JText::_('DESCRIPTION');?></th>
 </tr>
+</thead>
+<tbody>
 
 <?php
 	if($numtasks > 0) {
 		// continue row count from previous input rows
 		for($i = 0; $i < $numtasks; $i++) {
 			$data = dbResult($stdtasks, $i);
-			print("<tr><td><input type=\"checkbox\" name=\"del".$row."\" size=\"4\" >" .
+			if(($i % 2) ==1)
+				print "<tr class=\"diff\">\n";
+			else
+				print "<tr>\n";
+			print("<td class=\"calendar_cell_middle\"><input type=\"checkbox\" name=\"del".$row."\" size=\"4\" >" .
 				"<input type=\"hidden\" name=\"task".$row. "\" value=\"".$data["task_id"]."\">" .
-				"</td><td>".$data["name"]."</td><td>".$data["description"]."</td></tr>");
+				"</td><td class=\"calendar_cell_middle\">".$data["name"]."</td><td class=\"calendar_cell_middle\">".$data["description"]."</td></tr>");
 			$row++;
 		}
 	}
 	else {
-		print("<tr><td>" . JText::_('NO_EXISTING_TASKS') . "</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 	}
 ?>
 

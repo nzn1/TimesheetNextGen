@@ -228,7 +228,7 @@ function CallBack_WithNewDateSelected(strDate)
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('EXPENSE_LIST')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ob_end_clean();
 
 if(!$export_excel) { 
@@ -236,7 +236,7 @@ if(!$export_excel) {
 <form action="<?php echo Config::getRelativeRoot();?>/expenses/exp_submit_action" method="post" name="subexpenses" >
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>">
 <input type="hidden" name="mode" value="<?php echo $mode; ?>">
-
+<h1><?php echo JText::_('EXPENSE_LIST')." ".JText::_('FOR')." ".gbl::getContextUser()?></h1>
 <table>
 	<tr>
 		<td text-align="right" class="outer_table_heading"><?php echo JText::_('CLIENT').": "; ?></td>
@@ -278,8 +278,9 @@ if(!$export_excel) {
 	<?php endif; ?>	
 	</tr>
 </table>
-<table>
-	<thead>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 		<tr>
 
 <?php } // end if !export_excel 
@@ -342,14 +343,14 @@ if(!$export_excel) {
 				print "<tr class=\"diff\">\n";
 			else
 				print "<tr>\n";
-			print "<td>" . $data['client']. " / " .  $data['project']. "</td>";
-			print "<td>" . $data['date']. "</td>";
-			print "<td>" . $data['description']. "</td>";
-			print "<td>" . $data['category']. "</td>";
-			print "<td>" . $data['amount']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['client']. " / " .  $data['project']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['date']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['description']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['category']. "</td>";
+			print "<td class=\"calendar_cell_middle\">" . $data['amount']. "</td>";
 			if ($data['billable']) {
 				// print the different billable descriptions internationalised
-				print "<td>";
+				print "<td class=\"calendar_cell_middle\">";
 				switch($data['billable']) {
 					case "Billable":
 						print JText::_('BILLABLE');
@@ -364,7 +365,7 @@ if(!$export_excel) {
 				print "</td>";
 			}
 			// print the different status descriptions internationalised
-			print "<td>";
+			print "<td class=\"calendar_cell_middle\">";
 			switch($data['status']) {
 				case "Open":
 					print JText::_('STATUS_OPEN');
@@ -378,11 +379,11 @@ if(!$export_excel) {
 			}
 			print "</td>";
 			if ($data['status'] == "Open") {
-				print "<td><input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\">";
+				print "<td class=\"calendar_cell_middle\"><input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\">";
 				print "<input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\"></td>";
 			}
 			else 
-				print "<td>&nbsp;</td>";
+				print "<td class=\"calendar_cell_middle\">&nbsp;</td>";
 			print "</tr>";
 			$count++;
 			$level_total[0] = $level_total[0] + $data['amount'];
@@ -393,7 +394,7 @@ if(!$export_excel) {
 ?>
 
 		<tr class="mtotalr">
-		<td class="textproject" colspan="5">
+		<td class="calendar_total_value_weekly" colspan="5">
 <?php
 	if ($mode == "weekly")
 		echo JText::_('WEEKLY_TOTAL'). ": ";

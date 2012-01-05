@@ -49,7 +49,7 @@ $js->printJavascript();
 <script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/datetimepicker_css.js"></script>
 <?php 
 PageElements::setHead(PageElements::getHead().ob_get_contents());
-PageElements::setTheme('newcss');
+
 ob_end_clean();
 PageElements::setBodyOnLoad('doOnLoad();');
 ?>

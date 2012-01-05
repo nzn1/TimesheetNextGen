@@ -2,7 +2,7 @@
 
 if(!class_exists('Site'))die('Restricted Access');
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ADD_NEW_PROJECT')."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 // Authenticate
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');
@@ -29,7 +29,7 @@ $end_year = date("Y", $startDate);;
 <form action="<?php echo Config::getRelativeRoot(); ?>/projects/proj_action" method="post">
 <input type="hidden" name="action" value="add" />
 <div id="inputArea">
-	<h2><?php echo JText::_('ADD_NEW_PROJECT'); ?></h2>
+	<h1><?php echo JText::_('ADD_NEW_PROJECT'); ?></h1>
 
 	<div><label><?php echo JText::_('PROJECT_TITLE'); ?>:</label>
 		<input type="text" name="title" size="42" maxlength="200" /></div>

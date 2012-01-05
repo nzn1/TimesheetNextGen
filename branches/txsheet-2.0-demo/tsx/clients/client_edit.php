@@ -6,7 +6,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclClients'))return;
 
 PageElements::addFile('tsx_banner','themes/'.PageElements::getTheme().'/banner-no-menu.inc');
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ob_end_clean();
 
 if (isEmpty(gbl::getLoggedInUser()))
@@ -34,7 +34,7 @@ $data = dbResult($qh);
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="client_id" value="<?php echo gbl::getClientId() ?>" />
 <div id="inputArea">
-	<h2><?php echo JText::_('EDIT_CLIENT').": <i>".$data["organisation"]; ?> </i></h2>
+	<h1><?php echo JText::_('EDIT_CLIENT').": <i>".$data["organisation"]; ?> </i></h1>
 	<div><label><?php echo ucwords(JText::_('ORGANISATION'))?>:</label>
 		<input size="60" name="organisation" value="<?php echo $data["organisation"]; ?>" maxlength="64" /></div>
 	<div><label><?php echo ucwords(JText::_('DESCRIPTION'))?>:</label>

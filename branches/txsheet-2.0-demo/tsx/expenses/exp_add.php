@@ -1,8 +1,8 @@
 <?php
 
 if(!class_exists('Site'))die('Restricted Access');
-PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ADD_EXPENSE')."</title>");
-PageElements::setTheme('newcss');
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ADD_NEW_EXPENSE')."</title>");
+PageElements::setTheme('txsheet2');
 // Authenticate
 if(!class_exists('Site')){
 	die('remove .php from the url to access this page');
@@ -12,7 +12,8 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclExpenses'))return;
 if (isEmpty(gbl::getLoggedInUser()))
 	errorPage("Could not determine the logged in user");
 
-
+//define the command menu
+Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 
 //load client id from superglobals
 $client_id = isset($_REQUEST['client_id']) ? $_REQUEST['client_id']: 1;
@@ -30,6 +31,7 @@ $start_year = date("Y", $startDate);;
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/expenses/exp_action" method="post">
 <input type="hidden" name="action" value="add" />
+<h1><?php echo JText::_('ADD_NEW_EXPENSE');?></h1>
 <div id="inputArea">
 <div><label><?php echo JText::_('CLIENT'); ?>:</label><?php Common::client_select_list($client_id, 0, false, false, false, true, "", "submit();"); ?></div>
 <div><label><?php echo JText::_('PROJECT'); ?>:</label><?php Common::project_select_list(gbl::getClientId(), false, gbl::getProjId(), gbl::getContextUser(), false, true, false); ?></div>

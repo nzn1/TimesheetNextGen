@@ -17,7 +17,9 @@ function do_query($sql) {
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('ASSIGN_ALLTASKS_ALLPROJECTMEMBERS')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
+//define the command menu
+Site::getCommandMenu()->add(new TextCommand(JText::_('BACK'), true, "javascript:history.back()"));
 ?>
 
 <script type="text/javascript">

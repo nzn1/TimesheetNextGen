@@ -83,7 +83,7 @@ if ($action == "show_users") {
 	exit(0);
 }
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECT_USER_RATES_SELECTION')." | ".gbl::getContextUser()."</title>");
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ?>
 
 <script>
@@ -114,8 +114,9 @@ PageElements::setTheme('newcss');
 			</tr>
 		</table>
 
-		<table>
-		<thead>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 			<tr>
 				<th><i>&nbsp;</i></th>
 				<th>&nbsp;<?php echo JText::_('USER') ?></th>

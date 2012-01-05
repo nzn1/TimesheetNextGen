@@ -196,7 +196,7 @@ function make_index($data,$order) {
 //require_once("include/language/datetimepicker_lang.inc");
 
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ob_start();
 ?>
 
@@ -262,7 +262,7 @@ if(!$export_excel) { ?>
 		</td>
 	<?php if (!$print): ?>
 		<td>
-			<a href="<?php echo Rewrite::getShortUri();?>?<?php echo ampersandEncode($_SERVER["QUERY_STRING"]);?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" alt="" name="esporta_dati" border="0" /><br />&rArr;&nbsp;Excel </a>
+			<a href="<?php echo Rewrite::getShortUri();?>?<?php echo ampersandEncode($_SERVER['QUERY_STRING']);?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" alt="" name="esporta_dati" border="0" /><br />&rArr;&nbsp;Excel </a>
 		</td>
 		<td>
 			<?php print "<button onclick=\"popupPrintWindow()\">" .ucfirst(JText::_('PRINT_REPORT'))."</button>\n"; ?>
@@ -280,8 +280,9 @@ if(!$export_excel) { ?>
 	<?php endif; ?>	
 	</tr>
 </table>
-<table>
-	<thead>
+<div id ="simple">
+<table class="simpleTable">
+	<thead class="table_head">
 		<tr>
 		
 <?php } // end if !export_excel 
@@ -290,7 +291,7 @@ if(!$export_excel) { ?>
 	$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
 	if($orderby== 'project'): 	?> 
 		<th>
-		<a href=" <?php echo Rewrite::getShortUri();?>?<?php echo $projPost;?> " >
+		<a href="<?php echo Rewrite::getShortUri();?>?<?php echo $projPost;?> " >
 		<?php echo JText::_('CLIENT')." / ".JText::_('PROJECT');?>
 		</a></th>
 	
@@ -389,7 +390,7 @@ if(!$export_excel) { ?>
 				print "<tr>";
 				// max value equals number of columns plus 1 to print
 				for($i=0; $i<NR_FIELDS; $i++) {
-					print "<td>";
+					print "<td class=\"calendar_cell_middle\">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
 							$subcl->printInfo($colVar[$i],$data);
@@ -410,13 +411,13 @@ if(!$export_excel) { ?>
 
 		if (isset($subtotal_label[1]) && $level_total[1]) {
 			$formatted_time = $subcl->format_time($level_total[1]);
-			print "<tr class=\"totalr\"><td class=\"texttotal\" colspan=\"7\">" .
-				$subtotal_label[1].": </td><td class=\"texttotal\">$formatted_time</td><td>&nbsp;</td></tr>\n";
+			print "<tr class=\"calendar_total_value_weekly\"><td  colspan=\"5\"></td><td class=\"calendar_total_value_weekly\">" .
+				$subtotal_label[1].": </td><td class=\"calendar_total_value_weekly\">$formatted_time</td><td>&nbsp;</td></tr>\n";
 		}
 		if (isset($subtotal_label[0]) && $level_total[0]) {
 			$formatted_time = $subcl->format_time($level_total[0]);
-			print "<tr class=\"totalr\"><td class=\"textproject\" colspan=\"7\">" .
-				$subtotal_label[0].": </td><td class=\"texttotal\">$formatted_time</td><td>&nbsp;</td></tr>\n";
+			print "<tr class=\"calendar_total_value_weekly\"><td  colspan=\"5\"></td><td class=\"calendar_total_value_weekly\">" .
+				$subtotal_label[0].": </td><td class=\"calendar_total_value_weekly\">$formatted_time</td><td>&nbsp;</td></tr>\n";
 		}
 		$formatted_time = $subcl->format_time($grand_total_time);
 	}
@@ -424,14 +425,15 @@ if(!$export_excel) { ?>
 	if ($num > 0) {
 ?>
 
-		<tr class="mtotalr">
-		<td class="textproject" colspan="7">
+		<tr>
+		<td colspan="5"></td>
+		<td class="calendar_total_value_weekly" >
 <?php
 	if ($mode == "weekly")
 		echo JText::_('WEEKLY_TOTAL'). ": ";
 	else
 		echo JText::_('MONTHLY_TOTAL'). ": ";
-	echo "</td><td class=\"textproject\">" .$formatted_time;
+	echo "</td><td class=\"calendar_total_value_weekly\">" .$formatted_time;
 ?>
 		</td>
 		</tr>
