@@ -108,12 +108,14 @@ PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('PROJECTS'
 PageElements::setTheme('txsheet2');
 ?>
 
+<div id ="simple">
 <form method="post" name="projectFilter" action="<?php echo Rewrite::getShortUri(); ?>">
 	<input type="hidden" name="page" value="English" />
+	
 
-<h3><?php echo JText::_('PROJECTS'); ?></h3>
+<h1><?php echo JText::_('PROJECTS'); ?></h1>
 
-	<table>
+	<table class="simpleTable">
 		<tr>
 			<td>&nbsp;<?php echo JText::_('CLIENT')?>:&nbsp;</td>
 			<td><?php Common::client_select_list(gbl::getClientId(), 0, false, false, true, false, "submit();", false); ?></td>
@@ -130,7 +132,7 @@ PageElements::setTheme('txsheet2');
 	</table>
 </form>
 
-<table>
+<table class="simpleTable">
 
 	<tbody>
 
@@ -171,15 +173,15 @@ PageElements::setTheme('txsheet2');
 
 			//start the row
 ?>
-		<tr>
-			<td width="45%" valign="top">
+		<tr class="diff">
+			<td width="45%"  class="project_title">
 <?php
 			if ($data["http_link"] != "")
-				print "<a href=\"$data[http_link]\"><span class=\"project_title\">$data[organisation] / $data[title]</span></a>";
+				print "<a href=\"$data[http_link]\"><span>$data[organisation] / $data[title]</span></a>";
 			else
-				print "<span class=\"project_title\">$data[organisation] / $data[title]</span>";
+				print "<span>$data[organisation] / $data[title]</span>";
 
-			print "&nbsp;&nbsp;<span class=\"project_status\">&lt;$data[proj_status]&gt;</span>"
+			print "&nbsp;&nbsp;<span>&lt;$data[proj_status]&gt;</span>"
 ?>
 			</td>
 			<td align="right">
@@ -199,7 +201,7 @@ PageElements::setTheme('txsheet2');
 							</td>
 						</tr>
 						<tr>
-							<td colspan="2"><?php echo $data["description"]; ?><br></td>
+							<td colspan="2"><?php echo JText::_('DESCRIPTION'). ": ".$data["description"]; ?><br></td>
 							<td valign="top" align="right"><span class="label">Client:</span> <?php echo $data["organisation"]; ?></td>
 						</tr>
 						<tr>
@@ -244,7 +246,7 @@ PageElements::setTheme('txsheet2');
 			}
 			else {
 				$workers = '';
-				print ucwords(JText::_('PROJECT_MEMBERS'))."</td><td>";
+				print "<tr><td>" .ucwords(JText::_('PROJECT_MEMBERS'))."</td><td>";
 				for ($k = 0; $k < $num_workers; $k++) {
 					$worker = dbResult($qh2);
 					$workers .= "$worker[username], ";
@@ -256,12 +258,12 @@ PageElements::setTheme('txsheet2');
 			}
 
 ?>
-
+<div class="project_task_list">
 			</table>
-				</td>
-				<td width="30%">
-				<div class="project_task_list">
-				<a href="../tasks/task_maint?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label"><?php echo ucwords(JText::_('TASKS'))?>:</span></a>&nbsp; &nbsp;<br />
+				<tr>
+				<td width="50%">
+				
+				<a href="../tasks/task_maint?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label"><?php echo ucwords(JText::_('TASKS'))?>:</span></a>&nbsp; &nbsp;</td></tr>
 <?php
 			//get tasks
 			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM ".tbl::getTaskTable()." WHERE proj_id=$data[proj_id]");
@@ -269,8 +271,8 @@ PageElements::setTheme('txsheet2');
 			//are there any tasks?
 			if ($num_tasks > 0) {
 				while ($task_data = dbResult($qh3)) {
-					$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
-					print "<a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>$taskName</a><br>";
+					//$taskName = str_replace(" ", "&nbsp;", $task_data["name"]);
+					print "<tr><td><a href=\"javascript:void(0)\" onclick=window.open(\"task_info.php?proj_id=$data[proj_id]&task_id=$task_data[task_id]\",\"TaskInfo\",\"location=0,directories=no,status=no,menubar=no,resizable=1,width=550,height=220\")>".$task_data['name']."</a></td></tr>";
 				}
 			}
 			else
