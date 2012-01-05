@@ -283,3 +283,11 @@ label {
 	text-align: right;
 	width: 16em; 
 }
+
+/******************* PROJECT MAINTENANCE *************************/
+#simple .project_title {
+	font-size: 13px; font-family: Verdana, Arial, sans-serif; font-weight: bold; color: #00066F; 
+	}
+#simple .project_status {
+	font-size: 11px; font-family: Verdana, Arial, sans-serif; color: #9494B7;
+	}
