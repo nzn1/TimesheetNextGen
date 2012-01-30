@@ -6,14 +6,14 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclTApproval'))return;
 // Note supervisor form uses the same functions as the submit form.
 include('submit.class.php');
 $sc = new SubmitClass();
-
+$username = gbl::getContextUser();
 if (isset($_REQUEST['uid']))
 	$uid = gbl::getUid();
 else {
 	// need to find the first user managed by this supervisor, contextuser, otherwise we display the supervisor's times
 	//$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getuserTable()." " .
 	//		" WHERE (select uid from ts1_user s WHERE s.username = 'peter') = supervisor ORDER BY status DESC, last_name, first_name";
-	list($qh, $num) = Common::get_users_for_supervisor(gbl::getContextUser());
+	list($num, $qh) = Common::get_users_for_supervisor(gbl::getContextUser());
 	if ($num > 0) {
 		$data = dbResult($qh);
 		$uid = $data['uid'];
@@ -83,7 +83,7 @@ $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
-list($num, $qh) = Common::get_time_records($startStr, $endStr, $uid, $proj_id, $client_id);
+list($num, $qh) = Common::get_time_records_by_supervisor($startStr, $endStr, $username, $proj_id, $client_id);
 
 if($orderby == "project") {
 	$subtotal_label[]= JText::_('PROJECT_TOTAL');
@@ -126,6 +126,10 @@ if($orderby == "project") {
 //	$colAlign[]="align=\"right\"";
 	$colAlign[]="";
 	$colWrap[]="";
+		$colVar[]="last_name";
+	$colWid[]="width=\"7%\"";
+	$colAlign[]="";
+	$colWrap[]="";	
 	
 	// approve
 	$colVar[]="approve";
@@ -178,7 +182,11 @@ if($orderby == "date") {
 	$colWid[]="width=\"7%\"";
 	$colAlign[]="";
 	$colWrap[]="";
-		
+	
+	$colVar[]="last_name";
+	$colWid[]="width=\"7%\"";
+	$colAlign[]="";
+	$colWrap[]="";		
 	// approve
 	$colVar[]="approve";
 	$colWid[]="width=\"3%\"";
@@ -327,6 +335,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 						<th><?php echo JText::_('WORK_DESCRIPTION');?></th>
 						<th><?php echo JText::_('STATUS');?></th>
 						<th><?php echo JText::_('DURATION');?></th>
+						<th><?php echo JText::_('USER');?></th>
 						<th><?php echo JText::_('APPROVE');?></th>
 						<th><?php echo JText::_('REJECT');?></th>
 				</tr>
@@ -405,7 +414,7 @@ PageElements::setBodyOnLoad('doOnLoad();');
 
 				print "<tr>";
 				// max value equals number of columns plus 1 to print
-				for($i=0; $i<10; $i++) {
+				for($i=0; $i<11; $i++) {
 					print "<td class=\"calendar_cell_middle\" ".$colWid[$i]." ".$colAlign[$i]." ".$colWrap[$i].">";
 					if($i<2) {
 						if($last_colVar[$i] != $data[$colVar[$i]]) {
