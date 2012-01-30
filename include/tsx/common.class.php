@@ -78,6 +78,52 @@ class Common{
 		return array($num, $my_qh);
 	}
 
+	public static function get_time_records_by_supervisor($startStr, $endStr, $username='', $projId=0, $clientId=0, 
+							$order_by = "start_time, proj_id, task_id") {
+
+	//build the database query
+		$query = "SELECT start_time AS start_time_str, ".
+					"end_time AS end_time_str, ".
+					"unix_timestamp(start_time) AS start_stamp, ".
+					"unix_timestamp(end_time) AS end_stamp, ".
+					"duration, ".		//duration is stored in minutes 
+					"t.status AS subStatus, " . 
+					"trans_num, ".
+					"t.username, " .
+					"x.first_name, " .
+					"x.last_name, " .
+					"".tbl::getProjectTable().".title AS projectTitle, " .
+					"".tbl::getTaskTable().".name AS taskName, " .
+					"t.proj_id, " .
+					"t.task_id, " .
+					"t.log_message, " .
+					"".tbl::getClientTable().".organisation AS clientName, " .
+					"".tbl::getProjectTable().".client_id " .
+				"FROM ".tbl::getTimesTable()." t, ".tbl::getUserTable()." s, ".tbl::getUserTable()." x,".tbl::getTaskTable().", ".tbl::getProjectTable().", ".tbl::getClientTable()." " .
+				"WHERE s.username= '$username' AND s.uid = x.supervisor AND x.username = t.username AND ";
+		if ($projId > 0) //otherwise we want all projects
+			$query .= "t.proj_id=$projId AND ";
+		if ($clientId > 0) //otherwise we want all clients
+			$query .= "".tbl::getProjectTable().".client_id=$clientId AND ";
+
+		$query .=	"".tbl::getTaskTable().".task_id = t.task_id AND ".
+					"".tbl::getTaskTable().".proj_id = ".tbl::getProjectTable().".proj_id AND ".
+					"".tbl::getProjectTable().".client_id = ".tbl::getClientTable().".client_id AND ".
+					"((start_time    >= '$startStr' AND " . 
+					"  start_time    <  '$endStr') " .
+					" OR (end_time   >  '$startStr' AND " .
+					"     end_time   <= '$endStr') " .
+					" OR (start_time <  '$startStr' AND " .
+					"     end_time   >  '$endStr')) " .
+				"ORDER BY $order_by";
+	LogFile::write("get recs for supvr ". $query);
+    //ppr($query);
+    
+		list($my_qh, $num) = dbQuery($query);
+		return array($num, $my_qh);
+	}
+	
+	
 	public static function get_users_for_supervisor($username) {
 		if ($username) {
 			//build the database query and select by $uid if present

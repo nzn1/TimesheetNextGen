@@ -2,12 +2,25 @@
 if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
-if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclEcategories'))return;
+if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclECategories'))return;
 
 // Config::getRelativeRoot()."submit.php?uid=peter&amp;orderby=project&amp;client_id=0&amp;mode=monthly&amp;year=2010&amp;month=8&amp;day=1"
 //load local vars from request/post/get
 
-	if (!isset($_REQUEST['Modify'])) {
+	$action = isset($_REQUEST["Modify"])? $_REQUEST["Modify"] : "";
+	$proj_id = gbl::getProjId();
+	$client_id = gbl::getClientId();
+	$orderby = $_REQUEST["orderby"];
+	$mode = gbl::getMode();
+	$uid = gbl::getUid();
+	$todayDate = strtotime(date("d M Y",gbl::getContextTimestamp()));
+	$todayDateValues = getdate($todayDate);
+	$year = $todayDateValues["year"];
+	$month = $todayDateValues["mon"];
+	$day = $todayDateValues["mday"];
+	
+	
+	if (isset($_REQUEST['Modify'])) {
 		// if a modify request, look for changes to individual expenses
 			$transids = "";
 			foreach ($_REQUEST['approve'] as $transId) {
@@ -38,13 +51,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclEcategories'))return;
 		gotoLocation($Location);
 	}
 		
-	$action = $_REQUEST["Modify"];
-	$proj_id = gbl::getProjId();
-	$client_id = gbl::getClientId();
-	$orderby = $_REQUEST["orderby"];
-	$mode = gbl::getMode();
-	$uid = gbl::getUid();
-	
+
 	// if the approve tick box is pressed, change the state of all selected times to Approved
 	if (isset($_REQUEST['approve'])) {
 		$transids = "";
@@ -78,7 +85,7 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclEcategories'))return;
 	
 	
 	// we're done so redirect to the submission page
-	$path = Config::getRelativeRoot()."/expenses/supervisore?uid=".$uid."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay();
+	$path = Config::getRelativeRoot()."/expenses/supervisore?uid=".$uid."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".$year."&amp;month=".$month."&amp;day=".$day;
 	gotoLocation($path);
 
 ?>

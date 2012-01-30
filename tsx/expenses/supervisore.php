@@ -15,7 +15,7 @@ else {
 	// need to find the first user managed by this supervisor, contextuser, otherwise we display the supervisor's times
 	//$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getuserTable()." " .
 	//		" WHERE (select uid from ts1_user s WHERE s.username = 'peter') = supervisor ORDER BY status DESC, last_name, first_name";
-	list($qh, $num) = Common::get_users_for_supervisor(gbl::getContextUser());
+	list($num, $qh) = Common::get_users_for_supervisor(gbl::getContextUser());
 	if ($num > 0) {
 		$data = dbResult($qh);
 		$uid = $data['uid'];
@@ -32,7 +32,8 @@ else
 	$print = false;
 
 //get the context date
-$todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
+$todayDate = strtotime(date("d M Y",gbl::getContextTimestamp()));
+//$todayDate = mktime(0, 0, 0, gbl::getMonth(), gbl::getDay(), gbl::getYear());
 $todayDateValues = getdate($todayDate);
 $ymdStr = "&amp;year=".$todayDateValues["year"] . "&amp;month=".$todayDateValues["mon"] . "&amp;day=".$todayDateValues["mday"];
 $mode = gbl::getMode();
@@ -81,15 +82,21 @@ if($export_excel){
 	$time_fmt = 'time';
 
 
-	// list the expense data
+	// list the expense data, change the order depending on orderby
 
-		$query = "SELECT eid, title as project, organisation as client, billable, amount, e.description, " .
-			" DATE(date) as date, status, t.description as category FROM ".
-			tbl::getExpenseTable(). " e , " . tbl::getProjectTable(). " p, " . tbl::getClientTable()." c, " . tbl::getExpenseCategoryTable().
-			 " t WHERE user_id = '" . $uid . "' AND p.proj_id = e.proj_id AND c.client_id = e.client_id ".
-			 " AND e.cat_id = t.cat_id ORDER BY e.proj_id, e.client_id, e.date";
-			//"' AND p.proj_id = '" . $proj_id .   "' AND c.client_id = '" . $client_id .
+	$query = "SELECT eid, title as project, organisation as client, billable, amount, e.description, " .
+		" DATE(e.date) as date, e.status, t.description as category, x.first_name, x.last_name FROM ".
+		tbl::getExpenseTable(). " e , " . tbl::getProjectTable(). " p, " . tbl::getClientTable()." c, " . tbl::getExpenseCategoryTable().
+		 " t , " .tbl::getUserTable(). " s, ".tbl::getUserTable(). " x WHERE s.username = '".$uid."' AND s.uid = x.supervisor AND x.username = e.user_id ".
+		 " AND p.proj_id = e.proj_id AND c.client_id = e.client_id ".
+		 " AND e.date >= '". $startStr . "' AND e.date < '". $endStr . "' ".
+		 " AND e.cat_id = t.cat_id ORDER BY ";
+	if ($orderby == "project")
+		$query .= "e.proj_id, e.client_id, e.date";
+	else 
+		$query .= "e.date, e.proj_id, e.client_id";
 
+	LogFile::write("\nSupervisore\t $query\n");
 	list($qh, $num) = dbQuery($query);
 
 if($orderby == "project") {
@@ -274,7 +281,7 @@ ob_end_clean();
 			<td>
 				<table>
 					<tr>
-						<td>  class="outer_table_heading"<?php echo (JText::_('CLIENT')).':'; ?></td>
+						<td class="outer_table_heading"><?php echo (JText::_('CLIENT')).':'; ?></td>
 						<td class="outer_table_heading">
 							<?php Common::client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
 						</td>
@@ -326,15 +333,17 @@ ob_end_clean();
 				<?php 
 					$projPost="uid=$uid$ymdStr&orderby=project&client_id=$client_id&mode=$mode";
 					$datePost="uid=$uid$ymdStr&orderby=date&client_id=$client_id&mode=$mode";
-					if($orderby== 'project'): ?>
+					if($orderby== "project") { ?>
 						<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
 
 						<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 							
-						<?php else: ?>
+						<?php }
+						else { ?>
 							<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
 							<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost."\">".JText::_('CLIENT')." / ".JText::_('PROJECT')." / ";?></a></th>
-						<?php endif; ?>
+						<?php } ?>
+						<th><?php echo JText::_('USER');?></th>
 						<th><?php echo JText::_('DESCRIPTION');?></th>
 						<th><?php echo ucfirst(JText::_('EXPENSE_CATEGORY')); ?></th>
 						<th><?php echo ucfirst(JText::_('AMOUNT')); ?></th>
@@ -351,7 +360,8 @@ ob_end_clean();
 		print "			<i><br>".JText::_('NO_EXPENSES_RECORDED') ." ".date("Y-m-d",$startDate).".<br><br></i>\n";
 		print "		</td>\n";
 		print "	</tr>\n";
-	} else {
+	} 
+	else {
 		//Setup for two levels of subtotals
 		$last_colVar[0]='';
 		$last_colVar[1]='';
@@ -363,8 +373,15 @@ ob_end_clean();
 
 		while ($data = dbResult($qh)) {
 			print "<tr>";
-			print "<td class=\"calendar_cell_middle\">" . $data['client']. " / " .  $data['project']. "</td>";
-			print "<td class=\"calendar_cell_middle\">" . $data['date']. "</td>";
+			if($orderby == "project") {
+				print "<td class=\"calendar_cell_middle\">" . $data['client']. " / " .  $data['project']. "</td>";
+				print "<td class=\"calendar_cell_middle\">" . $data['date']. "</td>";
+			}
+			else {
+				print "<td class=\"calendar_cell_middle\">" . $data['date']. "</td>";
+				print "<td class=\"calendar_cell_middle\">" . $data['client']. " / " .  $data['project']. "</td>";
+			}
+			print "<td class=\"calendar_cell_middle\">" . $data['first_name']. " ".$data['last_name']."</td>";
 			print "<td class=\"calendar_cell_middle\">" . $data['description']. "</td>";
 			print "<td class=\"calendar_cell_middle\">" . $data['category']. "</td>";
 			print "<td class=\"calendar_cell_middle\">" . $data['amount']. "</td>";

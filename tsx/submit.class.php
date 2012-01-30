@@ -97,6 +97,11 @@ class SubmitClass{
 				// print the name of the timezone
 				print $data['timezone'];
 				break;
+
+			case "last_name":
+				// print the last name of the user
+				print $data['last_name'];
+				break;
 				
 			case "tzhours":
 				// print the hours difference from UTC
