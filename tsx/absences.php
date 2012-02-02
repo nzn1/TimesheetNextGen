@@ -35,6 +35,7 @@ $last_day = Common::get_last_day($month, $year);
 $startDate = mktime(0,0,0, $month, 1, $year);
 $nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 month");
 $prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 month");	
+PageElements::setTheme('txsheet2');
 ob_start();
 //require_once("include/language/datetimepicker_lang.inc");
 
@@ -71,7 +72,7 @@ ob_end_clean();
 <input type="hidden" name="origin" value="<?php echo Rewrite::getShortUri(); ?>" />
 
 <h1><?php echo JText::_('ABSENCE_ENTRY'); ?></h1>
-
+<div id="monthly">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<!--	<?php print "$day $month $year"; ?> -->
@@ -94,20 +95,21 @@ ob_end_clean();
 		<td >&nbsp;</td>
 	</tr>
 </table>
-
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-		<tr>
-<!--		<td class="calendar_cell_disabled_right">&nbsp</td> -->
-			<td align="center" colspan="2" rowspan="2" class="calendar_cell_disabled_right"><b><?php echo JText::_('DAY'); ?></b></td>
-			<td align="center" class="calendar_cell_disabled_right" colspan="2" ><b><?php echo JText::_('MORNING'); ?></b></td>
-			<td align="center" class="calendar_cell_disabled_right" colspan="2" ><b><?php echo JText::_('AFTERNOON'); ?></b></td>
+<table class="monthTable">
+		<thead>
+  		<tr class="table_head">
+			<th align="center" colspan="2" rowspan="2" class="calendar_cell_disabled_right"><b><?php echo JText::_('DAY'); ?></b></th>
+			<th align="center" class="calendar_cell_disabled_right" colspan="2" ><b><?php echo JText::_('MORNING'); ?></b></th>
+			<th align="center" class="calendar_cell_disabled_right" colspan="2" ><b><?php echo JText::_('AFTERNOON'); ?></b></th>
 		</tr>
 		<tr>
-			<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
-			<td align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></td>
-			<td align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></td>
-			<td align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></td>
+			<th align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></th>
+			<th align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></th>
+			<th align="center" class="calendar_cell_disabled_right" width="16%"><b><?php echo JText::_('TYPE'); ?></b></th>
+			<th align="center" class="calendar_cell_disabled_right" width="34%"><b><?php echo JText::_('DETAIL'); ?></b></th>
 		</tr>
+		</thead>
+		<tbody>
 
 <?php
 	for ($i=1;$i<=$last_day;$i++) {
@@ -186,7 +188,7 @@ ob_end_clean();
 <?php
 	}
 ?>
-
+		</tbody>
 	</table>
 
 </form>

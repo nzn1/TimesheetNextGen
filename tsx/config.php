@@ -201,18 +201,18 @@ function onSubmit() {
 PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('CONFIG_PARMS')." | ".gbl::getContextUser()."</title>");
 ob_start();
 
-PageElements::setTheme('newcss');
+PageElements::setTheme('txsheet2');
 ob_end_clean();
 
 ?>
 <body  onload="enableLDAP(<?php echo Config::getUseLDAP()?>);">
-<div id="inputArea">
+<div id="monthly">
 <form action="<?php echo Config::getRelativeRoot(); ?>/config_action" name="configurationForm" method="post">
 <input type="hidden" name="action" value="edit" />
 
 <h1><?php echo JText::_('CONFIG_PARMS') ?></h1>
 
-<table class="noborder">
+<table  class="monthTable">
 	<tr>
 		<td class="configdesc" colspan="2">
 		<?php echo JText::_('CONFIG_INTRO') ?>
@@ -223,7 +223,7 @@ ob_end_clean();
 	</tr>
 	</table>
 <br />
-	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+	<table  class="monthTable">
 		<!-- LDAP configurationForm -->
 		<tr>
 			<td class="configtype">
@@ -252,21 +252,22 @@ ob_end_clean();
 						</tr>
 						<tr>
 							<td>
-								<span class="label"><?php echo JText::_('LDAP_SCHEME'); ?>:</span>
+								<div><label><?php echo JText::_('LDAP_SCHEME'); ?>:</label>
 								</td><td>
 								<select id="LDAPScheme" name="LDAPScheme">
 								<option value="ldap" <?php if (Config::getLDAPScheme() == "ldap") echo "selected=\"selected\"";?>>LDAP</option>
 								<option value="ldaps" <?php if (Config::getLDAPScheme() == "ldaps") echo "selected=\"selected\"";?>>LDAPS</option>
 								</select>
 								(LDAP=Non SSL, LDAPS=Use SSL)
-							</td>
+								
+							</td></div>
 						</tr>
 						<tr>
 							<td width="50%">
-								<span class="label"><?php echo JText::_('LDAP_HOST'); ?>:</span>
+								<div><label><?php echo JText::_('LDAP_HOST'); ?>:</label>
 								</td><td>
 								<input id="LDAPHost" name="LDAPHost" type="text" value="<?php echo config::getLDAPHost(); ?>" style="width:100%;" />
-							</td>
+							</div></td>
 							</tr>
 							<tr>
 							<td width="50%">
@@ -382,7 +383,7 @@ ob_end_clean();
 
 				</table>
 			</table>
-		<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
 		<!-- ACL-->
 			<tr>
@@ -405,24 +406,24 @@ ob_end_clean();
     		 //TODO FInd a way to replace the nobr tags whilst keeping the menu icons next to the names
     		      	        
         ?>
-					<tr><td><?php echo JText::_('STOPWATCH'); ?>:</td><td><?php Common::acl_select_droplist("aclStopwatch", Config::getAclStopwatch()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('DAILY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclDaily", Config::getAclDaily()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('WEEKLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclWeekly", Config::getAclWeekly()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('MONTHLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclMonthly", Config::getAclMonthly()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('SIMPLE_WEEKLY_TIMESHEET'); ?>:</td><td><?php Common::acl_select_droplist("aclSimple", Config::getAclSimple()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('CLIENTS'); ?>:</td><td><?php Common::acl_select_droplist("aclClients", Config::getAclClients()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('PROJECTS'); ?>:</td><td><?php Common::acl_select_droplist("aclProjects", Config::getAclProjects()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('TASKS'); ?>:</td><td><?php Common::acl_select_droplist("aclTasks", Config::getAclTasks()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('REPORTS'); ?>:</td><td><?php Common::acl_select_droplist("aclReports", Config::getAclReports()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('RATES'); ?>:</td><td><?php Common::acl_select_droplist("aclRates", config::getAclRates()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('ABSENCES'); ?>:</td><td><?php Common::acl_select_droplist("aclAbsences", Config::getAclAbsences()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('EXPENSES'); ?>:</td><td><?php Common::acl_select_droplist("aclExpenses", Config::getAclExpenses()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('EXPENSE_CATEGORIES_APPROVAL'); ?>:</td><td><?php Common::acl_select_droplist("aclECategories", Config::getAclECategories()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('TIMESHEET_SUBMISSION'); ?>:</td><td><?php Common::acl_select_droplist("aclTsubmission", Config::getAclTsubmission()); ?>&nbsp;</td></tr>
-					<tr><td><?php echo JText::_('TIMESHEET_APPROVAL'); ?>:</td><td><?php Common::acl_select_droplist("aclTApproval", Config::getAclTApproval()); ?>&nbsp;</td></tr>
+					<tr><td><div><label><?php echo JText::_('STOPWATCH'); ?>:</label></td><td><?php Common::acl_select_droplist("aclStopwatch", Config::getAclStopwatch()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('DAILY_TIMESHEET'); ?>:</label></td><td><?php Common::acl_select_droplist("aclDaily", Config::getAclDaily()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('WEEKLY_TIMESHEET'); ?>:</label></td><td><?php Common::acl_select_droplist("aclWeekly", Config::getAclWeekly()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('MONTHLY_TIMESHEET'); ?>:</label></td><td><?php Common::acl_select_droplist("aclMonthly", Config::getAclMonthly()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('SIMPLE_WEEKLY_TIMESHEET'); ?>:</label></td><td><?php Common::acl_select_droplist("aclSimple", Config::getAclSimple()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('CLIENTS'); ?>:</label></td><td><?php Common::acl_select_droplist("aclClients", Config::getAclClients()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('PROJECTS'); ?>:</label></td><td><?php Common::acl_select_droplist("aclProjects", Config::getAclProjects()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('TASKS'); ?>:</label></td><td><?php Common::acl_select_droplist("aclTasks", Config::getAclTasks()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('REPORTS'); ?>:</label></td><td><?php Common::acl_select_droplist("aclReports", Config::getAclReports()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('RATES'); ?>:</label></td><td><?php Common::acl_select_droplist("aclRates", config::getAclRates()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('ABSENCES'); ?>:</label></td><td><?php Common::acl_select_droplist("aclAbsences", Config::getAclAbsences()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('EXPENSES'); ?>:</label></td><td><?php Common::acl_select_droplist("aclExpenses", Config::getAclExpenses()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('EXPENSE_CATEGORIES_APPROVAL'); ?>:</label></td><td><?php Common::acl_select_droplist("aclECategories", Config::getAclECategories()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('TIMESHEET_SUBMISSION'); ?>:</label></td><td><?php Common::acl_select_droplist("aclTsubmission", Config::getAclTsubmission()); ?>&nbsp;</td></div></tr>
+					<tr><td><div><label><?php echo JText::_('TIMESHEET_APPROVAL'); ?>:</label></td><td><?php Common::acl_select_droplist("aclTApproval", Config::getAclTApproval()); ?>&nbsp;</td></div></tr>
 		</table>
 	</table>
-	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+	<table  class="monthTable">
 
 		<!-- simple timesheet layout -->
 			<tr>
@@ -447,7 +448,7 @@ ob_end_clean();
 			</tr>
 
 	</table>
-	<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+	<table  class="monthTable">
 
 		<!-- start page -->
 			<tr>
@@ -474,7 +475,7 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
 		<!-- locale -->
 			<tr>
@@ -495,7 +496,7 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
 		<!-- timezone -->
 			<tr>
@@ -516,9 +517,9 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
-			<!-- timeformat -->
+		<!-- timeformat -->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('TIME_FORMAT'); ?></b>:
@@ -545,9 +546,9 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
-			<!-- weekstartday -->
+		<!-- weekstartday -->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('WEEK_START'); ?></b>:
@@ -585,9 +586,9 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
-			<!-- Items per page in Projects-->
+		<!-- Items per page in Projects-->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('PROJECTS_ITEMS'); ?></b>:
@@ -606,9 +607,9 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
-			<!-- Items per page in Tasks-->
+		<!-- Items per page in Tasks-->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('TASKS_ITEMS'); ?></b>:
@@ -627,10 +628,10 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
 
-			<!-- headerhtml -->
+		<!-- headerhtml -->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('HEADER_HTML'); ?></b>:
@@ -649,9 +650,9 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table class="monthTable">
 
-			<!-- bodyhtml -->
+		<!-- bodyhtml -->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('BODY_HTML'); ?></b>:
@@ -670,9 +671,9 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
-			<!-- bannerhtml -->
+		<!-- bannerhtml -->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('BANNER_HTML'); ?></b>:
@@ -691,9 +692,9 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table class="monthTable">
 
-			<!-- footerhtml -->
+		<!-- footerhtml -->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('FOOTER_HTML'); ?></b>:
@@ -712,9 +713,9 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
-			<!-- errorhtml -->
+		<!-- errorhtml -->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('ERROR_HTML'); ?></b>:
@@ -733,10 +734,9 @@ ob_end_clean();
 			</tr>
 
 				</table>
-				<table width="100%" border="0" cellspacing="0" cellpadding="5" class="section_body">
+		<table  class="monthTable">
 
-
-			<!-- tablehtml -->
+		<!-- tablehtml -->
 			<tr>
 				<td class="configtype">
 					<b><?php echo JText::_('TABLE_HTML'); ?></b>:

@@ -45,21 +45,27 @@ class gbl{
 		self::$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 		self::$client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;		
 		self::$uid = isset($_REQUEST["uid"]) ? $_REQUEST["uid"]: "";	
-		
-	if(isset($_REQUEST['date1'])){
-    //if the date1 variable exists, which comes from the java date picker
-		/* @TODO - add validation to this!!!*/
-		$d = explode('-',$_REQUEST['date1']);
-		self::$year = intval($d[2]);
-		self::$month = intval($d[1]);
-		self::$day = intval($d[0]);
-	}    
+		if(isset($_REQUEST['date1'])){
+    	//if the date1 variable exists, which comes from the java date picker
+			$d = explode('-',$_REQUEST['date1']);
+			self::$year = intval($d[2]);
+			self::$month = intval($d[1]);
+			self::$day = intval($d[0]);
+			if ( !checkdate(self::$year, self::$month, self::$day) )
+	 		 {
+	 		 	// date is invalid. Set to today's date
+	     		self::$year = self::$todayDate["year"];
+				self::$month = self::$todayDate["mon"];
+				self::$day =  self::$todayDate["mday"];
+	  		}
+  		
+		}    
 		
 		if(Auth::ACCESS_GRANTED == Auth::requestAuth('Administrator','page')){
-		  if(isset($_REQUEST["contextuid"])){ 
+		  	if(isset($_REQUEST["contextuid"])){ 
 			 $_SESSION['contextUser'] = $_REQUEST['contextuid'];
-      }	
-  	}
+      		}	
+  		}
 	
 		if (isset($_SESSION['contextUser']))
 			self::$contextUser = strtolower($_SESSION['contextUser']);
@@ -67,9 +73,9 @@ class gbl{
 		self::$loggedInUser = strtolower($_SESSION['loggedInUser']);
 		
 		//check that project id is valid
-    if (self::$proj_id == 0)self::$task_id = 0;
+    	if (self::$proj_id == 0)self::$task_id = 0;
     
-    self::$post="year=".self::$year."&amp;month=".self::$month."&amp;day=".self::$day."&amp;proj_id=".self::$proj_id."&amp;task_id=".self::$task_id."&amp;client_id=".self::$client_id;
+    	self::$post="year=".self::$year."&amp;month=".self::$month."&amp;day=".self::$day."&amp;proj_id=".self::$proj_id."&amp;task_id=".self::$task_id."&amp;client_id=".self::$client_id;
 		
 	}
 		
