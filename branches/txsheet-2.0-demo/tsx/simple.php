@@ -218,7 +218,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
         ?>
         
 				<th width="50">								
-					  <input type="hidden" id="minsinday_<?php echo($i+1);?> " value ="<?php echo $minsinday;?>" />
+					  <input type="hidden" id="minsinday_<?php echo($i+1);?>" value ="<?php echo $minsinday;?>" />
 						<?php echo $currentDayStr."<br />".date("d", $currentDayDate);?> 
 				</th>
 				<?php

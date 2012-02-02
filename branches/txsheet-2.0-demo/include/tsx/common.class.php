@@ -1105,9 +1105,10 @@ class Common{
 		if($authenticationManager->hasClearance(CLEARANCE_MANAGER)) {
 			//show disabled users at bottom of list
 			$show_disabled=1;
+			//TODO where user has manager clearance, list only users reporting to the manager
 			$query = "SELECT uid, username, last_name, first_name, status FROM ".tbl::getUserTable()." ORDER BY status DESC, last_name, first_name";
 		} else {
-			$query = "SELECT uid, username, last_name, first_name FROM ".tbl::getUserTable()." where status='ACTIVE' ORDER BY last_name, first_name";
+			$query = "SELECT uid, username, last_name, first_name FROM ".tbl::getUserTable()." WHERE status='ACTIVE' AND username='".$username."' ORDER BY last_name, first_name";
 		}
 
 		$drop_list_string = "<select name=\"$varname\" onchange=\"submit()\" ";

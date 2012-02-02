@@ -35,7 +35,8 @@ $client_id = gbl::getClientId();
 $year = $todayDateValues["year"];
 $month = $todayDateValues["mon"];
 $day = $todayDateValues["mday"];
-LogFile::write("Date values are: $year : $month : $day\n");
+LogFile::write("\nSubmit: Date values are: $year : $month : $day\n");
+LogFile::write("\nPassed values are: mode: $mode proj_id: $proj_id client_id: $client_id\n");
 
 if ($mode == "all") $mode = "monthly";
 if ($mode == "monthly") {
@@ -77,7 +78,7 @@ $subcl->setTimeFmt($time_fmt);
 //Setup the variables so we can let the user choose how to order things...
 $orderby = isset($_REQUEST["orderby"]) ? $_REQUEST["orderby"]: "project";
 
-//LogFile::write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
+LogFile::write("calling get_time_records($startStr, $endStr, $uid, $proj_id, $client_id)\n");
 //LogFile::write("day = $day, month = $month, year = $year, stDt = $startDate, eDt = $endDate\n");
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
@@ -236,30 +237,35 @@ function CallBack_WithNewDateSelected(strDate)
 PageElements::setHead(ob_get_contents());
 ob_end_clean();
 
-if(!$export_excel) { ?>
-<form action="<?php echo Config::getRelativeRoot();?>/submit_action" method="post" name="subtimes" >
-<input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
-<input type="hidden" name="year" value="<?php echo $year; ?>" />
-<input type="hidden" name="month" value="<?php echo $month; ?>" />
-<input type="hidden" name="day" value="<?php echo $day; ?>" />
-<input type="hidden" name="mode" value="<?php echo $mode; ?>" />
+if(!$export_excel) { 
 
+// first form covers client, user, date changes, and redirects back to the submit page
+// second form covers submit times for approval buttons, and redirects to the submit_action.php
+?>
 <table>
+
+<form action="<?php echo Config::getRelativeRoot();?>/submit" method="post" name="subselect">
+<input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
+<input type="hidden" name="mode" value="<?php echo $mode; ?>" />
 	<tr>
 		<td><?php echo JText::_('CLIENT').": "; ?></td>
 		<td>
-			<?php Common::client_select_list($client_id, $uid, false, false, true, false, "submit();"); ?>
+			<?php Common::client_select_list($client_id, gbl::getContextUser(), false, false, true, false, "document.subselect.submit();"); ?>
 		</td>
 	</tr>
 	<tr>
 		<td><?php echo JText::_('USER').": "; ?></td>
 		<td>
-			<?php Common::user_select_droplist($uid, false,"100%"); ?>
+			<?php Common::user_select_droplist($uid, false,"100%"); ?> 
 		</td>
 		<td>
 		<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
 			
 		</td>
+</form>
+<form action="<?php echo Config::getRelativeRoot();?>/submit_action" method="post" name="subtimes">
+<input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
+<input type="hidden" name="mode" value="<?php echo $mode; ?>" />
 	<?php if (!$print): ?>
 		<td>
 			<a href="<?php echo Rewrite::getShortUri();?>?<?php echo ampersandEncode($_SERVER['QUERY_STRING']);?>&amp;export_excel=1" class="export"><img src="images/export_data.gif" alt="" name="esporta_dati" border="0" /><br />&rArr;&nbsp;Excel </a>
@@ -291,9 +297,8 @@ if(!$export_excel) { ?>
 	$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=$client_id&amp;mode=$mode";
 	if($orderby== 'project'): 	?> 
 		<th>
-		<a href="<?php echo Rewrite::getShortUri();?>?<?php echo $projPost;?> " >
-		<?php echo JText::_('CLIENT')." / ".JText::_('PROJECT');?>
-		</a></th>
+		<a href="<?php echo Rewrite::getShortUri();?>?<?php echo $projPost;?> "><?php echo JText::_('CLIENT')." / ".JText::_('PROJECT');?></a></th>
+
 	
 		<th><?php echo JText::_('TASK');?></th>
 		<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost ."\">" .JText::_('DATE');?></a></th>
