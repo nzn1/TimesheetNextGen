@@ -29,14 +29,14 @@
 			//taskSelect.options[taskSelect.options.length] = new Option(None_option, '-1');
 
 			//add the clients
-			//var clientId = -1;
+			var clientId = -1;
 			for (var key in projectTasksHash) {
 				//alert('looking at key ' + key);
-				//if (projectTasksHash[key]['clientId'] != clientId) {
+				if (projectTasksHash[key]['clientId'] != clientId) {
 					//projectSelect.options[projectSelect.options.length] = new Option('[' + projectTasksHash[key]['clientName'] + ']', -1);
 					clientSelect.options[clientSelect.options.length] = new Option(projectTasksHash[key]['clientName'], projectTasksHash[key]['clientId']);
 					clientId = projectTasksHash[key]['clientId'];
-				//}
+				}
 
 				//alert('added client ' + key);
 
