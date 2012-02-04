@@ -85,7 +85,8 @@ $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
 						"FROM $PROJECT_TABLE, " .tbl::getAssignmentsTable(). ", $CLIENT_TABLE " .
 						"WHERE $PROJECT_TABLE.proj_id=" .tbl::getAssignmentsTable().".proj_id AND ".
 							"" .tbl::getAssignmentsTable(). ".username='".gbl::getContextUser()."' AND ".
-							"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
+							"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id AND ".
+							tbl::getProjectTable().".proj_status != 'Complete' " .
 						"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
 list($qh3, $num3) = dbQuery($getProjectsQuery);
@@ -108,7 +109,8 @@ $getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
 						"$TASK_TABLE.name " .
 					"FROM $TASK_TABLE, " .tbl::getTaskAssignmentsTable(). " ".
 					"WHERE $TASK_TABLE.task_id = " .tbl::getTaskAssignmentsTable().".task_id AND ".
-						"".tbl::getTaskAssignmentsTable().".username='".gbl::getContextUser()."' ".
+						"".tbl::getTaskAssignmentsTable().".username='".gbl::getContextUser()."' AND ".
+						"".tbl::getTaskTable().".status != 'Complete' " .
 					"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);
@@ -217,7 +219,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 				$daysOfWeek[$i] = date("d", $currentDayDate);
         ?>
         
-				<th width="50">								
+				<th>								
 					  <input type="hidden" id="minsinday_<?php echo($i+1);?>" value ="<?php echo $minsinday;?>" />
 						<?php echo $currentDayStr."<br />".date("d", $currentDayDate);?> 
 				</th>
@@ -226,11 +228,11 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 			}
 			?>
 			<th width="2">&nbsp;</th>
-			<th width="5%">
+			<th>
 				<?php echo ucfirst(JText::_('TOTAL')) ?>
 			</th>
 			<th width="2">&nbsp;</th>
-			<th width="50">
+			<th>
 				<?php echo ucfirst(JText::_('DELETE')) ?>
 			</th>
 		</tr>
@@ -281,7 +283,7 @@ PageElements::setBodyOnLoad('populateExistingSelects();');
 		//So, we handle it as best we can for now...
 		//Common::fixStartEndDuration($data);
 
-		//get the current task properties
+		//get the current task propertiesvalign=\"top\" align=\"left\"
 		$currentTaskId = $data["task_id"];
 		$currentTaskStartDate = $data["start_stamp"] + $dayAdjust;
 		$currentDay = date("d",$currentTaskStartDate);
