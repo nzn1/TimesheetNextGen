@@ -8,8 +8,8 @@ if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclECategories'))return;
 //load local vars from request/post/get
 $action = $_REQUEST['action'];
 if ($action == "add") {
-	
-	$description = $_REQUEST['description'];
+	$cat_name = addslashes($_REQUEST['name']);
+	$description = addslashes($_REQUEST['description']);
 	$cat_id = $_REQUEST['cat_id'];
 }
 
@@ -18,7 +18,8 @@ if ($action == "add") {
 	// No error checking for now.
 
 	
-		list($qh, $num) = dbQuery("UPDATE  ".tbl::getExpenseCategoryTable()." SET description= '".
+		list($qh, $num) = dbQuery("UPDATE  ".tbl::getExpenseCategoryTable()." SET cat_name= '".
+				$cat_name . "', cat_description= '".
 				$description . "' WHERE cat_id = '". $cat_id. "'");
 		
 	}

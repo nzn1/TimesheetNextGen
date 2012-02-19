@@ -24,7 +24,7 @@ $start_month = date("n", $startDate);
 $start_year = date("Y", $startDate);;
 
 // get a list of expense categories
-	$query = "SELECT cat_id, description FROM ". tbl::getExpenseCategoryTable();
+	$query = "SELECT cat_id, cat_name FROM ". tbl::getExpenseCategoryTable();
 	list($qcat, $num_cat) = dbQuery($query);
 
 ?>
@@ -40,14 +40,14 @@ $start_year = date("Y", $startDate);;
 		<?php 
 			for ($i=1; $i<=$num_cat; $i++) {
 				$data = dbResult($qcat);
-				print "<option value=\"". $data['cat_id'] . "\">" . $data['description'] . "</option>";
+				print "<option value=\"". $data['cat_id'] . "\">" . $data['cat_name'] . "</option>";
 			}
 		?>
 	</select>
 </div>
 <div><label><?php echo JText::_('DESCRIPTION'); ?>:</label><textarea name="description" rows="4" cols="40" wrap="virtual"></textarea></div>
 <div><label><?php echo JText::_('DATE_EXPENSE_INCURRED'); ?>:</label>
-	<?php Common::day_button("exp_day", $start_day); Common::month_button("exp_month", $start_month); Common::year_button("exp_year", $start_year); ?>
+	<?php Common::day_button("exp_day", $startDate); Common::month_button("exp_month", $start_month); Common::year_button("exp_year", $start_year); ?>
 </div>
 <div><label><?php echo JText::_('BILLABLE'); ?>:</label>
 	<select name="billable">
