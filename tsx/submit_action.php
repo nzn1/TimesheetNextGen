@@ -26,13 +26,12 @@ if (isset($_REQUEST['Submit'])) { // if submission of times
 	{
 		// a date, client or user redirection
 		// get new date for the url
-		//$date1 = $_POST["date1"];
-		//$newdate = explode("-", $date1);
-		Header("Location: ".Config::getRelativeRoot()."/submit?uid=".gbl::getUid()."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay());
+
+		Header("Location: ".Config::getRelativeRoot()."/submit?uid=".gbl::getUid()."&orderby=".$_REQUEST["orderby"]."&client_id=".gbl::getClientId()."&mode=".gbl::getMode()."&year=".gbl::getYear()."&month=".gbl::getMonth()."&day=".gbl::getDay());
 		exit;
 	}
 	// we're done so redirect to the submission page
-	Header("Location: ".Config::getRelativeRoot()."/submit?uid=".gbl::getUid()."&amp;orderby=".$_REQUEST["orderby"]."&amp;client_id=".gbl::getClientId()."&amp;mode=".gbl::getMode()."&amp;year=".gbl::getYear()."&amp;month=".gbl::getMonth()."&amp;day=".gbl::getDay());
+	Header("Location: ".Config::getRelativeRoot()."/submit?uid=".gbl::getUid()."&orderby=".$_REQUEST["orderby"]."&client_id=".gbl::getClientId()."&mode=".gbl::getMode()."&year=".gbl::getYear()."&month=".gbl::getMonth()."&day=".gbl::getDay());
 	exit;
 
 ?>

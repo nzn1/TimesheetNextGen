@@ -85,8 +85,7 @@ $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, " .
 						"FROM $PROJECT_TABLE, " .tbl::getAssignmentsTable(). ", $CLIENT_TABLE " .
 						"WHERE $PROJECT_TABLE.proj_id=" .tbl::getAssignmentsTable().".proj_id AND ".
 							"" .tbl::getAssignmentsTable(). ".username='".gbl::getContextUser()."' AND ".
-							"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id AND ".
-							tbl::getProjectTable().".proj_status != 'Complete' " .
+							"$PROJECT_TABLE.client_id=$CLIENT_TABLE.client_id ".
 						"ORDER BY $CLIENT_TABLE.organisation, $PROJECT_TABLE.title";
 
 list($qh3, $num3) = dbQuery($getProjectsQuery);
@@ -109,8 +108,7 @@ $getTasksQuery = "SELECT $TASK_TABLE.proj_id, " .
 						"$TASK_TABLE.name " .
 					"FROM $TASK_TABLE, " .tbl::getTaskAssignmentsTable(). " ".
 					"WHERE $TASK_TABLE.task_id = " .tbl::getTaskAssignmentsTable().".task_id AND ".
-						"".tbl::getTaskAssignmentsTable().".username='".gbl::getContextUser()."' AND ".
-						"".tbl::getTaskTable().".status != 'Complete' " .
+						"".tbl::getTaskAssignmentsTable().".username='".gbl::getContextUser()."' ".
 					"ORDER BY $TASK_TABLE.name";
 
 list($qh4, $num4) = dbQuery($getTasksQuery);

@@ -124,7 +124,7 @@ function printFormRow($rowIndex, $layout, $data) {
         //while we are printing times set the style
         //create a string to be used in form input names
         ?>
-				<td class="calendar_cell_">
+				<td class="calendar_cell_middle">
 				  <span class="task_time_small">
   				<?php			
   				print "<input type=\"hidden\" class=task_time_small id=\"tid".$rowCol."\" name=\"tid".$rowCol."\" value=\"0\"/>";
