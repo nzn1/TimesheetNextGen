@@ -301,7 +301,7 @@ if(!$export_excel) {
 		<th><?php echo ucfirst(JText::_('AMOUNT')); ?></th>
 		<th><?php echo JText::_('BILLABLE');?></td>
 		<th><?php echo JText::_('STATUS');?></td>
-		<th><?php echo JText::_('ACTIONS');?></td>
+		<th><?php echo JText::_('SUBMIT');?></td>
 		</tr>
 	</thead>
 	<tbody>
@@ -309,7 +309,7 @@ if(!$export_excel) {
 <?php
 	$count = 0; // used to change the background of each alternate line
 	$query = "SELECT eid, title as project, organisation as client, billable, amount, e.description, " .
-			" date, status, t.description as category FROM ".
+			" DATE_FORMAT(date, '%e %M %Y') AS date, status, t.cat_name AS category FROM ".
 			tbl::getExpenseTable(). " e , " . tbl::getProjectTable(). " p, " . tbl::getClientTable()." c, " . tbl::getExpenseCategoryTable().
 			 " t WHERE user_id = '" . $uid . "' AND p.proj_id = e.proj_id AND c.client_id = e.client_id ".
 			" AND e.date >= '$startStr' AND e.date < '$endStr' AND e.cat_id = t.cat_id" ;
@@ -379,8 +379,10 @@ if(!$export_excel) {
 			}
 			print "</td>";
 			if ($data['status'] == "Open") {
-				print "<td class=\"calendar_cell_middle\"><input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\">";
-				print "<input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\"></td>";
+				print "<td class=\"calendar_cell_middle\">";
+				print "<a href=\"exp_edit?eid=" . $data["eid"] . "\">edit</a>";
+				print "<input type=\"checkbox\" name=\"sub[]\" value=\"\"" . $data["eid"] . "\">";
+				print "</td>";
 			}
 			else 
 				print "<td class=\"calendar_cell_middle\">&nbsp;</td>";

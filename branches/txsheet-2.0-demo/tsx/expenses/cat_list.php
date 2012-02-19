@@ -15,7 +15,8 @@ if (isset($_REQUEST['page']) && $_REQUEST['page'] != 0) { $page  = $_REQUEST['pa
 $results_per_page = Common::getTaskItemsPerPage();
 $start_from = ($page-1) * $results_per_page;
 
-$query_categories = "SELECT cat_id, description FROM ". tbl::getExpenseCategoryTable() ;
+$query_categories = "SELECT cat_id, cat_name, cat_description FROM ". tbl::getExpenseCategoryTable() .
+						"  ORDER BY cat_name" ;
 
 function writePageLinks($page, $results_per_page, $num_task_page)
 {
@@ -68,6 +69,7 @@ PageElements::setTheme('txsheet2');
 	<thead class="table_head">
 		<tr>
 			<th><?php echo JText::_('CATEGORY') ?></th>
+			<th><?php echo JText::_('CATDESC') ?></th>
 			<th><?php echo JText::_('ACTIONS') ?></th>
 		</tr>
 	</thead>
@@ -95,7 +97,10 @@ list($qh, $num) = dbQuery($query_categories);
 ?>
 			<td class="calendar_cell_middle">
 				<input type="hidden" name="catId" value="<?php echo $data_cat['cat_id']; ?>">
-				<?php echo stripslashes($data_cat["description"]); ?>
+				<?php echo stripslashes($data_cat["cat_name"]); ?>
+			</td>		
+			<td class="calendar_cell_middle">
+				<?php echo stripslashes($data_cat["cat_description"]); ?>
 			</td>		
 
 			<td align="right" class="calendar_cell_middle">
