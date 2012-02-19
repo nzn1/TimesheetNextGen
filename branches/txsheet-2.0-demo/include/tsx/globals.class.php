@@ -51,7 +51,7 @@ class gbl{
 			self::$year = intval($d[2]);
 			self::$month = intval($d[1]);
 			self::$day = intval($d[0]);
-			if ( !checkdate(self::$year, self::$month, self::$day) )
+			if ( !checkdate(self::$month, self::$day, self::$year) )
 	 		 {
 	 		 	// date is invalid. Set to today's date
 	     		self::$year = self::$todayDate["year"];
