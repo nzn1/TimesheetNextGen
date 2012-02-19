@@ -364,7 +364,8 @@ CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__expense` (
 
 CREATE TABLE IF NOT EXISTS `__TABLE_PREFIX__category` (
   `cat_id` int(8) NOT NULL AUTO_INCREMENT,
-  `description` varchar(64) NOT NULL,
+  `cat_name` varchar(64) NOT NULL,
+  `cat_description` varchar(256) NOT NULL,
   PRIMARY KEY (`cat_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='ts1_expense_category' AUTO_INCREMENT=8 ;
 

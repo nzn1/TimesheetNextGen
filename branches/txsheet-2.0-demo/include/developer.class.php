@@ -7,7 +7,7 @@ class Developer{
     self::timesTable();
     self::userTable();
     self::configTable();    
-    
+    self::categoryTable();   
     
   
   }
@@ -36,7 +36,7 @@ class Developer{
         $title = "Database Update Required";  
     }
     if ($supervisor == FALSE) {
-        $msg .= "A new column supervisor has been added to the user table.<br />"
+        $msg .= "A new colTable();   umn supervisor has been added to the user table.<br />"
             ."Look in the upgrade sql.in file for the line below and update your db:<br />"
             ."ALTER TABLE __TABLE_PREFIX__user  ADD supervisor int(11) DEFAULT NULL;";
         $title = "Database Update Required";  
@@ -121,6 +121,38 @@ class Developer{
     }
   }
 
+  public static function categoryTable(){
+  //ALTER TABLE __TABLE_PREFIX__times CHANGE `uid` `username` varchar(32) DEFAULT '' NOT NULL
+    $q = "SHOW COLUMNS FROM ".tbl::getCategoryTable().";";    
+    $data = Database::getInstance()->sql($q,Database::TYPE_OBJECT);
+    $status = FALSE;
+    $description = FALSE;
+    $msg = "";
+	$title = "";
+    foreach($data as $obj){
+      if($obj->Field == 'description'){
+      	$description = TRUE;
+        $msg .= "The column description has been modified to cat_description.<br />" .
+            "Look in the upgrade sql.in file for the line below and update your db:<br />" .
+            "ALTER TABLE __TABLE_PREFIX__category CHANGE `description` `cat_description`";
+        $title = "Database Update Required";        
+      }
+      if($obj->Field == 'cat_name'){
+      	$status = TRUE;
+      }
+      
+    }
+    if ($status == FALSE) {
+        $msg .= "A new column status has been added to the category table.<br />"
+            ."Look in the upgrade sql.in file for the line below and update your db:<br />"
+            ."ALTER TABLE __TABLE_PREFIX__times  ADD `cat_name` varchar(64) NOT NULL";
+        $title = "Database Update Required";  
+    }
+    if ($title != "") {
+        Errorhandler::fatalError($msg.ppr($obj,'SQL Problem Column',true),$title,$title);
+    }
+  }
+  
   public static function newtables(){
     // check that tables exenses, category and std_tasks exist
 	$expenses = FALSE;
