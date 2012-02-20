@@ -3,11 +3,11 @@ class Developer{
   
   public static function checkForDeveloperPrerequisites(){
   
-    self::timesTable();
+    self::newtables();
     self::timesTable();
     self::userTable();
     self::configTable();    
-    self::categoryTable();   
+    self::expenseCategoryTable();   
     
   
   }
@@ -36,7 +36,7 @@ class Developer{
         $title = "Database Update Required";  
     }
     if ($supervisor == FALSE) {
-        $msg .= "A new colTable();   umn supervisor has been added to the user table.<br />"
+        $msg .= "A new column supervisor has been added to the user table.<br />"
             ."Look in the upgrade sql.in file for the line below and update your db:<br />"
             ."ALTER TABLE __TABLE_PREFIX__user  ADD supervisor int(11) DEFAULT NULL;";
         $title = "Database Update Required";  
@@ -121,9 +121,9 @@ class Developer{
     }
   }
 
-  public static function categoryTable(){
+  public static function expenseCategoryTable(){
   //ALTER TABLE __TABLE_PREFIX__times CHANGE `uid` `username` varchar(32) DEFAULT '' NOT NULL
-    $q = "SHOW COLUMNS FROM ".tbl::getCategoryTable().";";    
+    $q = "SHOW COLUMNS FROM ".tbl::getExpenseCategoryTable().";";    
     $data = Database::getInstance()->sql($q,Database::TYPE_OBJECT);
     $status = FALSE;
     $description = FALSE;
@@ -162,13 +162,16 @@ class Developer{
 	$msg = "";
 	$title = "";
 	$q = "SHOW TABLES;";    
-    $data = Database::getInstance()->sql($q,Database::TYPE_OBJECT);
-    
+	$tableobject = "Tables_in_".Config::getDbName();
+    $data = Database::getInstance()->sql($q,Database::TYPE_ARRAY);
+
+ 
     foreach($data as $obj){
-      if($obj->Field == 'expenses') $expenses = TRUE;
-      if($obj->Field == 'category') $category = TRUE;
-      if($obj->Field == 'std_tasks') $std_tasks = TRUE;
-      if($obj->Field == 'configuration') $configuration = TRUE;
+    	LogFile::write("tables: ". $obj->$tableobject);
+      if(strstr($obj->$tableobject, "expense")) $expenses = TRUE;
+      if(strstr($obj->$tableobject, "category")) $category = TRUE;
+      if(strstr($obj->$tableobject, "std_tasks")) $std_tasks = TRUE;
+      if(strstr($obj->$tableobject, "configuration")) $configuration = TRUE;
     }
     if ($expenses == FALSE) {
         $msg .= "A new table called expenses has been added to the database.<br />"
