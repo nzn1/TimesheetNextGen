@@ -40,6 +40,7 @@ function printMessage($message) {
 $redirect = isset($_REQUEST["redirect"]) ? $_REQUEST["redirect"] : "";
 
 PageElements::setHead("<title>".Config::getMainTitle()." | " .JText::_('LOGIN')."</title>");
+PageElements::setTheme('txsheet2');
 PageElements::setBodyOnLoad("document.loginForm.username.focus();");
 ?>
 
