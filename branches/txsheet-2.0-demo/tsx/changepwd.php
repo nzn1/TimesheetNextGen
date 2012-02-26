@@ -31,7 +31,8 @@ if (empty($errormsg) && !empty($old_pass)) {
 	$qh = mysql_query("SELECT password, ".config::getDbPwdFunction()."('$old_pass') FROM ".tbl::getuserTable()." WHERE username='".gbl::getContextUser()."'") or die("Unable to select ". mysql_error());
 	list($check1, $check2) = mysql_fetch_row($qh);
 	if ($check1 != $check2) {
-		$errormsg = "Wrong password, sorry!";
+		//$errormsg = "Wrong password, sorry!";
+		$errormsg = JText::_('JGLOBAL_AUTH_INCORRECT');
 	} else {
 		$qh = mysql_query("UPDATE ".tbl::getUserTable()." SET password=".config::getDbPwdFunction()."('$passwd1') WHERE username='".gbl::getContextUser()."'");
 		gotoStartPage();
@@ -45,38 +46,32 @@ if (!empty($errormsg)) {
 	exit;
 }
 
+PageElements::setHead("<title>".Config::getMainTitle()." | ".JText::_('CHANGE_PASSWD')."</title>");
+PageElements::setTheme('txsheet2');
 ?>
-<html>
-<head>
-<title>Change Password for user <?php echo gbl::getContextUser(); ?></title>
 
-</head>
-
+<h1> <?php echo (JText::_('CHANGE_PASSWD')) ?> </h1>
 
 <form action="<?php echo Config::getRelativeRoot(); ?>/changepwd" method="post">
 <input type="hidden" name="action" value="changePassword" />
 <div id="inputArea">
 <table width="436" align="center" border="0" cellspacing="0" cellpadding="0">
+
 	<tr>
-		<td align="left" class="outer_table_heading" >
-			Change Password:
-		</td>
-	</tr>
-	<tr>
-		<td width="150" align="right" >Old Password:</td>
+		<td width="150" align="right" ><?php echo (JText::_('OLD_PASSWD')) ?>:</td>
 		<td><input type="password" name="old_pass" style="width: 100%;" /></td>
 		</tr>
 		<tr>
-			<td width="150" align="right" >New Password:</td>
+			<td width="150" align="right" ><?php echo (JText::_('NEW_PASSWD')) ?>:</td>
 			<td><input type="password" name="passwd1" style="width: 100%; AUTOCOMPLETE="OFF"" /></td>
 		</tr>
 		<tr>
-			<td width="150" align="right" >New Password (again):</td>
+			<td width="150" align="right" ><?php echo (JText::_('NEW_PASSWD')) ?>:</td>
 			<td><input type="password" name="passwd2" style="width: 100%; AUTOCOMPLETE="OFF"" /></td>
 		</tr>
 		<tr>
 			<td align="center">
-				<input type="submit" value="Change!" />
+				<input type="submit" value="<?php echo (JText::_('CHANGE_PASSWD')) ?>!" />
 			</td>
 		</tr>
 </table>
