@@ -71,7 +71,7 @@ abstract class JFactory
 	{
 		jimport('jclasses.language');
 
-		$locale	= "en-GB";
+		$locale	= Config::getLocale();
 		$debug	= 0;
 		$lang	= JLanguage::getInstance($locale, $debug);
 
