@@ -15,18 +15,18 @@ $contextUser = strtolower($_SESSION['contextUser']);
 //load local vars from superglobals
 $action = $_REQUEST['action'];
 if ($action == "add" || $action == "edit") {
-	$assigned = isset($_REQUEST['assigned']) ? $_REQUEST['assigned']: array();
-	$end_month = $_REQUEST['end_month'];
-	$end_day = $_REQUEST['end_day'];
-	$end_year = $_REQUEST['end_year'];
-	$start_month = $_REQUEST['start_month'];
-	$start_day = $_REQUEST['start_day'];
-	$start_year = $_REQUEST['start_year'];
-	$title = $_REQUEST['title'];
-	$description = $_REQUEST['description'];
-	$url = $_REQUEST['url'];
-	$proj_status = $_REQUEST['proj_status'];
-	$project_leader = $_REQUEST['project_leader'];
+	$assigned = isset($_REQUEST['assigned']) ? mysql_real_escape_string($_REQUEST['assigned']): array();
+	$end_month = mysql_real_escape_string($_REQUEST['end_month']);
+	$end_day = mysql_real_escape_string($_REQUEST['end_day']);
+	$end_year = mysql_real_escape_string($_REQUEST['end_year']);
+	$start_month = mysql_real_escape_string($_REQUEST['start_month']);
+	$start_day = mysql_real_escape_string($_REQUEST['start_day']);
+	$start_year = mysql_real_escape_string($_REQUEST['start_year']);
+	$title = mysql_real_escape_string($_REQUEST['title']);
+	$description = mysql_real_escape_string($_REQUEST['description']);
+	$url = mysql_real_escape_string($_REQUEST['url']);
+	$proj_status = mysql_real_escape_string($_REQUEST['proj_status']);
+	$project_leader = mysql_real_escape_string($_REQUEST['project_leader']);
 }
 $client_id = $_REQUEST['client_id'];
 $proj_id = isset($_REQUEST['proj_id']) ? $_REQUEST['proj_id']: 0;

@@ -64,7 +64,7 @@ $uid=''; $proj_id=0;
 //get the context date
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 $dateValues = getdate($todayDate);
-$ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+$ymdStr = "year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
 if ($mode == "all") $mode = "monthly";
 if ($mode == "monthly") {
@@ -178,7 +178,7 @@ function printInfo($type) {
 		print format_time($data["duration"]);
 	} else if($type == "start_stamp") {
 		$dateValues = getdate($data["start_stamp"]);
-		$ymdStr = "&year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
+		$ymdStr = "year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 		$formattedDate = sprintf("%04d-%02d-%02d",$dateValues["year"],$dateValues["mon"],$dateValues["mday"]); 
 		make_daily_link($ymdStr,0,$formattedDate); 
 	} else if($type == "log") {
@@ -199,7 +199,6 @@ function make_index($data,$order) {
 }
 
 $Location="$_SERVER[PHP_SELF]?$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
-$post="&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
 
 if(!$export_excel) 
 	require("report_javascript.inc");

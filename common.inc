@@ -3,9 +3,12 @@
 if (!defined("COMMON_INC")) {
 	define("COMMON_INC", 1);
 
-	include("database_credentials.inc");
+	include("install/database_credentials.inc");
 	include("mysql.db.inc");
-	require("timezone.inc");
+	include("class.config.php");
+	$tsx_config = new Config();
+	
+	include("timezone.inc");
 
 	//get realToday's values
 	$realToday = getdate(time());
@@ -20,7 +23,7 @@ if (!defined("COMMON_INC")) {
 
 	function get_time_records($startStr, $endStr, $uid='', $proj_id=0, $client_id=0, 
 							$order_by = "start_time, proj_id, task_id") {
-		include("table_names.inc");
+		include("install/table_names.inc");
 	//build the database query
 		$query = "SELECT start_time AS start_time_str, ".
 					"end_time AS end_time_str, ".
@@ -28,7 +31,7 @@ if (!defined("COMMON_INC")) {
 					"unix_timestamp(end_time) AS end_stamp, ".
 					"duration, ".		//duration is stored in minutes
 					"trans_num, ".
-					"$TIMES_TABLE.uid, " .
+					"$TIMES_TABLE.username, " .
 					"$USER_TABLE.first_name, " .
 					"$USER_TABLE.last_name, " .
 					"$PROJECT_TABLE.title AS projectTitle, " .
@@ -42,13 +45,13 @@ if (!defined("COMMON_INC")) {
 				"WHERE ";
 
 		if ($uid != '') //otherwise we want all users
-			$query .= "$TIMES_TABLE.uid='$uid' AND ";
+			$query .= "$TIMES_TABLE.username='$uid' AND ";
 		if ($proj_id > 0) //otherwise we want all projects
 			$query .= "$TIMES_TABLE.proj_id=$proj_id AND ";
 		if ($client_id > 0) //otherwise we want all clients
 			$query .= "$PROJECT_TABLE.client_id=$client_id AND ";
 
-		$query .=	"$TIMES_TABLE.uid    = $USER_TABLE.username AND ".
+		$query .=	"$TIMES_TABLE.username = $USER_TABLE.username AND ".
 					"$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
 					"$TASK_TABLE.proj_id = $PROJECT_TABLE.proj_id AND ".
 					"$PROJECT_TABLE.client_id = $CLIENT_TABLE.client_id AND ".
@@ -65,13 +68,12 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function count_worked_secs($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $id) {
-		include("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
+		global $tsx_config;
+		include("install/table_names.inc");
 
 		$query = "SELECT date_format(start_time,'%d') AS day_of_month, trans_num, ";
 
-		if ($configData["timeformat"] == "12")
+		if ($tsx_config->get("timeformat") == "12")
 			$query .= "date_format(end_time, '%l:%i%p') AS endd, date_format(start_time, '%l:%i%p') AS start, ";
 		else
 			$query .= "date_format(end_time, '%k:%i') AS endd, date_format(start_time, '%k:%i') as start, ";
@@ -83,7 +85,7 @@ if (!defined("COMMON_INC")) {
 			"end_time As end_time_str, ".
 			"start_time AS start_time_str, ".
 			"$TASK_TABLE.name, $TIMES_TABLE.proj_id, $TIMES_TABLE.task_id ".
-			"FROM $TIMES_TABLE, $TASK_TABLE WHERE uid='$id' AND ";
+			"FROM $TIMES_TABLE, $TASK_TABLE WHERE username='$id' AND ";
 
 		$query .= "$TASK_TABLE.task_id = $TIMES_TABLE.task_id AND ".
 			"((start_time >= '$start_year-$start_month-$start_day 00:00:00' AND start_time <= '$end_year-$end_month-$end_day 23:59:59') ".
@@ -203,7 +205,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_holidays($month, $year, $day=0) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		$last_day = get_last_day($month, $year);
 		$query = "SELECT date_format(date,'%d') AS day_of_month, ".
 			"unix_timestamp(date) AS date, ".
@@ -224,7 +226,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_absences($month, $year, $user='', $day=0) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		$last_day = get_last_day($month, $year);
 		$query = "SELECT date_format(date,'%d') AS day_of_month, ".
 			"unix_timestamp(date) AS date, ".
@@ -247,7 +249,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_start_date($user) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		$query = "SELECT min(date) as start_date FROM $ALLOWANCE_TABLE WHERE username='$user'";
 		list($my_qu, $num) = dbQuery($query); //num should only be 1
 		$userdata = dbResult($my_qu, 1);
@@ -255,7 +257,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_allowance($day, $month, $year, $user, $type='Holiday') {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		$user_start_date = get_start_date($user);
 		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
 			return 0;
@@ -272,7 +274,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_balance($day, $month, $year, $user, $type='Holiday') {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		$user_start_date = get_start_date($user);
 		if (strcmp($user_start_date,sprintf("%04d-%02d-%02d",$year,$month,$day))>0)
 			return 0;
@@ -328,7 +330,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function count_absences($start_day, $start_month, $start_year, $end_day, $end_month, $end_year, $user, $type='Holiday') {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		$query = "SELECT date,AM_PM,type,user FROM $ABSENCE_TABLE WHERE ".
 				"(type='$type') AND (user='$user') AND ".
 				"(date >= '$start_year-$start_month-$start_day 00:00:00' AND date <= '$end_year-$end_month-$end_day 23:59:59') ".
@@ -418,7 +420,7 @@ if (!defined("COMMON_INC")) {
 
 	function fix_entry_duration($entry) {
 		//print "  fix_entry_duration<br />\n";
-		include("table_names.inc");
+		include("install/table_names.inc");
 		$duration = $entry["duration"];
 		$trans_num = $entry["trans_num"];
 		tryDbQuery("UPDATE $TIMES_TABLE set duration=$duration WHERE trans_num=$trans_num");
@@ -426,14 +428,14 @@ if (!defined("COMMON_INC")) {
 
 	function fix_entry_endstamp($entry) {
 		//print "  fix_entry_endstamp ". $entry["trans_num"].") ".strftime("%Y-%m-%d %H:%M:%S", $entry["start_stamp"])." - ".strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"])."<br />\n";
-		include("table_names.inc");
+		include("install/table_names.inc");
 		$etsStr = strftime("%Y-%m-%d %H:%M:%S", $entry["end_stamp"]);
 		$trans_num = $entry["trans_num"];
 		tryDbQuery("UPDATE $TIMES_TABLE set end_time=\"$etsStr\" WHERE trans_num=$trans_num");
 	}
 
 	function get_user_empid($username) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		// Retreives user's payroll Employee ID
 		$sql = "SELECT EmpId FROM $USER_TABLE WHERE username='$username'";
@@ -443,7 +445,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_project_name($proj_id) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		// Retreives project title (name)
 		$sql = "SELECT title FROM $PROJECT_TABLE WHERE proj_id=$proj_id";
@@ -453,7 +455,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_project_info($proj_id) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		// Retreives title, client_id, description, deadline and link from database for a given proj_id
 		$result = array();
@@ -466,7 +468,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_trans_info($trans_num) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		$result = array();
 		if ($trans_num > 0) {
@@ -488,10 +490,8 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_acl_level($page) {
-		include("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT aclStopwatch,aclDaily,aclWeekly,aclMonthly,aclSimple,aclClients,aclProjects,aclTasks,aclReports,aclRates,aclAbsences FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		return $configData[$page];
+		global $tsx_config;
+		return $tsx_config->get($page);
 	}
 
 	function day_button($name, $timeStamp=0, $limit=1) {
@@ -568,7 +568,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function single_user_select_list($varname, $username='', $extra='', $showSelect='false') {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		global $authenticationManager;
 	
@@ -623,7 +623,7 @@ if (!defined("COMMON_INC")) {
 
 
 	function get_users_name($uid) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		$query = "SELECT last_name, first_name, status FROM $USER_TABLE where username='$uid'";
 		list($qh, $num) = dbQuery($query);
 		$data = dbResult($qh);
@@ -631,7 +631,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function multi_user_select_list($name, $selected_array=array()) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		global $authenticationManager;
 	
@@ -668,7 +668,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function get_client_name($clientId) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		if($clientId == 0) return "All Clients";
 		$query = "SELECT organisation FROM $CLIENT_TABLE where client_id='$clientId'";
 		list($qh, $num) = dbQuery($query);
@@ -677,7 +677,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function client_select_list($currentClientId, $contextUser, $isMultiple, $showSelectClient, $showAllClients, $showNoClient, $onChange="", $restrictedList=true) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		if ($restrictedList) {
 				list($qh,$num) = dbQuery(
@@ -744,7 +744,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function project_select_list($currentClientId, $needsClient, $currentProjectId, $contextUser, $showSelectProject, $showAllProjects, $onChange="", $disabled=false) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		if ($currentClientId == 0 && $needsClient) {
 			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
@@ -814,7 +814,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function task_select_list ($currentProjectId, $currentTaskId, $contextUser="", $onChange="") {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		if ($currentProjectId == 0) {
 			print "<select name=\"dummy\" disabled=\"disabled\" style=\"width: 100%;\">\n";
@@ -894,7 +894,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function user_select_droplist_string($varname, $username='', $width='', $disabled='false') {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		global $authenticationManager;
 	
@@ -979,7 +979,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function client_select_droplist($client_id=1, $disabled=false, $info=true) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 			$query = "SELECT client_id, organisation FROM $CLIENT_TABLE ORDER BY organisation";
 
@@ -1015,7 +1015,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function project_select_droplist($proj_id=1, $disabled='false') {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 			$query = "SELECT " .
 							"proj_id, " .
@@ -1228,7 +1228,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function isValidProjectForClient($projectId, $clientId) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE " .
 						"WHERE client_id='$clientId' AND proj_id='$projectId'");
 
@@ -1236,7 +1236,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function getValidProjectForClient($clientId) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE " .
 						"WHERE client_id='$clientId'");
 		if ($num == 0)
@@ -1248,7 +1248,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function getFirstClient() {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		list($qh, $num) = dbQuery("SELECT client_id FROM $CLIENT_TABLE");
 		if ($num == 0)
 			return 0;
@@ -1259,7 +1259,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function getClientNameFromProject($proj_id) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		list($qh, $num) = dbQuery("SELECT client_id FROM $PROJECT_TABLE WHERE proj_id = $proj_id");
 		if ($num == 0)
 			return 0;
@@ -1276,7 +1276,7 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function getFirstProject() {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		list($qh, $num) = dbQuery("SELECT proj_id FROM $PROJECT_TABLE");
 		if ($num == 0)
 			return 0;
@@ -1286,29 +1286,8 @@ if (!defined("COMMON_INC")) {
 		return $data["proj_id"];
 	}
 
-	function getWeekStartDay() {
-		include("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT weekstartday FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		return $configData["weekstartday"];
-	}
-	
-	function getProjectItemsPerPage() {
-		include ("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT project_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		return $configData["project_items_per_page"];
-	}
-	
-	function getTaskItemsPerPage() {
-		include ("table_names.inc");
-		list($qhq, $numq) = dbQuery("SELECT task_items_per_page FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-		$configData = dbResult($qhq);
-		return $configData["task_items_per_page"];
-	}
-
 	function getFirstUser() {
-		include("table_names.inc");
+		include("install/table_names.inc");
 		list($qh, $num) = dbQuery("SELECT username FROM $USER_TABLE ");
 		if ($num == 0)
 			return 0;
@@ -1318,26 +1297,9 @@ if (!defined("COMMON_INC")) {
 		return $data["username"];
 	}
 
-	function getTimeFormat() {
-			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-			$configData = dbResult($qhq);
-			return $configData["timeformat"];
-	}
-
-	function getVersion() {
-		include("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT value FROM $NEW_CONFIG_TABLE WHERE name = 'version'");
-		if ($num == 0)
-			return 0;
-
-		//get the first result
-		$data = dbResult($qh);
-		return $data["value"];
-	}
-
 	function getWeeklyStartEndDates($time) {
-		$wsd = getWeekStartDay();
+		global $tsx_config;
+		$wsd = $tsx_config->get("weekstartday");
 		$daysToMinus = date('w',$time) - $wsd;
 		if ($daysToMinus < 0)
 		    $daysToMinus += 7;
@@ -1398,7 +1360,7 @@ if (!defined("COMMON_INC")) {
 			$info["proj_id"]=$data["proj_id"];
 			$info["task_id"]=$data["task_id"];
 			$info["trans_num"]=$data["trans_num"];
-			$info["uid"]=$data["uid"];
+			$info["uid"]=$data["username"];
 			$info["first_name"]=$data["first_name"];
 			$info["last_name"]=$data["last_name"];
 
@@ -1474,9 +1436,8 @@ if (!defined("COMMON_INC")) {
 	}
 
 	function gotoStartPage() {
-		include('table_names.inc');
-		list($result, $count) = dbQuery("SELECT startPage FROM $CONFIG_TABLE WHERE config_set_id = '1';");
-		list($startPage) = dbResult($result);
+		global $tsx_config;
+		$startPage = $tsx_config->get("startPage");
 		
 		header("Location: $startPage.php");
 		exit();

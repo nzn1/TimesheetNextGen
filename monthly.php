@@ -38,7 +38,7 @@ $todayDate = mktime(0, 0, 0, $month, $day, $year);
 $dateValues = getdate($todayDate);
 
 //the day the week should start on: 0=Sunday, 1=Monday
-$startDayOfWeek = getWeekStartDay();
+$startDayOfWeek = $tsx_config->get("weekstartday");
 
 //work out the start date by subtracting days to get to beginning of week
 $startDate = mktime(0,0,0, $month, 1, $year);
@@ -59,7 +59,7 @@ $endDate = getMonthlyEndDate($dateValues);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 //get the timeformat
-$CfgTimeFormat = getTimeFormat();
+$CfgTimeFormat = $tsx_config->get("timeformat");
 
 $post="proj_id=$proj_id&task_id=$task_id&client_id=$client_id";       //this isn't used anywhere
 

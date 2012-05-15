@@ -8,8 +8,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //define the command menu

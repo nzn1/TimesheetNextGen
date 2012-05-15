@@ -27,7 +27,7 @@ if ($client_id != 0) {
 }
 
 if (isset($_REQUEST['page']) && $_REQUEST['page'] != 0) { $page  = $_REQUEST['page']; } else { $page=1; };
-$results_per_page = getTaskItemsPerPage();
+$results_per_page = $tsx_config->get('task_items_per_page');
 $start_from = ($page-1) * $results_per_page;
 
 //set up the required queries

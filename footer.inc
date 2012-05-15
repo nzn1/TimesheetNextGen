@@ -1,8 +1,5 @@
 <?php
-//Get the result set for the config set 1
-list($qhq, $numq) = dbQuery("SELECT footerhtml FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-$configData = dbResult($qhq);
-parse_and_echo(stripslashes($configData["footerhtml"]));
+parse_and_echo(stripslashes($tsx_config->get("footerhtml")));
 ?>
 <p>
 <table width="100%" class="grey_area">
@@ -10,13 +7,13 @@ parse_and_echo(stripslashes($configData["footerhtml"]));
 		<td width="10px"> </td>
 		<td class="timesheet_logo" width="30%">
 			<?php 
-			$ver = getVersion();
+			$ver = $tsx_config->get("version");
 			echo "TimesheetNextGen &nbsp;&nbsp; v$ver";
 			?>
 		</td>
 		<td> </td>
 		<td align="center" width="30%">
-			&copy; 2008-2011 <a href="http://sourceforge.net/projects/tsheetx">Tsheetx Development Team</a><br />
+			&copy; 2008-2012 <a href="http://sourceforge.net/projects/tsheetx">Tsheetx Development Team</a><br />
 		</td>
 		<td> </td>
 		<td align="right" width="30%">

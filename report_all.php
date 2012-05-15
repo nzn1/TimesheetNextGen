@@ -208,7 +208,7 @@ function printBlanks($type) {
 
 function make_index($data,$order) {
 	if($order == "username") {
-		$index=sprintf("%-25.25s",$data["uid"]) .  sprintf("-%05d-",$data["proj_id"]) . sprintf("-%05d-",$data["task_id"]);
+		$index=sprintf("%-25.25s",$data["username"]) .  sprintf("-%05d-",$data["proj_id"]) . sprintf("-%05d-",$data["task_id"]);
 	} else if($order == "project") {
 		$index=sprintf("-%05d",$data["proj_id"]) . sprintf("-%05d",$data["task_id"]) . sprintf("%-25.25s",$data["uid"]);
 	} else {
@@ -356,11 +356,11 @@ $query = "SELECT $TIMES_TABLE.proj_id, ".
 		"$PROJECT_TABLE.title, ".
 		"$TASK_TABLE.name, ".
 		"first_name, last_name, ".
-		"$TIMES_TABLE.uid as username, ".
+		"$TIMES_TABLE.username as username, ".
 		"date_format(start_time, '%Y/%m/%d') as start_date, ".
 		"trans_num ".
 	"FROM $USER_TABLE, $TIMES_TABLE, $PROJECT_TABLE, $TASK_TABLE ".
-	"WHERE $TIMES_TABLE.uid=$USER_TABLE.username AND ".
+	"WHERE $TIMES_TABLE.username=$USER_TABLE.username AND ".
 		"end_time > 0 AND ".
 		//"$TIMES_TABLE.uid='$uid' AND ".
 		"start_time >= '$year-$month-1' AND ".

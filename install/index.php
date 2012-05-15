@@ -1,5 +1,5 @@
 <?php 
-define('INSTALLER_VERSION', '1.5.2');
+define('INSTALLER_VERSION', '1.5.3');
 // set up the global variable that holds any error messages
 // don't really like using globals, but this is quick and dirty
 $_ERROR = '';
@@ -25,6 +25,7 @@ th { vertical-align: top; text-align: left; }
 // check that Timesheet NG isn't already installed
 if(!isset($_REQUEST['step'])) {
 	switch (check_is_installed()) {
+	 	case 4:
 	 	case 3:
 			display_install_success();
 			break;
@@ -51,15 +52,16 @@ if(!isset($_REQUEST['step'])) {
  *   0 if not installed, 
  *   1 if installed but lower version, 
  *   2 if installed but no admin user
- *   3 if installed and up-to-date
+ *   3 if installed but not locked
+ *   4 if installed and up-to-date
  */
 function check_is_installed() {
 	global $db_inc_file, $table_inc_file;
-	if(!file_exists('../'.$db_inc_file)) { return 0; }
-	if(!file_exists('../'.$table_inc_file)) { return 0; }
+	if(!file_exists($db_inc_file)) { return 0; }
+	if(!file_exists($table_inc_file)) { return 0; }
 
-	include_once('../'.$db_inc_file);
-	include_once('../'.$table_inc_file);
+	include_once($db_inc_file);
+	include_once($table_inc_file);
 	if(!isset($TIMESHEET_INSTALLED)) { 
 		// pre-V1.3.1 installation?
 		if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
@@ -73,7 +75,8 @@ function check_is_installed() {
 	if(version_compare($TIMESHEET_VERSION, INSTALLER_VERSION) == -1) { return 1; }
 
 	if(!check_admin_user()) { return 2; }
-	else { return 3; }
+	if(!file_exists('lock')) { return 3; }
+	else { return 4; }
 }
 /** 
  * install()
@@ -82,7 +85,7 @@ function check_is_installed() {
 function install() {
 	global $table_inc_file, $db_inc_file;
 	$step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 'one';
-	if(check_is_installed() == 3) {
+	if(check_is_installed() >= 3) {
 			display_install_success();
 			return;
 	}
@@ -125,8 +128,8 @@ function install() {
 function check_include_files() {
 	global $table_inc_file, $db_inc_file;
 	if(
-		file_exists('../'.$table_inc_file) && is_writable('../'.$table_inc_file) &&
-		file_exists('../'.$db_inc_file) && is_writable('../'.$db_inc_file)
+		file_exists($table_inc_file) && is_writable($table_inc_file) &&
+		file_exists($db_inc_file) && is_writable($db_inc_file)
 		) {
 		return true;
 	}
@@ -141,10 +144,10 @@ function check_include_files() {
  */
 function display_install_step_1() {
 	global $table_inc_file, $db_inc_file;
-	$table_inc_exists = file_exists('../'.$table_inc_file); 
-	$table_inc_write = is_writable('../'.$table_inc_file);
-	$db_inc_exists = file_exists('../'.$db_inc_file); 
-	$db_inc_write = is_writable('../'.$db_inc_file);
+	$table_inc_exists = file_exists($table_inc_file); 
+	$table_inc_write = is_writable($table_inc_file);
+	$db_inc_exists = file_exists($db_inc_file); 
+	$db_inc_write = is_writable($db_inc_file);
 ?>
 <p>Thank you for downloading Timesheet Next Gen. 
 It'll just take a few more minutes to get it installed and working on your system.</p>
@@ -156,8 +159,8 @@ It'll just take a few more minutes to get it installed and working on your syste
 </ul>
 
 <h2>Step One: Configuration Files</h2>
-<p>Firstly you need to copy the files <code>install/database_credentials.inc.in</code> to <code>database_credentials.inc</code>
-and <code>install/table_names.inc.in</code> to <code>table_names.inc</code>
+<p>Firstly you need to copy the files <code>install/database_credentials.inc.in</code> to <code>install/database_credentials.inc</code>
+and <code>install/table_names.inc.in</code> to <code>install/table_names.inc</code>
 and make sure that they are writeable by the webserver</p>
 <table border="1">
 	<tr>
@@ -352,10 +355,10 @@ function display_fatal_error() {
  */
 function display_upgrade_step_1() {
 	global $table_inc_file, $db_inc_file;
-	$table_inc_exists = file_exists('../'.$table_inc_file); 
-	$table_inc_write = is_writable('../'.$table_inc_file);
-	$db_inc_exists = file_exists('../'.$db_inc_file); 
-	$db_inc_write = is_writable('../'.$db_inc_file);
+	$table_inc_exists = file_exists($table_inc_file); 
+	$table_inc_write = is_writable($table_inc_file);
+	$db_inc_exists = file_exists($db_inc_file); 
+	$db_inc_write = is_writable($db_inc_file);
 	?>
 <p>Thank you for downloading Timesheet Next Gen. 
 It'll just take a few more minutes to get it installed and working on your system.</p>
@@ -364,8 +367,8 @@ It'll just take a few more minutes to get it installed and working on your syste
 <p>If you are trying to upgrade from a version before 1.2.0, please 
 <a href="http://wiki.timesheetng.org/user-docs/update">see our wiki</a> for more details.</p>
 <h2>Step One: Configuration Files</h2>
-<p>Confirming that the configuration files <code>database_credentials.inc</code> and 
-<code>table_names.inc</code> exist and are both writeable by the webserver.</p>
+<p>Confirming that the configuration files <code>install/database_credentials.inc</code> and 
+<code>install/table_names.inc</code> exist and are both writeable by the webserver.</p>
 <table border="1">
 	<tr>
 		<th>File name</th>
@@ -838,14 +841,15 @@ function draw_ok_or_not_image($ok) {
 function display_install_success() {
 	global $db_inc_file, $table_inc_file;
 	$db_inc_ok = 1;  $table_inc_ok = 1;
-	if(is_writable('../'.$db_inc_file)) 	$db_inc_ok = 0; 
-	if(is_writable('../'.$table_inc_file))	$table_inc_ok = 0; 
+	if(is_writable('../'.$db_inc_file)) 	$db_inc_ok = 0;
+	if(is_writable('../'.$table_inc_file))	$table_inc_ok = 0;
+	if(!file_exists('lock')) touch('lock');
 ?>
 <h2>Installation Complete</h2>
 <p>Installation was successful</p>
 <h3>Final Bits</h3>
 <p>There are just a few things to do before you can start using Timesheet Next Gen</p>
-<p>Both the <?php echo "$db_inc_file and $table_inc_file"; ?></td>s should be made <stong>Read Only</strong><br>and the install directory and all its contents need to be removed from the web site directory</p>
+<p>Both the <?php echo "$db_inc_file and $table_inc_file"; ?></td>s should be made <stong>Read Only</strong></p>
 
 <table border="1">
 	<tr>
@@ -858,9 +862,6 @@ function display_install_success() {
 	</tr><tr>
 		<td><?php echo "make $table_inc_file read only"; ?>&nbsp;&nbsp;</td>
 		<td align="center"> <? draw_ok_or_not_image($table_inc_ok); ?> </td>
-	</tr><tr>
-		<td>Remove Install directory</td>
-		<td align="center"> <? draw_ok_or_not_image(0); ?> </td>
 	</tr>
 </table>
 <p>Once you have done those you can then <a href="../">continue to Timesheet Next Gen</a></p>
@@ -934,7 +935,7 @@ function create_tables($db_host, $db_name, $db_user, $db_pass, $db_prefix) {
 	global $_ERROR, $db_pass_func;
 	$db_prefix = mysql_real_escape_string($db_prefix);
 
-	$contents = file_get_contents('timesheet.sql.in');
+	$contents = file_get_contents('sql/timesheet.sql.in');
 	// finalise the file
 	$key_words = array('__TIMESHEET_VERSION__', '__TABLE_PREFIX__', '__DBPASSWORDFUNCTION__');
 	$key_values = array(INSTALLER_VERSION, $db_prefix, $db_pass_func);
@@ -963,8 +964,8 @@ function create_tables($db_host, $db_name, $db_user, $db_pass, $db_prefix) {
 function create_admin_user($username, $password) {
 	global $_ERROR, $db_inc_file, $table_inc_file;
 
-	include('../'.$db_inc_file);
-	include('../'.$table_inc_file);
+	include($db_inc_file);
+	include($table_inc_file);
 
 	// connect to the database
 	if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
@@ -1003,8 +1004,8 @@ function create_admin_user($username, $password) {
 function check_admin_user() {
 	global $_ERROR, $db_inc_file, $table_inc_file;
 
-	include('../'.$db_inc_file);
-	include('../'.$table_inc_file);
+	include($db_inc_file);
+	include($table_inc_file);
 
 	if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
 		return display_fatal_error(); 
@@ -1103,7 +1104,7 @@ function create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix
 	$contents = str_replace("__DBNAME__", $db_name, $contents);
 	$contents = str_replace("__DBPASSWORDFUNCTION__", $db_pass_func, $contents);
 	// re-write it
-	if (!$handle = fopen('../'.$db_inc_file, 'w')) {
+	if (!$handle = fopen($db_inc_file, 'w')) {
 		$_ERROR .= 'Could not open <code>'.$db_inc_file.'</code> file for writing';
 		return false;
     }
@@ -1116,7 +1117,7 @@ function create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix
 	// now the table names
 	$contents = file_get_contents($table_inc_file.'.in');
 	$contents = str_replace("__TABLE_PREFIX__", $db_prefix, $contents);
-	if (!$handle = fopen('../'.$table_inc_file, 'w')) {
+	if (!$handle = fopen($table_inc_file, 'w')) {
 		$_ERROR .= 'Could not open <code>'.$table_inc_file.'</code> file for writing';
 		return false;
     }
@@ -1144,39 +1145,39 @@ function update_db_version($db_prefix, $version) {
 function upgrade_tables($db_prefix, $db_pass_func) {
 	global $_ERROR;
 	$result = true;
-	$db_version = get_database_version($db_prefix.'config');
+	$db_version = get_database_version($db_prefix);
 
 	switch ($db_version) {
 	//If any SQL statements fail, we don't want to continue, and we want to mark the DB
 	//with the version that last succeeded so we can hopefully continue the upgrades later
 	case '1.2.0' :
-		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.2.1.sql.in');
+		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.2.1.sql.in');
 		if($result === false) return $result;
 		$result = update_db_version($db_prefix, '1.2.1');
 		if($result === false) return $result;
 	case '1.2.1' :
-		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.3.1.sql.in');
+		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.3.1.sql.in');
 		if($result === false) return $result;
 		$result = update_db_version($db_prefix, '1.3.1');
 		if($result === false) return $result;
 	case '1.3.1' :
-		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.4.1.sql.in');
+		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.4.1.sql.in');
 		if($result === false) return $result;
 		$result = update_db_version($db_prefix, '1.4.1');
 		if($result === false) return $result;
 	case '1.4.1' :
-		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.5.0.sql.in');
+		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.0.sql.in');
 		if($result === false) return $result;
 		$result = update_db_version($db_prefix, '1.5.0');
 		if($result === false) return $result;
 	case '1.5.0' :
-		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.5.1.sql.in');
+		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.1.sql.in');
 		if($result === false) return $result;
 		$result = update_db_version($db_prefix, '1.5.1');
 		if($result === false) return $result;
 	case '1.5.1' :
 	case '1.5.2' :
-		$result = run_sql_script($db_prefix, $db_pass_func, 'timesheet_upgrade_to_1.5.3.sql.in');
+		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.3.sql.in');
 		if($result === false) return $result;
 		$result = update_db_version($db_prefix, '1.5.3');
 		if($result === false) return $result;

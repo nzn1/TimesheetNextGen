@@ -8,9 +8,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
@@ -55,7 +52,6 @@ $last_day = get_last_day($month, $year);
 		document.getElementById('action').value = 1;
 		document.theForm.submit();
 	}
-
 
 </script>
 </head>
@@ -117,7 +113,7 @@ include ("navcal/navcal_monthly.inc");
 <?php
 	for ($i=1;$i<=$last_day;$i++) {
 		$day = mktime(0,0,0,$month,$i,$year);
-		$dow = strftime("%a", $day);
+		$dow = strftime("%A", $day);
 		$daystyle = "calendar_cell_middle";
 		if ((date('w', $day) == 6)||(date('w', $day) == 0)) {
 			$daystyle = "calendar_cell_holiday_middle";

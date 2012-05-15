@@ -5,7 +5,7 @@ require("class.AuthenticationManager.php");
 //check that this form has been submitted
 if (isset($_POST["username"]) && isset($_POST["password"])) {
 	//try logging the user in
-	if (!$authenticationManager->login($_POST["username"], $_POST["password"]))
+	if (!$authenticationManager->login(mysql_real_escape_string($_POST["username"]), mysql_real_escape_string($_POST["password"])))
 		$loginFailure = true;
 	else {
 		if (!empty($_REQUEST["redirect"]))

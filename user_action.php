@@ -16,21 +16,19 @@ $dbh = dbConnect();
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
-$uid = $_REQUEST["uid"];
-$first_name = $_REQUEST["first_name"];
-$last_name = $_REQUEST["last_name"];
-$username = $_REQUEST["username"];
-$email_address = $_REQUEST["email_address"];
-$password = $_REQUEST["password"];
-$isAdministrator = isset($_REQUEST["isAdministrator"]) ? $_REQUEST["isAdministrator"]: "false";
-$isManager = isset($_REQUEST["isManager"]) ? $_REQUEST["isManager"]: "false";
+$uid = mysql_real_escape_string($_REQUEST["uid"]);
+$first_name = mysql_real_escape_string($_REQUEST["first_name"]);
+$last_name = mysql_real_escape_string($_REQUEST["last_name"]);
+$username = mysql_real_escape_string($_REQUEST["username"]);
+$email_address = mysql_real_escape_string($_REQUEST["email_address"]);
+$password = mysql_real_escape_string($_REQUEST["password"]);
+$isAdministrator = isset($_REQUEST["isAdministrator"]) ? mysql_real_escape_string($_REQUEST["isAdministrator"]): "false";
+$isManager = isset($_REQUEST["isManager"]) ? mysql_real_escape_string($_REQUEST["isManager"]): "false";
 $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIVE" : "INACTIVE") : "ACTIVE";
 
 //$debug->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
-
-include("table_names.inc");
 
 if ($action == "delete") {
 	dbquery("DELETE FROM $USER_TABLE WHERE uid='$uid'");

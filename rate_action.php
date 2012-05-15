@@ -13,12 +13,12 @@ $dbh = dbConnect();
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
-$rate_id = $_REQUEST["rate_id"];
-$bill_rate = $_REQUEST["bill_rate"];
+$rate_id = mysql_real_escape_string($_REQUEST["rate_id"]);
+$bill_rate = mysql_real_escape_string($_REQUEST["bill_rate"]);
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
 
-include("table_names.inc");
+include("install/table_names.inc");
 	
 if ($action == "addupdate") {
 	if ($rate_id == 1) {

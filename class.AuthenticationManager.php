@@ -10,17 +10,15 @@ ini_set('display_errors', true);
  */	
 $cpath = dirname(__FILE__);
 if(
-	!file_exists($cpath.DIRECTORY_SEPARATOR.'database_credentials.inc') ||
-	!file_exists($cpath.DIRECTORY_SEPARATOR.'table_names.inc') 
+	!file_exists($cpath.DIRECTORY_SEPARATOR.'install'.DIRECTORY_SEPARATOR.'database_credentials.inc') ||
+	!file_exists($cpath.DIRECTORY_SEPARATOR.'install'.DIRECTORY_SEPARATOR.'table_names.inc') 
 	) {
 	// this app has not been installed yet, redirect to the installation pages
 	header("Location: ./install/");
 	exit;
-} else if(file_exists($cpath.DIRECTORY_SEPARATOR.'install')) {
-	// the install directory has not been deleted, redirect to "delete install dir" pages
-	// NOTE: this may also mean that the user has upgraded. The "delete install dir"
-	// pages also check the version number to see if the user is running the latest
-	// version, if not takes user to the "upgrade" pages
+} else if(!file_exists($cpath.DIRECTORY_SEPARATOR.'install'.DIRECTORY_SEPARATOR.'lock')) {
+	// the install lock has not been created, redirect to install pages
+	// NOTE: this may also mean that the user has upgraded.
 	header("Location: ./install/");
 	exit;	
 }
@@ -31,7 +29,7 @@ if( file_exists( $cpath . "/siteclosed")) {
 	$siteclosed=0;
 }
 	
-require("table_names.inc");
+require("install/table_names.inc");
 require("common.inc");
 require("enum.php");
 
@@ -101,9 +99,10 @@ class AuthenticationManager {
 	*   each page to ensure that there is an authenticated user
 	*/
 	function login($username, $password) {
-		require("table_names.inc");
-		require("database_credentials.inc");
+		require("install/table_names.inc");
+		require("install/database_credentials.inc");
 		global $siteclosed;
+		global $tsx_config;
 
 		//start/continue the session
 		session_start();
@@ -136,10 +135,10 @@ class AuthenticationManager {
 		$dbh = dbConnect();
 
 		//check whether we are using ldap
-		if ($this->usingLDAP()) {
+		if ($tsx_config->get("useLDAP")==1) {
 			//check their credentials with LDAP
 			if ( !$this->ldapAuth($username, $password) ) {
-				if ($this->usingFallback()) {
+				if ($tsx_config->get("LDAPFallback")==1) {
 					if(!$this->dbAuth($username, $password)){
 						return false;
 					}
@@ -214,8 +213,8 @@ class AuthenticationManager {
 	* Login using local database 
 	*/
 	function dbAuth($username, $password){
-		require( "table_names.inc" );
-		require( "database_credentials.inc" );
+		require("install/table_names.inc");
+		require("install/database_credentials.inc");
 		// query the user table for authentication details
 		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2, status " . "FROM $USER_TABLE WHERE username='$username'" );
 		$data = dbResult( $qh );
@@ -243,8 +242,8 @@ class AuthenticationManager {
 	* Logs out the currenlty logged in user
 	*/
 	function logout() {
-		require("table_names.inc");
-		require("database_credentials.inc");
+		require("install/table_names.inc");
+		require("install/database_credentials.inc");
 
 		//start/continue the session
 		session_start();
@@ -270,7 +269,7 @@ class AuthenticationManager {
 	*/
 	function isLoggedIn() {
 		global $siteclosed;
-		require( "table_names.inc" );
+		require("install/table_names.inc");
 
 		//start/continue the session
 		@session_start();
@@ -323,43 +322,15 @@ class AuthenticationManager {
 		return ($this->hasClearance($level));
 	}
 
-	/* This function returns true if the system is configured to use
-	*	LDAP for authentication
-	*/
-	function usingLDAP() {
-		require("table_names.inc");
-		list($qh, $num) = dbQuery("SELECT useLDAP FROM $CONFIG_TABLE WHERE config_set_id='1'");
-		$data = dbResult($qh);
-		return $data['useLDAP'] == 1;
-	}
-
-	/* 
-	* This function returns true if the system is configured to fallback to local authentication should LDAP authentication fail
-	* DB Field should perhaps be renamed to LOCALFallback
-	*/
-	function usingFallback(){
-		require( "table_names.inc" );
-		list( $qh, $num ) = dbQuery( "SELECT BIN(LDAPFallback) FROM $CONFIG_TABLE WHERE config_set_id='1'" );
-		$data = dbResult( $qh );
-		return $data['BIN(LDAPFallback)'] == 1;
-	}
-
 	function ldapLogin($username, $password) {
-		require("table_names.inc");
-		require("database_credentials.inc");
+		require("install/table_names.inc");
+		require("install/database_credentials.inc");
 
 		//require("debuglog.php");
 		//$debug = new logfile();
 
-		//get the connection settings from the database
-		list($qh, $num) = dbQuery("SELECT LDAPScheme, LDAPHost, LDAPPort, LDAPBaseDN, " .
-						"LDAPUsernameAttribute, LDAPSearchScope, LDAPFilter, LDAPProtocolVersion, " .
-						"LDAPBindByUser, LDAPBindUsername, LDAPBindPassword, LDAPReferrals " .
-						"FROM $CONFIG_TABLE WHERE config_set_id='1'");
-		$data = dbResult($qh);
-
 		//build up connection string
-		$connectionString = $data['LDAPScheme'] . "://" . $data['LDAPHost'] . ":" . $data['LDAPPort'];
+		$connectionString = $tsx_config->get('LDAPScheme') . "://" . $tsx_config->get('LDAPHost') . ":" . $tsx_config->get('LDAPPort');
 
 		//$debug->write("connectionString = $connectionString\n");
 
@@ -372,13 +343,13 @@ class AuthenticationManager {
 		}
 
 		//attempt to set the protocol version to use
-		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $data["LDAPProtocolVersion"]);
+		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $tsx_config->get("LDAPProtocolVersion"));
 
 		// bind to server by user
-		if ($data['LDAPBindByUser'] == 1) {
-			if (empty($data["LDAPBindUsername"])) {
+		if ($tsx_config->get('LDAPBindByUser') == 1) {
+			if ($tsx_config->get("LDAPBindUsername") == '') {
 				//bind using user supplied info, if there is no BindUsername in the config
-				$credentials=$data['LDAPUsernameAttribute'] . "=" . $username . "," . $data['LDAPBaseDN'];
+				$credentials=$tsx_config->get('LDAPUsernameAttribute') . "=" . $username . "," . $tsx_config->get('LDAPBaseDN');
 
 				if (!($bind = @ldap_bind($connection, $credentials, $password))) {
 					$this->ldapErrorCode = LDAP_SERVER_ERROR;
@@ -388,7 +359,7 @@ class AuthenticationManager {
 				}
 			} else {
 				//bind to server with config provided username and password
-				if (!($bind = @ldap_bind($connection, $data["LDAPBindUsername"], $data["LDAPBindPassword"]))) {
+				if (!($bind = @ldap_bind($connection, $tsx_config->get("LDAPBindUsername"), $tsx_config->get("LDAPBindPassword")))) {
 					$this->ldapErrorCode = LDAP_SERVER_ERROR;
 					$this->ldapServerErrorCode = ldap_errno($connection);
 					$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
@@ -406,13 +377,13 @@ class AuthenticationManager {
 		}
 
 		//attempt to set the protocol version to use
-		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $data["LDAPProtocolVersion"]);
+		@ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, $tsx_config->get("LDAPProtocolVersion"));
 
 		//build up the filter by adding the username filter
-		$filter = $data['LDAPUsernameAttribute'] . "=" . $username;
-		if ($data['LDAPFilter'] != "") {
+		$filter = $tsx_config->get('LDAPUsernameAttribute') . "=" . $username;
+		if ($tsx_config->get('LDAPFilter') != "") {
 			//does it start with a '(' and end with a ')' ?
-			$userFilter = $data["LDAPFilter"];
+			$userFilter = $tsx_config->get("LDAPFilter");
 			$length = strlen($userFilter);
 			if ($userFilter{0} == "(" && $userFilter{$length-1} == ")")
 				$userFilter = substr($userFilter, 1, $length-2);
@@ -421,25 +392,25 @@ class AuthenticationManager {
 		}
 
 		// Always avoid referals if flag is not set (they are enabled by default in php ldap module)
-		if ( $data["LDAPReferrals"] != 1) {
+		if ( $tsx_config->get("LDAPReferrals") != 1) {
 			@ldap_set_option( $connection, LDAP_OPT_REFERRALS, 0 );
 		}
 
-		if ($data["LDAPSearchScope"] == "base") {
+		if ($tsx_config->get("LDAPSearchScope") == "base") {
 			//search the directory returning records in the base dn
-			//echo "<p>searching base dn: $data[LDAPBaseDN]        with filter: $filter <p>";
-			//$debug->write("searching base ".$data['LDAPBaseDN']." for $filter\n");
-			if (!($search = @ldap_read($connection, $data['LDAPBaseDN'], $filter))) {
+			//echo "<p>searching base dn: $tsx_config->get(LDAPBaseDN]        with filter: $filter <p>";
+			//$debug->write("searching base ".$tsx_config->get('LDAPBaseDN')." for $filter\n");
+			if (!($search = @ldap_read($connection, $tsx_config->get('LDAPBaseDN'), $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
 				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
 				return false;
 			}
-		} else if ($data["LDAPSearchScope"] == "one") {
+		} else if ($tsx_config->get("LDAPSearchScope") == "one") {
 			//search the directory returning records in the base dn
-			//echo "<p>searching base dn: $data[LDAPBaseDN]        with filter: $filter <p>";
-			//$debug->write("searching one ".$data['LDAPBaseDN']." for $filter\n");
-			if (!($search = @ldap_list($connection, $data['LDAPBaseDN'], $filter))) {
+			//echo "<p>searching base dn: $tsx_config->get(LDAPBaseDN]        with filter: $filter <p>";
+			//$debug->write("searching one ".$tsx_config->get('LDAPBaseDN')." for $filter\n");
+			if (!($search = @ldap_list($connection, $tsx_config->get('LDAPBaseDN'), $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
 				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
@@ -447,9 +418,9 @@ class AuthenticationManager {
 			}
 		} else { //full subtree search
 			//search the directory returning records in the base dn
-			//echo "<p>searching base dn: $data[LDAPBaseDN]        with filter: $filter <p>";
-			//$debug->write("searching sub ".$data['LDAPBaseDN']." for $filter\n");
-			if (!($search = @ldap_search($connection, $data['LDAPBaseDN'], $filter))) {
+			//echo "<p>searching base dn: $tsx_config->get(LDAPBaseDN]        with filter: $filter <p>";
+			//$debug->write("searching sub ".$tsx_config->get('LDAPBaseDN')." for $filter\n");
+			if (!($search = @ldap_search($connection, $tsx_config->get('LDAPBaseDN'), $filter))) {
 				$this->ldapErrorCode = LDAP_SERVER_ERROR;
 				$this->ldapServerErrorCode = ldap_errno($connection);
 				$this->ldapServerErrorText = "LDAP: " . ldap_error($connection);
@@ -510,7 +481,7 @@ class AuthenticationManager {
 		//does the user exist in the db?
 		if (!$this->userExists($username)) {
 			//create the user
-			if ($this->usingFallback()) //if we're using Fallback, then we want to put the password in the database
+			if ($tsx_config->get("LDAPFallback")==1) //if we're using Fallback, then we want to put the password in the database
 				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
 			else 
 				$pwdstr = "";
@@ -541,7 +512,7 @@ class AuthenticationManager {
 				$emailAddress = $existingUserDetails['email_address'];
 
 			//update the users details
-			if ($this->usingFallback()) //if we're using Fallback, then we want to store the current password in the database
+			if ($tsx_config->get("LDAPFallback")==1) //if we're using Fallback, then we want to store the current password in the database
 				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
 			else 
 				$pwdstr = "''";
@@ -558,7 +529,7 @@ class AuthenticationManager {
 	* returns true if there is a record under that username in the database
 	*/
 	function userExists($username) {
-		require("table_names.inc");
+		require("install/table_names.inc");
 
 		//check whether the user exists
 		list($qh,$num) = dbQuery("SELECT username FROM $USER_TABLE WHERE username='$username'");

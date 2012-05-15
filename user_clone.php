@@ -41,7 +41,7 @@ if($action!='performCopy') {
 
 //$debug->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");
 
-include("table_names.inc");
+include("install/table_names.inc");
 
 ?>
 <div id="header">
@@ -268,7 +268,7 @@ if($action!='performCopy') {
 					</tr>
 <?php
 	function get_task_name($task_id) {
-		include("table_names.inc");
+		include("install/table_names.inc");
 
 		$sql = "SELECT name FROM $TASK_TABLE WHERE task_id=$task_id";
 		list($my_qh, $num) = dbQuery($sql);

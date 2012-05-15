@@ -38,7 +38,7 @@ $todayValues = getdate($todayStamp);
 $curDayOfWeek = $todayValues["wday"];
 
 //the day the week should start on: 0=Sunday, 1=Monday
-$startDayOfWeek = getWeekStartDay();
+$startDayOfWeek = $tsx_config->get('weekstartday');
 
 $daysToMinus = $curDayOfWeek - $startDayOfWeek;
 if ($daysToMinus < 0)
@@ -46,11 +46,7 @@ if ($daysToMinus < 0)
 
 $startDate = strtotime(date("d M Y H:i:s",$todayStamp) . " -$daysToMinus days");
 $endDate = strtotime(date("d M Y H:i:s",$startDate) . " +7 days");
-
-//get the configuration of timeformat and layout
-list($qh2, $numq) = dbQuery("SELECT simpleTimesheetLayout FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-$configData = dbResult($qh2);
-$layout = $configData['simpleTimesheetLayout'];
+$layout = $tsx_config->get('simpleTimesheetLayout');
 
 $post="";
 ?>

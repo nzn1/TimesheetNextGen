@@ -8,9 +8,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
         exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");

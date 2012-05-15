@@ -85,7 +85,7 @@ if(!($val === ''))
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">User report</td>
 						<td class="calendar_cell_right">
-							<a href="report_user.php?<?php print $ymdStr; ?>amp;&mode=monthly">Generate monthly</a> /
+							<a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
 							<a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
 						</td>
 					</tr>

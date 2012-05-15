@@ -14,14 +14,14 @@ $contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
-$task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
+$task_id = isset($_REQUEST["task_id"]) ? mysql_real_escape_string($_REQUEST["task_id"]): 0;
 $proj_id = $_REQUEST["proj_id"];
 
 if ($action == "add" || $action == "edit") {
-	$name = $_REQUEST["name"];
-	$description = $_REQUEST["description"];
-	$assigned = isset($_REQUEST["assigned"]) ? $_REQUEST['assigned']: array();
-	$task_status = $_REQUEST["task_status"];
+	$name = mysql_real_escape_string($_REQUEST["name"]);
+	$description = mysql_real_escape_string($_REQUEST["description"]);
+	$assigned = isset($_REQUEST["assigned"]) ? mysql_real_escape_string($_REQUEST['assigned']): array();
+	$task_status = mysql_real_escape_string($_REQUEST["task_status"]);
 }
 
 //create a time string for >>now<<

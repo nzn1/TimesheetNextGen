@@ -11,9 +11,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
@@ -42,7 +39,7 @@ $query .= "$PROJECT_TABLE.proj_id > 0 AND $CLIENT_TABLE.client_id = $PROJECT_TAB
 						"ORDER BY $PROJECT_TABLE.title";
 
 if (isset($_POST['page']) && $_POST['page'] != 0) { $page  = $_POST['page']; } else { $page=1; }; 
-$results_per_page = getProjectItemsPerPage();
+$results_per_page = $tsx_config->get("project_items_per_page");
 $start_from = ($page-1) * $results_per_page; 
 $query .= " LIMIT $start_from, $results_per_page";
 //$sql = “SELECT * FROM students ORDER BY name ASC LIMIT $start_from, 20”; 
@@ -190,7 +187,7 @@ include ("banner.inc");
 						"WHERE end_time > 0 AND $TIMES_TABLE.proj_id = $data[proj_id] ".
 						"AND $ASSIGNMENTS_TABLE.proj_id = $data[proj_id] ".
 						"AND $ASSIGNMENTS_TABLE.rate_id = $RATE_TABLE.rate_id ".
-						"AND $ASSIGNMENTS_TABLE.username = $TIMES_TABLE.uid ");
+						"AND $ASSIGNMENTS_TABLE.username = $TIMES_TABLE.username ");
 			$bill_data = dbResult($billqh);
 
 			//start the row

@@ -118,7 +118,7 @@ read asdf3
 if [ "$TIMESHEET_VERSION" \< "1.2.0" ]; then
 
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.2.0.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.2.0.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.2.0.sql.in | sed s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g > timesheet_upgrade_to_1.2.0.sql
 
 	echo ""
 	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
@@ -153,7 +153,7 @@ fi
 if [ "$TIMESHEET_VERSION" \< "1.2.1" ]; then
 	#now do the latest (1.2.1) changes
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.2.1.sql.in > timesheet_upgrade_to_1.2.1.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.2.1.sql.in > timesheet_upgrade_to_1.2.1.sql
 
 	echo ""
 	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
@@ -171,7 +171,7 @@ fi
 if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then
 	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.3.1.sql.in > timesheet_upgrade_to_1.3.1.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.3.1.sql.in > timesheet_upgrade_to_1.3.1.sql
 
 	echo ""
 	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
@@ -189,7 +189,7 @@ fi
 if [ "$TIMESHEET_VERSION" \< "1.4.1" ]; then
 	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.4.1.sql.in > timesheet_upgrade_to_1.4.1.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.4.1.sql.in > timesheet_upgrade_to_1.4.1.sql
 
 	echo ""
 	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
@@ -207,7 +207,7 @@ fi
 if [ "$TIMESHEET_VERSION" \< "1.5.0" ]; then
 	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.5.0.sql.in > timesheet_upgrade_to_1.5.0.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.5.0.sql.in > timesheet_upgrade_to_1.5.0.sql
 
 	echo ""
 	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
@@ -225,7 +225,7 @@ fi
 if [ "$TIMESHEET_VERSION" \< "1.5.1" ]; then
 	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
-	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g timesheet_upgrade_to_1.5.1.sql.in > timesheet_upgrade_to_1.5.1.sql
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.5.1.sql.in > timesheet_upgrade_to_1.5.1.sql
 
 	echo ""
 	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
@@ -244,6 +244,24 @@ if [ "$TIMESHEET_VERSION" \< "1.5.2" ]; then
 	echo ""
 	echo "No DB upgrade needed for 1.5.2"
 	echo ""
+fi
+
+if [ "$TIMESHEET_VERSION" \< "1.5.3" ]; then
+	#now do the latest changes
+	#replace prefix and version timesheet_upgrade....sql.in
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.5.3.sql.in > timesheet_upgrade_to_1.5.3.sql
+
+	echo ""
+	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
+	echo "$DBNAME, to version 1.5.3:"
+	echo ""
+	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.5.3.sql
+
+	if [ $? = 1 ]; then
+		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "
+		echo "has ALTER TABLE privileges. Upgrade will not continue."
+		exit 1;
+	fi
 fi
 
 #set the version number in the config table

@@ -15,6 +15,7 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 // Connect to database.
 $dbh = dbConnect();
 
+include("install/table_names.inc");
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
 include("timesheet_menu.inc");
@@ -49,7 +50,7 @@ $startStr = date("Y-m-d H:i:s",$startDate);
 $endStr = date("Y-m-d H:i:s",$endDate);
 
 //get the timeformat
-$CfgTimeFormat = getTimeFormat();
+$CfgTimeFormat = $tsx_config->get("timeformat");
 
 $post="proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";
 ?>
