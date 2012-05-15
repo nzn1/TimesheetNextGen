@@ -8,8 +8,6 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess(
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 $loggedInUser = strtolower($_SESSION['loggedInUser']);
 
@@ -49,9 +47,9 @@ if ($action!=0) {
 				"date < '$endYear-$endMonth-01 00:00:00'");
 
 	for ($i=1; $i<=$last_day; $i++) {
-		$AMtype = $_POST["AMtype".$i];
+		$AMtype = mysql_real_escape_string($_POST["AMtype".$i]);
 		$AMtext = urlencode($_POST["AMtext".$i]);
-		$PMtype = $_POST["PMtype".$i];
+		$PMtype = mysql_real_escape_string($_POST["PMtype".$i]);
 		$PMtext = urlencode($_POST["PMtext".$i]);
 
 		if (($AMtype!='')&&($AMtype!='Public')) {

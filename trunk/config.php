@@ -17,9 +17,13 @@ include("timesheet_menu.inc");
 
 $contextUser = strtolower($_SESSION['contextUser']);
 
-//Get the result set for the config set 1
-list($qh, $num) = dbQuery("SELECT * FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-$resultset = dbResult($qh);
+//Get the result set for the config
+$resultset = array();
+list($qh, $num) = dbQuery("SELECT * FROM $CONFIG_TABLE");
+for ($i = 0; $i < $num; $i++) {
+	$resultrow = dbResult($qh, $i);
+	$resultset[$resultrow[0]] = $resultrow[1];
+}
 
 ?>
 <html>

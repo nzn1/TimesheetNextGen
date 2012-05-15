@@ -12,7 +12,7 @@ $proj_id = isset($_REQUEST["proj_id"]) ? $_REQUEST["proj_id"]: 0;
 $task_id = isset($_REQUEST["task_id"]) ? $_REQUEST["task_id"]: 0;
 $client_id = isset($_REQUEST["client_id"]) ? $_REQUEST["client_id"]: 0;
 
-if(empty($post)) $post="year=$year&amp;&month=$month&amp;day=$day&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";
+if(empty($post)) $post="year=$year&amp;month=$month&amp;day=$day&amp;proj_id=$proj_id&amp;task_id=$task_id&amp;client_id=$client_id";
 
 if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR))
 	if(isset($_REQUEST["contextuid"]))
@@ -66,7 +66,7 @@ if ($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
 		$commandMenu->add(new IconTextCommand("User Rates", true, "rate_maint.php", "images/icon_rates.gif"));
 	$commandMenu->add(new IconTextCommand("Configuration", true, "config.php", "images/icon_configuration.gif"));
 }
-if (!$authenticationManager->usingLDAP())
+if (!$tsx_config->get("useLDAP"))
 	$commandMenu->add(new IconTextCommand("Change Password", true, "changepwd.php", "images/icon_key.gif"));
 $commandMenu->add(new IconTextCommand("Logout", true, "logout.php?logout=true", "images/icon_logout.gif"));
 if($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {

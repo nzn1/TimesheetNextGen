@@ -1,23 +1,20 @@
 <?php
-
-	//Get the result set for the config set 1
-	$dbh = dbConnect();
-	list($qhq, $numq) = dbQuery("SELECT locale, timezone FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-	$configdata = dbResult($qhq);
-
+	$locale = $tsx_config->get("locale");
+	$timezone = $tsx_config->get("timezone");
+	
 	//set the locale
-	if ($configdata["locale"] != "")
-		setlocale(LC_ALL, stripslashes($configdata["locale"]));
+	if ($locale != "")
+		setlocale(LC_ALL, stripslashes($locale));
 
 	//set the timezone
-	if ($configdata["timezone"] != "") {
+	if ($timezone != "") {
 		//for >= PHP 5.1
 		if(function_exists("date_default_timezone_set")) {
-			date_default_timezone_set($configdata["timezone"]);
+			date_default_timezone_set($timezone);
 		// for PHP < 5.1
 		} else {
-			putenv("PHP_TZ=" . stripslashes($configdata["timezone"]));
-			putenv("TZ=" . stripslashes($configdata["timezone"]));
+			putenv("PHP_TZ=" . stripslashes($timezone));
+			putenv("TZ=" . stripslashes($timezone));
 		}
 	} else {
 		//for >= PHP 5.1

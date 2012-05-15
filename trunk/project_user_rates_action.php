@@ -20,7 +20,7 @@ $proj_id = $_REQUEST["proj_id"];
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
 
-include("table_names.inc");
+include("install/table_names.inc");
 
 if ($action == "show_users") {
 	$username_array = array();

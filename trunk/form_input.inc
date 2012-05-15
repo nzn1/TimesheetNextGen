@@ -26,14 +26,11 @@
 	class HourInput extends SelectInput {
 
 		function create($selectedIndex = 9) {
+			global $tsx_config;
 			$this->printSelect();
 
 			//work out whether we want to display time in 12 or 24 hour format
-			include("table_names.inc");
-			list($qhq, $numq) = dbQuery("SELECT timeformat FROM $CONFIG_TABLE WHERE config_set_id = '1'");
-			$configdata = dbResult($qhq);
-
-			if ($configdata['timeformat'] == "12")
+			if ($tsx_config->get('timeformat') == "12")
 				$this->create_12hour($selectedIndex);
 			else
 				$this->create_24hour($selectedIndex);
@@ -76,7 +73,7 @@
 		function create($selectedMinute = 0) {
 			$this->printSelect();
 
-			for ($i=0;$i<60;$i+=5) {
+			for ($i=0;$i<60;$i+=15) {
 				echo "<option value=\"$i\"";
 					if ($selectedMinute > $i - 2 && $selectedMinute < $i + 3)
 						echo " selected=\"selected\"";

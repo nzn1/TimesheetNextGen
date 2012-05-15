@@ -10,8 +10,6 @@ if (!$authenticationManager->isLoggedIn()) {
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
 /**
@@ -159,7 +157,7 @@ function getLogMessage() {
 }
 
 function clockon() {
-	include("table_names.inc");
+	include("install/table_names.inc");
 
 	//import global vars
 	global $contextUser, $onStamp, $task_id, $proj_id, $Location, $fromPopupWindow;
@@ -188,7 +186,7 @@ function clockon() {
 	$onStr = strftime("%Y-%m-%d %H:%M:%S", $onStamp);
 
 	//now insert the record for this clock on
-	$querystring = "INSERT INTO $TIMES_TABLE (uid, start_time, proj_id,task_id) ".
+	$querystring = "INSERT INTO $TIMES_TABLE (username, start_time, proj_id,task_id) ".
 			"VALUES ('$contextUser','$onStr', $proj_id, $task_id)";
 	list($qh,$num) = dbQuery($querystring);
 
@@ -212,7 +210,7 @@ function clockon() {
 }
 
 function clockoff() {
-	include("table_names.inc");
+	include("install/table_names.inc");
 
 	//import global vars
 	global $contextUser, $year, $month, $day, $offStamp, $task_id, $proj_id, $Location;
@@ -259,7 +257,7 @@ function clockoff() {
 }
 
 function clockonandoff() {
-	include("table_names.inc");
+	include("install/table_names.inc");
 
 	//import global vars
 	global $contextUser, $year, $month, $day, $task_id, $proj_id, $Location;
@@ -283,7 +281,7 @@ function clockonandoff() {
 	$offStr = strftime("%Y-%m-%d %H:%M:%S", $offStamp);
 	
 	$log_message = addslashes($log_message);
-	$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
+	$queryString = "INSERT INTO $TIMES_TABLE (username, start_time, end_time, duration, proj_id, task_id, log_message) ".
 			"VALUES ('$contextUser','$onStr', '$offStr', '$duration', " .
 			"$proj_id, $task_id, '$log_message')";
 	list($qh,$num) = dbQuery($queryString);

@@ -9,13 +9,7 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
-$contextUser = strtolower($_SESSION["contextUser"]);
-
-//$debug = new logfile();
-
-//load local vars from superglobals
+//load local vars from request/post/get
 $action = $_REQUEST["action"];
 $headerhtml = isset($_REQUEST["headerhtml"]) ? $_REQUEST["headerhtml"]: "";
 $bodyhtml = isset($_REQUEST["bodyhtml"]) ? $_REQUEST["bodyhtml"]: "";
@@ -72,112 +66,102 @@ $startPage = $_REQUEST["startPage"];
 
 //$debug->write("startPage is $startPage\n");
 
-	function resetConfigValue($fieldName) {
-		include("table_names.inc");
-
-		//get the default value
-		list($qh, $num) = dbQuery("SELECT $fieldName FROM $CONFIG_TABLE WHERE config_set_id='0';");
-		$resultset = dbResult($qh);
-
-		//set it
-		dbQuery("UPDATE $CONFIG_TABLE SET $fieldName='" . $resultset[$fieldName] . "' WHERE config_set_id='1';");
-	}
-
 if (!isset($action)) {
 	Header("Location: $HTTP_REFERER");
 }
 elseif ($action == "edit") {
-	$headerhtml = addslashes(unhtmlentities(trim($headerhtml)));
-	$bodyhtml = addslashes(unhtmlentities(trim($bodyhtml)));
-	$footerhtml = addslashes(unhtmlentities(trim($footerhtml)));
-	$errorhtml = addslashes(unhtmlentities(trim($errorhtml)));
-	$bannerhtml = addslashes(unhtmlentities(trim($bannerhtml)));
-	$tablehtml = addslashes(unhtmlentities(trim($tablehtml)));
-	$locale = addslashes(unhtmlentities(trim($locale)));
-	$timezone = addslashes(unhtmlentities(trim($timezone)));
-	$projectItemsPerPage = addslashes(unhtmlentities(trim($projectItemsPerPage)));
-	$taskItemsPerPage = addslashes(unhtmlentities(trim($taskItemsPerPage)));
-	$query = "UPDATE $CONFIG_TABLE SET ".
-		"headerhtml='$headerhtml',".
-		"bodyhtml='$bodyhtml',".
-		"footerhtml='$footerhtml',".
-		"errorhtml='$errorhtml',".
-		"bannerhtml='$bannerhtml',".
-		"tablehtml='$tablehtml',".
-		"locale='$locale',".
-		"timezone='$timezone',".
-		"timeformat='$timeformat', ".
-		"weekstartday='$weekstartday', " .
-		"project_items_per_page='$projectItemsPerPage', " .
-		"task_items_per_page='$taskItemsPerPage', " .
-		"useLDAP='$useLDAP', " .
-		"LDAPScheme='$LDAPScheme', " .
-		"LDAPHost='$LDAPHost', " .
-		"LDAPPort='$LDAPPort', " .
-		"LDAPBaseDN='$LDAPBaseDN', " .
-		"LDAPUsernameAttribute='$LDAPUsernameAttribute', " .
-		"LDAPSearchScope='$LDAPSearchScope', " .
-		"LDAPFilter='$LDAPFilter', " .
-		"LDAPProtocolVersion='$LDAPProtocolVersion', " .
-		"LDAPBindUsername='$LDAPBindUsername', ".
-		"LDAPBindPassword='$LDAPBindPassword', ".
-		"LDAPBindByUser='$LDAPBindByUser', " .
-		"LDAPReferrals='$LDAPReferrals', " .
-		"LDAPFallback='$LDAPFallback', " .
-		"aclStopwatch='$aclStopwatch', " .
-		"aclDaily='$aclDaily', " .
-		"aclWeekly='$aclStopwatch', " .
-		"aclMonthly='$aclMonthly', " .
-		"aclSimple='$aclSimple', " .
-		"aclClients='$aclClients', " .
-		"aclProjects='$aclProjects', " .
-		"aclTasks='$aclTasks', " .
-		"aclReports='$aclReports', " .
-		"aclRates='$aclRates', " .
-		"aclAbsences='$aclAbsences', " .
-		"simpleTimesheetLayout= '$simpleTimesheetLayout', " .
-		"startPage='$startPage' " .
-		"WHERE config_set_id='1';";
+	$headerhtml = mysql_real_escape_string(trim($headerhtml));
+	$bodyhtml = mysql_real_escape_string(trim($bodyhtml));
+	$footerhtml = mysql_real_escape_string(trim($footerhtml));
+	$errorhtml = mysql_real_escape_string(trim($errorhtml));
+	$bannerhtml = mysql_real_escape_string(trim($bannerhtml));
+	$tablehtml = mysql_real_escape_string(trim($tablehtml));
+	$locale = mysql_real_escape_string(trim($locale));
+	$timezone = mysql_real_escape_string(trim($timezone));
+	$projectItemsPerPage = mysql_real_escape_string(trim($projectItemsPerPage));
+	$taskItemsPerPage = mysql_real_escape_string(trim($taskItemsPerPage));
+
+	// now change values in new configuration table
+
+	$tsx_config->set("headerhtml", $headerhtml);
+	$tsx_config->set("bodyhtml", $bodyhtml);
+	$tsx_config->set("footerhtml", $footerhtml);
+	$tsx_config->set("errorhtml", $errorhtml);
+	$tsx_config->set("bannerhtml", $bannerhtml);
+	$tsx_config->set("tablehtml", $tablehtml);
+	$tsx_config->set("locale", $locale);
+	$tsx_config->set("timezone", $timezone);
+	$tsx_config->set("timeformat", $timeformat);
+	$tsx_config->set("weekstartday", $weekstartday);
+	$tsx_config->set("project_items_per_page", $projectItemsPerPage);
+	$tsx_config->set("task_items_per_page", $taskItemsPerPage);
+	$tsx_config->set("useLDAP", $useLDAP);
+	$tsx_config->set("LDAPScheme", $LDAPScheme);
+	$tsx_config->set("LDAPHost", $LDAPHost);
+	$tsx_config->set("LDAPPort", $LDAPPort);
+	$tsx_config->set("LDAPBaseDN", $LDAPBaseDN);
+	$tsx_config->set("LDAPUsernameAttribute", $LDAPUsernameAttribute);
+	$tsx_config->set("LDAPSearchScope", $LDAPSearchScope);
+	$tsx_config->set("LDAPFilter", $LDAPFilter);
+	$tsx_config->set("LDAPProtocolVersion", $LDAPProtocolVersion);
+	$tsx_config->set("LDAPBindUsername", $LDAPBindUsername);
+	$tsx_config->set("LDAPBindPassword", $LDAPBindPassword);
+	$tsx_config->set("LDAPBindByUser", $LDAPBindByUser);
+	$tsx_config->set("LDAPReferrals", $LDAPReferrals);
+	$tsx_config->set("LDAPFallback", $LDAPFallback);
+	$tsx_config->set("aclStopwatch", $aclStopwatch);
+	$tsx_config->set("aclDaily", $aclDaily);
+	$tsx_config->set("aclWeekly", $aclWeekly);
+	$tsx_config->set("aclMonthly", $aclMonthly);
+	$tsx_config->set("aclSimple", $aclSimple);
+	$tsx_config->set("aclClients", $aclClients);
+	$tsx_config->set("aclProjects", $aclProjects);
+	$tsx_config->set("aclTasks", $aclTasks);
+	$tsx_config->set("aclReports", $aclReports);
+	$tsx_config->set("aclRates", $aclRates);
+	$tsx_config->set("aclAbsences", $aclAbsences);
+	$tsx_config->set("SimpleTimesheetLayout", $simpleTimesheetLayout);
+	$tsx_config->set("startPage", $startPage);
+
 	//$debug->write("$query\n");
-	list($qh,$num) = dbquery($query);
 
 	if ($headerReset == true)
-		resetConfigValue("headerhtml");
+		$tsx_config->set("headerhtml", '<meta name="description" content="Timesheet Next Gen">\r\n<link href="css/timesheet.css" rel="stylesheet" type="text/css">\r\n<link rel="shortcut icon" href="images/favicon.ico">');
 	if ($bodyReset == true)
-		resetConfigValue("bodyhtml");
+		$tsx_config->set("bodyhtml", 'link=\"#004E8A\" vlink=\"#171A42\"');
 	if ($footerReset == true)
-		resetConfigValue("footerhtml");
+		$tsx_config->set("footerhtml", '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n<tr><td style=\"background-color: #000788; padding: 3;\" class=\"bottom_bar_text\" align=\"center\">\r\nTimesheetNextGen\r\n<br /><span style=\"font-size: 9px;\"><b>Page generated %time% %date% (%timezone% time)</b></span>\r\n</td></tr></table>');
 	if ($errorReset == true)
-		resetConfigValue("errorhtml");
+		$tsx_config->set("errorhtml", '<table border=0 cellpadding=5 width=\"100%\">\r\n<tr>\r\n  <td><font size=\"+2\" color=\"red\">%errormsg%</font></td>\r\n</tr></table>\r\n<p>Please go <a href=\"javascript:history.back()\">Back</a> and try again.</p>');
 	if ($bannerReset == true)
-		resetConfigValue("bannerhtml");
+		$tsx_config->set("bannerhtml", '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>\r\n<td colspan=\"2\" style=\"background-image: url(\'images/timesheet_background_pattern.gif\');\"><img src=\"images/timesheet_banner.gif\" alt=\"Timesheet Banner\" /></td>\r\n</tr><tr>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\">%commandmenu%</td>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">You are logged in as %username%</td>\r\n</tr><tr>\r\n<td colspan=\"2\" height=\"1\" style=\"background-color: #758DD6;\"><img src=\"images/spacer.gif\" alt=\"\" width=\"1\" height=\"1\" /></td>\r\n</tr></table>');
 	if ($tableReset == true)
-		resetConfigValue("tablehtml");
+		$tsx_config->set("tablehtml", '');
 	if ($localeReset == true)
-		resetConfigValue("locale");
+		$tsx_config->set("locale", 'C');
 	if ($timezoneReset == true)
-		resetConfigValue("timezone");
+		$tsx_config->set("timezone", 'Europe/Zurich');
 	if ($timeformatReset == true)
-		resetConfigValue("timeformat");
+		$tsx_config->set("timeformat", '12');
 	if ($weekStartDayReset == true)
-		resetConfigValue("weekstartday");
+		$tsx_config->set("weekstartday", '1');
 	if ($projectItemsPerPageReset == true)
-		resetConfigValue("project_items_per_page");
+		$tsx_config->set("project_items_per_page", '10');
 	if ($taskItemsPerPageReset == true)
-		resetConfigValue("task_items_per_page");
+		$tsx_config->set("task_items_per_page", '10');
 	if ($aclReset == true)
 	{
-		resetConfigValue("aclStopwatch");
-		resetConfigValue("aclDaily");
-		resetConfigValue("aclWeekly");
-		resetConfigValue("aclMonthly");
-		resetConfigValue("aclSimple");
-		resetConfigValue("aclClients");
-		resetConfigValue("aclProjects");
-		resetConfigValue("aclTasks");
-		resetConfigValue("aclReports");
-		resetConfigValue("aclRates");
-		resetConfigValue("aclAbsences");
+		$tsx_config->set("aclStopwatch", 'Basic');
+		$tsx_config->set("aclDaily", 'Basic');
+		$tsx_config->set("aclWeekly", 'Basic');
+		$tsx_config->set("aclMonthly", 'Basic');
+		$tsx_config->set("aclSimple", 'Basic');
+		$tsx_config->set("aclClients", 'Basic');
+		$tsx_config->set("aclProjects", 'Basic');
+		$tsx_config->set("aclTasks", 'Basic');
+		$tsx_config->set("aclReports", 'Basic');
+		$tsx_config->set("aclRates", 'Basic');
+		$tsx_config->set("aclAbsences", 'Basic');
 	}
 }
 

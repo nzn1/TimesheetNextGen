@@ -25,9 +25,9 @@ $old_pass = "";
 if (isset($_POST["action"])) {
 	if (!isset($_POST["passwd1"]) || !isset($_POST["passwd2"]) || !isset($_POST["old_pass"]))
 		errorPage("Please fill out all fields.");
-	$passwd1 = $_POST['passwd1'];
-	$passwd2 = $_POST['passwd2'];
-	$old_pass = $_POST['old_pass'];
+	$passwd1 = mysql_real_escape_string($_POST['passwd1']);
+	$passwd2 = mysql_real_escape_string($_POST['passwd2']);
+	$old_pass = mysql_real_escape_string($_POST['old_pass']);
 }
 
 //check for guest user

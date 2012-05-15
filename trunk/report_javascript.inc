@@ -19,7 +19,7 @@ function getObjectByName(sName){
 }
 
 function popupPrintWindow() {
-	window.open("<?php echo "$Location&print=yes"; ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
+	window.open("<?php echo html_entity_decode("$Location&print=yes"); ?>", "PopupPrintWindow", "location=0,status=no,menubar=no,resizable=1,width=800,height=450");
 	return;
 }
 

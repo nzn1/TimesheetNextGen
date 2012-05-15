@@ -141,7 +141,7 @@ else
 		read DBPASS
 
 		#replace connection settings in the timesheet_create.sql.in file
-		sed s/__DBHOST__/$DBHOST/g timesheet_create.sql.in | \
+		sed s/__DBHOST__/$DBHOST/g sql/timesheet_create.sql.in | \
 		sed s/__DBNAME__/$DBNAME/g | \
 		sed s/__DBUSER__/$DBUSER/g | \
 		sed s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g | \
@@ -174,13 +174,13 @@ if [ "$TABLE_PREFIX" = "" ]; then
 fi
 
 #replace prefix and version timesheet.sql.in
-sed "s/__TABLE_PREFIX__/$TABLE_PREFIX/g;s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g;s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g;" timesheet.sql.in> timesheet.sql
+sed "s/__TABLE_PREFIX__/$TABLE_PREFIX/g;s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g;s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g;" sql/timesheet.sql.in> timesheet.sql
 
 #replace prefix in table_names.inc.in
 sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > ../table_names.inc
 
 #replace prefix in sample_data.sql.in
-sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sample_data.sql.in > ../sample_data.sql
+sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/sample_data.sql.in > ../sample_data.sql
 
 echo ""
 echo "TimesheetNextGen installation will now create the necessary tables "

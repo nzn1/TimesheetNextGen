@@ -25,13 +25,13 @@ if (empty($contextUser))
 if ($proj_id == 0)
 	$task_id = 0;
 
-$startDayOfWeek = getWeekStartDay();  //needed by NavCalendar
+$startDayOfWeek = $tsx_config->get('weekstartday');  //needed by NavCalendar
 $todayDate = mktime(0, 0, 0,$month, $day, $year);
 
 $tomorrowDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 days");
 
 //get the timeformat
-$CfgTimeFormat = getTimeFormat();
+$CfgTimeFormat = $tsx_config->get('timeformat');
 
 //include date input classes
 include "form_input.inc";

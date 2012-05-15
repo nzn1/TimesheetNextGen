@@ -62,7 +62,7 @@ $endStr = date("Y-m-d H:i:s",$endDate);
 
 //clear the tasks which start on this week
 $queryString = "DELETE FROM $TIMES_TABLE " . 
-					"WHERE uid='$contextUser' AND " .
+					"WHERE username='$contextUser' AND " .
 							"start_time >= '$startStr' AND ".
 							"start_time < '$endStr'";
 
@@ -115,7 +115,7 @@ for ($i=0; $i<$totalRows; $i++) {
 			$etsStr = strftime("%Y-%m-%d %H:%M:%S", $ets);
 			
 			//add to database
-			$queryString = "INSERT INTO $TIMES_TABLE (uid, start_time, end_time, duration, proj_id, task_id, log_message) ".
+			$queryString = "INSERT INTO $TIMES_TABLE (username, start_time, end_time, duration, proj_id, task_id, log_message) ".
 									"VALUES ('$contextUser','$stsStr', ".
 									"'$etsStr', ".
 									"'$minutes', ".

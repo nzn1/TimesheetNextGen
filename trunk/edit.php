@@ -18,28 +18,28 @@ include("timesheet_menu.inc");
 $contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
-$save_changes = isset($_REQUEST['save_changes']) ? $_REQUEST['save_changes']: false;
-$task_id = $_REQUEST['task_id'];
-$proj_id = $_REQUEST['proj_id'];
-$client_id = $_REQUEST['client_id'];
-$trans_num = $_REQUEST['trans_num'];
-$month = $_REQUEST['month'];
-$day = $_REQUEST['day'];
-$year = $_REQUEST['year'];
-$action = isset($_REQUEST["action"]) ? $_REQUEST["action"]: "edit";
+$save_changes = isset($_REQUEST['save_changes']) ? mysql_real_escape_string($_REQUEST['save_changes']): false;
+$task_id = mysql_real_escape_string($_REQUEST['task_id']);
+$proj_id = mysql_real_escape_string($_REQUEST['proj_id']);
+$client_id = mysql_real_escape_string($_REQUEST['client_id']);
+$trans_num = mysql_real_escape_string($_REQUEST['trans_num']);
+$month = mysql_real_escape_string($_REQUEST['month']);
+$day = mysql_real_escape_string($_REQUEST['day']);
+$year = mysql_real_escape_string($_REQUEST['year']);
+$action = isset($_REQUEST["action"]) ? mysql_real_escape_string($_REQUEST["action"]): "edit";
 
 if ($action == "saveChanges") {
-	$clock_on_date_year = $_REQUEST['clock_on_date_year'];
-	$clock_on_date_month = $_REQUEST['clock_on_date_month'];
-	$clock_on_date_day = $_REQUEST['clock_on_date_day'];
-	$clock_off_date_year = $_REQUEST['clock_off_date_year'];
-	$clock_off_date_month = $_REQUEST['clock_off_date_month'];
-	$clock_off_date_day = $_REQUEST['clock_off_date_day'];
-	$clock_on_time_hour = $_REQUEST['clock_on_time_hour'];
-	$clock_on_time_min = $_REQUEST['clock_on_time_min'];
-	$clock_off_time_hour = $_REQUEST['clock_off_time_hour'];
-	$clock_off_time_min = $_REQUEST['clock_off_time_min'];
-	$log_message = $_REQUEST['log_message'];
+	$clock_on_date_year = mysql_real_escape_string($_REQUEST['clock_on_date_year']);
+	$clock_on_date_month = mysql_real_escape_string($_REQUEST['clock_on_date_month']);
+	$clock_on_date_day = mysql_real_escape_string($_REQUEST['clock_on_date_day']);
+	$clock_off_date_year = mysql_real_escape_string($_REQUEST['clock_off_date_year']);
+	$clock_off_date_month = mysql_real_escape_string($_REQUEST['clock_off_date_month']);
+	$clock_off_date_day = mysql_real_escape_string($_REQUEST['clock_off_date_day']);
+	$clock_on_time_hour = mysql_real_escape_string($_REQUEST['clock_on_time_hour']);
+	$clock_on_time_min = mysql_real_escape_string($_REQUEST['clock_on_time_min']);
+	$clock_off_time_hour = mysql_real_escape_string($_REQUEST['clock_off_time_hour']);
+	$clock_off_time_min = mysql_real_escape_string($_REQUEST['clock_off_time_min']);
+	$log_message = mysql_real_escape_string($_REQUEST['log_message']);
 
 	$clock_on_time_string = "$clock_on_date_year-$clock_on_date_month-$clock_on_date_day $clock_on_time_hour:$clock_on_time_min:00";
 	$clock_off_time_string = "$clock_off_date_year-$clock_off_date_month-$clock_off_date_day $clock_off_time_hour:$clock_off_time_min:00";

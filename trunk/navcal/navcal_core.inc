@@ -3,7 +3,7 @@
 $todayDate = mktime(0,0,0,$month,$day,$year);
 $startDateCalendar = mktime(0,0,0, $month, 1, $year);
 
-$startDayOfWeek = getWeekStartDay();
+$startDayOfWeek = $tsx_config->get("weekstartday");
 $dowForFirstOfMonth = date('w',mktime(0,0,0,$month,1,$year));
 $leadInDays = $dowForFirstOfMonth - $startDayOfWeek;
 if ($leadInDays < 0)

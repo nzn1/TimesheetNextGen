@@ -29,7 +29,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]amp;clearanceRequired=" . get_acl_level('aclReports'));
+	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclReports'));
 	exit;
 }
 
@@ -49,6 +49,11 @@ if (isset($_REQUEST['uid']))
 	$uid = $_REQUEST['uid'];
 else
 	$uid = $contextUser;
+
+if (isset($_REQUEST['clock']))
+	$clock = $_REQUEST['clock'];
+else
+	$clock = "no";
 
 if (isset($_REQUEST['print']))
 	$print = true;
@@ -198,7 +203,7 @@ function make_index($data,$order) {
 }
 
 $Location="$_SERVER[PHP_SELF]?uid=$uid$ymdStr&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
-$post="uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode";
+$post="uid=$uid&amp;orderby=$orderby&amp;client_id=$client_id&amp;mode=$mode&amp;clock=$clock";
 
 if(!$export_excel) 
 	require("report_javascript.inc");
@@ -291,6 +296,14 @@ if(!$export_excel)
 							<td  align="right" width="15%" nowrap >
 								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
 								<button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
+							</td>
+							<td align="left" width="10%" nowrap>
+								<input type="radio" name="clock" value="no" onClick="this.form.submit()"
+									<?php if($clock == "no") print " checked"; ?>
+								> Just durations&nbsp;<br>
+								<input type="radio" name="clock" value="yes" onClick="this.form.submit()"
+									<?php if($clock != "no") print " checked"; ?>
+								> Duration and times&nbsp;
 							</td>
 						<?php endif; ?>
 					</tr>

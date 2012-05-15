@@ -9,8 +9,6 @@ if (!$authenticationManager->isLoggedIn()) {
 	exit;
 }
 
-// Connect to database.
-$dbh = dbConnect();
 $contextUser = strtolower($_SESSION['contextUser']);
 
 if (empty($contextUser))
@@ -39,7 +37,7 @@ $todayDate = mktime(0, 0, 0, $realToday['mon'], $realToday['mday'], $realToday['
 if ($proj_id == 0)
 	$task_id = 0;
 
-include("table_names.inc");
+include("install/table_names.inc");
 
 //include date input classes
 include "form_input.inc";
