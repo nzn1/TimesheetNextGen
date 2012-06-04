@@ -1,7 +1,7 @@
 <?php
 
 if(!class_exists('Site'))die('Restricted Access');
-
+PageElements::setTheme('txsheet2');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
 // NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
@@ -52,23 +52,31 @@ $todayDate = mktime(0, 0, 0, $month, $day, $year);
 $dateValues = getdate($todayDate);
 $ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
-if (gbl::getMode() == "all" || gbl::getMode() == "monthly") $mode = "monthly";
-	else $mode = "weekly";
+if (gbl::getMode() == "all" || gbl::getMode() == "monthly"){
+  $mode = "monthly";
+}
+else{
+  $mode = "weekly";
+}
+
 if ($mode == "monthly") {
 	$startDate = mktime(0,0,0, gbl::getMonth(), 1, gbl::getYear());
 	$startStr = date("Y-m-d H:i:s",$startDate);
 
 	$endDate = Common::getMonthlyEndDate($dateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 month");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 month");		
 }
-if ($mode == "weekly") {
-	list($startDate,$endDate) = Common::getWeeklyStartEndDates($todayDate);
+else if ($mode == "weekly") {
+	list($startDate,$endDate) = Common::getWeeklyStartEndDates(gbl::getContextTimestamp());
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
 	$endStr = date("Y-m-d H:i:s",$endDate);
+	$nextDate = strtotime(date("d M Y H:i:s",$startDate) . " +1 week");
+	$prevDate = strtotime(date("d M Y H:i:s",$startDate) . " -1 week");	
+	
 }
-
-
 
 //Since we have to pre-process the data, it really doesn't matter what order the data 
 //is in at this point...
@@ -277,19 +285,16 @@ PageElements::setHead("<title>".Config::getMainTitle()." | All hours this month<
 						<td width="15%">&nbsp;</td>
 						<td align="left" class="outer_table_heading">
 						<?php echo date('F Y',mktime(0,0,0,$month,1,$year)) ?>
-						</td><td><input id="date1" name="date1" type="hidden" value="<?php echo date('d-m-Y', $todayDate); ?>" />
-			&nbsp;&nbsp;&nbsp;
-			<?php
-				echo JText::_('SELECT_OTHER_MONTH').": ";
-			?>
-				<img style="cursor: pointer;" onclick="javascript:NewCssCal('date1', 'ddmmyyyy', 'arrow', 'false', '24', 'false', 'MONTH')" alt="" src="<?php echo Config::getRelativeRoot();?>/images/cal.gif">
-				<td>	&nbsp;&nbsp;&nbsp;
 						
-						</td>
+			&nbsp;&nbsp;&nbsp;
+
+		<td align="center" class="outer_table_heading">
+		<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
+		</td>
 						<?php if (!$print): ?>
 							<td  align="right" width="15%" >
-								<button name="export_excel" onclick="reload2Export(this.form)"><img src="images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
-								</td><td><button onclick="popupPrintWindow()"><img src="images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
+								<button name="export_excel" onclick="reload2Export(this.form)"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_xport-2-excel.gif" alt="Export to Excel" align="absmiddle" /></button> &nbsp;
+								</td><td><button onclick="popupPrintWindow()"><img src="<?php echo Config::getRelativeRoot();?>images/icon_printer.gif" alt="Print Report" align="absmiddle" /></button>
 							</td>
 						<?php endif; ?>
 					</tr>
@@ -307,35 +312,46 @@ else {  //create Excel header
 }
 ?>
 
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-					<tr class="inner_table_head">
-					<?php
-						$userPost="$ymdStr&amp;orderby=username";
-						$projPost="$ymdStr&amp;orderby=project";
-						$taskPost="$ymdStr&amp;orderby=task";
-						if($orderby=='username'): ?>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
-							<td class="inner_table_column_heading">First Name</td>
-							<td class="inner_table_column_heading">Last Name</td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
-						<?php elseif($orderby=='project'): ?>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
-							<td class="inner_table_column_heading">First Name</td>
-							<td class="inner_table_column_heading">Last Name</td>
-						<?php elseif($orderby=='task'): ?>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $taskPost; ?>" class="inner_table_column_heading">Task</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading">Client / Project</a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading">Username</a></td>
-							<td class="inner_table_column_heading">First Name</td>
-							<td class="inner_table_column_heading">Last Name</td>
-						<?php else: ?>
-							<td colspan="4" class="inner_table_column_heading">unknown orderby, so I don't know what the headers should look like</td>
-						<?php endif; ?>
-						<td class="inner_table_column_heading">Duration</td>
-					</tr>
+<div id="monthly">
+	<table class="monthTable">
+		<thead>
+  		<tr class="table_head">
+		<?php
+			$userPost="$ymdStr&amp;orderby=username";
+			$projPost="$ymdStr&amp;orderby=project";
+			$taskPost="$ymdStr&amp;orderby=task";
+			if($orderby=='username'): 
+		?>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USERNAME'); ?></a></th>
+				<th>First Name</th>
+				<th>Last Name</t>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('CLIENT').'/'.JText::_('PROJECT');?></a></th>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $taskPost; ?>" class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></a></th>
+		<?php 
+			elseif($orderby=='project'): 
+		?>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('CLIENT').'/'.JText::_('PROJECT');?></a></th>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $taskPost; ?>" class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></a></th>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USERNAME'); ?></a></th>
+				<th>First Name</th>
+				<th>Last Name</th>
+		<?php 
+			elseif($orderby=='task'): 
+		?>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $taskPost; ?>" class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></a></th>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('CLIENT').'/'.JText::_('PROJECT');?></a></th>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USERNAME'); ?></a></th>
+				<th>First Name</th>
+				<th>Last Name</th>
+		<?php 
+			else: 
+		?>
+				<td colspan="4" class="inner_table_column_heading">unknown orderby, so I don't know what the headers should look like</th>
+		<?php 
+			endif; 
+		?>
+			<th><?php echo JText::_('DURATION'); ?></th>
+		</tr>
 <?php
 
 /*$query =	"select distinct first_name, ".
@@ -508,16 +524,12 @@ $query = "SELECT tt.proj_id, ".
 	if ($num > 0) {
 ?>
 		<tr>
-			<td>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_bottom_panel">
-					<tr>
+
 						<td align="right" class="report_grand_total">
 						Monthly	Grand total:
 							<?php echo $formatted_time; ?>
 						</td>
-					</tr>
-				</table>
-			</td>
+
 		</tr>
 <?php
 	}

@@ -234,9 +234,7 @@ ob_end_clean();
 					<tr>
 						<td align="left" width="35%">
 							<table width="100%" border="0" cellpadding="1" cellspacing="2">
-								<?php 
-                /*
-                ?>
+		
                 <tr>
 									<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('CLIENT'); ?>:</td>
 									<td align="left" width="100%">
@@ -244,9 +242,7 @@ ob_end_clean();
 									</td>
 									
 								</tr>
-								<?php
-                  */
-                  ?>
+			
 								<tr>
 									<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('PROJECT'); ?>:</td>
 									<td align="left" width="100%">
@@ -291,30 +287,31 @@ else {  //create Excel header
 	echo "</h4>";
 }
 ?>
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-					<!-- Table header line -->
-					<tr class="inner_table_head">
-					<?php 
-						$userPost="$ymdStr&amp;orderby=username&amp;proj_id=".gbl::getProjId()."&amp;mode=$mode";
-						$datePost="$ymdStr&amp;orderby=date&amp;proj_id=".gbl::getProjId()."&amp;mode=$mode";
-						if($orderby== 'username'){ ?>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USER'); ?></a></td>
-							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
-						<?php
+<div id="monthly">
+	<table class="monthTable">
+		<thead>
+  		<tr class="table_head">
+			<?php 
+				$userPost="$ymdStr&amp;orderby=username&amp;proj_id=".gbl::getProjId()."&amp;mode=$mode";
+				$datePost="$ymdStr&amp;orderby=date&amp;proj_id=".gbl::getProjId()."&amp;mode=$mode";
+				if($orderby== 'username'){ ?>
+					<th><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USER'); ?></a></th>
+					<th><?php echo JText::_('TASK'); ?></th>
+					<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></th>
+				<?php
             }
             else{ 
             ?>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USER'); ?></a></td>
-							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
-						<?php
+					<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></th>
+					<th><a href="<?php echo Rewrite::getShortUri() . "?" . $userPost; ?>" class="inner_table_column_heading"><?php echo JText::_('USER'); ?></a></th>
+					<th><?php echo JText::_('TASK'); ?></th>
+				<?php
             }
             ?>
-						<td class="inner_table_column_heading"><?php echo JText::_('DESCRIPTION'); ?></td>
-						<td class="inner_table_column_heading"><?php echo JText::_('STATUS'); ?></td>
-            <td class="inner_table_column_heading"><?php echo JText::_('DURATION'); ?></td>
-					</tr>
+				<th><?php echo JText::_('DESCRIPTION'); ?></th>
+				<th><?php echo JText::_('STATUS'); ?></th>
+            <th><?php echo JText::_('DURATION'); ?></th>
+			</tr>
 <?php
 	$darray=array();
 

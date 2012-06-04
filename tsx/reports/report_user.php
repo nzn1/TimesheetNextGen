@@ -3,7 +3,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
-
+PageElements::setTheme('txsheet2');
 //export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
 if (isset($_REQUEST["export_excel"]) && $_REQUEST["export_excel"] == "1"){
   $export_excel=true;
@@ -222,39 +222,35 @@ ob_end_clean();
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td class="face_padding_cell">
-
-				<table width="100%" border="0">
-					<tr>
-						<td align="left" width="35%">
-							<table width="100%" border="0" cellpadding="1" cellspacing="2">
-								<tr>
-										<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('CLIENT'); ?>:</td>
-										<td align="left" width="100%">
-											<?php Common::client_select_list(gbl::getClientId(), $uid, false, false, true, false, "submit();"); ?>
-										</td>
-									</tr>
-								<tr>
-									<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('USER'); ?>:</td>
-									<td align="left" width="100%">
-											<?php Common::user_select_droplist($uid, false,"100%"); ?>
-									</td>
-								</tr>
-							</table>
+		<td align="left" width="35%">
+			<table width="100%" border="0" cellpadding="1" cellspacing="2">
+				<tr>
+						<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('CLIENT'); ?>:</td>
+						<td align="left" width="100%">
+							<?php Common::client_select_list(gbl::getClientId(), $uid, false, false, true, false, "submit();"); ?>
 						</td>
-						<td align="center" class="outer_table_heading">
-						<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
-						</td>
-						
-						<?php
-							if (!$print){ ?>
-							<td  align="right" width="15%" >
-								<button name="export_excel" onclick="reload2Export(this.form)"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_xport-2-excel.gif" alt="Export to Excel" /></button> &nbsp;
-								<button onclick="popupPrintWindow()"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_printer.gif" alt="Print Report" /></button>
-							</td>
-						<?php }?>
 					</tr>
-				</table>
+				<tr>
+					<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('USER'); ?>:</td>
+					<td align="left" width="100%">
+							<?php Common::user_select_droplist($uid, false,"100%"); ?>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td align="center" class="outer_table_heading">
+		<?php Common::printDateSelector($mode, $startDate, $prevDate, $nextDate); ?>
+		</td>
+		
+		<?php
+			if (!$print){ ?>
+			<td  align="right" width="15%" >
+				<button name="export_excel" onclick="reload2Export(this.form)"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_xport-2-excel.gif" alt="Export to Excel" /></button> &nbsp;
+				<button onclick="popupPrintWindow()"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_printer.gif" alt="Print Report" /></button>
+			</td>
+		<?php }?>
+	</tr>
+</table>
 
 	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
 		<tr>
@@ -280,30 +276,33 @@ else {  //create Excel header
 	echo "</h4>";
 }
 ?>
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-					<!-- Table header line -->
-					<tr class="inner_table_head">
-					<?php 
-						$projPost="uid=$uid$ymdStr&amp;orderby=project&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
-						$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
-						if($orderby== 'project'){?>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('CLIENT').'/'.JText::_('PROJECT'); ?></a></td>
-							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
-						<?php 
-						}
-            else {
-            ?>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('CLIENT').'/'.JText::_('PROJECT'); ?></a></td>
-							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
-						<?php 
+<div id="monthly">
+	<table class="monthTable">
+		<thead>
+  		<tr class="table_head">
+  		<?php 
+			$projPost="uid=$uid$ymdStr&amp;orderby=project&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
+					$datePost="uid=$uid$ymdStr&amp;orderby=date&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
+			if($orderby== 'project'){?>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('CLIENT').'/'.JText::_('PROJECT'); ?></a></th>
+				<th><?php echo JText::_('TASK'); ?></th>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></th>
+		<?php 
+			}
+           else {
+        ?>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></th>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('CLIENT').'/'.JText::_('PROJECT'); ?></a></th>
+				<th><?php echo JText::_('TASK'); ?></th>
+		<?php 
             } 
-            ?>
-						<td class="inner_table_column_heading"><?php echo JText::_('DESCRIPTION'); ?></td>
-						<td class="inner_table_column_heading"><?php echo JText::_('STATUS'); ?></td>
-						<td class="inner_table_column_heading"><?php echo JText::_('DURATION'); ?></td>
-					</tr>
+        ?>
+				<th><?php echo JText::_('DESCRIPTION'); ?></th>
+				<th><?php echo JText::_('STATUS'); ?></th>
+				<th><?php echo JText::_('DURATION'); ?></th>
+			</tr>
+			</thead>
+			<tbody>
 <?php
 	$darray=array();
 

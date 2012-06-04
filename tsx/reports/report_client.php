@@ -1,7 +1,7 @@
 <?php
 
 if(!class_exists('Site'))die('Restricted Access');
-
+PageElements::setTheme('txsheet2');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
 //export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
@@ -277,30 +277,33 @@ else {  //create Excel header
 	echo "</h4>";
 }
 ?>
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-					<!-- Table header line -->
-					<tr class="inner_table_head">
-					<?php 
-						$projPost="$ymdStr&amp;orderby=project&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
-						$datePost="$ymdStr&amp;orderby=date&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
-						if($orderby== 'project'){ ?>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('PROJECT'); ?></a></td>
-							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
-						<?php 
+<div id="monthly">
+	<table class="monthTable">
+		<thead>
+  		<tr class="table_head">
+		<?php 
+			$projPost="$ymdStr&amp;orderby=project&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
+			$datePost="$ymdStr&amp;orderby=date&amp;client_id=".gbl::getClientId()."&amp;mode=$mode";
+			if($orderby== 'project'){ ?>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('PROJECT'); ?></a></th>
+				<th><?php echo JText::_('TASK'); ?></th>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></th>
+			<?php 
 						}
             else {
             ?>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></td>
-							<td class="inner_table_column_heading"><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('PROJECT'); ?></a></td>
-							<td class="inner_table_column_heading"><?php echo JText::_('TASK'); ?></td>
-						<?php
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $datePost; ?>" class="inner_table_column_heading"><?php echo JText::_('DATE'); ?></a></th>
+				<th><a href="<?php echo Rewrite::getShortUri() . "?" . $projPost; ?>" class="inner_table_column_heading"><?php echo JText::_('PROJECT'); ?></a></th>
+				<th><?php echo JText::_('TASK'); ?></th>
+			<?php
             }
             ?>
-						<td class="inner_table_column_heading"><?php echo JText::_('DESCRIPTION'); ?></td>
-						<td class="inner_table_column_heading"><?php echo JText::_('STATUS'); ?></td>
-            <td class="inner_table_column_heading"><?php echo JText::_('DURATION'); ?></td>
-					</tr>
+			<th><?php echo JText::_('DESCRIPTION'); ?></th>
+			<th><?php echo JText::_('STATUS'); ?></th>
+            <th><?php echo JText::_('DURATION'); ?></th>
+		</tr>
+		</thead>
+		<tbody>
 <?php
 	$darray=array();
 

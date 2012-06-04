@@ -4,7 +4,7 @@ if(!class_exists('Site'))die('Restricted Access');
 // Authenticate
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
-
+PageElements::setTheme('txsheet2');
 if (isEmpty(gbl::getLoggedInUser()))
         errorPage("Could not determine the logged in user");
 
@@ -132,19 +132,22 @@ function popupPrintWindow() {
 	</tr>
 	</table>
 
-	<!--  table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table" -->
-
-	<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-		<tr class="table_body">
-			<td class="calendar_cell_disabled_right">&nbsp;</td>
-			<td align="center" class="calendar_cell_disabled_right"><b>Day</b></td>
-			<td align="center" class="calendar_cell_disabled_right"><b>Morning</b></td>
-			<td align="center" class="calendar_cell_disabled_right"><b>Afternoon</b></td>
+<div id="monthly">
+	<table class="monthTable">
+		<thead>
+  		<tr class="table_head">
+			<th width="10%">&nbsp;</td>
+			<th width="10%"><b><?php echo JText::_('DAY'); ?></b></td>
+			<th><b><?php echo JText::_('MORNING'); ?></b></td>
+			<th><b><?php echo JText::_('AFTERNOON'); ?></b></td>
 		</tr>
+		</thead>
+		<tbody>
+		<tr>
 <?php
 	for ($i=1;$i<=$last_day;$i++) {
 		$day = mktime(0,0,0,$month,$i,$year);
-		$dow = strftime("%a", $day);
+		$dow = strftime("%A", $day);
 		$daystyle = "calendar_cell_middle";
 		if ((date('w', $day) == 6)||(date('w', $day) == 0)) {
 			$daystyle = "calendar_cell_holiday_middle";
