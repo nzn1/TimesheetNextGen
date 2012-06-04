@@ -3,7 +3,7 @@
 if(!class_exists('Site'))die('Restricted Access');
 
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
-
+PageElements::setTheme('txsheet2');
 //export data to excel (or not) (IE is broken with respect to buttons, so we have to do it this way)
 if (isset($_REQUEST["export_excel"]) && $_REQUEST["export_excel"] == "1"){
   $export_excel=true;
@@ -49,9 +49,21 @@ if (isset($_REQUEST['print'])){
 else{
   $print = false;
 }
+gbl::setDay(1);
 
+$startDate = strtotime(date("d M Y",gbl::getContextTimestamp()));
+$startStr = date("Y-m-d H:i:s",$startDate);
+$endDate = Common::getMonthlyEndDate(gbl::getContextDate());
+$endStr = date("Y-m-d H:i:s",$endDate);
+$mode="monthly";
+if (isset($_REQUEST['day'])) 
+	$day = $_REQUEST['day'];
+else
+	$day = 1; 
+$previousDate = strtotime(date("d M Y H:i:s",gbl::getContextTimestamp()) . " -1 month");
+$nextDate = strtotime(date("d M Y H:i:s",gbl::getContextTimestamp()) . " +1 month");
 //What bi-monthly period is the context date in?
-if(gbl::getDay() < 16) {
+if($day < 16) {
 	$sday=1; 
 	$eday=15;
 } else {
@@ -59,71 +71,52 @@ if(gbl::getDay() < 16) {
 	$eday=date('t',strtotime(gbl::getYear()."-".gbl::getMonth()."-15"));
 }
 
-//get start and end dates for the calendars
-$startDay   = isset($_GET['start_day'])   && $_GET['start_day']   ? (int)$_GET['start_day']   : $sday;
-$startMonth = isset($_GET['start_month']) && $_GET['start_month'] ? (int)$_GET['start_month'] : gbl::getMonth();
-$startYear  = isset($_GET['start_year'])  && $_GET['start_year']  ? (int)$_GET['start_year']  : gbl::getYear();
+//get start and end dates for the calendars use day
+$startDay = $sday;
+$startMonth = gbl::getMonth();
+$startYear  = gbl::getYear();
 
-$endDay     = isset($_GET['end_day'])     && $_GET['start_day']   ? (int)$_GET['end_day']     : $eday;
+$endDay = $eday;
 //$endMonth   = isset($_GET['end_month'])   && $_GET['start_month'] ? (int)$_GET['end_month']   : gbl::getMonth();
 //$endYear    = isset($_GET['end_year'])    && $_GET['start_year']  ? (int)$_GET['end_year']    : gbl::getYear();
 //Since we're only allowing the user to choose a start and end day within the cur. context month 
 //we can do this:  But note: we can't remove the variables altogether, or we'd need yet another set
 //of functions to create the navcal calendars, and at some point we may want to allow more
 //freestyle date choosing...
-$endMonth   = $startMonth;
-$endYear    = $startYear;
+//$endMonth   = $startMonth;
+//$endYear    = $startYear;
 
-$startTimestamp = strtotime($startYear . '/' . $startMonth . '/' . $startDay);
-$endTimestamp   = strtotime($endYear   . '/' . $endMonth   . '/' . $endDay);
+$startTimestamp = strtotime(gbl::getYear(). '/' . gbl::getMonth() . '/' . $startDay);
+$endTimestamp   = strtotime(gbl::getYear() . '/' . gbl::getMonth()   . '/' . $endDay);
 $endTimestamp2   = strtotime("+1 day",$endTimestamp);  //need last day to be inclusive...
 
-$startStr = date("Y-m-d H:i:s",$startTimestamp);
-$endStr = date("Y-m-d H:i:s",$endTimestamp2);
-
+//$startStr = date("Y-m-d H:i:s",$startTimestamp);
+//$endStr = date("Y-m-d H:i:s",$endTimestamp2);
+// calcuate the urls to select the first or second half of the month
+$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;day=1";
+$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;day=".date('t',gbl::getYear()."-".gbl::getMonth()."-15");
 
 
 require_once('report.class.php');
 $report = new Report();
 
-$Location= Rewrite::getShortUri()."?uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=$startDay&amp;end_year=$endYear&amp;end_month=$endMonth&amp;end_day=$endDay";
+$Location= Rewrite::getShortUri()."?uid=$uid&amp;time_fmt=$time_fmt&amp;day=$endDay";
 gbl::setPost("uid=$uid&amp;time_fmt=$time_fmt");
 
 if(!$export_excel) {
 ?>
-<script type="text/javascript">
-report = new Object();
-report.location = "<?php echo $Location;?>";
-</script>
-
-<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/reports.js"></script>
-
-<script type="text/javascript">
-/*
-* Setup Javascript events for date drop-down lists. Again, this should be included in
-* an external js file, but for now I want this report to be self-contained
-*/
-
-//run init function on window load
-window.onload = init;
-
-//apply auto-submit behaviour when changing date values
-function init(){
-	var start_day   = getObjectByName('start_day');
-	//var start_month = getObjectByName('start_month');
-	//var start_year  = getObjectByName('start_year');
-	var end_day     = getObjectByName('end_day');
-	//var end_month   = getObjectByName('end_month');
-	//var end_year    = getObjectByName('end_year');
-
-	start_day.onchange   = function (){this.form.submit();};
-	//start_month.onchange = function (){this.form.submit();};
-	//start_year.onchange  = function (){this.form.submit();};
-	end_day.onchange     = function (){this.form.submit();};
-	//end_month.onchange   = function (){this.form.submit();};
-	//end_year.onchange    = function (){this.form.submit();};
-}
-</script>
+	<script type="text/javascript">
+	report = new Object();
+	report.location = "<?php echo $Location;?>";
+	</script>
+	
+	<script type="text/javascript" src="<?php echo Config::getRelativeRoot();?>/js/reports.js"></script>
+	<script type="text/javascript" src="<?php echo Config::getRelativeRoot()."/js/datetimepicker_css.js";?> "></script>
+	<script type="text/javascript">
+		function CallBack_WithNewDateSelected(strDate) {
+			document.monthForm.submit();
+		}
+	</script>
 <?php 
 } 
 
@@ -156,11 +149,7 @@ ob_end_clean();
 ?>
 
 <?php if(!$export_excel) { ?>
-<form action="<?php print Rewrite::getShortUri(); ?>" method="get">
-<input type="hidden" name="start_month" value="<?php echo $startMonth; ?>" />
-<input type="hidden" name="start_year" value="<?php echo $startYear; ?>" />
-<input type="hidden" name="end_month" value="<?php echo $endMonth; ?>" />
-<input type="hidden" name="end_year" value="<?php echo $endYear; ?>" />
+<form name="monthForm" action="<?php print Rewrite::getShortUri(); ?>" method="get">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -173,13 +162,7 @@ ob_end_clean();
 							<?php Common::user_select_droplist($uid, false); ?>
 						</td>
 						<td align="center" class="outer_table_heading">
-						<?php
-							echo utf8_encode(strftime("%B", $startTimestamp))." ";
-							Common::day_button("start_day",$startTimestamp);
-							echo "&nbsp;&nbsp;-&nbsp;&nbsp;";
-							Common::day_button("end_day",$endTimestamp);
-							echo " $endYear";
-						?> 
+					<?php Common::printDateSelector($mode, $startDate, $previousDate, $nextDate); ?>
 						</td>
 						<?php if (!$print): ?>
 							<td align="right" width="10%">
@@ -189,10 +172,6 @@ ob_end_clean();
 									<?php if($time_fmt != "decimal") print " checked=\"checked\""; ?> /> Hrs:Min&nbsp;
 							</td>
 							<td align="right">
-							<?php
-								$p1post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=1&amp;end_year=$endYear&amp;end_month=$endMonth&amp;end_day=15";
-								$p2post="uid=$uid&amp;time_fmt=$time_fmt&amp;start_year=$startYear&amp;start_month=$startMonth&amp;start_day=16&amp;end_year=$endYear&amp;end_month=$endMonth&amp;end_day=".date('t',strtotime("$endYear-$endMonth-15"));
-							?>
 								<a href="<?php echo Rewrite::getShortUri()."?".$p1post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_1'); ?></a><br />
 								<a href="<?php echo Rewrite::getShortUri()."?".$p2post; ?>" class="outer_table_action"><?php echo JText::_('HALF_MONTH_2'); ?></a>
 							</td>
@@ -218,7 +197,9 @@ else {  //create Excel header
 	echo "</h4>";
 }
 ?>
-				<table width="100%" border="0" cellpadding="4" cellspacing="0" class="table_body">
+<div id="monthly">
+	<table class="monthTable">
+		
 <?php
 
 // ==============================================================================================
@@ -251,11 +232,9 @@ if ($num == 0) {
 	unset($data);
 
 ?>
-					<!-- Table headers -->
-					<tr>
-						<td class="calendar_cell_disabled_right">Client&nbsp;/ Project&nbsp;/ Task</td>
-						<!--td class="calendar_cell_disabled_right">Project</td>
-						<td class="calendar_cell_disabled_right">Task</td-->
+<thead>
+  		<tr class="table_head" width="15%">
+			<th>Client&nbsp;/ Project&nbsp;/ Task</th>
 <?php 
 	$daytotals=array();
 	
@@ -265,7 +244,7 @@ if ($num == 0) {
 	for ($i = $startDay; $i <= $endDay; $i++) {
 		//$currentDayStr = strftime("%a %d/%m/%y", $currentTime);
 		$currentDayStr = strftime("%d/%m", $currentTime);
-		echo "<th class=\"inner_table_column_heading\" align=\"center\" width=\"10%\">$currentDayStr</th>\n";
+		echo "<th align=\"center\" width=\"5%\">$currentDayStr</th>\n";
 		
 		$dayStamp = mktime(0,0,0,$startMonth,$i,$startYear);
 		$stamp_to_day_array[$dayStamp]=$i;
@@ -279,10 +258,12 @@ if ($num == 0) {
   //ppr($stamp_to_day_array); 
 ?>
     
-		<td class="calendar_cell_disabled_right" align="right">
+		<th align="right" width="7%">
 			Totals
-		</td>
+		</th>
 	</tr>
+	</thead>
+	<tbody>
 	<?php
 		$completeArray=array();
 		//ppr($dayArray,'darry');

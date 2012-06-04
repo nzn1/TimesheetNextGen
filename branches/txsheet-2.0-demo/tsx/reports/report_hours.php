@@ -1,7 +1,7 @@
 <?php
 
 if(!class_exists('Site'))die('Restricted Access');
-
+PageElements::setTheme('txsheet2');
 if(Auth::ACCESS_GRANTED != $this->requestPageAuth('aclReports'))return;
 
 // NOTE:  The session cache limiter and the excel stuff must appear before the session_start call,
@@ -143,7 +143,7 @@ function make_index($data,$order) {
 					<td align="left" width="35%">
 						<table width="100%" height="100%" border="0" cellpadding="1" cellspacing="2">
 							<tr>
-								<td align="right" width="0" class="outer_table_heading">User:</td>
+								<td align="right" width="0" class="outer_table_heading"><?php echo JText::_('USER')?>:</td>
 								<td align="left" width="100%">
 									<?php Common::user_select_droplist($uid, false); ?>
 								</td>
@@ -155,9 +155,9 @@ function make_index($data,$order) {
 					</td>
 					<?php if(!$print): ?>
 						<td  align="center" width="15%">
-							<button onclick="popupPrintWindow()">Print Report</button>
+							<button onclick="popupPrintWindow()"><img src="<?php echo Config::getRelativeRoot();?>/images/icon_printer.gif" alt="Print Report" /></button>
 						</td> 
-						<td align="right" width="20%">select year:&nbsp;
+						<td align="right" width="20%"><?php echo JText::_('SELECTYEAR')?>:&nbsp;
 							<?php
 								Common::year_button("year",$year);
 							?>
@@ -166,27 +166,24 @@ function make_index($data,$order) {
 				</tr>
 			</table>
 
-
-	<table width="100%" align="center" border="0" cellpadding="0" cellspacing="0" class="outer_table">
-		<tr>
-			<td>
-				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_body">
-				<tr>
-					<td class="calendar_cell_disabled_right">&nbsp;</td>
+<div id="monthly">
+	<table class="monthTable">
+		<thead>
+  		<tr class="table_head">
+  		<th>&nbsp;</th>
 <?php
 	//Since we're iterating through the months anyway, we're going to collect the month date stamps in an array structure.
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$currentMonDate = mktime(0,0,0,$currentMonth,1,$year);
 		$monthStamps[]=$currentMonDate;
 		$currentMonStr = strftime("%b", $currentMonDate);
-		print "<td align=\"center\" class=\"calendar_cell_disabled_right\"><b>$currentMonStr</b></td>";
+		print "<th><b>$currentMonStr</b></th>";
 	}
-	
+	print "<th>Total</th></tr></thead><tbody><tr>";
 	$monthStamps[]=mktime(0,0,0,1,1,$year+1); //also need the first stamp for next year...
 ?>
-					<td class="calendar_cell_disabled_right">&nbsp;</td>
-				</tr>
-				<tr><td class="calendar_cell_middle"><b>Hours in month</b></td>
+					
+				<tr><td class="calendar_cell_middle"><b><?php echo JText::_('HRSINMONTH'); ?></b></td>
 <?php
 	//Let the record show that although I vaguely understand what the holiday/allowances stuff is attempting to accomplish,
 	//this is not my itch, so I don't quite understand how to scratch it.  I am just going to attempt to make sure the queries
@@ -216,7 +213,7 @@ function make_index($data,$order) {
 	print "</tr>";
 
 	// Worked hours & find weekend and holiday hours worked
-	print "<tr><td class=\"calendar_cell_middle\"><b>Total attendance</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>" . JText::_('TOTALATTEND') ."</b></td>";
 	$hours["total"]["attendance"] = 0;
 	$darray=array();
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
@@ -278,7 +275,7 @@ function make_index($data,$order) {
 
 	// Print Weekend worked hours
 	$hours["total"]["weekend"] = 0;
-	print "<tr><td class=\"calendar_cell_middle\"><b>Weekend attendance</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>". JText::_('WKENDATTEND') ."</b></td>";
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 
 		$wkendMinutes = $hours[$currentMonth]["weekend"];
@@ -291,7 +288,7 @@ function make_index($data,$order) {
 	print "</tr>";
 
 	// Compensation taken
-	print "<tr><td class=\"calendar_cell_middle\"><b>Compensation taken</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>". JText::_('COMPENSATIONTAKEN') ."</b></td>";
 	$hours["total"]["compensation"] = 0;
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = Common::count_absences_in_month($currentMonth, $year, $uid, 'Compensation');
@@ -305,7 +302,7 @@ function make_index($data,$order) {
 	print "</tr>";
 
 	// Training taken
-	print "<tr><td class=\"calendar_cell_middle\"><b>Training taken</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>". JText::_('TRAININGTAKEN') ."</b></td>";
 	$hours["total"]["training"] = 0;
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = Common::count_absences_in_month($currentMonth, $year, $uid, 'Training');
@@ -319,7 +316,7 @@ function make_index($data,$order) {
 	print "</tr>";
 
 	// Sick time
-	print "<tr><td class=\"calendar_cell_middle\"><b>Sick</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>". JText::_('SICK') ."</b></td>";
 	$hours["total"]["sick"] = 0;
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = Common::count_absences_in_month($currentMonth, $year, $uid, 'Sick');
@@ -333,7 +330,7 @@ function make_index($data,$order) {
 	print "</tr>";
 
 	// Military Service
-	print "<tr><td class=\"calendar_cell_middle\"><b>Military Service</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>". JText::_('MILITARY') ."</b></td>";
 	$hours["total"]["military"] = 0;
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = Common::count_absences_in_month($currentMonth, $year, $uid, 'Military');
@@ -347,7 +344,7 @@ function make_index($data,$order) {
 	print "</tr>";
 
 	// Other absences
-	print "<tr><td class=\"calendar_cell_middle\"><b>Other Absences</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>". JText::_('OTHERABSENCE') ."</b></td>";
 	$hours["total"]["other"] = 0;
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = Common::count_absences_in_month($currentMonth, $year, $uid, 'Other');
@@ -361,7 +358,7 @@ function make_index($data,$order) {
 	print "</tr>";
 
 	// Holiday taken
-	print "<tr><td class=\"calendar_cell_middle\"><b>Holiday taken</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>". JText::_('HOLIDAYTAKEN') ."</b></td>";
 	$hours["total"]["holiday"] = 0;
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = Common::count_absences_in_month($currentMonth, $year, $uid);
@@ -375,7 +372,7 @@ function make_index($data,$order) {
 	print "</tr>";
 
 	// Holiday remaining
-	print "<tr><td class=\"calendar_cell_middle\"><b>Holiday remaining</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>". JText::_('HOLIDAYREMAINING') ."</b></td>";
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$holidays = Common::get_balance(Common::get_last_day($currentMonth, $year), $currentMonth, $year, $uid);
 		$holiday_remaining = Common::format_hours_minutes($holidays*SECONDS_PER_HOUR);
@@ -387,7 +384,7 @@ function make_index($data,$order) {
 	// I don't understand this, and it returns large negative numbers for me. Very likely because I don't have 
 	// data populated in the 'allowances' table, and don't know how to populate it correctly.  -SLM
 	// glidetime remaining
-	print "<tr><td class=\"calendar_cell_middle\"><b>Glidetime</b></td>";
+	print "<tr><td class=\"calendar_cell_middle\"><b>". JText::_('GLIDETIME') ."</b></td>";
 	for ($currentMonth=1;$currentMonth<=12;$currentMonth++) {
 		$remaining = Common::get_balance(Common::get_last_day($currentMonth, $year), $currentMonth, $year, $uid, 'glidetime');
 		$glidetime = Common::format_hours_minutes($remaining*SECONDS_PER_HOUR);
