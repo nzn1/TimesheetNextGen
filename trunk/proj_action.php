@@ -15,7 +15,8 @@ $contextUser = strtolower($_SESSION['contextUser']);
 //load local vars from superglobals
 $action = $_REQUEST['action'];
 if ($action == "add" || $action == "edit") {
-	$assigned = isset($_REQUEST['assigned']) ? mysql_real_escape_string($_REQUEST['assigned']): array();
+	$assigned = isset($_REQUEST["assigned"]) ? $_REQUEST['assigned']: array();
+	array_walk($assigned, mysql_real_escape_string);
 	$end_month = mysql_real_escape_string($_REQUEST['end_month']);
 	$end_day = mysql_real_escape_string($_REQUEST['end_day']);
 	$end_year = mysql_real_escape_string($_REQUEST['end_year']);
