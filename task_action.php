@@ -20,7 +20,8 @@ $proj_id = $_REQUEST["proj_id"];
 if ($action == "add" || $action == "edit") {
 	$name = mysql_real_escape_string($_REQUEST["name"]);
 	$description = mysql_real_escape_string($_REQUEST["description"]);
-	$assigned = isset($_REQUEST["assigned"]) ? mysql_real_escape_string($_REQUEST['assigned']): array();
+	$assigned = isset($_REQUEST["assigned"]) ? $_REQUEST['assigned']: array();
+	array_walk($assigned, mysql_real_escape_string);
 	$task_status = mysql_real_escape_string($_REQUEST["task_status"]);
 }
 
