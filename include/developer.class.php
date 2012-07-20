@@ -165,12 +165,12 @@ class Developer{
 	$tableobject = "Tables_in_".Config::getDbName();
     $data = Database::getInstance()->sql($q,Database::TYPE_ARRAY);
 
- 
+    $msg .= ppr($data,'',true);
     foreach($data as $obj){
     	LogFile::write("tables: ". $obj->$tableobject);
       if(strstr($obj->$tableobject, "expense")) $expenses = TRUE;
       if(strstr($obj->$tableobject, "category")) $category = TRUE;
-      if(strstr($obj->$tableobject, "std_tasks")) $std_tasks = TRUE;
+      if(strstr($obj->$tableobject, "std_task")) $std_tasks = TRUE;
       if(strstr($obj->$tableobject, "configuration")) $configuration = TRUE;
     }
     if ($expenses == FALSE) {
