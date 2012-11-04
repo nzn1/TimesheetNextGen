@@ -59,16 +59,16 @@ INSERT INTO __TABLE_PREFIX__client VALUES (1,'No Client', 'This is required, do 
 #
 DROP TABLE IF EXISTS __TABLE_PREFIX__configuration;
 CREATE TABLE IF NOT EXISTS __TABLE_PREFIX__configuration (
-  `name` varchar(32) NOT NULL,
-  `value` text NOT NULL,
-  PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  name varchar(32) NOT NULL,
+  value text NOT NULL,
+  PRIMARY KEY (name)
+);
 
 --
 -- Create basic entries for table `__TABLE_PREFIX__configuration`
 --
 
-INSERT INTO __TABLE_PREFIX__configuration (name, `value`) VALUES
+INSERT INTO __TABLE_PREFIX__configuration (name, value) VALUES
 ('aclAbsences', 'Basic'),
 ('aclClients', 'Basic'),
 ('aclDaily', 'Basic'),
