@@ -67,7 +67,7 @@ function check_is_installed() {
 		if(!database_connect($DATABASE_HOST, $DATABASE_DB, $DATABASE_USER, $DATABASE_PASS)) { 
 			return 0; 
 		}
-		$ver = get_database_version($CONFIG_TABLE);
+		$ver = get_old_database_version($CONFIG_TABLE);
 		if ($ver==false) { return 0; }
 		else { return 1; }
 	}
@@ -399,7 +399,7 @@ It'll just take a few more minutes to get it installed and working on your syste
  */
 function display_upgrade_step_2() {
 	global $_ERROR, $table_inc_file, $db_inc_file;
-	include('../'.$db_inc_file);
+	include($db_inc_file);
 
 	if(isset($_REQUEST['db_host'])) { $DATABASE_HOST = $_REQUEST['db_host']; }
 	if(isset($_REQUEST['db_name'])) { $DATABASE_DB = $_REQUEST['db_name']; }
@@ -411,7 +411,7 @@ function display_upgrade_step_2() {
 	if(isset($_REQUEST['db_prefix'])) {
 		$db_prefix = $_REQUEST['db_prefix'];
 	} else {
-		include('../'.$table_inc_file);
+		include($table_inc_file);
 		$pos = strpos(strtolower($CONFIG_TABLE), 'config');
 		$db_prefix = substr($CONFIG_TABLE, 0, $pos);
 	}
@@ -841,8 +841,8 @@ function draw_ok_or_not_image($ok) {
 function display_install_success() {
 	global $db_inc_file, $table_inc_file;
 	$db_inc_ok = 1;  $table_inc_ok = 1;
-	if(is_writable('../'.$db_inc_file)) 	$db_inc_ok = 0;
-	if(is_writable('../'.$table_inc_file))	$table_inc_ok = 0;
+	if(is_writable($db_inc_file)) 	$db_inc_ok = 0;
+	if(is_writable($table_inc_file))	$table_inc_ok = 0;
 	if(!file_exists('lock')) touch('lock');
 ?>
 <h2>Installation Complete</h2>
@@ -1033,12 +1033,20 @@ function get_db_error($error,$query='') {
 }
 
 /**
- * get_database_version()
+ * get_old_database_version()
  * Check the status in the DB 
  * @return version number
  */
-function get_database_version($cfg_table) {
+function get_old_database_version($cfg_table) {
 	global $_ERROR;
+
+	$sql = 'SHOW TABLES LIKE \''.$cfg_table.'\'';
+	$result = mysql_query($sql);
+	if(!$result) {
+		$_ERROR .= 'Could not find the config table<br />';
+		$_ERROR .= get_db_error(mysql_error());
+		return false;
+	}
 
 	$sql = 'SELECT version FROM '.$cfg_table.' WHERE config_set_id=\'1\'';
 	$result = mysql_query($sql);
@@ -1053,6 +1061,33 @@ function get_database_version($cfg_table) {
 	if ($row[0]=='__timesheet_VERSION__')
 		$row[0] = '1.3.1';
 
+	return $row[0];
+}
+
+/**
+ * get_new_database_version()
+ * Check the status in the DB 
+ * @return version number
+ */
+function get_new_database_version($cfg_table) {
+	global $_ERROR;
+
+	$sql = 'SHOW TABLES LIKE \''.$cfg_table.'\'';
+	$result = mysql_query($sql);
+	if(!$result) {
+		$_ERROR .= 'Could not find the config table<br />';
+		$_ERROR .= get_db_error(mysql_error());
+		return false;
+	}
+
+	$sql = 'SELECT value FROM '.$cfg_table.' WHERE name=\'version\'';
+	$result = mysql_query($sql);
+	if(!$result) {
+		$_ERROR .= 'Could not check version<br />';
+		$_ERROR .= get_db_error(mysql_error());
+		return false;
+	}
+	$row = mysql_fetch_row($result);
 	return $row[0];
 }
 
@@ -1130,9 +1165,21 @@ function create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix
 }
 
 /* update DB version number */
-function update_db_version($db_prefix, $version) {
+function update_old_db_version($db_prefix, $version) {
 	global $_ERROR;
 	$sql = 'UPDATE '.$db_prefix.'config set version=\''.$version.'\';';
+	if(!mysql_query($sql)) {
+		$_ERROR .= '<strong>Could not update DB version</strong><br />';
+		$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
+		$_ERROR .= 'Our database said: '.mysql_error().'<br />';
+		return false;
+	}
+}
+
+/* update DB version number */
+function update_new_db_version($db_prefix, $version) {
+	global $_ERROR;
+	$sql = 'UPDATE '.$db_prefix.'configuration set value=\''.$version.'\' WHERE \'name\'=\'version\';';
 	if(!mysql_query($sql)) {
 		$_ERROR .= '<strong>Could not update DB version</strong><br />';
 		$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
@@ -1145,7 +1192,17 @@ function update_db_version($db_prefix, $version) {
 function upgrade_tables($db_prefix, $db_pass_func) {
 	global $_ERROR;
 	$result = true;
-	$db_version = get_database_version($db_prefix);
+
+	$sql = 'SHOW TABLES LIKE \''.$db_prefix.'config\'';
+	$result = mysql_query($sql);
+	if(!$result) {
+		$db_version = get_new_database_version($db_prefix.'configuration');
+		if($db_version === false) return false;
+	}
+	else {
+		$db_version = get_old_database_version($db_prefix.'config');
+		if($db_version === false) return false;
+	}
 
 	switch ($db_version) {
 	//If any SQL statements fail, we don't want to continue, and we want to mark the DB
@@ -1153,33 +1210,33 @@ function upgrade_tables($db_prefix, $db_pass_func) {
 	case '1.2.0' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.2.1.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version($db_prefix, '1.2.1');
+		$result = update_old_db_version($db_prefix, '1.2.1');
 		if($result === false) return $result;
 	case '1.2.1' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.3.1.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version($db_prefix, '1.3.1');
+		$result = update_old_db_version($db_prefix, '1.3.1');
 		if($result === false) return $result;
 	case '1.3.1' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.4.1.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version($db_prefix, '1.4.1');
+		$result = update_old_db_version($db_prefix, '1.4.1');
 		if($result === false) return $result;
 	case '1.4.1' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.0.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version($db_prefix, '1.5.0');
+		$result = update_old_db_version($db_prefix, '1.5.0');
 		if($result === false) return $result;
 	case '1.5.0' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.1.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version($db_prefix, '1.5.1');
+		$result = update_old_db_version($db_prefix, '1.5.1');
 		if($result === false) return $result;
 	case '1.5.1' :
 	case '1.5.2' :
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.3.sql.in');
 		if($result === false) return $result;
-		$result = update_db_version($db_prefix, '1.5.3');
+		$result = update_new_db_version($db_prefix, '1.5.3');
 		if($result === false) return $result;
 	}
 	return $result;
