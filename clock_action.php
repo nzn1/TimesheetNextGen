@@ -168,7 +168,7 @@ function clockon() {
 	//check that we are not already clocked on
 	$querystring = "SELECT $TIMES_TABLE.start_time, $TASK_TABLE.name FROM ".
 			"$TIMES_TABLE, $TASK_TABLE WHERE ".
-			"uid='$contextUser' AND ".
+			"username='$contextUser' AND ".
 			"end_time='0' AND ".
 			//"start_time>='$year-$month-$day' AND ".
 			//"start_time<='$year-$month-$day 23:59:59' AND ".
@@ -220,7 +220,7 @@ function clockoff() {
 
 	//check that we are actually clocked on
 	$querystring = "SELECT start_time, start_time < '$offStr' AS valid FROM $TIMES_TABLE WHERE ".
-			"uid='$contextUser' AND ".
+			"username='$contextUser' AND ".
 			"end_time=0 AND ".
 			//"start_time >= '$year-$month-$day' AND ".
 			//"start_time <= '$year-$month-$day 23:59:59' AND ".
@@ -246,7 +246,7 @@ function clockoff() {
 	//now insert the record for this clock off
 	$log_message = addslashes($log_message);
 	$querystring = "UPDATE $TIMES_TABLE SET log_message='$log_message', end_time='$offStr', duration='$duration' WHERE ".
-			"uid='$contextUser' AND ".
+			"username='$contextUser' AND ".
 			"proj_id=$proj_id AND ".
 			"end_time=0 AND ".
 			//"start_time >= '$year-$month-$day' AND ".
