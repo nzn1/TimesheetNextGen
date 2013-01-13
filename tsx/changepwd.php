@@ -35,7 +35,7 @@ if (empty($errormsg) && !empty($old_pass)) {
 		$errormsg = JText::_('JGLOBAL_AUTH_INCORRECT');
 	} else {
 		$qh = mysql_query("UPDATE ".tbl::getUserTable()." SET password=".config::getDbPwdFunction()."('$passwd1') WHERE username='".gbl::getContextUser()."'");
-		gotoStartPage();
+		Common::gotoStartPage();
 		exit;
 	}
 }
