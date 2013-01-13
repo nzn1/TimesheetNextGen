@@ -350,19 +350,25 @@ if (isset($popup))
 
 		if ($data_seen == 1) {
 			//Print the entire day's worth of info we've gathered
+			echo "<a class=\"tooltip-click\" tabindex=\"1\"><div class=\"shadow\">";
 			foreach($todaysData as $clientName => $clientArray) {
-				echo "<span class=\"client_name_small\">$clientName</span>";
 				foreach($clientArray as $projectName => $projectArray) {
-					echo "<span class=\"project_name_small\">&nbsp;$projectName</span>";
 					foreach($projectArray as $taskName => $taskArray) {
-						echo "<span class=\"task_name_small\">&nbsp;&nbsp;$taskName</span>";
 						foreach($taskArray as $taskStr) {
-							echo "<span class=\"task_time_small\">&nbsp;&nbsp;&nbsp;$taskStr</span>";
+				echo "$clientName<br>&nbsp;$projectName<br>&nbsp;&nbsp;$taskName<br>&nbsp;&nbsp;&nbsp;$taskStr
+				<span><img class=\"callout-click\" src=\"images/callout_black.gif\" /> 
+		<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
+		<tr><td width=\"100px\" align=\"right\" class=\"monthly-popup\">Client:</td><td width=\"100%\" class=\"monthly-popup\">&nbsp; $clientName</td></tr>
+		<tr><td width=\"100px\" align=\"right\" class=\"monthly-popup\">Project:</td><td width=\"100%\" class=\"monthly-popup\">&nbsp; $projectName</td></tr>
+		<tr><td width=\"100px\" align=\"right\" class=\"monthly-popup\">Task:</td><td width=\"100%\" class=\"monthly-popup\">&nbsp; $taskName</td></tr>
+		<tr><td width=\"100px\" align=\"right\" class=\"monthly-popup\">On-site time:</td><td width=\"100%\" class=\"monthly-popup\">&nbsp; $taskStr</td></tr>
+    <tr><td width=\"100px\" align=\"right\" class=\"monthly-popup\">Log:</td><td width=\"100%\" class=\"monthly-popup\">&nbsp; ".$data->log_message."</td></tr>	
+		</table></span></div></a>";
+
 						}
 					}
 				}
 			}
-
 			echo "<span class=\"task_time_total_small\">" . Common::formatMinutes($todaysTotal) ."</span>";
 
 		} else {
