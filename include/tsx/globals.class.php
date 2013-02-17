@@ -75,7 +75,7 @@ class gbl{
 		//check that project id is valid
     	if (self::$proj_id == 0)self::$task_id = 0;
     
-    	self::$post="year=".self::$year."&amp;month=".self::$month."&amp;day=".self::$day."&amp;proj_id=".self::$proj_id."&amp;task_id=".self::$task_id."&amp;client_id=".self::$client_id;
+    	self::$post="year=".self::$year."&amp;month=".self::$month."&amp;day=".self::$day."&amp;proj_id=".self::$proj_id."&amp;task_id=".self::$task_id."&amp;client_id=".self::$client_id."&amp;uid=".self::$uid;
 		
 	}
 		
