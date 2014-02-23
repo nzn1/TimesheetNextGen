@@ -1,6 +1,19 @@
 TimesheetNextGen installation.
 
    <<<<<<<<<<<<<<<<<<<<<x>>>>>>>>>>>>>>>>>>>>>
+   
+Updating from 1.5.3 to 2.0.0.
+
+	Database changes
+	Web page redirection
+		- require an .htaccess file which redirects all page requests through index.php
+		- require Apache httpd.conf changes to allow redirection i.e. allow override directive is set to all: 
+			AllowOverride All
+		- Apache module to be loaded: LoadModule rewrite_module modules/mod_rewrite.so
+		
+			
+
+   <<<<<<<<<<<<<<<<<<<<<x>>>>>>>>>>>>>>>>>>>>>
 
 Updating from 1.5.0 to 1.5.1?  Version 1.5.1 includes updates to the default items within the configuration 
 database, but no database schema changes. That means a manual update should be very easy to accomplish:

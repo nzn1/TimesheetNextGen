@@ -73,7 +73,7 @@ echo "Press Enter..."
 read asdf
 
 #now test
-mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < test.sql > /dev/null
+mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < sql/test.sql > /dev/null
 
 if [ $? = 1 ]; then
 	echo "There was an error accessing the database. Either the database doesn't exist, or your username/password is incorrect."
@@ -274,13 +274,13 @@ sed s/__INSTALLED__/1/g | \
 sed s/__DBNAME__/$DBNAME/g | \
 sed s/__DBUSER__/$DBUSER/g | \
 sed s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g | \
-sed s/__DBPASS__/$DBPASS/g > ../database_credentials.inc
+sed s/__DBPASS__/$DBPASS/g > database_credentials.inc
 
 #replace table_names with new version
-sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > ../table_names.inc
+sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > table_names.inc
 
 #replace prefix in sample_data.sql.in
-sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sample_data.sql.in > ../sample_data.sql
+sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/sample_data.sql.in > sample_data.sql
 
 #create new directories
 if [ ! -d $INSTALL_DIR/css ]; then
