@@ -8,7 +8,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 require("class.Pair.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclWeekly')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclWeekly'));
+	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclWeekly'));
 	exit;
 }
 

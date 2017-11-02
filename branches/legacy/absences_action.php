@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclAbsences')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclAbsences'));
+	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclAbsences'));
 	exit;
 }
 
@@ -31,7 +31,7 @@ $last_day = isset($_REQUEST['last_day']) ? $_REQUEST['last_day']: "31";
 $action = isset($_REQUEST['action']) ? $_REQUEST['action']: 0;
 
 //set the return location
-$Location = "absences.php?month=$month&amp;year=$year&amp;day=$day&amp;uid=$uid";
+$Location = sprintf('absences.php?month=%d&year=%d&day=%d&uid=%s',$month,$year,$day,$uid);
 
 if ($action!=0) {
 	$endMonth = $month + 1;

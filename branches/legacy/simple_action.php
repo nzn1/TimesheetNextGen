@@ -33,7 +33,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclSimple')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclSimple'));
+	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclSimple'));
 	exit;
 }
 
@@ -127,7 +127,7 @@ for ($i=0; $i<$totalRows; $i++) {
 	}
 }
 
-$Location = "simple.php?year=$year&amp;month=$month&amp;day=$day";
+$Location = sprintf('simple.php?year=%04d&month=%02d&day=%02d',$year,$month,$day);
 
 Header("Location: $Location");
 exit;
