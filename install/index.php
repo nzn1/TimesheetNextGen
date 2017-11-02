@@ -1186,7 +1186,6 @@ function update_new_db_version($db_prefix, $version) {
 		$_ERROR .= 'Our database said: '.mysql_error().'<br />';
 		return false;
 	}
-	return true;
 }
 
 /* Database Upgrade */
