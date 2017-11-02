@@ -24,7 +24,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclReports')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclReports'));
+	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclReports'));
 	exit;
 }
 

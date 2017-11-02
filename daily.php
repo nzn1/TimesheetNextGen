@@ -5,7 +5,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclDaily')) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]&amp;clearanceRequired=" . get_acl_level('aclDaily'));
+	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclDaily'));
 	exit;
 }
 
