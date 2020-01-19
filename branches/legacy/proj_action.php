@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclProjects')) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclProjects'));
+	Header('Location: login.php?clearanceRequired=' . get_acl_level('aclProjects'));
 	exit;
 }
 
@@ -16,18 +16,18 @@ $contextUser = strtolower($_SESSION['contextUser']);
 $action = $_REQUEST['action'];
 if ($action == "add" || $action == "edit") {
 	$assigned = isset($_REQUEST["assigned"]) ? $_REQUEST['assigned']: array();
-	array_walk($assigned, mysql_real_escape_string);
-	$end_month = mysql_real_escape_string($_REQUEST['end_month']);
-	$end_day = mysql_real_escape_string($_REQUEST['end_day']);
-	$end_year = mysql_real_escape_string($_REQUEST['end_year']);
-	$start_month = mysql_real_escape_string($_REQUEST['start_month']);
-	$start_day = mysql_real_escape_string($_REQUEST['start_day']);
-	$start_year = mysql_real_escape_string($_REQUEST['start_year']);
-	$title = mysql_real_escape_string($_REQUEST['title']);
-	$description = mysql_real_escape_string($_REQUEST['description']);
-	$url = mysql_real_escape_string($_REQUEST['url']);
-	$proj_status = mysql_real_escape_string($_REQUEST['proj_status']);
-	$project_leader = mysql_real_escape_string($_REQUEST['project_leader']);
+	array_walk($assigned, $authenticationManager->escape_string);
+	$end_month = mysqli_real_escape_string($dbh, $_REQUEST['end_month']);
+	$end_day = mysqli_real_escape_string($dbh, $_REQUEST['end_day']);
+	$end_year = mysqli_real_escape_string($dbh, $_REQUEST['end_year']);
+	$start_month = mysqli_real_escape_string($dbh, $_REQUEST['start_month']);
+	$start_day = mysqli_real_escape_string($dbh, $_REQUEST['start_day']);
+	$start_year = mysqli_real_escape_string($dbh, $_REQUEST['start_year']);
+	$title = mysqli_real_escape_string($dbh, $_REQUEST['title']);
+	$description = mysqli_real_escape_string($dbh, $_REQUEST['description']);
+	$url = mysqli_real_escape_string($dbh, $_REQUEST['url']);
+	$proj_status = mysqli_real_escape_string($dbh, $_REQUEST['proj_status']);
+	$project_leader = mysqli_real_escape_string($dbh, $_REQUEST['project_leader']);
 }
 $client_id = $_REQUEST['client_id'];
 $proj_id = isset($_REQUEST['proj_id']) ? $_REQUEST['proj_id']: 0;

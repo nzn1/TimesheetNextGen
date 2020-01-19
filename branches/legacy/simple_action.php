@@ -33,7 +33,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclSimple')) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclSimple'));
+	Header('Location: login.php?clearanceRequired=' . get_acl_level('aclSimple'));
 	exit;
 }
 
@@ -84,7 +84,7 @@ for ($i=0; $i<$totalRows; $i++) {
 	$workDescription = '';
 	if (array_key_exists("description_row" . $i, $_POST)) {
 		// does not exist if simple timesheet layout = "no work description field"!
-		$workDescription = mysql_real_escape_string($_POST["description_row" . $i]);
+		$workDescription = mysqli_real_escape_string($dbh, $_POST["description_row" . $i]);
 	}
 	//$debug->write("proj=$projectId  task=$taskId  log=$workDescription\n");
 

@@ -4,9 +4,12 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclTasks'));
+	Header('Location: login.php?clearanceRequired=' . get_acl_level('aclTasks'));
         exit;
 }
+
+// Connect to database.
+$dbh = dbConnect();
 
 //define the command menu & we get these variables from $_REQUEST:
 //  $month $day $year $client_id $proj_id $task_id
@@ -15,11 +18,11 @@ include("timesheet_menu.inc");
 $contextUser = strtolower($_SESSION['contextUser']);
 $assignTasks = isset($_REQUEST["assignTasks"]) ? $_REQUEST["assignTasks"]: false;
 
-function do_query($sql) {
-	$result = mysql_query($sql);
+function do_query($dbh, $sql) {
+	$result = mysqli_query($dbh, $sql);
 	if(!$result) {
 		print "Query failed: \"$sql\"\n";
-		print get_db_error(mysql_error())."\n";
+		print get_db_error(mysql_error($dbh))."\n";
 		return false;
 	}
 	return $result;
@@ -87,9 +90,9 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 	$task_array=array();
 
 	$sql = "SELECT task_id, proj_id FROM $TASK_TABLE order by task_id";
-	$result = do_query($sql);
+	$result = do_query($dbh, $sql);
 	if($result) {
-		while($data = mysql_fetch_array($result)) {
+		while($data = mysqli_fetch_array($result)) {
 			$task_id=$data["task_id"];
 			$proj_id=$data["proj_id"];
 
@@ -98,7 +101,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 	}
 
 	$sql = "DELETE from $TASK_ASSIGNMENTS_TABLE";
-	$rslt = do_query($sql);
+	$rslt = do_query($dbh, $sql);
 	print "All task assignments removed<br />\n";
 
 	$lastuser="";
@@ -106,9 +109,9 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 	$usertaskcnt=0;
 
 	$sql = "SELECT username, proj_id FROM $ASSIGNMENTS_TABLE order by username";
-	$result = do_query($sql);
+	$result = do_query($dbh, $sql);
 	if($result) {
-		while($data = mysql_fetch_array($result)) {
+		while($data = mysqli_fetch_array($result)) {
 			$proj_id=$data["proj_id"];
 			$username=$data["username"];
 
@@ -123,7 +126,7 @@ If this is what you want to do, check this box <input type="checkbox" name="assi
 
 			foreach($task_array[$proj_id] as $task_id => $value) {	
 				$sql = "INSERT into $TASK_ASSIGNMENTS_TABLE VALUES ($task_id,'$username',$proj_id)";
-				$rslt = do_query($sql);
+				$rslt = do_query($dbh, $sql);
 				$usertaskcnt++;
 			}
 		}

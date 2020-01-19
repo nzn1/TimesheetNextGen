@@ -5,7 +5,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=Administrator');
+	Header('Location: login.php?clearanceRequired=Administrator');
 	exit;
 }
 
@@ -16,14 +16,14 @@ $dbh = dbConnect();
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
-$uid = mysql_real_escape_string($_REQUEST["uid"]);
-$first_name = mysql_real_escape_string($_REQUEST["first_name"]);
-$last_name = mysql_real_escape_string($_REQUEST["last_name"]);
-$username = mysql_real_escape_string($_REQUEST["username"]);
-$email_address = mysql_real_escape_string($_REQUEST["email_address"]);
-$password = mysql_real_escape_string($_REQUEST["password"]);
-$isAdministrator = isset($_REQUEST["isAdministrator"]) ? mysql_real_escape_string($_REQUEST["isAdministrator"]): "false";
-$isManager = isset($_REQUEST["isManager"]) ? mysql_real_escape_string($_REQUEST["isManager"]): "false";
+$uid = mysqli_real_escape_string($dbh, $_REQUEST["uid"]);
+$first_name = mysqli_real_escape_string($dbh, $_REQUEST["first_name"]);
+$last_name = mysqli_real_escape_string($dbh, $_REQUEST["last_name"]);
+$username = mysqli_real_escape_string($dbh, $_REQUEST["username"]);
+$email_address = mysqli_real_escape_string($dbh, $_REQUEST["email_address"]);
+$password = mysqli_real_escape_string($dbh, $_REQUEST["password"]);
+$isAdministrator = isset($_REQUEST["isAdministrator"]) ? mysqli_real_escape_string($dbh, $_REQUEST["isAdministrator"]): "false";
+$isManager = isset($_REQUEST["isManager"]) ? mysqli_real_escape_string($dbh, $_REQUEST["isManager"]): "false";
 $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIVE" : "INACTIVE") : "ACTIVE";
 
 //$debug->write("status = \"$status\"  isActive=\"".$_REQUEST["isActive"]."\"\n");

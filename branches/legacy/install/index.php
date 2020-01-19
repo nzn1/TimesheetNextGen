@@ -1,5 +1,5 @@
 <?php 
-define('INSTALLER_VERSION', '1.5.3');
+define('INSTALLER_VERSION', '1.6.0');
 // set up the global variable that holds any error messages
 // don't really like using globals, but this is quick and dirty
 $_ERROR = '';
@@ -153,7 +153,7 @@ function display_install_step_1() {
 It'll just take a few more minutes to get it installed and working on your system.</p>
 <h3>Things you'll need:</h3>
 <ul>
-<li>A MySQL database (we recommend version 4.1 or better)</li>
+<li>A MySQL database (we recommend version 5.7 or better)</li>
 <li>The ability to change permissions of files on your server</li>
 <li>The ability to delete directories on your server</li>
 </ul>
@@ -194,7 +194,7 @@ function display_install_step_2() {
 	$db_prefix = (isset($_REQUEST['db_prefix']) && $_REQUEST['db_prefix']) ? $_REQUEST['db_prefix'] : 'timesheet_';
 	$db_user = (isset($_REQUEST['db_user']) && $_REQUEST['db_user']) ? $_REQUEST['db_user'] : '';
 	$db_pass = (isset($_REQUEST['db_pass']) && $_REQUEST['db_pass']) ? $_REQUEST['db_pass'] : '';
-	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA1';
+	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA2';
 ?>
 <h2>Step Two: MySQL Database Configuration</h2>
 <?php if($_ERROR) {?>
@@ -222,13 +222,14 @@ function display_install_step_2() {
 <tr>
 <th>Password Function</th>
 <td><select name="db_pass_func">
+<option value="SHA2">SHA2</option>
 <option value="SHA1">SHA1</option>
 <option value="PASSWORD">PASSWORD</option>
 <option value="OLD_PASSWORD">OLD PASSWORD</option>
 </select></td>
-<td>This is the function the database uses to encrypt the passwords. If your MySQL version is 4.1 or above
+<td>This is the function the database uses to encrypt the passwords. Nowadays use SHA2 (256 bits). If your MySQL version is 4.1 or above
 you should use SHA1. PASSWORD should be used on MySQL version 4.0 or below, and OLD PASSWORD for MySQL
-version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA1.</em></td></tr>
+version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA2.</em></td></tr>
 <tr>
 <th>Table Prefix</th><td><input type="text" name="db_prefix" value="<?php echo $db_prefix; ?>" /></td>
 <td>This prefix is used for all table names</td>
@@ -259,7 +260,7 @@ function create_new_installation() {
 	$db_prefix = (isset($_REQUEST['db_prefix']) && $_REQUEST['db_prefix']) ? $_REQUEST['db_prefix'] : 'timesheet_';
 	$db_user = (isset($_REQUEST['db_user']) && $_REQUEST['db_user']) ? $_REQUEST['db_user'] : false;
 	$db_pass = (isset($_REQUEST['db_pass']) && $_REQUEST['db_pass']) ? $_REQUEST['db_pass'] : false;
-	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA1';
+	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA2';
 	$admin_user = (isset($_REQUEST['admin_user']) && $_REQUEST['admin_user']) ? $_REQUEST['admin_user'] : '';
 	$admin_pass = (isset($_REQUEST['admin_pass']) && $_REQUEST['admin_pass']) ? $_REQUEST['admin_pass'] : '';
 
@@ -440,13 +441,14 @@ function display_upgrade_step_2() {
 <tr>
 <th>Password Function</th>
 <td><select name="db_pass_func">
+<option value="SHA2" <?php if ($DATABASE_PASSWORD_FUNCTION == 'SHA2') { echo 'selected="selected"'; } ?>>SHA2</option>
 <option value="SHA1" <?php if ($DATABASE_PASSWORD_FUNCTION == 'SHA1') { echo 'selected="selected"'; } ?>>SHA1</option>
 <option value="PASSWORD" <?php if ($DATABASE_PASSWORD_FUNCTION == 'PASSWORD') { echo 'selected="selected"'; } ?>>PASSWORD</option>
 <option value="OLD_PASSWORD" <?php if ($DATABASE_PASSWORD_FUNCTION == 'OLD_PASSWORD') { echo 'selected="selected"'; } ?>>OLD PASSWORD</option>
 </select></td>
-<td>This is the function the database uses to encrypt the passwords. If your MySQL version is 4.1 or above
+<td>This is the function the database uses to encrypt the passwords. Nowadays use SHA2 (256 bit). If your MySQL version is 4.1 or above
 you should use SHA1. PASSWORD should be used on MySQL version 4.0 or below, and OLD PASSWORD for MySQL
-version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA1.</em></td></tr>
+version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA2.</em></td></tr>
 <tr>
 <th>Table Prefix</th><td><input type="text" name="db_prefix" value="<?php echo $db_prefix; ?>" /></td>
 <td>This prefix is used for all table names</td>
@@ -466,7 +468,7 @@ version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA1
  * Check if database exists
  */
 function create_database_one() {
-	global $_ERROR;
+	global $dbh, $_ERROR;
 
 	// get the passed data
 	$db_host = (isset($_REQUEST['db_host']) && $_REQUEST['db_host']) ? $_REQUEST['db_host'] : false;
@@ -474,7 +476,7 @@ function create_database_one() {
 	$db_prefix = (isset($_REQUEST['db_prefix']) && $_REQUEST['db_prefix']) ? $_REQUEST['db_prefix'] : false;
 	$db_user = (isset($_REQUEST['db_user']) && $_REQUEST['db_user']) ? $_REQUEST['db_user'] : false;
 	$db_pass = (isset($_REQUEST['db_pass']) && $_REQUEST['db_pass']) ? $_REQUEST['db_pass'] : false;
-	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA1';
+	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA2';
 
 	$admin_user = (isset($_REQUEST['admin_user']) && $_REQUEST['admin_user']) ? $_REQUEST['admin_user'] : '';
 	$admin_pass = (isset($_REQUEST['admin_pass']) && $_REQUEST['admin_pass']) ? $_REQUEST['admin_pass'] : '';
@@ -486,7 +488,7 @@ function create_database_one() {
 	// check that we have all we need
 	$_ERROR = '';
 	if(!$admin_user) { $_ERROR .= 'You have not specified a DBA username<br />'; }
-	if(!$admin_pass) { $_ERROR .= 'You have not specified a DBA password<br />'; }
+	//if(!$admin_pass) { $_ERROR .= 'You have not specified a DBA password<br />'; }
 	if($_ERROR != '') {
 		return get_dba_info($db_host, $db_name, $db_prefix, $db_user, $db_pass, $db_pass_func, $admin_user, $admin_pass);
 	}
@@ -514,32 +516,32 @@ function create_database_one() {
 	$need_validation=0;
 	$validation_string='';
 	if(!database_connect($db_host, 'mysql', $admin_user, $admin_pass)) { 
-		$_ERROR .= 'Couldn\'t connect to the database.  Check host and DBA credentials.';
+		$_ERROR .= 'Check host and DBA credentials.';
 		return get_dba_info($db_host, $db_name, $db_prefix, $db_user, $db_pass, $db_pass_func, $admin_user, $admin_pass);
 	}
 
-	$db_prefix = mysql_real_escape_string($db_prefix);
-	$db_host = mysql_real_escape_string($db_host);
-	$db_name = mysql_real_escape_string($db_name);
-	$db_user = mysql_real_escape_string($db_user);
-	$db_pass = mysql_real_escape_string($db_pass);
-	$admin_user = mysql_real_escape_string($admin_user);
-	$admin_pass = mysql_real_escape_string($admin_pass);
+	$db_prefix = mysqli_real_escape_string($dbh, $db_prefix);
+	$db_host = mysqli_real_escape_string($dbh, $db_host);
+	$db_name = mysqli_real_escape_string($dbh, $db_name);
+	$db_user = mysqli_real_escape_string($dbh, $db_user);
+	$db_pass = mysqli_real_escape_string($dbh, $db_pass);
+	$admin_user = mysqli_real_escape_string($dbh, $admin_user);
+	$admin_pass = mysqli_real_escape_string($dbh, $admin_pass);
 
 	$sql = "SHOW TABLES FROM $db_name;";
-	$result = mysql_query($sql);
+	$result = mysqli_query($dbh, $sql);
 	if(!$result) {
-		if(strpos(mysql_error(),"Unknown database") === false ) {
+		if(strpos(mysqli_error($dbh),"Unknown database") === false ) {
 			$_ERROR .= 'Show Tables failed <br />';
-			$_ERROR .= get_db_error(mysql_error(),$sql);
+			$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 			return get_dba_info($db_host, $db_name, $db_prefix, $db_user, $db_pass, $db_pass_func, $admin_user, $admin_pass);
 		}
 		//echo "<br>No database found with that name - Good!<br>\n";
 	} else {
-		if(mysql_num_rows($result) > 0) {
+		if(mysqli_num_rows($result) > 0) {
 			if($db_purge!="on"){
 				$items=array(0,0,0,0,0,0,0,0);
-				while($row = mysql_fetch_row($result) ) {
+				while($row = mysqli_fetch_row($result) ) {
 					if(strpos($row[0],"assignments") !== false) $items[0]=1;
 					if(strpos($row[0],"client") !== false) $items[1]=1;
 					if(strpos($row[0],"config") !== false) $items[2]=1;
@@ -586,14 +588,14 @@ function create_database_one() {
 
 	if($user_exists === false) {
 		$sql = "SELECT * FROM user where User=\"$db_user\";";
-		$result = mysql_query($sql);
+		$result = mysqli_query($dbh, $sql);
 		if(!$result) {
 			$_ERROR .= 'SELECT from user table failed <br />';
-			$_ERROR .= get_db_error(mysql_error(),$sql);
+			$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 			return get_dba_info($db_host, $db_name, $db_prefix, $db_user, $db_pass, $db_pass_func, $admin_user, $admin_pass);
 		}
 
-		if(mysql_num_rows($result) > 0) {
+		if(mysqli_num_rows($result) > 0) {
 			echo "<br><font color=\"orangered\"><b>A DB user with the name &quot;$db_user&quot; already exists, we have two options:</b></font><br>\n";
 			if(!$need_validation) print "<form method=\"post\">";
 			$need_validation=1;
@@ -639,48 +641,48 @@ function create_database_one() {
  * Delete existing DB and user as needed, then create the database, and create the user if needed.
  */
 function create_database_two($db_host, $db_name, $db_prefix, $db_user, $db_pass, $db_pass_func, $db_purge, $user_exists, $user_purge) {
-	global $_ERROR;
+	global $dbh, $_ERROR;
 
 	if($db_purge=='on') {
 		$sql="DROP DATABASE IF EXISTS $db_name";
 		//echo htmlentities($sql) . '<br />';
-		if(!mysql_query($sql)) {
+		if(!mysqli_query($dbh, $sql)) {
 			$_ERROR .= 'Could not drop the database<br />';
-			$_ERROR .= get_db_error(mysql_error(),$sql);
+			$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 			return display_install_step_2(); 
 		}
 		$sql="DELETE FROM db WHERE db=\"$db_name\"";
 		//echo htmlentities($sql) . '<br />';
-		if(!mysql_query($sql)) {
+		if(!mysqli_query($dbh, $sql)) {
 			$_ERROR .= 'Could not clear database permissions<br />';
-			$_ERROR .= get_db_error(mysql_error(),$sql);
+			$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 			return display_install_step_2(); 
 		}
 	}
 
 	$sql="CREATE DATABASE $db_name";
 	//echo htmlentities($sql) . '<br />';
-	if(!mysql_query($sql)) {
+	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= 'Could not drop the database<br />';
-		$_ERROR .= get_db_error(mysql_error(),$sql);
+		$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 		return display_install_step_2(); 
 	}
 
 	if($user_exists=='yes') {
 		if($user_purge='yes') {
-			$sql="DELETE FROM user WHERE User=\"$db_user\"";
+			$sql="DROP USER '$db_user'@'$db_host'";
 			//echo htmlentities($sql) . '<br />';
-			if(!mysql_query($sql)) {
+			if(!mysqli_query($dbh, $sql)) {
 				$_ERROR .= 'Could not delete the user<br />';
-				$_ERROR .= get_db_error(mysql_error(),$sql);
+				$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 				echo $_ERROR;
 				return display_install_step_2(); 
 			}
 			$sql="DELETE FROM db WHERE user=\"$db_user\"";
 			//echo htmlentities($sql) . '<br />';
-			if(!mysql_query($sql)) {
+			if(!mysqli_query($dbh, $sql)) {
 				$_ERROR .= 'Could not clear the users\' permissions<br />';
-				$_ERROR .= get_db_error(mysql_error(),$sql);
+				$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 				echo $_ERROR;
 				return display_install_step_2(); 
 			}
@@ -721,20 +723,20 @@ function create_database_two($db_host, $db_name, $db_prefix, $db_user, $db_pass,
  * Grant appropriate permissions for DB user
  */
 function grant_user_permissions($db_host,$db_name,$db_user) {
-	$sql="INSERT INTO db(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Grant_priv,References_priv, Index_priv, Alter_priv, Lock_tables_priv)" .
-	     "VALUES('$db_host','$db_name','$db_user','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y')";
+	global $dbh, $_ERROR;
+	$sql="GRANT ALL ON $db_name TO $db_user@$db_host";
 	//echo htmlentities($sql) . '<br />';
-	if(!mysql_query($sql)) {
+	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= 'Could not add user permissions<br />';
-		$_ERROR .= get_db_error(mysql_error(),$sql);
+		$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 		echo $_ERROR;
 		return display_install_step_2(); 
 	}
 	$sql="FLUSH PRIVILEGES";
 	//echo htmlentities($sql) . '<br />';
-	if(!mysql_query($sql)) {
+	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= 'Could not flush privileges<br />';
-		$_ERROR .= get_db_error(mysql_error(),$sql);
+		$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 		echo $_ERROR;
 		return display_install_step_2(); 
 	}
@@ -745,12 +747,18 @@ function grant_user_permissions($db_host,$db_name,$db_user) {
  * Create the database user the timesheet system will use to access the database
  */
 function create_db_user($db_host,$db_user,$db_pass,$db_pass_func) {
-	$sql="INSERT INTO user (Host,User,Password)" .
-	     "VALUES('$db_host','$db_user',$db_pass_func('$db_pass'))";
+	global $dbh, $_ERROR;
+	switch ($db_pass_func)
+	{
+		case 'SHA2': { $sql="CREATE USER '$db_user'@'$db_host' IDENTIFIED WITH sha256_password BY '$db_pass';"; break; }
+		case 'SHA1': { $sql="CREATE USER '$db_user'@'$db_host' IDENTIFIED WITH some_old_password_function BY '$db_pass';"; break; }
+		case 'PASSWORD': { $sql="CREATE USER '$db_user'@'$db_host' IDENTIFIED WITH mysql_native_password BY '$db_pass';"; break; }
+		case 'OLD_PASSWORD': { $sql="CREATE USER '$db_user'@'$db_host' IDENTIFIED WITH mysql_old_password BY '$db_pass';"; break; }
+	}	
 	//echo htmlentities($sql) . '<br />';
-	if(!mysql_query($sql)) {
+	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= 'Could not create user<br />';
-		$_ERROR .= get_db_error(mysql_error(),$sql);
+		$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 		echo $_ERROR;
 		return display_install_step_2(); 
 	}
@@ -886,7 +894,7 @@ echo "<h2>Attempting upgrade</h2><br>";
 	$db_prefix = (isset($_REQUEST['db_prefix']) && $_REQUEST['db_prefix']) ? $_REQUEST['db_prefix'] : false;
 	$db_user = (isset($_REQUEST['db_user']) && $_REQUEST['db_user']) ? $_REQUEST['db_user'] : false;
 	$db_pass = (isset($_REQUEST['db_pass']) && $_REQUEST['db_pass']) ? $_REQUEST['db_pass'] : false;
-	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA1';
+	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA2';
 
 	// check that we have all we need
 	$_ERROR = '';
@@ -932,22 +940,22 @@ echo "<h2>Attempting upgrade</h2><br>";
  * @return bool true on successful creation
  */
 function create_tables($db_host, $db_name, $db_user, $db_pass, $db_prefix) {
-	global $_ERROR, $db_pass_func;
-	$db_prefix = mysql_real_escape_string($db_prefix);
+	global $dbh, $_ERROR;
+	$db_prefix = mysqli_real_escape_string($dbh, $db_prefix);
 
 	$contents = file_get_contents('sql/timesheet.sql.in');
 	// finalise the file
-	$key_words = array('__TIMESHEET_VERSION__', '__TABLE_PREFIX__', '__DBPASSWORDFUNCTION__');
-	$key_values = array(INSTALLER_VERSION, $db_prefix, $db_pass_func);
+	$key_words = array('__TIMESHEET_VERSION__', '__TABLE_PREFIX__');
+	$key_values = array(INSTALLER_VERSION, $db_prefix);
 	$contents = str_replace($key_words, $key_values, $contents);
 
 	//regex is a mess: $queries = preg_split("/;+(?=([^'|^\\']*['|\\'][^'|^\\']*['|\\'])*[^'|^\\']*[^'|^\\']$)/", $contents);
 	$queries = preg_split("#(;\s*\n)|(;\s*\r\n)#", $contents);
 	foreach ($queries as $sql) {
 		if (strlen(trim($sql)) > 0) {
-			if(!mysql_query($sql)) {
+			if(!mysqli_query($dbh, $sql)) {
 				$_ERROR .= 'Could not create <strong>Tables</strong><br />';
-				$_ERROR .= get_db_error(mysql_error(),$sql);
+				$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 				return false;
 			}
 		}
@@ -962,7 +970,7 @@ function create_tables($db_host, $db_name, $db_user, $db_pass, $db_prefix) {
  * @return bool true if admin user was created
  */
 function create_admin_user($username, $password) {
-	global $_ERROR, $db_inc_file, $table_inc_file;
+	global $dbh, $_ERROR, $db_inc_file, $table_inc_file;
 
 	include($db_inc_file);
 	include($table_inc_file);
@@ -972,26 +980,27 @@ function create_admin_user($username, $password) {
 		return display_fatal_error(); 
 	}
 	// clean up input
-	$username = mysql_real_escape_string($username);
-	$password = mysql_real_escape_string($password);
+	$username = mysqli_real_escape_string($dbh, $username);
+	$password = mysqli_real_escape_string($dbh, $password);
+	$hashedpw = password_hash($password, PASSWORD_DEFAULT);
 
 	$sql = 'INSERT INTO '.$USER_TABLE.' (username,level,password,first_name,last_name) 
-		VALUES ("'.$username.'",10,'.$DATABASE_PASSWORD_FUNCTION.'("'.$password.'"),"Timesheet","Admin")';
-	if(!mysql_query($sql)) {
+		VALUES ("'.$username.'",10,"'.$hashedpw.'","Timesheet","Admin")';
+	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= 'Could not create the admin user <br />';
-		$_ERROR .= get_db_error(mysql_error());
+		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
 	}
 	$sql = 'INSERT INTO '.$ASSIGNMENTS_TABLE.' VALUES(1,"'.$username.'", 1)';
-	if(!mysql_query($sql)) {
+	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= 'Could not add user to default assignment<br />';
-		$_ERROR .= get_db_error(mysql_error());
+		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
 	}
 	$sql = 'INSERT INTO '.$TASK_ASSIGNMENTS_TABLE.' VALUES(1,"'.$username.'", 1)';
-	if(!mysql_query($sql)) {
+	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= 'Could not add user to default assignment<br />';
-		$_ERROR .= get_db_error(mysql_error());
+		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
 	}
 	return true;
@@ -1002,7 +1011,7 @@ function create_admin_user($username, $password) {
  * @return bool true if created
  */
 function check_admin_user() {
-	global $_ERROR, $db_inc_file, $table_inc_file;
+	global $dbh, $_ERROR, $db_inc_file, $table_inc_file;
 
 	include($db_inc_file);
 	include($table_inc_file);
@@ -1012,13 +1021,13 @@ function check_admin_user() {
 	}
 
 	$sql = 'SELECT COUNT(*) FROM '.$USER_TABLE.' WHERE level>=10';
-	$result = mysql_query($sql);
+	$result = mysqli_query($dbh, $sql);
 	if(!$result) {
 		$_ERROR .= 'Could not check admin user<br />';
-		$_ERROR .= get_db_error(mysql_error());
+		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
 	}
-	$row = mysql_fetch_row($result);
+	$row = mysqli_fetch_row($result);
 	return $row[0];
 }
 
@@ -1038,24 +1047,24 @@ function get_db_error($error,$query='') {
  * @return version number
  */
 function get_old_database_version($cfg_table) {
-	global $_ERROR;
+	global $dbh, $_ERROR;
 
 	$sql = 'SHOW TABLES LIKE \''.$cfg_table.'\'';
-	$result = mysql_query($sql);
+	$result = mysqli_query($dbh, $sql);
 	if(!$result) {
 		$_ERROR .= 'Could not find the config table<br />';
-		$_ERROR .= get_db_error(mysql_error());
+		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
 	}
 
 	$sql = 'SELECT version FROM '.$cfg_table.' WHERE config_set_id=\'1\'';
-	$result = mysql_query($sql);
+	$result = mysqli_query($dbh, $sql);
 	if(!$result) {
 		$_ERROR .= 'Could not check version<br />';
-		$_ERROR .= get_db_error(mysql_error());
+		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
 	}
-	$row = mysql_fetch_row($result);
+	$row = mysqli_fetch_row($result);
 
 	// hack for V1.3.1
 	if ($row[0]=='__timesheet_VERSION__')
@@ -1070,38 +1079,37 @@ function get_old_database_version($cfg_table) {
  * @return version number
  */
 function get_new_database_version($cfg_table) {
-	global $_ERROR;
+	global $dbh, $_ERROR;
 
 	$sql = 'SHOW TABLES LIKE \''.$cfg_table.'\'';
-	$result = mysql_query($sql);
+	$result = mysqli_query($dbh, $sql);
 	if(!$result) {
 		$_ERROR .= 'Could not find the config table<br />';
-		$_ERROR .= get_db_error(mysql_error());
+		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
 	}
 
 	$sql = 'SELECT value FROM '.$cfg_table.' WHERE name=\'version\'';
-	$result = mysql_query($sql);
+	$result = mysqli_query($dbh, $sql);
 	if(!$result) {
 		$_ERROR .= 'Could not check version<br />';
-		$_ERROR .= get_db_error(mysql_error());
+		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
 	}
-	$row = mysql_fetch_row($result);
+	$row = mysqli_fetch_row($result);
 	return $row[0];
 }
 
 function database_connect($db_host, $db_name, $db_user, $db_pass) {
-	global $_ERROR;
-	$link = @mysql_connect($db_host, $db_user, $db_pass);
-	if (!$link) {
+	global $dbh, $_ERROR;
+	$dbh = mysqli_connect($db_host, $db_user, $db_pass);
+	if (!$dbh) {
 		$_ERROR .= 'Could not connect to the database.<br />';
-		$_ERROR .= get_db_error(mysql_error());
 		return false;
 	}
-	if(!mysql_select_db($db_name)) {
+	if(!mysqli_select_db($dbh, $db_name)) {
 		$_ERROR .= 'Could not select the database.<br />';
-		$_ERROR .= get_db_error(mysql_error());
+		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
 	}
 	return true;
@@ -1119,14 +1127,14 @@ function database_connect($db_host, $db_name, $db_user, $db_pass) {
  * @return bool true if successfully written
  */
 function create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func) {
-	global $_ERROR, $table_inc_file, $db_inc_file;
+	global $dbh, $_ERROR, $table_inc_file, $db_inc_file;
 	// make sure the values are safe
-	$db_host = mysql_real_escape_string($db_host);
-	$db_name = mysql_real_escape_string($db_name);
-	$db_user = mysql_real_escape_string($db_user);
-	$db_pass = mysql_real_escape_string($db_pass);
-	$db_prefix = mysql_real_escape_string($db_prefix);
-	$db_pass_func = mysql_real_escape_string($db_pass_func);
+	$db_host = mysqli_real_escape_string($dbh, $db_host);
+	$db_name = mysqli_real_escape_string($dbh, $db_name);
+	$db_user = mysqli_real_escape_string($dbh, $db_user);
+	$db_pass = mysqli_real_escape_string($dbh, $db_pass);
+	$db_prefix = mysqli_real_escape_string($dbh, $db_prefix);
+	$db_pass_func = mysqli_real_escape_string($dbh, $db_pass_func);
 
 	// first write the database credentials: read in current file
 	$contents = file_get_contents($db_inc_file.'.in');
@@ -1166,35 +1174,35 @@ function create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix
 
 /* update DB version number */
 function update_old_db_version($db_prefix, $version) {
-	global $_ERROR;
+	global $dbh, $_ERROR;
 	$sql = 'UPDATE '.$db_prefix.'config set version=\''.$version.'\';';
-	if(!mysql_query($sql)) {
+	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= '<strong>Could not update DB version</strong><br />';
 		$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
-		$_ERROR .= 'Our database said: '.mysql_error().'<br />';
+		$_ERROR .= 'Our database said: '.mysqli_error($dbh).'<br />';
 		return false;
 	}
 }
 
 /* update DB version number */
 function update_new_db_version($db_prefix, $version) {
-	global $_ERROR;
+	global $dbh, $_ERROR;
 	$sql = 'UPDATE '.$db_prefix.'configuration set value=\''.$version.'\' WHERE \'name\'=\'version\';';
-	if(!mysql_query($sql)) {
+	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= '<strong>Could not update DB version</strong><br />';
 		$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
-		$_ERROR .= 'Our database said: '.mysql_error().'<br />';
+		$_ERROR .= 'Our database said: '.mysqli_error($dbh).'<br />';
 		return false;
 	}
 }
 
 /* Database Upgrade */
 function upgrade_tables($db_prefix, $db_pass_func) {
-	global $_ERROR;
+	global $dbh, $_ERROR;
 	$result = true;
 
 	$sql = 'SHOW TABLES LIKE \''.$db_prefix.'config\'';
-	$result = mysql_query($sql);
+	$result = mysqli_query($dbh, $sql);
 	if(!$result) {
 		$db_version = get_new_database_version($db_prefix.'configuration');
 		if($db_version === false) return false;
@@ -1238,13 +1246,18 @@ function upgrade_tables($db_prefix, $db_pass_func) {
 		if($result === false) return $result;
 		$result = update_new_db_version($db_prefix, '1.5.3');
 		if($result === false) return $result;
+	case '1.5.3' :
+		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.6.0.sql.in');
+		if($result === false) return $result;
+		$result = update_new_db_version($db_prefix, '1.6.0');
+		if($result === false) return $result;
 	}
 	return $result;
 }
 
 function run_sql_script($db_prefix, $db_pass_func, $sqlfile) {
-	global $_ERROR;
-	$db_prefix = mysql_real_escape_string($db_prefix);
+	global $dbh, $_ERROR;
+	$db_prefix = mysqli_real_escape_string($dbh, $db_prefix);
 
 	$contents = file_get_contents($sqlfile);
 	// finalise the script
@@ -1255,10 +1268,10 @@ function run_sql_script($db_prefix, $db_pass_func, $sqlfile) {
 	$queries = preg_split("/;+(?=([^'|^\\']*['|\\'][^'|^\\']*['|\\'])*[^'|^\\']*[^'|^\\']$)/", $contents);
 	foreach ($queries as $sql) {
 		if (strlen(trim($sql)) > 0) {
-			if(!mysql_query($sql)) {
+			if(!mysqli_query($dbh, $sql)) {
 				$_ERROR .= '<strong>Could not complete script</strong><br />';
 				$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
-				$_ERROR .= 'Our database said: '.mysql_error().'<br />';
+				$_ERROR .= 'Our database said: '.mysqli_error($dbh).'<br />';
 				return false;
 			}
 		}

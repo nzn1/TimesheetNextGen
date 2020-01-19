@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclAbsences')) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclAbsences'));
+	Header('Location: login.php?clearanceRequired=' . get_acl_level('aclAbsences'));
 	exit;
 }
 
@@ -47,9 +47,9 @@ if ($action!=0) {
 				"date < '$endYear-$endMonth-01 00:00:00'");
 
 	for ($i=1; $i<=$last_day; $i++) {
-		$AMtype = mysql_real_escape_string($_POST["AMtype".$i]);
+		$AMtype = mysqli_real_escape_string($dbh, $_POST["AMtype".$i]);
 		$AMtext = urlencode($_POST["AMtext".$i]);
-		$PMtype = mysql_real_escape_string($_POST["PMtype".$i]);
+		$PMtype = mysqli_real_escape_string($dbh, $_POST["PMtype".$i]);
 		$PMtext = urlencode($_POST["PMtext".$i]);
 
 		if (($AMtype!='')&&($AMtype!='Public')) {

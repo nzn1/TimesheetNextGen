@@ -6,7 +6,7 @@
 	class FormInput {
 		var $name;
 
-		function FormInput($name) {
+		function __construct($name) {
 			$this->name = $name;
 		}
 	}

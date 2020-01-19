@@ -7,7 +7,7 @@ class Command {
 	var $text;
 	var $enabled;
 
-	function Command($text, $enabled, $sep=true) {
+	function __construct($text, $enabled, $sep=true) {
 		//$this->text = str_replace(" ", "&nbsp;", $text);  don't need to do this because we're using <nobr></nobr> tags
 		//<nobr> should not be used. it isn't a valid html tag.
 		$this->text = $text;
@@ -40,8 +40,8 @@ class TextCommand extends Command {
 	/**
 	* Constructor
 	*/
-	function TextCommand($text, $enabled, $url) {
-		parent::Command($text, $enabled);
+	function __construct($text, $enabled, $url) {
+		parent::__construct($text, $enabled);
 		$this->url = $url;
 	}
 
@@ -63,8 +63,8 @@ class IconTextCommand extends TextCommand {
 	/**
 	* Constructor
 	*/
-	function IconTextCommand($text, $enabled, $url, $img) {
-		parent::TextCommand($text, $enabled, $url);
+	function __construct($text, $enabled, $url, $img) {
+		parent::__construct($text, $enabled, $url);
 		$this->img = $img;
 	}
 

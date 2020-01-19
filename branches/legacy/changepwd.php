@@ -3,7 +3,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+	Header("Location: login.php");
 	exit;
 }
 
@@ -25,9 +25,9 @@ $old_pass = "";
 if (isset($_POST["action"])) {
 	if (!isset($_POST["passwd1"]) || !isset($_POST["passwd2"]) || !isset($_POST["old_pass"]))
 		errorPage("Please fill out all fields.");
-	$passwd1 = mysql_real_escape_string($_POST['passwd1']);
-	$passwd2 = mysql_real_escape_string($_POST['passwd2']);
-	$old_pass = mysql_real_escape_string($_POST['old_pass']);
+	$passwd1 = mysqli_real_escape_string($dbh, $_POST['passwd1']);
+	$passwd2 = mysqli_real_escape_string($dbh, $_POST['passwd2']);
+	$old_pass = mysqli_real_escape_string($dbh, $_POST['old_pass']);
 }
 
 //check for guest user
@@ -38,16 +38,19 @@ if ($loggedInUser == 'guest')
 if ($passwd1 != $passwd2)
 	$errormsg = "Passwords do not match, please try again";
 
-if (empty($errormsg) && !empty($old_pass)) {
-	$qh = mysql_query("SELECT password, $DATABASE_PASSWORD_FUNCTION('$old_pass') FROM $USER_TABLE WHERE username='$contextUser'") or die("Unable to select ". mysql_error());
-	list($check1, $check2) = mysql_fetch_row($qh);
-	if ($check1 != $check2) {
-		$errormsg = "Wrong password, sorry!";
-	}
-	else {
-		$qh = mysql_query("UPDATE $USER_TABLE SET password=$DATABASE_PASSWORD_FUNCTION('$passwd1') WHERE username='$contextUser'");
+if (empty($errormsg) && !empty($old_pass) && !empty($passwd1)) {
+	$qh = mysqli_query($dbh, "SELECT password FROM $USER_TABLE WHERE username='$contextUser'") or die("Unable to select ". mysqli_error($dbh));
+	list($check1) = mysqli_fetch_row($qh);
+	if ((password_verify($old_pass, $check1)) || 
+		($check1 == '') || 
+		($authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR) && ($old_pass == $contextUser))) {
+		$hashedpw = password_hash($passwd1, PASSWORD_DEFAULT);
+		$qh = mysqli_query($dbh, "UPDATE $USER_TABLE SET password='$hashedpw' WHERE username='$contextUser'");
 		gotoStartPage();
 		exit;
+	}
+	else {
+		$errormsg = "Wrong password, sorry!";
 	}
 }
 
@@ -60,7 +63,7 @@ if (!empty($errormsg)) {
 ?>
 <html>
 <head>
-<title>Change Password for user <?php echo $contextUser; ?></title>
+<title>Change Password</title>
 <?php include ("header.inc"); ?>
 </head>
 <body <?php include ("body.inc"); ?> >
@@ -79,7 +82,7 @@ if (!empty($errormsg)) {
 				<table width="100%" border="0">
 					<tr>
 						<td align="left" nowrap class="outer_table_heading" nowrap>
-							Change Password:
+							Change password for user <?php echo $contextUser; ?>:
 						</td>
 					</tr>
 				</table>
@@ -91,10 +94,14 @@ if (!empty($errormsg)) {
 		<tr>
 			<td>
 				<table width="100%" border="0" cellpadding="1" cellspacing="2" class="table_body">
+<?php if ($contextUser == $loggedInUser): ?>
 					<tr>
 						<td width="150" align="right" nowrap>Old Password:</td>
 						<td><input type="password" name="old_pass" style="width: 100%;" /></td>
 					</tr>
+<?php else: ?>
+					<input type="hidden" name="old_pass" style="width: 100%;" value="<?php echo $contextUser; ?>" />
+<?php endif; ?>
 					<tr>
 						<td width="150" align="right" nowrap>New Password:</td>
 						<td><input type="password" name="passwd1" style="width: 100%; AUTOCOMPLETE="OFF"" /></td>

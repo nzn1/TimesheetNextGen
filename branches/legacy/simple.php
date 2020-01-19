@@ -8,7 +8,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 require("class.Pair.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclSimple')) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclSimple'));
+	Header('Location: login.php?clearanceRequired=' . get_acl_level('aclSimple'));
 	exit;
 }
 
@@ -632,8 +632,8 @@ include("navcal/navcalendars.inc");
 		var $taskName;
 		var $workDescription;
 
-		function TaskInfo($value1, $value2, $projectId, $projectTitle, $taskName, $workDescription) {
-			parent::Pair($value1, $value2);
+		function __construct($value1, $value2, $projectId, $projectTitle, $taskName, $workDescription) {
+			parent::__construct($value1, $value2);
 			$this->projectId = $projectId;
 			$this->projectTitle = $projectTitle;
 			$this->taskName = $taskName;

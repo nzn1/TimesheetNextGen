@@ -2,7 +2,7 @@
 // Authenticate
 require("class.AuthenticationManager.php");
 if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+	Header("Location: login.php");
 	exit;
 }
 
