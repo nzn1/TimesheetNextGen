@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclTasks'));
+	Header('Location: login.php?clearanceRequired=' . get_acl_level('aclTasks'));
 	exit;
 }
 
@@ -14,15 +14,15 @@ $contextUser = strtolower($_SESSION['contextUser']);
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
-$task_id = isset($_REQUEST["task_id"]) ? mysql_real_escape_string($_REQUEST["task_id"]): 0;
+$task_id = isset($_REQUEST["task_id"]) ? mysqli_real_escape_string($dbh, $_REQUEST["task_id"]): 0;
 $proj_id = $_REQUEST["proj_id"];
 
 if ($action == "add" || $action == "edit") {
-	$name = mysql_real_escape_string($_REQUEST["name"]);
-	$description = mysql_real_escape_string($_REQUEST["description"]);
+	$name = mysqli_real_escape_string($dbh, $_REQUEST["name"]);
+	$description = mysqli_real_escape_string($dbh, $_REQUEST["description"]);
 	$assigned = isset($_REQUEST["assigned"]) ? $_REQUEST['assigned']: array();
-	array_walk($assigned, mysql_real_escape_string);
-	$task_status = mysql_real_escape_string($_REQUEST["task_status"]);
+	array_walk($assigned, $authenticationManager->escape_string);
+	$task_status = mysqli_real_escape_string($dbh, $_REQUEST["task_status"]);
 }
 
 //create a time string for >>now<<

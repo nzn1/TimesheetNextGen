@@ -192,7 +192,7 @@ DROP TABLE IF EXISTS __TABLE_PREFIX__user;
 CREATE TABLE __TABLE_PREFIX__user (
   username varchar(32) DEFAULT '' NOT NULL,
   level int(11) DEFAULT '0' NOT NULL,
-  password varchar(41) DEFAULT '' NOT NULL,
+  password varchar(256) DEFAULT '' NOT NULL,
   first_name varchar(64) DEFAULT '' NOT NULL,
   last_name varchar(64) DEFAULT '' NOT NULL,
   email_address varchar(63) DEFAULT '' NOT NULL,
@@ -206,7 +206,7 @@ CREATE TABLE __TABLE_PREFIX__user (
   KEY uid (uid)
 );
 
-INSERT INTO __TABLE_PREFIX__user (username,level,password,first_name,last_name) VALUES ('guest',1,__DBPASSWORDFUNCTION__(''),'Guest','User');
+INSERT INTO __TABLE_PREFIX__user (username,level,password,first_name,last_name) VALUES ('guest',1,'','Guest','User');
 
 #--------------------------------------------------------
 #

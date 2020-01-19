@@ -112,7 +112,7 @@ class AuthenticationManager {
 
 		//set initial error codes
 		$this->errorCode = AUTH_NONE;
-		$this->errorText = "No attempt has been made to authenticate yet";
+		$this->errorText = Null; //"No attempt has been made to authenticate yet";
 		$this->ldapErrorCode = LDAP_AUTH_NONE;
 		$this->ldapErrorText = "No attempt has been made to authenticate via LDAP yet";
 		$this->ldapServerErrorCode = 0;
@@ -140,9 +140,9 @@ class AuthenticationManager {
 		//check whether we are using ldap
 		if ($tsx_config->get("useLDAP")==1) {
 			//check their credentials with LDAP
-			if ( !$this->ldapAuth($username, $password) ) {
+			if ( !$this->ldapAuth(mysqli_real_escape_string($dbh, $username), mysqli_real_escape_string($dbh, $password)) ) {
 				if ($tsx_config->get("LDAPFallback")==1) {
-					if(!$this->dbAuth($username, $password)){
+					if(!$this->dbAuth(mysqli_real_escape_string($dbh, $username), mysqli_real_escape_string($dbh, $password))){
 						return false;
 					}
 				} else {
@@ -150,7 +150,7 @@ class AuthenticationManager {
 				}
 			}
 		} else {
-			if(!$this->dbAuth($username, $password)){
+			if(!$this->dbAuth(mysqli_real_escape_string($dbh, $username), mysqli_real_escape_string($dbh, $password))){
 				return false;
 			}
 		}
@@ -219,10 +219,10 @@ class AuthenticationManager {
 		require("install/table_names.inc");
 		require("install/database_credentials.inc");
 		// query the user table for authentication details
-		list( $qh, $num ) = dbQuery( "SELECT password AS passwd1, $DATABASE_PASSWORD_FUNCTION('$password') AS passwd2, status " . "FROM $USER_TABLE WHERE username='$username'" );
+		list( $qh, $num ) = dbQuery( "SELECT password AS hashedpw, status " . "FROM $USER_TABLE WHERE username='$username'" );
 		$data = dbResult( $qh );
 		// is the password correct?
-		if ( $num == 0 || $data["passwd1"] != $data["passwd2"] ){
+		if ( $num == 0 || !password_verify($password, $data["hashedpw"]) ){
 			$this->errorCode =  AUTH_FAILED_INCORRECT_PASSWORD;
 			if((isset($this->errorText))){
 				$this->errorText = $this->errorText . " or Incorrect username or password";
@@ -242,7 +242,7 @@ class AuthenticationManager {
 	}
 
 	/**
-	* Logs out the currenlty logged in user
+	* Logs out the currently logged in user
 	*/
 	function logout() {
 		require("install/table_names.inc");
@@ -485,7 +485,7 @@ class AuthenticationManager {
 		if (!$this->userExists($username)) {
 			//create the user
 			if ($tsx_config->get("LDAPFallback")==1) //if we're using Fallback, then we want to put the password in the database
-				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
+				$pwdstr = '"'.password_hash($password, PASSWORD_DEFAULT).'"';
 			else 
 				$pwdstr = "";
 			dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, last_name, " .
@@ -516,7 +516,7 @@ class AuthenticationManager {
 
 			//update the users details
 			if ($tsx_config->get("LDAPFallback")==1) //if we're using Fallback, then we want to store the current password in the database
-				$pwdstr = "$DATABASE_PASSWORD_FUNCTION('$password')";
+				$pwdstr = '"'.password_hash($password, PASSWORD_DEFAULT).'"';
 			else 
 				$pwdstr = "''";
 			dbquery("UPDATE $USER_TABLE SET first_name='$firstName', last_name='$lastName', ".
@@ -555,7 +555,7 @@ class AuthenticationManager {
 	}
 }
 
-//create the instance so its availiable by just including this file
+//create the instance so its available by just including this file
 $authenticationManager = new AuthenticationManager;
 
 // vim:ai:ts=4:sw=4

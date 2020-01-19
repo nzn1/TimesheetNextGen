@@ -1,12 +1,12 @@
 #!/bin/sh
 
-TIMESHEET_NEW_VERSION="1.5.2";
+TIMESHEET_NEW_VERSION="1.6.0";
 DATETIME=`date +%Y-%m-%d_%H-%M-%S`
 DB_BACKUP_FILE="timesheet-backup-${DATETIME}.sql";
 
 echo "###################################################################"
 echo "# TimesheetNextGen $TIMESHEET_NEW_VERSION"
-echo "# (c) 2008-2010 Tsheetx Development Team                          #"
+echo "# (c) 2008-2020 Tsheetx Development Team                          #"
 echo "###################################################################"
 echo "# This program is free software; you can redistribute it and/or   #"
 echo "# modify it under the terms of the GNU General Public License     #"
@@ -18,7 +18,7 @@ echo "# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   #"
 echo "# GNU General Public License for more details.                    #"
 echo "###################################################################"
 
-echo "Welcome to the TimesheetNextGen upgrade tool. This script will attempt to "
+echo "Welcome to the tsheetx upgrade tool. This script will attempt to "
 echo "upgrade your existing version of Timesheet.php or TimesheetNextGen. "
 echo ""
 echo "This script will attempt to detect existing settings and the existing version, "
@@ -29,11 +29,11 @@ echo "graphical templates. Please save these into a text file before upgrading s
 echo "you can enter them afterwards."
 echo ""
 echo "Whilst this script has been tested and known to work on at least one machine "
-echo "there is no guarantee it will be successfull on yours. This script will attempt "
+echo "there is no guarantee it will be successful on yours. This script will attempt "
 echo "to backup the existing database into a file called '$DB_BACKUP_FILE'."
 echo ""
 
-# get the working dir of the existing timesheet.php
+# get the working dir of the existing installation
 SUCCESS=0
 until [ $SUCCESS = 1 ]
 do
@@ -127,31 +127,33 @@ if [ "$TIMESHEET_VERSION" \< "1.2.0" ]; then
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.2.0.sql
 fi
 
-echo -n "Due to changes to MySQL in version 4.1, the way that passwords are stored and "
-echo -n "accessed has changed. There are 3 different functions and you must choose the "
-echo -n "correct one according to your version of MySQl"
+echo -n "Due to changes to MySQL, the way that passwords are stored and "
+echo -n "accessed has changed. There are 4 different functions and you must choose the "
+echo -n "correct one according to your installation of MySQl"
 echo ""
 echo -n "Your local version of mysql is:"
 echo ""
 mysql --version
 echo ""
 echo "Please select a password function:"
-echo "   1: SHA1 (Use this for version 4.1 and later)"
+echo "   0: SHA2 (Use this for version 5.7 and later)"
+echo "   1: SHA1 (Use this for version 4.1 and in between)"
 echo "   2: PASSWORD (Use this for version below 4.1)"
-echo "   3: OLD_PASSWORD (Select this one if you orignally installed timesheet on pre 4.1 versions)"
+echo "   3: OLD_PASSWORD (Select this one if you originally installed timesheet on pre-4.1 versions)"
 read PASSWORD_FUNCTION_NUMBER
 
-DBPASSWORDFUNCTION="OLD_PASSWORD"
+DBPASSWORDFUNCTION="SHA2"
 if [ "$PASSWORD_FUNCTION_NUMBER" = "3" ]; then
         DBPASSWORDFUNCTION="OLD_PASSWORD"
 fi
-
 if [ "$PASSWORD_FUNCTION_NUMBER" = "2" ]; then
         DBPASSWORDFUNCTION="PASSWORD"
 fi
+if [ "$PASSWORD_FUNCTION_NUMBER" = "1" ]; then
+        DBPASSWORDFUNCTION="SHA1"
+fi
 
 if [ "$TIMESHEET_VERSION" \< "1.2.1" ]; then
-	#now do the latest (1.2.1) changes
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.2.1.sql.in > timesheet_upgrade_to_1.2.1.sql
 
@@ -169,7 +171,6 @@ if [ "$TIMESHEET_VERSION" \< "1.2.1" ]; then
 fi
 
 if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then
-	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.3.1.sql.in > timesheet_upgrade_to_1.3.1.sql
 
@@ -187,7 +188,6 @@ if [ "$TIMESHEET_VERSION" \< "1.3.1" ]; then
 fi
 
 if [ "$TIMESHEET_VERSION" \< "1.4.1" ]; then
-	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.4.1.sql.in > timesheet_upgrade_to_1.4.1.sql
 
@@ -205,7 +205,6 @@ if [ "$TIMESHEET_VERSION" \< "1.4.1" ]; then
 fi
 
 if [ "$TIMESHEET_VERSION" \< "1.5.0" ]; then
-	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.5.0.sql.in > timesheet_upgrade_to_1.5.0.sql
 
@@ -223,7 +222,6 @@ if [ "$TIMESHEET_VERSION" \< "1.5.0" ]; then
 fi
 
 if [ "$TIMESHEET_VERSION" \< "1.5.1" ]; then
-	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.5.1.sql.in > timesheet_upgrade_to_1.5.1.sql
 
@@ -247,7 +245,6 @@ if [ "$TIMESHEET_VERSION" \< "1.5.2" ]; then
 fi
 
 if [ "$TIMESHEET_VERSION" \< "1.5.3" ]; then
-	#now do the latest changes
 	#replace prefix and version timesheet_upgrade....sql.in
 	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.5.3.sql.in > timesheet_upgrade_to_1.5.3.sql
 
@@ -256,6 +253,23 @@ if [ "$TIMESHEET_VERSION" \< "1.5.3" ]; then
 	echo "$DBNAME, to version 1.5.3:"
 	echo ""
 	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.5.3.sql
+
+	if [ $? = 1 ]; then
+		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "
+		echo "has ALTER TABLE privileges. Upgrade will not continue."
+		exit 1;
+	fi
+fi
+
+if [ "$TIMESHEET_VERSION" \< "1.6.0" ]; then
+	#replace prefix and version timesheet_upgrade....sql.in
+	sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g sql/timesheet_upgrade_to_1.6.0.sql.in > timesheet_upgrade_to_1.6.0.sql
+
+	echo ""
+	echo "TimesheetNextGen upgrade will now attempt to upgrade the existing DB, "
+	echo "$DBNAME, to version 1.6.0:"
+	echo ""
+	mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet_upgrade_to_1.6.0.sql
 
 	if [ $? = 1 ]; then
 		echo "There was an error altering tables in the database. Please make sure the user $DBUSER "

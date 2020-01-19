@@ -73,13 +73,13 @@ Manual Installation
 	This can be done manually if you know how, 
 	or by running the script that comes with the distribution.
 
-	First open the "timesheet_create.sql.in" file and replace the following occurrances:
+	First open the "timesheet_create.sql.in" file and replace the following occurrences:
 
 	__DBUSER__ replace with the database username (one with privileges to create databases)
 	__DBNAME__ the name of the database you want to create (e.g. "timesheet")
 	__DBHOST__ the hostname which mysql is runnning on
 	__DBPASS__ the password for the username which will access it
-	__DBPASSWORDFUNCTION__ either "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. (See footnote)
+	__DBPASSWORDFUNCTION__ either "SHA2", "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. (See footnote)
 
 	Now rename it to "timesheet_create.sql"
 	and run it. This script is just a list of SQL commands.
@@ -110,18 +110,18 @@ Manual Installation
 	$DATABASE_USER - (The username which you will connect to the database with)
 	$DATABASE_PASS - (The password which you will connect to the database with)
 	$DATABASE_DB - (The name of the database you created - usually 'timesheet')
-	$DATABASE_PASSWORD_FUNCTION (either "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. [See footnote])
+	$DATABASE_PASSWORD_FUNCTION (either "SHA2", "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. [See footnote])
 
 
-	These values are not required, but may help an upgrade process in the future
+	These values are not required, but will help an upgrade process in the future
 	$TIMESHEET_VERSION   - (The current version of the Timesheet system)
 	$TIMESHEET_INSTALLED - (If the Timesheet system is installed, should be the numeral one).
 
 	Now rename this file to "database_credentials.inc"
  
-5. Set the admin password for TimesheetNextGen, by running the following SQL command:
+5. Add an admin user for TimesheetNextGen, by running the following SQL command:
 
-	INSERT INTO user (username,level,password,first_name,last_name) VALUES ('admin', 10, PASSWORD('<password>'), 'Timesheet', 'Admin');
+	INSERT INTO user (username,level,password,first_name,last_name) VALUES ('admin', 10, '', 'Timesheet', 'Admin');
 
 	Also run these:
 
@@ -130,7 +130,7 @@ Manual Installation
 
 6. Upload the files to your web server.
 
-7. Test the installation by logging in to 'login.php' with the username 'admin', and the <password> entered above.
+7. Test the installation by logging in to 'login.php' with the username 'admin', where you should be prompted to set a new password.
 
 
    <<<<<<<<<<<<<<<<<<<<<x>>>>>>>>>>>>>>>>>>>>>
@@ -139,7 +139,7 @@ Manual Installation
 FOOTNOTE
 --------
 
-Due to changes to MySQL in version 4.1, the way that passwords are stored and
+Due to changes to MySQL, the way that passwords are stored and
 accessed has changed. There are 3 different functions and you must choose the
 correct one according to your version of MySQL.
 
@@ -147,8 +147,9 @@ You can determine your local version of mysql by typing
 
 mysql --version
 
-You will need to choose one of the folling password functions:
+You will need to choose one of the following password functions:
 
+SHA2 (Use this for version 5.7 and later)
 SHA1 (Use this for version 4.1 and later)
 PASSWORD (Use this for versions below 4.1)
 OLD_PASSWORD (For versions above 4.1 when SHA1 fails)

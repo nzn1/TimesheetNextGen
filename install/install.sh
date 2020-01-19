@@ -1,11 +1,11 @@
 #!/bin/sh
 
-TIMESHEET_NEW_VERSION="1.5.2";
+TIMESHEET_NEW_VERSION="1.6.0";
 TIMESHEET_FIRST_VERSION="1.2.1";
 
 echo "###################################################################"
 echo "# TimesheetNextGen $TIMESHEET_NEW_VERSION "
-echo "# (c) 2008-2009 Tsheetx Development Team                          #"
+echo "# (c) 2008-2020 Tsheetx Development Team                          #"
 echo "###################################################################"
 echo "# This program is free software; you can redistribute it and/or   #"
 echo "# modify it under the terms of the GNU General Public License     #"
@@ -17,7 +17,7 @@ echo "# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   #"
 echo "# GNU General Public License for more details.                    #"
 echo "###################################################################"
 
-echo "Welcome to the TimesheetNextGen Installation. This script will attempt to "
+echo "Welcome to the tsheetx Installation. This script will attempt to "
 echo "install on your webserver."
 echo ""
 echo "If you want to upgrade from a previous version of TimesheetNextGen, please "
@@ -36,27 +36,30 @@ if [ "$DBHOST" = "" ]; then
 fi
 
 echo ""
-echo "Due to changes to MySQL in version 4.1, the way that passwords are stored and "
+echo "Due to changes to MySQL, the way that passwords are stored and "
 echo "accessed has changed. There are 3 different functions and you must choose the "
-echo "correct one according to your version of MySQl"
+echo "correct one according to your installation of MySQl"
 echo ""
 echo "Your local version of mysql is:"
 echo ""
 mysql --version
 echo ""
 echo "Please select a password function:"
-echo "   1: SHA1 (Use this for version 4.1 and later)"
+echo "   0: SHA2 (Use this for version 5.7 and later)"
+echo "   1: SHA1 (Use this for version 4.1 and in between)"
 echo "   2: PASSWORD (Use this for version below 4.1)"
 echo "   3: OLD_PASSWORD (For versions above 4.1 when SHA1 fails)"
 read PASSWORD_FUNCTION_NUMBER
 
-DBPASSWORDFUNCTION="SHA1"
+DBPASSWORDFUNCTION="SHA2"
 if [ "$PASSWORD_FUNCTION_NUMBER" = "3" ]; then
 	DBPASSWORDFUNCTION="OLD_PASSWORD"
 fi
-
 if [ "$PASSWORD_FUNCTION_NUMBER" = "2" ]; then
 	DBPASSWORDFUNCTION="PASSWORD"
+fi
+if [ "$PASSWORD_FUNCTION_NUMBER" = "1" ]; then
+	DBPASSWORDFUNCTION="SHA1"
 fi
 
 echo ""
@@ -126,7 +129,7 @@ else
 		echo ""
 		echo -n "MySQL Administrator username:"
 		read MYSQLADMINUSER
-		echo -n "MySQL Administator password:"
+		echo -n "MySQL Administrator password:"
 		read MYSQLADMINPASS
 		echo ""
 		echo "A new account will be created specifically for accessing the "
@@ -174,7 +177,7 @@ if [ "$TABLE_PREFIX" = "" ]; then
 fi
 
 #replace prefix and version timesheet.sql.in
-sed "s/__TABLE_PREFIX__/$TABLE_PREFIX/g;s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g;s/__DBPASSWORDFUNCTION__/$DBPASSWORDFUNCTION/g;" sql/timesheet.sql.in> timesheet.sql
+sed "s/__TABLE_PREFIX__/$TABLE_PREFIX/g;s/__TIMESHEET_VERSION__/$TIMESHEET_NEW_VERSION/g;" sql/timesheet.sql.in> timesheet.sql
 
 #replace prefix in table_names.inc.in
 sed s/__TABLE_PREFIX__/$TABLE_PREFIX/g table_names.inc.in > ../table_names.inc
@@ -190,7 +193,7 @@ mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < timesheet.sq
 
 if [ $? != 0 ]; then
 	echo ""
-	echo "An unexpected error occured when creating the tables. Please report this."
+	echo "An unexpected error occurred when creating the tables. Please investigate this."
 	exit 1;
 fi
 
@@ -294,18 +297,17 @@ if [ $? != 0 ]; then
 fi
 
 echo ""
-echo "An account must now be created with administrator privileges"
+echo "A timesheet account must now be created with administrator privileges"
 echo "to allow someone to login and configure the system."
 echo ""
 echo -n "Please enter a username for the account:"
 read ADMIN_USER
-echo -n "Please enter a password for the account:"
-read ADMIN_PASS
+echo ""
+echo "A password reset will be required on the first login."
+echo ""
 
 echo -n "INSERT INTO $TABLE_PREFIX" > sql.tmp
-echo -n "user (username,level,password,first_name,last_name) VALUES ('$ADMIN_USER',10,$DBPASSWORDFUNCTION('" >> sql.tmp
-echo -n $ADMIN_PASS >> sql.tmp
-echo "'),'Timesheet','Admin')" >> sql.tmp
+echo -n "user (username,level,password,first_name,last_name) VALUES ('$ADMIN_USER',10,'','Timesheet','Admin')" >> sql.tmp
 mysql -h $DBHOST -u $DBUSER --database=$DBNAME --password=$DBPASS < sql.tmp
 
 echo -n "INSERT INTO $TABLE_PREFIX" > sql.tmp
@@ -319,16 +321,8 @@ rm sql.tmp
 
 echo ""
 echo "###################################################################"
-echo "Be sure that your web server is set up to parse PHP 4 (or later)"
-echo "files.  See the PHP documentation at http://www.php.net for more"
-echo "information on how to do this."
-echo ""
-echo "If you are wanting to use LDAP for authentication then you will"
-echo "need the php LDAP modules for apache, or LDAP compiled into your"
-echo "Apache PHP module. For more information check the PHP documentation"
-echo "at http://www.php.net"
-echo ""
-echo "Once that is done, point your browser to the installation and log"
-echo "in as $ADMIN_USER with the password you gave above. "
+echo "Assuming your webhosting is configured for PHP and MySQL,"
+echo "point your browser to the installation and log in"
+echo "as $ADMIN_USER, set a password and continue from there. "
 echo ""
 

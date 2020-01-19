@@ -5,7 +5,7 @@ require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 //require("debuglog.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=Administrator');
+	Header('Location: login.php?clearanceRequired=Administrator');
 	exit;
 }
 
@@ -70,16 +70,16 @@ if (!isset($action)) {
 	Header("Location: $HTTP_REFERER");
 }
 elseif ($action == "edit") {
-	$headerhtml = mysql_real_escape_string(trim($headerhtml));
-	$bodyhtml = mysql_real_escape_string(trim($bodyhtml));
-	$footerhtml = mysql_real_escape_string(trim($footerhtml));
-	$errorhtml = mysql_real_escape_string(trim($errorhtml));
-	$bannerhtml = mysql_real_escape_string(trim($bannerhtml));
-	$tablehtml = mysql_real_escape_string(trim($tablehtml));
-	$locale = mysql_real_escape_string(trim($locale));
-	$timezone = mysql_real_escape_string(trim($timezone));
-	$projectItemsPerPage = mysql_real_escape_string(trim($projectItemsPerPage));
-	$taskItemsPerPage = mysql_real_escape_string(trim($taskItemsPerPage));
+	$headerhtml = mysqli_real_escape_string($dbh, trim($headerhtml));
+	$bodyhtml = mysqli_real_escape_string($dbh, trim($bodyhtml));
+	$footerhtml = mysqli_real_escape_string($dbh, trim($footerhtml));
+	$errorhtml = mysqli_real_escape_string($dbh, trim($errorhtml));
+	$bannerhtml = mysqli_real_escape_string($dbh, trim($bannerhtml));
+	$tablehtml = mysqli_real_escape_string($dbh, trim($tablehtml));
+	$locale = mysqli_real_escape_string($dbh, trim($locale));
+	$timezone = mysqli_real_escape_string($dbh, trim($timezone));
+	$projectItemsPerPage = mysqli_real_escape_string($dbh, trim($projectItemsPerPage));
+	$taskItemsPerPage = mysqli_real_escape_string($dbh, trim($taskItemsPerPage));
 
 	// now change values in new configuration table
 

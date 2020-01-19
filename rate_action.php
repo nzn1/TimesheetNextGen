@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearance(CLEARANCE_ADMINISTRATOR)) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=Administrator');
+	Header('Location: login.php?clearanceRequired=Administrator');
 	exit;
 }
 
@@ -13,8 +13,8 @@ $dbh = dbConnect();
 
 //load local vars from superglobals
 $action = $_REQUEST["action"];
-$rate_id = mysql_real_escape_string($_REQUEST["rate_id"]);
-$bill_rate = mysql_real_escape_string($_REQUEST["bill_rate"]);
+$rate_id = mysqli_real_escape_string($dbh, $_REQUEST["rate_id"]);
+$bill_rate = mysqli_real_escape_string($dbh, $_REQUEST["bill_rate"]);
 
 //print "<p>isAdministrator='$isAdministrator'</p>";
 

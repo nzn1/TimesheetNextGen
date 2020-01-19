@@ -5,13 +5,10 @@ require("class.AuthenticationManager.php");
 //check that this form has been submitted
 if (isset($_POST["username"]) && isset($_POST["password"])) {
 	//try logging the user in
-	if (!$authenticationManager->login(mysql_real_escape_string($_POST["username"]), mysql_real_escape_string($_POST["password"])))
+	if (!$authenticationManager->login($_POST["username"], $_POST["password"]))
 		$loginFailure = true;
 	else {
-		if (!empty($_REQUEST["redirect"]))
-			header("Location: $_REQUEST[redirect]");
-		else
-			gotoStartPage();
+		gotoStartPage();
 
 		exit();
 	}
@@ -37,8 +34,6 @@ function printMessage($message) {
 				"</tr>";
 }
 
-$redirect = isset($_REQUEST["redirect"]) ? $_REQUEST["redirect"] : "";
-
 ?>
 
 <html>
@@ -51,7 +46,6 @@ include ("header.inc");
 <body onLoad="document.loginForm.username.focus();">
 
 <form action="login.php" method="POST" name="loginForm" style="margin: 0px;">
-<input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
 
 <table border="0" cellspacing="0" cellpadding="0" align="center">
 	<tr>

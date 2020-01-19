@@ -4,7 +4,7 @@
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasAccess('aclTasks')) {
-	Header('Location: login.php?redirect='.$_SERVER[PHP_SELF].'&clearanceRequired=' . get_acl_level('aclTasks'));
+	Header('Location: login.php?clearanceRequired=' . get_acl_level('aclTasks'));
         exit;
 }
 
@@ -19,10 +19,10 @@ $contextUser = strtolower($_SESSION['contextUser']);
 $assignTasks = isset($_REQUEST["assignTasks"]) ? $_REQUEST["assignTasks"]: false;
 
 function do_query($sql) {
-	$result = mysql_query($sql);
+	$result = mysqli_query($dbh, $sql);
 	if(!$result) {
 		print "Query failed: \"$sql\"\n";
-		print get_db_error(mysql_error())."\n";
+		print get_db_error(mysqli_error($dbh))."\n";
 		return false;
 	}
 	return $result;

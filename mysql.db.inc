@@ -7,8 +7,9 @@
 	function dbConnect() {
 		$GLOBALS["CONNECTED_MYSQL_DB_INC"] = 1;
 		global $DATABASE_HOST, $DATABASE_USER, $DATABASE_PASS, $DATABASE_DB;
-		$dbh = @mysql_pconnect("$DATABASE_HOST","$DATABASE_USER","$DATABASE_PASS") or die("Unable to connect to SQL server: ". mysql_error());
-		mysql_select_db("$DATABASE_DB",$dbh) or die("Unable to select database: ".mysql_error());
+		$dbh = @mysqli_connect("p:$DATABASE_HOST", "$DATABASE_USER", "$DATABASE_PASS") or die("Unable to connect to DB server: ". mysqli_connect_error());
+		mysqli_select_db($dbh, "$DATABASE_DB") or die("Unable to select database: ".mysqli_error($dbh));
+		$GLOBALS["DB_LINK"] = $dbh;
 		return $dbh;
 	}
 
@@ -42,35 +43,38 @@
 
 	function dbQuery ($statement) {
 		if (!isset($GLOBALS["CONNECTED_MYSQL_DB_INC"]))
-			dbConnect();
-		//$result=@mysql_query($statement) or die("<pre>\n\nCan't perform query: " . mysql_error() . " \n\n$statement\n\n</pre>");
-		$result=mysql_query($statement) or die("<pre>\n\nCan't perform query: " . mysql_error() . " \n\n$statement\n\n</pre>");
+			$dbh = dbConnect();
+		else
+		    $dbh = $GLOBALS["DB_LINK"];
+		$result=mysqli_query($dbh, $statement) or die("<pre>\n\nCan't perform query: " . mysqli_error($dbh) . " \n\n$statement\n\n</pre>");
 		$num_rows = dbNumRows($result);
 		return array($result, $num_rows);
 	}
 
 	function tryDbQuery ($statement) {
 		if (!isset($GLOBALS["CONNECTED_MYSQL_DB_INC"]))
-			dbConnect();
-		//$result=@mysql_query($statement) or die("<pre>\n\nCan't perform query: " . mysql_error() . " \n\n$statement\n\n</pre>");
-		$result=mysql_query($statement);
+			$dbh = dbConnect();
+		else
+		    $dbh = $GLOBALS["DB_LINK"];
+		//$result=@mysqli_query($dbh, $statement) or die("<pre>\n\nCan't perform query: " . mysqli_error($dbh) . " \n\n$statement\n\n</pre>");
+		$result=mysqli_query($dbh, $statement);
 		$num_rows = dbNumRows($result);
 		return array($result, $num_rows);
 	}
 
 	function dbNumRows ($result) {
-		return @mysql_numrows($result);
+		return @mysqli_num_rows($result);
 	}
 
 	function dbResult ($result,$i=-1) {
 		if ($i >= 0) {
-			@mysql_data_seek($result,$i);
+			@mysqli_data_seek($result,$i);
 		}
-		return mysql_fetch_array($result);
+		return mysqli_fetch_array($result);
 	}
 
 	function dbLastID($result) {
-		return mysql_insert_id($result);
+		return mysqli_insert_id($result);
 	}
 
 // vim:ai:ts=4:sw=4:filetype=php

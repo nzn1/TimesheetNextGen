@@ -28,7 +28,7 @@ if($export_excel){
 require("class.AuthenticationManager.php");
 require("class.CommandMenu.php");
 if (!$authenticationManager->isLoggedIn()) {
-	Header("Location: login.php?redirect=$_SERVER[PHP_SELF]");
+	Header("Location: login.php");
 	exit;
 }
 
