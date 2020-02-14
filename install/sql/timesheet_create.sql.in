@@ -1,7 +1,7 @@
 #cleanup and create database
 
 use mysql;
-DROP USER '__DBUSER__'@'__DBHOST__';
+DROP USER IF EXISTS '__DBUSER__'@'__DBHOST__';
 DROP DATABASE IF EXISTS __DBNAME__;
 
 CREATE DATABASE __DBNAME__;

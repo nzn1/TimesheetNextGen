@@ -21,7 +21,7 @@ if ($action == "add" || $action == "edit") {
 	$name = mysqli_real_escape_string($dbh, $_REQUEST["name"]);
 	$description = mysqli_real_escape_string($dbh, $_REQUEST["description"]);
 	$assigned = isset($_REQUEST["assigned"]) ? $_REQUEST['assigned']: array();
-	array_walk($assigned, $authenticationManager->escape_string);
+	//array_walk($assigned, $authenticationManager->escape_string);
 	$task_status = mysqli_real_escape_string($dbh, $_REQUEST["task_status"]);
 }
 

@@ -586,7 +586,7 @@ include("navcal/navcalendars.inc");
 			<td>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_body">
 					<tr class="inner_table_head">
-						<td class="inner_table_column_heading" align="center">
+						<td class="inner_table_column_heading" align="left">
 							Client / Project / Task<?php if(strstr($layout, 'no work description') == '') echo ' / Work Description'; ?>
 						</td>
 						<td align="center" width="2">&nbsp;</td>
@@ -704,15 +704,15 @@ include("navcal/navcalendars.inc");
 						default:
 							// small work description field = default layout
 							?>
-							<td align="left" style="width:100px;">
+							<td align="left" style="width:200px;">
 								<input type="hidden" id="client_row<?php echo $rowIndex; ?>" name="client_row<?php echo $rowIndex; ?>" value="<?php echo $clientId; ?>" />
 								<select id="clientSelect_row<?php echo $rowIndex; ?>" name="clientSelect_row<?php echo $rowIndex; ?>" onChange="onChangeClientSelect(this.id);" style="width: 100%;" />
 							</td>
-							<td align="left" style="width:100px;">
+							<td align="left" style="width:200px;">
 								<input type="hidden" id="project_row<?php echo $rowIndex; ?>" name="project_row<?php echo $rowIndex; ?>" value="<?php echo $projectId; ?>" />
 								<select id="projectSelect_row<?php echo $rowIndex; ?>" name="projectSelect_row<?php echo $rowIndex; ?>" onChange="onChangeProjectSelect(this.id);" style="width: 100%;" />
 							</td>
-							<td align="left" style="width:140px;">
+							<td align="left" style="width:150px;">
 								<input type="hidden" id="task_row<?php echo $rowIndex; ?>" name="task_row<?php echo $rowIndex; ?>" value="<?php echo $taskId; ?>" />
 								<select id="taskSelect_row<?php echo $rowIndex; ?>" name="taskSelect_row<?php echo $rowIndex; ?>" onChange="onChangeTaskSelect(this.id);" style="width: 100%;" />
 							</td>

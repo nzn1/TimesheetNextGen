@@ -85,8 +85,9 @@ if(!($val === ''))
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">User report</td>
 						<td class="calendar_cell_right">
-							<a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
-							<a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
+							<p><a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=All">Generate all</a> /
+							<a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=Monthly">Generate monthly</a> /
+							<a href="report_user.php?<?php print $ymdStr; ?>&amp;mode=Weekly">Generate weekly</a></p>
 						</td>
 					</tr>
 					<?php echo_TR_Class();?>
@@ -98,15 +99,17 @@ if(!($val === ''))
 					<?php echo_TR_Class();?>
 						<td class="calendar_cell_middle">Project report</td>
 						<td class="calendar_cell_right">
-							<a href="report_project.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
-							<a href="report_project.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
+							<a href="report_project.php?&amp;mode=All">Generate all</a> /
+							<a href="report_project.php?<?php print $ymdStr; ?>&amp;mode=Monthly">Generate monthly</a> /
+							<a href="report_project.php?<?php print $ymdStr; ?>&amp;mode=Weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<?php echo_TR_Class();?>
-						<td class="calendar_cell_middle">Client report</td>
+						<td class="calendar_cell_middle"><a href="report_client.php">Client report</a></td>
 						<td class="calendar_cell_right">
-							<a href="report_client.php?<?php print $ymdStr; ?>&amp;mode=monthly">Generate monthly</a> /
-							<a href="report_client.php?<?php print $ymdStr; ?>&amp;mode=weekly">Generate weekly</a>
+							<a href="report_client.php?&amp;mode=All">Generate All</a> /
+							<a href="report_client.php?<?php print $ymdStr; ?>&amp;mode=Monthly">Generate monthly</a> /
+							<a href="report_client.php?<?php print $ymdStr; ?>&amp;mode=Weekly">Generate weekly</a>
 						</td>
 					</tr>
 					<?php echo_TR_Class();?>
