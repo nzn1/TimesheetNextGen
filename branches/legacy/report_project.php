@@ -52,19 +52,27 @@ if ($proj_id == 0)
 	$proj_id = getFirstProject();
 
 //get the context date
-$todayDate = mktime(0, 0, 0,$month, $day, $year);
+$todayDate = mktime(0, 0, 0,$month, $day+1, $year);
 $dateValues = getdate($todayDate);
 $ymdStr = "&amp;year=".$dateValues["year"] . "&amp;month=".$dateValues["mon"] . "&amp;day=".$dateValues["mday"];
 
-if ($mode == "all") $mode = "monthly";
-if ($mode == "monthly") {
+
+if ($mode == "All") {
+	$startDate = mktime(0,0,0, 1, 1, 2000);
+	$startStr = date("Y-m-d H:i:s",$startDate);
+
+	$endDate = getdate($todayDate);
+	$endStr = date("Y-m-d H:i:s",$todayDate);
+}
+
+if ($mode == "Monthly") {
 	$startDate = mktime(0,0,0, $month, 1, $year);
 	$startStr = date("Y-m-d H:i:s",$startDate);
 
 	$endDate = getMonthlyEndDate($dateValues);
 	$endStr = date("Y-m-d H:i:s",$endDate);
 }
-if ($mode == "weekly") {
+if ($mode == "Weekly") {
 	list($startDate,$endDate) = getWeeklyStartEndDates($todayDate);
 
 	$startStr = date("Y-m-d H:i:s",$startDate);
@@ -224,21 +232,64 @@ if(!$export_excel)
 		echo "<div id=\"header\">";
 		include ("banner.inc");
 		$motd = 0;  //don't want the motd printed
-		if($mode=='weekly')
+		//echo("debugging line --242---  mode = " . $mode . "</br>");
+		if($mode=='Weekly')
 			include("navcal/navcalendars.inc");
-		else
+		elseif($mode=='Monthly')
 			include("navcal/navcal_monthly.inc");
 		echo "</div>";
 	}
 ?>
 
 <?php if(!$export_excel) { ?>
+<? // this populates the dropdown list?>
+
 <form action="<?php echo $_SERVER["PHP_SELF"] ?>" method="get">
+
+<? 
+//get old mode
+$old_mode=$_GET["mode"];
+
+//echo("debugging line --260---  mode = " . $mode . "</br>");
+
+?>
+
 <input type="hidden" name="orderby" value="<?php echo $orderby; ?>" />
-<input type="hidden" name="year" value="<?php echo $year; ?>" />
-<input type="hidden" name="month" value="<?php echo $month; ?>" />
-<input type="hidden" name="day" value="<?php echo $day; ?>" />
-<input type="hidden" name="mode" value="<?php echo $mode; ?>" />
+
+
+
+<? // need to capture mode and make it persistant
+
+
+
+		if($mode=='Weekly'){
+			echo('<input type="hidden" name="mode" value="Weekly" />');
+			echo('<input type="hidden" name="year" value="' . $year . '" />');
+			echo('<input type="hidden" name="month" value="' . $month . '" />');
+			echo('<input type="hidden" name="day" value="' . $day . '" />');
+			}
+		if($mode=='Monthly'){
+			echo('<input type="hidden" name="mode" value="Monthly" />');
+			echo('<input type="hidden" name="year" value="' . $year . '" />');
+			echo('<input type="hidden" name="month" value="' . $month . '" />');
+			echo('<input type="hidden" name="day" value="' . $day . '" />');
+			}
+		if($mode=='All'){
+			echo('<input type="hidden" name="mode" value="All" />');
+			echo('<input type="hidden" name="year" value="' . $year . '" />');
+			echo('<input type="hidden" name="month" value="' . $month . '" />');
+			echo('<input type="hidden" name="day" value="' . $day . '" />');
+			}
+			?>
+
+
+
+
+
+
+
+
+
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -266,14 +317,16 @@ if(!$export_excel)
 						</td>
 						<td align="center" nowrap class="outer_table_heading">
 						<?php
-							if ($mode == "weekly") {
+							if ($mode == "Weekly") {
 								$sdStr = date("M d, Y",$startDate);
 								//just need to go back 1 second most of the time, but DST 
 								//could mess things up, so go back 6 hours...
 								$edStr = date("M d, Y",$endDate - 6*60*60); 
 								echo "Week: $sdStr - $edStr"; 
-							} else
+							} elseif ($mode =="Monthly"){
 								echo date('F Y',$startDate);
+							}
+							else echo ("");
 						?>
 						</td>
 						<?php if (!$print): ?>
@@ -297,7 +350,7 @@ else {  //create Excel header
 	$cn = stripslashes(getClientNameFromProject($proj_id));
 	$pn = stripslashes(get_project_name($proj_id));
 	echo "<h4>Report for $cn / $pn<br />";
-	if ($mode == "weekly") {
+	if ($mode == "Weekly") {
 		$sdStr = date("M d, Y",$startDate);
 		//just need to go back 1 second most of the time, but DST 
 		//could mess things up, so go back 6 hours...
@@ -436,10 +489,11 @@ else {  //create Excel header
 					<tr>
 						<td align="right" class="report_grand_total">
 <?php
-	if ($mode == "weekly")
+	if ($mode == "Weekly")
 		print "Weekly";
-	else
+	if ($mode == "Monthly")
 		print "Monthly";
+	else print "Grand";
 ?>
 							total:
 							<?php echo $formatted_time; ?>
