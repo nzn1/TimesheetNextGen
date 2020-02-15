@@ -79,7 +79,7 @@ Manual Installation
 	__DBNAME__ the name of the database you want to create (e.g. "timesheet")
 	__DBHOST__ the hostname which mysql is runnning on
 	__DBPASS__ the password for the username which will access it
-	__DBPASSWORDFUNCTION__ either "SHA2", "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. (See footnote)
+	__DBPASSWORDFUNCTION__ either "DEFAULT", "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. (See footnote)
 
 	Now rename it to "timesheet_create.sql"
 	and run it. This script is just a list of SQL commands.
@@ -110,7 +110,7 @@ Manual Installation
 	$DATABASE_USER - (The username which you will connect to the database with)
 	$DATABASE_PASS - (The password which you will connect to the database with)
 	$DATABASE_DB - (The name of the database you created - usually 'timesheet')
-	$DATABASE_PASSWORD_FUNCTION (either "SHA2", "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. [See footnote])
+	$DATABASE_PASSWORD_FUNCTION (either "DEFAULT", "SHA1", "PASSWORD" or "OLD_PASSWORD" depending on your version of mysql. [See footnote])
 
 
 	These values are not required, but will help an upgrade process in the future
@@ -149,7 +149,7 @@ mysql --version
 
 You will need to choose one of the following password functions:
 
-SHA2 (Use this for version 5.7 and later)
+DEFAULT (Use this for version 5.7 and later)
 SHA1 (Use this for version 4.1 and later)
 PASSWORD (Use this for versions below 4.1)
 OLD_PASSWORD (For versions above 4.1 when SHA1 fails)

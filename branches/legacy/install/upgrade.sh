@@ -136,13 +136,13 @@ echo ""
 mysql --version
 echo ""
 echo "Please select a password function:"
-echo "   0: SHA2 (Use this for version 5.7 and later)"
+echo "   0: DEFAULT (Use this for version 5.7 and later)"
 echo "   1: SHA1 (Use this for version 4.1 and in between)"
 echo "   2: PASSWORD (Use this for version below 4.1)"
 echo "   3: OLD_PASSWORD (Select this one if you originally installed timesheet on pre-4.1 versions)"
 read PASSWORD_FUNCTION_NUMBER
 
-DBPASSWORDFUNCTION="SHA2"
+DBPASSWORDFUNCTION="DEFAULT"
 if [ "$PASSWORD_FUNCTION_NUMBER" = "3" ]; then
         DBPASSWORDFUNCTION="OLD_PASSWORD"
 fi

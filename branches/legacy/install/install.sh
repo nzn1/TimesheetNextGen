@@ -37,7 +37,7 @@ fi
 
 echo ""
 echo "Due to changes to MySQL, the way that passwords are stored and "
-echo "accessed has changed. There are 3 different functions and you must choose the "
+echo "accessed has changed. There are 4 different functions and you must choose the "
 echo "correct one according to your installation of MySQl"
 echo ""
 echo "Your local version of mysql is:"
@@ -45,13 +45,13 @@ echo ""
 mysql --version
 echo ""
 echo "Please select a password function:"
-echo "   0: SHA2 (Use this for version 5.7 and later)"
+echo "   0: DEFAULT (Use this for version 5.7 and later)"
 echo "   1: SHA1 (Use this for version 4.1 and in between)"
 echo "   2: PASSWORD (Use this for version below 4.1)"
 echo "   3: OLD_PASSWORD (For versions above 4.1 when SHA1 fails)"
 read PASSWORD_FUNCTION_NUMBER
 
-DBPASSWORDFUNCTION="SHA2"
+DBPASSWORDFUNCTION="DEFAULT"
 if [ "$PASSWORD_FUNCTION_NUMBER" = "3" ]; then
 	DBPASSWORDFUNCTION="OLD_PASSWORD"
 fi

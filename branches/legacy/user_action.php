@@ -21,7 +21,7 @@ $first_name = mysqli_real_escape_string($dbh, $_REQUEST["first_name"]);
 $last_name = mysqli_real_escape_string($dbh, $_REQUEST["last_name"]);
 $username = mysqli_real_escape_string($dbh, $_REQUEST["username"]);
 $email_address = mysqli_real_escape_string($dbh, $_REQUEST["email_address"]);
-$password = mysqli_real_escape_string($dbh, $_REQUEST["password"]);
+$password = password_hash(mysqli_real_escape_string($dbh, $_REQUEST["password"]), PASSWORD_DEFAULT);
 $isAdministrator = isset($_REQUEST["isAdministrator"]) ? mysqli_real_escape_string($dbh, $_REQUEST["isAdministrator"]): "false";
 $isManager = isset($_REQUEST["isManager"]) ? mysqli_real_escape_string($dbh, $_REQUEST["isManager"]): "false";
 $status = isset($_REQUEST["isActive"]) ? ($_REQUEST["isActive"]=="true" ? "ACTIVE" : "INACTIVE") : "ACTIVE";
@@ -74,14 +74,14 @@ else if ($action == "addupdate") {
 								"username='$username', " .
 								"email_address='$email_address', ".
 								"level='$level', ".
-								"password=$DATABASE_PASSWORD_FUNCTION('$password') " .
+								"password='$password' " .
 								"WHERE uid='$uid'");
 		}
 	} else {
 		// a new user
 		dbquery("INSERT INTO $USER_TABLE (username, level, password, first_name, ".
 							"last_name, email_address, time_stamp, status) " .
-						"VALUES ('$username',$level,$DATABASE_PASSWORD_FUNCTION('$password'),'$first_name',".
+						"VALUES ('$username',$level,'$password','$first_name',".
 							"'$last_name','$email_address',0,'$status')");
 		dbquery("INSERT INTO $ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default project.
 		dbquery("INSERT INTO $TASK_ASSIGNMENTS_TABLE VALUES (1,'$username', 1)"); // add default task

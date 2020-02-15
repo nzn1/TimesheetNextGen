@@ -194,7 +194,7 @@ function display_install_step_2() {
 	$db_prefix = (isset($_REQUEST['db_prefix']) && $_REQUEST['db_prefix']) ? $_REQUEST['db_prefix'] : 'timesheet_';
 	$db_user = (isset($_REQUEST['db_user']) && $_REQUEST['db_user']) ? $_REQUEST['db_user'] : '';
 	$db_pass = (isset($_REQUEST['db_pass']) && $_REQUEST['db_pass']) ? $_REQUEST['db_pass'] : '';
-	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA2';
+	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'DEFAULT';
 ?>
 <h2>Step Two: MySQL Database Configuration</h2>
 <?php if($_ERROR) {?>
@@ -222,14 +222,14 @@ function display_install_step_2() {
 <tr>
 <th>Password Function</th>
 <td><select name="db_pass_func">
-<option value="SHA2">SHA2</option>
+<option value="DEFAULT">DEFAULT</option>
 <option value="SHA1">SHA1</option>
 <option value="PASSWORD">PASSWORD</option>
 <option value="OLD_PASSWORD">OLD PASSWORD</option>
 </select></td>
-<td>This is the function the database uses to encrypt the passwords. Nowadays use SHA2 (256 bits). If your MySQL version is 4.1 or above
+<td>This is the function the database uses to encrypt the passwords. Nowadays use the DB's default. If your MySQL version is 4.1 or above
 you should use SHA1. PASSWORD should be used on MySQL version 4.0 or below, and OLD PASSWORD for MySQL
-version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA2.</em></td></tr>
+version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use DEFAULT.</em></td></tr>
 <tr>
 <th>Table Prefix</th><td><input type="text" name="db_prefix" value="<?php echo $db_prefix; ?>" /></td>
 <td>This prefix is used for all table names</td>
@@ -260,7 +260,7 @@ function create_new_installation() {
 	$db_prefix = (isset($_REQUEST['db_prefix']) && $_REQUEST['db_prefix']) ? $_REQUEST['db_prefix'] : 'timesheet_';
 	$db_user = (isset($_REQUEST['db_user']) && $_REQUEST['db_user']) ? $_REQUEST['db_user'] : false;
 	$db_pass = (isset($_REQUEST['db_pass']) && $_REQUEST['db_pass']) ? $_REQUEST['db_pass'] : false;
-	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA2';
+	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'DEFAULT';
 	$admin_user = (isset($_REQUEST['admin_user']) && $_REQUEST['admin_user']) ? $_REQUEST['admin_user'] : '';
 	$admin_pass = (isset($_REQUEST['admin_pass']) && $_REQUEST['admin_pass']) ? $_REQUEST['admin_pass'] : '';
 
@@ -441,14 +441,14 @@ function display_upgrade_step_2() {
 <tr>
 <th>Password Function</th>
 <td><select name="db_pass_func">
-<option value="SHA2" <?php if ($DATABASE_PASSWORD_FUNCTION == 'SHA2') { echo 'selected="selected"'; } ?>>SHA2</option>
+<option value="DEFAULT" <?php if ($DATABASE_PASSWORD_FUNCTION == 'DEFAULT') { echo 'selected="selected"'; } ?>>DEFAULT</option>
 <option value="SHA1" <?php if ($DATABASE_PASSWORD_FUNCTION == 'SHA1') { echo 'selected="selected"'; } ?>>SHA1</option>
 <option value="PASSWORD" <?php if ($DATABASE_PASSWORD_FUNCTION == 'PASSWORD') { echo 'selected="selected"'; } ?>>PASSWORD</option>
 <option value="OLD_PASSWORD" <?php if ($DATABASE_PASSWORD_FUNCTION == 'OLD_PASSWORD') { echo 'selected="selected"'; } ?>>OLD PASSWORD</option>
 </select></td>
-<td>This is the function the database uses to encrypt the passwords. Nowadays use SHA2 (256 bit). If your MySQL version is 4.1 or above
+<td>This is the function the database uses to encrypt the passwords. Nowadays use the DB's default. If your MySQL version is 4.1 or above
 you should use SHA1. PASSWORD should be used on MySQL version 4.0 or below, and OLD PASSWORD for MySQL
-version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use SHA2.</em></td></tr>
+version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use DEFAULT.</em></td></tr>
 <tr>
 <th>Table Prefix</th><td><input type="text" name="db_prefix" value="<?php echo $db_prefix; ?>" /></td>
 <td>This prefix is used for all table names</td>
@@ -476,7 +476,7 @@ function create_database_one() {
 	$db_prefix = (isset($_REQUEST['db_prefix']) && $_REQUEST['db_prefix']) ? $_REQUEST['db_prefix'] : false;
 	$db_user = (isset($_REQUEST['db_user']) && $_REQUEST['db_user']) ? $_REQUEST['db_user'] : false;
 	$db_pass = (isset($_REQUEST['db_pass']) && $_REQUEST['db_pass']) ? $_REQUEST['db_pass'] : false;
-	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA2';
+	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'DEFAULT';
 
 	$admin_user = (isset($_REQUEST['admin_user']) && $_REQUEST['admin_user']) ? $_REQUEST['admin_user'] : '';
 	$admin_pass = (isset($_REQUEST['admin_pass']) && $_REQUEST['admin_pass']) ? $_REQUEST['admin_pass'] : '';
@@ -750,7 +750,7 @@ function create_db_user($db_host,$db_user,$db_pass,$db_pass_func) {
 	global $dbh, $_ERROR;
 	switch ($db_pass_func)
 	{
-		case 'SHA2': { $sql="CREATE USER '$db_user'@'$db_host' IDENTIFIED WITH sha256_password BY '$db_pass';"; break; }
+		case 'DEFAULT': { $sql="CREATE USER '$db_user'@'$db_host' IDENTIFIED BY '$db_pass';"; break; }
 		case 'SHA1': { $sql="CREATE USER '$db_user'@'$db_host' IDENTIFIED WITH some_old_password_function BY '$db_pass';"; break; }
 		case 'PASSWORD': { $sql="CREATE USER '$db_user'@'$db_host' IDENTIFIED WITH mysql_native_password BY '$db_pass';"; break; }
 		case 'OLD_PASSWORD': { $sql="CREATE USER '$db_user'@'$db_host' IDENTIFIED WITH mysql_old_password BY '$db_pass';"; break; }
@@ -894,7 +894,7 @@ echo "<h2>Attempting upgrade</h2><br>";
 	$db_prefix = (isset($_REQUEST['db_prefix']) && $_REQUEST['db_prefix']) ? $_REQUEST['db_prefix'] : false;
 	$db_user = (isset($_REQUEST['db_user']) && $_REQUEST['db_user']) ? $_REQUEST['db_user'] : false;
 	$db_pass = (isset($_REQUEST['db_pass']) && $_REQUEST['db_pass']) ? $_REQUEST['db_pass'] : false;
-	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'SHA2';
+	$db_pass_func = (isset($_REQUEST['db_pass_func']) && $_REQUEST['db_pass_func']) ? $_REQUEST['db_pass_func'] : 'DEFAULT';
 
 	// check that we have all we need
 	$_ERROR = '';
