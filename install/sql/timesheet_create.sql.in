@@ -10,8 +10,8 @@ CREATE DATABASE __DBNAME__;
 # Now add a user with access to timesheet tables
 #
 
-# currently hard-coded authentication to sha256 
-CREATE USER '__DBUSER__'@'__DBHOST__' IDENTIFIED WITH sha256_password BY '__DBPASS__';
+# currently hard-coded authentication to DB's default authentication 
+CREATE USER '__DBUSER__'@'__DBHOST__' IDENTIFIED BY '__DBPASS__';
 
 GRANT ALL ON __DBNAME__ TO '__DBUSER__'@'__DBHOST__';
 
