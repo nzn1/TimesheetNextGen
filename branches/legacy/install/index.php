@@ -760,7 +760,7 @@ function create_database_two($db_host, $db_name, $db_prefix, $db_user, $db_pass,
  */
 function grant_user_permissions($db_host,$db_name,$db_user) {
 	global $dbh, $_ERROR;
-	$sql="GRANT ALL ON $db_name TO $db_user@'$db_host'";
+	$sql="GRANT ALL PRIVILEGES ON $db_name.* TO '$db_user'@'$db_host' WITH GRANT OPTION";
 	//echo htmlentities($sql) . '<br />';
 	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= 'Could not add user permissions<br />';
@@ -1250,44 +1250,44 @@ function upgrade_tables($db_prefix, $db_pass_func) {
 	//If any SQL statements fail, we don't want to continue, and we want to mark the DB
 	//with the version that last succeeded so we can hopefully continue the upgrades later
 	case '1.2.0' :
-        echo "Updating to v1.2.1<br>";
+	echo "Updating to v1.2.1<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.2.1.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.2.1');
 		if($result === false) return $result;
 	case '1.2.1' :
-        echo "Updating to v1.3.1<br>";
+	echo "Updating to v1.3.1<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.3.1.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.3.1');
 		if($result === false) return $result;
 	case '1.3.1' :
-        echo "Updating to v1.4.1<br>";
+	echo "Updating to v1.4.1<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.4.1.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.4.1');
 		if($result === false) return $result;
 	case '1.4.1' :
-        echo "Updating to v1.5.0<br>";
+	echo "Updating to v1.5.0<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.0.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.5.0');
 		if($result === false) return $result;
 	case '1.5.0' :
-        echo "Updating to v1.5.1<br>";
+	echo "Updating to v1.5.1<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.1.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.5.1');
 		if($result === false) return $result;
 	case '1.5.1' :
 	case '1.5.2' :
-        echo "Updating to v1.5.3<br>";
+	echo "Updating to v1.5.3<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.3.sql.in');
 		if($result === false) return $result;
 		$result = update_new_db_version($db_prefix, '1.5.3');
 		if($result === false) return $result;
 	case '1.5.3' :
-        echo "Updating to v1.6.0<br>";
+	echo "Updating to v1.6.0<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.6.0.sql.in');
 		if($result === false) return $result;
 		$result = update_new_db_version($db_prefix, '1.6.0');
