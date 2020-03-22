@@ -388,7 +388,7 @@ class AuthenticationManager {
 			//does it start with a '(' and end with a ')' ?
 			$userFilter = $tsx_config->get("LDAPFilter");
 			$length = strlen($userFilter);
-			if ($userFilter{0} == "(" && $userFilter{$length-1} == ")")
+			if ($userFilter[0] == "(" && $userFilter[$length-1] == ")")
 				$userFilter = substr($userFilter, 1, $length-2);
 
 			$filter = "(&(" . $userFilter . ")(" . $filter . "))";

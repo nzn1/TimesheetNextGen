@@ -689,7 +689,8 @@ if (!defined("COMMON_INC")) {
 						"AND $CLIENT_TABLE.client_id=$PROJECT_TABLE.client_id ".
 						"AND $PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id ".
 						"AND $ASSIGNMENTS_TABLE.username='$contextUser' ".
-						"GROUP BY $CLIENT_TABLE.client_id ".
+#incompatible with sql_mode=only_full_group_by
+#						"GROUP BY $CLIENT_TABLE.client_id ".
 						"ORDER BY organisation");
 		}
 		else {
