@@ -122,7 +122,7 @@ CREATE TABLE __TABLE_PREFIX__project (
   client_id int(11) DEFAULT '0' NOT NULL,
   description varchar(255),
   start_date date DEFAULT '1970-01-01' NOT NULL,
-  deadline date DEFAULT '0000-00-00' NOT NULL,
+  deadline date DEFAULT '1970-01-01' NOT NULL,
   http_link varchar(127),
   proj_status enum('Pending','Started','Suspended','Complete') DEFAULT 'Pending' NOT NULL,
   proj_leader varchar(32) DEFAULT '' NOT NULL,
@@ -141,15 +141,15 @@ CREATE TABLE __TABLE_PREFIX__task (
   proj_id int(11) DEFAULT '0' NOT NULL,
   name varchar(127) DEFAULT '' NOT NULL,
   description text,
-  assigned datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-  started datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-  suspended datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-  completed datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+  assigned datetime DEFAULT '1970-01-01 00:00:00' NOT NULL,
+  started datetime DEFAULT '1970-01-01 00:00:00' NOT NULL,
+  suspended datetime DEFAULT '1970-01-01 00:00:00' NOT NULL,
+  completed datetime DEFAULT '1970-01-01 00:00:00' NOT NULL,
   status enum('Pending','Assigned','Started','Suspended','Complete') DEFAULT 'Pending' NOT NULL,
   PRIMARY KEY (task_id)
 );
 
-INSERT INTO __TABLE_PREFIX__task VALUES (1,1,'Default Task','','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','0000-00-00 00:00:00','Started');
+INSERT INTO __TABLE_PREFIX__task VALUES (1,1,'Default Task','','1970-01-01 00:00:00','1970-01-01 00:00:00','1970-01-01 00:00:00','1970-01-01 00:00:00','Started');
 
 #--------------------------------------------------------
 #
@@ -173,7 +173,7 @@ DROP TABLE IF EXISTS __TABLE_PREFIX__times;
 CREATE TABLE __TABLE_PREFIX__times (
   username varchar(32) DEFAULT '' NOT NULL,
   start_time datetime DEFAULT '1970-01-01 00:00:00' NOT NULL,
-  end_time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+  end_time datetime DEFAULT '1970-01-01 00:00:00' NOT NULL,
   duration smallint unsigned,
   trans_num int(11) NOT NULL auto_increment,
   proj_id int(11) DEFAULT '1' NOT NULL,
@@ -215,7 +215,7 @@ INSERT INTO __TABLE_PREFIX__user (username,level,password,first_name,last_name) 
 DROP TABLE IF EXISTS __TABLE_PREFIX__absences;
 CREATE TABLE __TABLE_PREFIX__absences (
   `entry_id` int(6) NOT NULL auto_increment,
-  `date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `date` datetime NOT NULL default '1970-01-01 00:00:00',
   `AM_PM` enum('day','AM','PM') NOT NULL default 'day',
   `subject` varchar(127) NOT NULL default '',
   `type` enum('Holiday','Sick','Military','Training','Compensation','Other','Public') NOT NULL default 'Holiday',

@@ -13,6 +13,6 @@ CREATE DATABASE __DBNAME__;
 # currently hard-coded authentication to DB's default authentication 
 CREATE USER '__DBUSER__'@'__DBHOST__' IDENTIFIED BY '__DBPASS__';
 
-GRANT ALL ON __DBNAME__ TO '__DBUSER__'@'__DBHOST__';
+GRANT ALL PRIVELEGES ON __DBNAME__.* TO '__DBUSER__'@'__DBHOST__' WITH GRANT OPTION;
 
 FLUSH PRIVILEGES;

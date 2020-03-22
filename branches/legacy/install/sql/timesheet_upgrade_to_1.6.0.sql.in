@@ -1,2 +1,2 @@
 -- change size of password field
-ALTER TABLE __TABLE_PREFIX__user CHANGE `password` `password` VARCHAR(255)
+ALTER TABLE __TABLE_PREFIX__user CHANGE `password` `password` VARCHAR(256);

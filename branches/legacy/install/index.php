@@ -85,10 +85,10 @@ function check_is_installed() {
 function install() {
 	global $table_inc_file, $db_inc_file;
 	$step = isset($_REQUEST['step']) ? $_REQUEST['step'] : 'one';
-	if(check_is_installed() >= 3) {
-			display_install_success();
-			return;
-	}
+#	if(check_is_installed() >= 3) {
+#			display_install_success();
+#			return;
+#	}
 	switch ($step) {
 		case 'up-one':
 			display_upgrade_step_2();
@@ -106,6 +106,7 @@ function install() {
 			create_database_one();
 			break;
 		case 'three':
+		case 'up-three':
 			install_step_final();
 			break;
 		case 'one':
@@ -464,6 +465,41 @@ version 4.1 or above where SHA1 is not available.<br /><em>If in doubt, use DEFA
 }
 
 /**
+ * display_upgrade_step_3()
+ * outputs the actual "Step Three" page
+ */
+function display_update_step_3() {
+	global $_ERROR;
+?>
+<h2>Step Three: Create New Admin User</h2>
+<form method="post">
+	<p class="success">Database and setup files have been successfully updated. We now need to create a new Timesheet admin user for this installation of Timesheet Next Gen. </p>
+
+	<p><strong>A new admin user is required in v1.6.0 because password hashing changes mean that all previous users cannot log in, until their passwords have been reset by this new admin user.</strong></p>
+<?php if($_ERROR) {?>
+	<h3 class="error">There was an error</h3>
+	<p class="error"><?php echo $_ERROR; ?></p>
+<?php } ?>
+	<table border="0">
+		<tr>
+			<th>Admin User Name</th><td><input type="text" name="username" value="<?php if (isset($_REQUEST['username'])) echo $_REQUEST['username'];?>" /></td>
+		</tr>
+		<tr>
+			<th>Admin Password</th><td><input type="password" name="password" /></td>
+		</tr>
+		<tr>
+			<th>Admin Password (again)</th><td><input type="password" name="password2" /></td>
+		</tr>
+		<tr><td colspan="2">
+			<input type="submit" value="Create Now" />
+		</td></tr>
+	</table>
+	<input type="hidden" name="step" value="up-three" />
+</form>
+<?php 
+}
+
+/**
  * create_database_one()
  * Check if database exists
  */
@@ -663,7 +699,7 @@ function create_database_two($db_host, $db_name, $db_prefix, $db_user, $db_pass,
 	$sql="CREATE DATABASE $db_name";
 	//echo htmlentities($sql) . '<br />';
 	if(!mysqli_query($dbh, $sql)) {
-		$_ERROR .= 'Could not drop the database<br />';
+		$_ERROR .= 'Could not create the database<br />';
 		$_ERROR .= get_db_error(mysqli_error($dbh),$sql);
 		return display_install_step_2(); 
 	}
@@ -724,7 +760,7 @@ function create_database_two($db_host, $db_name, $db_prefix, $db_user, $db_pass,
  */
 function grant_user_permissions($db_host,$db_name,$db_user) {
 	global $dbh, $_ERROR;
-	$sql="GRANT ALL ON $db_name TO $db_user@$db_host";
+	$sql="GRANT ALL ON $db_name TO $db_user@'$db_host'";
 	//echo htmlentities($sql) . '<br />';
 	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= 'Could not add user permissions<br />';
@@ -771,7 +807,7 @@ function create_db_user($db_host,$db_user,$db_pass,$db_pass_func) {
 function display_install_step_3() {
 	global $_ERROR;
 ?>
-<h2>Step Three: Create Admin User</h2>
+<h2>Step Three: Create New Admin User</h2>
 <form method="post">
 	<p class="success">Database and setup files have been successfully created</p>
 
@@ -857,7 +893,7 @@ function display_install_success() {
 <p>Installation was successful</p>
 <h3>Final Bits</h3>
 <p>There are just a few things to do before you can start using Timesheet Next Gen</p>
-<p>Both the <?php echo "$db_inc_file and $table_inc_file"; ?></td>s should be made <stong>Read Only</strong></p>
+<p>Both the <?php echo "$db_inc_file and $table_inc_file"; ?> files should be made <strong>Read Only</strong></p>
 
 <table border="1">
 	<tr>
@@ -886,7 +922,7 @@ function display_install_success() {
 function upgrade_installation() {
 	global $_ERROR;
 
-echo "<h2>Attempting upgrade</h2><br>";
+	echo "<h2>Attempting upgrade</h2><br />";
 	// get the passed data
 	$db_host = (isset($_REQUEST['db_host']) && $_REQUEST['db_host']) ? $_REQUEST['db_host'] : false;
 	$db_name = (isset($_REQUEST['db_name']) && $_REQUEST['db_name']) ? $_REQUEST['db_name'] : false;
@@ -907,25 +943,27 @@ echo "<h2>Attempting upgrade</h2><br>";
 
 	// connect to the database
 	if(!database_connect($db_host, $db_name, $db_user, $db_pass)) { 
+		echo "Could not connect to the database<br />";
 		return display_upgrade_step_2(); 
 	} else {
-		echo "Connection to the database successful<br>";
+		echo "Connection to the database successful<br />";
 	}
 
 	// now create the tables
 	if(!upgrade_tables($db_prefix, $db_pass_func)) { 
+		echo "Could not update the tables<br />";
 		return display_upgrade_step_2(); 
 	} else {
-		echo "Tables updated successfully<br>";
+		echo "Tables updated successfully<br />";
 	}
 
 	// finally write the include files
 	if(!create_include_files($db_host, $db_name, $db_user, $db_pass, $db_prefix, $db_pass_func)) {
 		return display_fatal_error();
 	} else {
-		echo "Include files updated successfully<br>";
+		echo "Include files updated successfully<br />";
 	}
-	return display_install_success();
+	return display_update_step_3();
 }
 
 
@@ -1051,7 +1089,7 @@ function get_old_database_version($cfg_table) {
 
 	$sql = 'SHOW TABLES LIKE \''.$cfg_table.'\'';
 	$result = mysqli_query($dbh, $sql);
-	if(!$result) {
+	if((!$result)||(mysqli_num_rows($result) == 0)) {
 		$_ERROR .= 'Could not find the config table<br />';
 		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
@@ -1083,7 +1121,7 @@ function get_new_database_version($cfg_table) {
 
 	$sql = 'SHOW TABLES LIKE \''.$cfg_table.'\'';
 	$result = mysqli_query($dbh, $sql);
-	if(!$result) {
+	if((!$result)||(mysqli_num_rows($result) == 0)) {
 		$_ERROR .= 'Could not find the config table<br />';
 		$_ERROR .= get_db_error(mysqli_error($dbh));
 		return false;
@@ -1187,13 +1225,14 @@ function update_old_db_version($db_prefix, $version) {
 /* update DB version number */
 function update_new_db_version($db_prefix, $version) {
 	global $dbh, $_ERROR;
-	$sql = 'UPDATE '.$db_prefix.'configuration set value=\''.$version.'\' WHERE \'name\'=\'version\';';
+	$sql = 'UPDATE '.$db_prefix.'configuration set value=\''.$version.'\' WHERE name=\'version\';';
 	if(!mysqli_query($dbh, $sql)) {
 		$_ERROR .= '<strong>Could not update DB version</strong><br />';
 		$_ERROR .= 'Your query said:   '.htmlentities($sql).'<br />';
 		$_ERROR .= 'Our database said: '.mysqli_error($dbh).'<br />';
 		return false;
 	}
+	return true;
 }
 
 /* Database Upgrade */
@@ -1201,13 +1240,8 @@ function upgrade_tables($db_prefix, $db_pass_func) {
 	global $dbh, $_ERROR;
 	$result = true;
 
-	$sql = 'SHOW TABLES LIKE \''.$db_prefix.'config\'';
-	$result = mysqli_query($dbh, $sql);
-	if(!$result) {
-		$db_version = get_new_database_version($db_prefix.'configuration');
-		if($db_version === false) return false;
-	}
-	else {
+	$db_version = get_new_database_version($db_prefix.'configuration');
+	if($db_version === false) {
 		$db_version = get_old_database_version($db_prefix.'config');
 		if($db_version === false) return false;
 	}
@@ -1216,37 +1250,44 @@ function upgrade_tables($db_prefix, $db_pass_func) {
 	//If any SQL statements fail, we don't want to continue, and we want to mark the DB
 	//with the version that last succeeded so we can hopefully continue the upgrades later
 	case '1.2.0' :
+        echo "Updating to v1.2.1<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.2.1.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.2.1');
 		if($result === false) return $result;
 	case '1.2.1' :
+        echo "Updating to v1.3.1<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.3.1.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.3.1');
 		if($result === false) return $result;
 	case '1.3.1' :
+        echo "Updating to v1.4.1<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.4.1.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.4.1');
 		if($result === false) return $result;
 	case '1.4.1' :
+        echo "Updating to v1.5.0<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.0.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.5.0');
 		if($result === false) return $result;
 	case '1.5.0' :
+        echo "Updating to v1.5.1<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.1.sql.in');
 		if($result === false) return $result;
 		$result = update_old_db_version($db_prefix, '1.5.1');
 		if($result === false) return $result;
 	case '1.5.1' :
 	case '1.5.2' :
+        echo "Updating to v1.5.3<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.5.3.sql.in');
 		if($result === false) return $result;
 		$result = update_new_db_version($db_prefix, '1.5.3');
 		if($result === false) return $result;
 	case '1.5.3' :
+        echo "Updating to v1.6.0<br>";
 		$result = run_sql_script($db_prefix, $db_pass_func, 'sql/timesheet_upgrade_to_1.6.0.sql.in');
 		if($result === false) return $result;
 		$result = update_new_db_version($db_prefix, '1.6.0');
