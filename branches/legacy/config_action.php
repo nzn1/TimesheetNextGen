@@ -9,6 +9,9 @@ if (!$authenticationManager->isLoggedIn() || !$authenticationManager->hasClearan
 	exit;
 }
 
+// Connect to database.
+$dbh = dbConnect();
+
 //load local vars from request/post/get
 $action = $_REQUEST["action"];
 $headerhtml = isset($_REQUEST["headerhtml"]) ? $_REQUEST["headerhtml"]: "";
@@ -134,7 +137,7 @@ elseif ($action == "edit") {
 	if ($errorReset == true)
 		$tsx_config->set("errorhtml", '<table border=0 cellpadding=5 width=\"100%\">\r\n<tr>\r\n  <td><font size=\"+2\" color=\"red\">%errormsg%</font></td>\r\n</tr></table>\r\n<p>Please go <a href=\"javascript:history.back()\">Back</a> and try again.</p>');
 	if ($bannerReset == true)
-		$tsx_config->set("bannerhtml", '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>\r\n<td colspan=\"2\" style=\"background-image: url(\'images/timesheet_background_pattern.gif\');\"><img src=\"images/timesheet_banner.gif\" alt=\"Timesheet Banner\" /></td>\r\n</tr><tr>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\">%commandmenu%</td>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">You are logged in as %username%</td>\r\n</tr><tr>\r\n<td colspan=\"2\" height=\"1\" style=\"background-color: #758DD6;\"><img src=\"images/spacer.gif\" alt=\"\" width=\"1\" height=\"1\" /></td>\r\n</tr></table>');
+		$tsx_config->set("bannerhtml", '<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>\r\n<td colspan=\"2\" ><img src=\"images/timesheet_banner.gif\" alt=\"Timesheet Banner\" /></td>\r\n</tr><tr>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\">%commandmenu%</td>\r\n<td style=\"background-color: #F2F3FF; padding: 3;\" align=\"right\" width=\"145\" valign=\"top\">You are logged in as %username%</td>\r\n</tr><tr>\r\n<td colspan=\"2\" height=\"1\" style=\"background-color: #758DD6;\"><img src=\"images/spacer.gif\" alt=\"\" width=\"1\" height=\"1\" /></td>\r\n</tr></table>');
 	if ($tableReset == true)
 		$tsx_config->set("tablehtml", '');
 	if ($localeReset == true)
