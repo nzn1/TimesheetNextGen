@@ -182,11 +182,14 @@ for ($i=0; $i<$num4; $i++) {
 
 	function sortSelect(selElem) {
 		var tmpAry = new Array();
+		var selected = 0;
 		for (var i=0;i<selElem.options.length;i++) {
 			tmpAry[i] = new Array();
 			tmpAry[i][0] = selElem.options[i].text;
 			tmpAry[i][1] = selElem.options[i].value;
-		} 
+			if (selElem.options[i].selected)
+				selected = selElem.options[i].value;
+		}
 		tmpAry.sort();
 		while (selElem.options.length > 0) {
 			selElem.options[0] = null;
@@ -194,6 +197,8 @@ for ($i=0; $i<$num4; $i++) {
 		for (var i=0;i<tmpAry.length;i++) {
 			var op = new Option(tmpAry[i][0], tmpAry[i][1]);
 			selElem.options[i] = op;
+			if (selElem.options[i].value == selected)
+				selElem.options[i].selected = true;
 		}
 		return;
 	}
