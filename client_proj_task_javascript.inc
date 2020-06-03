@@ -9,7 +9,7 @@
 $getUsersClientList = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id FROM $ASSIGNMENTS_TABLE, $PROJECT_TABLE WHERE ".
 		"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
 		"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
-		"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
+		"$PROJECT_TABLE.proj_status='Started' ".
 		"ORDER BY $PROJECT_TABLE.title";
 
 list($qh5, $num5) = dbQuery($getUsersClientList);
@@ -47,7 +47,7 @@ $getProjectsQuery = "SELECT $PROJECT_TABLE.proj_id, $PROJECT_TABLE.client_id, $P
 			"$PROJECT_TABLE, $ASSIGNMENTS_TABLE WHERE ".
 			"$PROJECT_TABLE.proj_id=$ASSIGNMENTS_TABLE.proj_id AND ".
 			"$ASSIGNMENTS_TABLE.username='$contextUser' AND ".
-			"$PROJECT_TABLE.proj_status!='Suspended' AND $PROJECT_TABLE.proj_status!='Complete' ".
+			"$PROJECT_TABLE.proj_status='Started' ".
 			"ORDER BY $PROJECT_TABLE.title";
 
 list($qh3, $num3) = dbQuery($getProjectsQuery);
@@ -80,6 +80,7 @@ foreach ($projCount as $client => $project_count) {
 $getTasksQuery = "SELECT $TASK_TABLE.proj_id, $TASK_TABLE.task_id, $TASK_TABLE.name FROM ".
 			"$TASK_TABLE, $TASK_ASSIGNMENTS_TABLE WHERE ".
 			"$TASK_TABLE.task_id = $TASK_ASSIGNMENTS_TABLE.task_id AND ".
+			"$TASK_TABLE.status = 'Started' AND ".
 			"$TASK_ASSIGNMENTS_TABLE.username='$contextUser' ".
 			"ORDER BY $TASK_TABLE.name";
 
@@ -263,7 +264,7 @@ for ($i=0; $i<$num4; $i++) {
 
 		//if there were no projects then disable the field
 		if (empty) {
-			projectSelect.options[projectSelect.options.length] = new Option("None assigned to you", -1);
+			projectSelect.options[projectSelect.options.length] = new Option("No running projects assigned to you", -1);
 			enableProjectSelect(false);
 		} else
 			enableProjectSelect(true);
@@ -299,7 +300,7 @@ for ($i=0; $i<$num4; $i++) {
 
 		//if there were no tasks then disable the field
 		if (empty) {
-			taskSelect.options[taskSelect.options.length] = new Option("None assigned to you", -1);
+			taskSelect.options[taskSelect.options.length] = new Option("No running tasks assigned to you", -1);
 			enableTaskSelect(false);
 		}
 		else
