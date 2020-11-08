@@ -44,8 +44,12 @@ elseif ($action == "add") {
 			dbQuery("INSERT INTO $TASK_ASSIGNMENTS_TABLE (proj_id, task_id, username) VALUES ($proj_id, $task_id, '$username')");
 	}
 
-	// redirect to the task management page (we're done)
-	Header("Location: task_maint.php?proj_id=$proj_id");
+	if (isset($_REQUEST["return"])) {
+    Header("Location: $_REQUEST[return]");
+  } else {
+    // redirect to the task management page (we're done)
+    Header("Location: task_maint.php?proj_id=$proj_id");
+  }
 } elseif ($action == "edit") {
 	$name = addslashes($name);
 	$description = addslashes($description);

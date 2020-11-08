@@ -270,7 +270,7 @@ include ("banner.inc");
 															</td>
 															<td width="30%">
 																<div class="project_task_list">
-																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; &nbsp;<br />
+																	<a href="task_maint.php?proj_id=<?php echo $data["proj_id"]; ?>"><span class="label">Tasks:</span></a>&nbsp; <a href="task_add.php?proj_id=<?php echo $data["proj_id"]; ?>&return=proj_maint.php%3Fclient_id=<?php echo $client_id; ?>">[Add Task]</a> &nbsp;<br />
 <?php
 			//get tasks
 			list($qh3, $num_tasks) = dbQuery("SELECT name, task_id FROM $TASK_TABLE WHERE proj_id=$data[proj_id]");

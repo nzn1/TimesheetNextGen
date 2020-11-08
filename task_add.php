@@ -30,7 +30,13 @@ $commandMenu->add(new TextCommand("Back", true, "javascript:history.back()"));
 <form action="task_action.php" method="post">
 <input type="hidden" name="action" value="add" />
 <input type="hidden" name="proj_id" value="<?php echo $proj_id ?>" />
-
+<?php
+if (isset($_GET["return"])) {
+?>
+<input type="hidden" name="return" value="<?php echo preg_replace('~[^a-z_=0-9.?]~', '', $_GET["return"]) ?>" />
+<?php
+}
+?>
 <table width="600" align="center" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td width="100%" class="face_padding_cell">
