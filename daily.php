@@ -33,6 +33,24 @@ $tomorrowDate = strtotime(date("d M Y H:i:s",$todayDate) . " +1 days");
 //get the timeformat
 $CfgTimeFormat = $tsx_config->get('timeformat');
 
+//Get the data
+$startStr = date("Y-m-d H:i:s",$todayDate);
+$endStr = date("Y-m-d H:i:s",$tomorrowDate);
+
+$order_by_str = "start_stamp, $CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name, end_stamp";
+list($num, $qh) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
+$qh->data_seek($num - 1);
+$last_time_arr = $qh->fetch_assoc();
+$last_hour = 10;
+$last_minute = 0;
+
+if ($last_time_arr) {
+  preg_match('~ (..):(..):~', $last_time_arr['end_time_str'], $matches);
+  $last_hour = $matches[1];
+  $last_minute = $matches[2];
+}
+
+$qh->data_seek(0);
 //include date input classes
 include "form_input.inc";
 
@@ -107,13 +125,6 @@ function make_daily_link($ymdStr, $proj_id, $string) {
 function open_cell_middle_td() {
 	echo "<td class=\"calendar_cell_middle\" align=\"right\" nowrap>";
 }
-
-//Get the data
-$startStr = date("Y-m-d H:i:s",$todayDate);
-$endStr = date("Y-m-d H:i:s",$tomorrowDate);
-
-$order_by_str = "start_stamp, $CLIENT_TABLE.organisation, $PROJECT_TABLE.title, $TASK_TABLE.name, end_stamp";
-list($num, $qh) = get_time_records($startStr, $endStr, $contextUser, 0, 0, $order_by_str);
 
 if ($num == 0) {
 	print "	<tr>\n";

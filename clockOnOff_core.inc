@@ -97,10 +97,10 @@
 																	<input type="radio" name="clock_on_radio" id="clock_on_radio_date" value="date" onclick="enableClockOn();" checked="checked"  />
 																<?php endif; ?>
 																<?php $hourInput = new HourInput("clock_on_time_hour");
-																	$hourInput->create(10); ?>
+																	$hourInput->create($last_hour); ?>
 																:
 																<?php $minuteInput = new MinuteInput("clock_on_time_min");
-																	$minuteInput->create(); ?>
+																	$minuteInput->create($last_minute); ?>
 															</td>
 															<td>
 																<img src="images/clock-green-sml.gif" border="0" alt="" />
