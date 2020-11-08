@@ -239,6 +239,7 @@ else {
 			}
 
 			print "<td class=\"calendar_cell_disabled_right\" align=\"right\" nowrap>\n";
+			print "<a href='#' title=\"" . htmlspecialchars($data['log_message'] ? : ' No Message ') . "\">[?]</a>\n";
 			print "	<a href=\"edit.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]&year=$year&month=$month&day=$day\" class=\"action_link\">Edit</a>,&nbsp;\n";
 			//print "	<a href=\"delete.php?client_id=$client_id&proj_id=$proj_id&task_id=$task_id&trans_num=$data[trans_num]\" class=\"action_link\">Delete</a>\n";
 			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
@@ -270,6 +271,7 @@ else {
 						'&amp;clock_off_check=on&amp;clock_off_radio=now" class="action_link\">Clock Off</a>, ';
 				print $stop_link;
 			}
+			print "<a href='#' title=\"" . htmlspecialchars($data['log_message'] ? : ' No Message ') . "\">[?]</a>\n";
 			print "	<a href=\"javascript:delete_entry($data[trans_num]);\" class=\"action_link\">Delete</a>\n";
 			print "</td>";
 		}
