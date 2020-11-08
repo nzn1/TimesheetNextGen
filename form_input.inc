@@ -73,7 +73,7 @@
 		function create($selectedMinute = 0) {
 			$this->printSelect();
 
-			for ($i=0;$i<60;$i+=15) {
+			for ($i=0;$i<60;$i+=5) {
 				echo "<option value=\"$i\"";
 					if ($selectedMinute > $i - 2 && $selectedMinute < $i + 3)
 						echo " selected=\"selected\"";
