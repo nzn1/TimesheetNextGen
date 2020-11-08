@@ -135,6 +135,16 @@ for ($i=0; $i<$num4; $i++) {
 			}
 		}
 
+    var ontimeH = document.getElementById('clock_on_time_hour');
+    var ontimeM = document.getElementById('clock_on_time_min');
+    var offtimeH = document.getElementById('clock_off_time_hour');
+    var offtimeM = document.getElementById('clock_off_time_min');
+
+    if (ontimeH.value * 60 + ontimeM.value > offtimeH.value * 60 + offtimeM.value) {
+      alert("You cannot have your clock on time (" + (ontimeH.options[ontimeH.selectedIndex].text + ' ').replace(' ', ":" + ontimeM.options[ontimeM.selectedIndex].text).replace(' ', '') + ") equal to\nor later than your clock off time (" + (offtimeH.options[offtimeH.selectedIndex].text + ' ').replace(' ', ":" + offtimeM.options[offtimeM.selectedIndex].text) + ")").replace(' ', '');
+      return;
+    }
+
 		//copy the values of the selects
 		var clientSelect = document.getElementById('clientSelect');
 		document.getElementById('client_id').value = clientSelect.options[clientSelect.selectedIndex].value;
